@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 typedef unsigned char *String;
 
@@ -97,14 +98,10 @@ int lexer(String s, int tc[])
             len = 1;
 
         } else if (isAlphabetOrNumber(s[i])) {
-            while (isAlphabetOrNumber(s[i + len])) {
-                len++;
-            }
+            while (isAlphabetOrNumber(s[i + len])) len++;
 
         } else if (strchr("=+-*/!%&~|<>?:.#", s[i]) != 0) {
-            while (strchr("=+-*/!%&~|<>?:.#", s[i + len]) != 0 && s[i + len] != 0) {
-                len++;
-            }
+            while (strchr("=+-*/!%&~|<>?:.#", s[i + len]) != 0 && s[i + len] != 0) len++;
 
         } else {
             printf("syntax error : %.10s\n", &s[i]);
@@ -130,7 +127,13 @@ int main(int argc, const char **argv)
     tc[pc1] = tc[pc1 + 1] = tc[pc1 + 2] = tc[pc1 + 3] = getTc(".", 1);    // エラー表示のために末尾にピリオドを追加
 
     int semi = getTc(";", 1);
-    for (pc = 0; pc < pc1; pc++) {
+    for (pc = 0; pc < pc1; pc++) {    // ラベル定義命令を探して位置を登録
+        if (tc[pc + 1] ==getTc(":", 1)) {
+            var[tc[pc]] = pc + 2;    // ラベル定義命令の次のpc値を変数に記憶させておく
+        }
+    }
+
+    for (pc = 0; pc < pc1;) {
         if (tc[pc + 1] == getTc("=", 1) && tc[pc + 3] == semi) {
             var[tc[pc]] = var[tc[pc + 2]];    // 変数の単純代入
 
@@ -149,11 +152,42 @@ int main(int argc, const char **argv)
         } else if (tc[pc] == getTc("print", 5) && tc[pc + 2] == semi) {
             printf("%d\n", var[tc[pc + 1]]);    // print
         
+        } else if (tc[pc + 1] == getTc(":", 1)) {    // ラベル定義命令
+            pc += 2;    // 読み飛ばす
+            continue;
+        
+        } else if (tc[pc] == getTc("goto", 4) && tc[pc + 2] == semi) {
+            pc = var[tc[pc + 1]];    // goto
+            continue;
+
+        } else if (tc[pc] == getTc("if", 2) && tc[pc + 1] == getTc("(", 1) && tc[pc + 5] == getTc(")", 1) && tc[pc + 6] == getTc("goto", 4) && tc[pc + 8] == semi) {
+            int gpc = var[tc[pc + 7]];
+            int v0  = var[tc[pc + 2]];
+            int v1  = var[tc[pc + 4]];
+            
+            // if (...) goto
+            if (tc[pc + 3] == getTc("!=", 2) && v0 != v1) {
+                pc = gpc;
+                continue;
+            }
+            if (tc[pc + 3] == getTc("==", 2) && v0 == v1) {
+                pc = gpc;
+                continue;
+            }
+            if (tc[pc + 3] == getTc("<", 1) && v0 < v1) {
+                pc = gpc;
+                continue;
+            }
+
+        } else if (tc[pc] == getTc("time", 4) && tc[pc + 1] == semi) {
+            printf("time: %.3f[sec]\n", clock() / (double)CLOCKS_PER_SEC);
+
         } else {
             goto err;
         }
 
         while (tc[pc] != semi) pc++;
+        pc++;
     }
     return 0;
 
