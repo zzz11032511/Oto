@@ -6,25 +6,34 @@
 typedef unsigned char *String;
 
 // コマンドライン引数で指定されたソースファイルをtに読み込む
-void loadText(int argc, const char **argv, String t, int siz)
+int loadText(String path, String t, int siz)
 {
     FILE *fp;
-    int i;
+    unsigned char s[1000];
+    int i = 0, j;
+
+    if (path[0] == 34) {
+        i = 1;
+    }
     
-    if (argc < 2) {    // 引数が少ないのでエラー表示
-        printf("usage>%s program-file\n", argv[0]);
-        exit(1);
+    for (j = 0; ; j++) {
+        if (path[i + j] == 0 || path[j + i] == 34) {
+            break;    // ファイル名の末尾に来たらそこで終わり
+        }
+        s[j] = path[i + j]; 
     }
+    s[j] = 0;
 
-    fp = fopen(argv[1], "rt");    // テキストモードでファイルを開く
-    if (fp == 0) {    // ファイルを開けなかった
-        printf("fopen error :  %s\n", argv[1]);
-        exit(1);
+    fp = fopen(s, "rt");
+    if (fp == 0) {
+        printf("fopen error : %s\n", path);
+        return 1;    // 失敗
     }
-    i = fread(t, 1, siz - 1, fp);    // iは読み込んだバイト数
-
+    i = fread(t, 1, siz - 1, fp);
+    
     fclose(fp);
-    t[i] = 0;    // 終端マーク
+    t[i] = 0;    // 終端マークを書いておく
+    return 0;
 }
 
 
@@ -117,18 +126,19 @@ int lexer(String s, int tc[])
 int tc[10000];
 
 
-int main(int argc, const char **argv)
+// プログラム実行
+int run(String s)
 {
+    clock_t t0 = clock();
     int pc, pc1;
-    unsigned char txt[10000];    // ソースコード用のバッファ
-    
-    loadText(argc, argv, txt, 10000);
-    pc1 = lexer(txt, tc);
-    tc[pc1] = tc[pc1 + 1] = tc[pc1 + 2] = tc[pc1 + 3] = getTc(".", 1);    // エラー表示のために末尾にピリオドを追加
+
+    pc1 = lexer(s, tc);
+    tc[pc1++] = getTc(";", 1);    // 末尾に;をつけてあげる
+    tc[pc1] = tc[pc1 + 1] = tc[pc1 + 3] = getTc(".", 1);    // エラー表示のために末尾にピリオドを追加
 
     int semi = getTc(";", 1);
     for (pc = 0; pc < pc1; pc++) {    // ラベル定義命令を探して位置を登録
-        if (tc[pc + 1] ==getTc(":", 1)) {
+        if (tc[pc + 1] == getTc(":", 1)) {
             var[tc[pc]] = pc + 2;    // ラベル定義命令の次のpc値を変数に記憶させておく
         }
     }
@@ -182,8 +192,12 @@ int main(int argc, const char **argv)
         } else if (tc[pc] == getTc("time", 4) && tc[pc + 1] == semi) {
             printf("time: %.3f[sec]\n", clock() / (double)CLOCKS_PER_SEC);
 
+        } else if (tc[pc] == semi) {
+            // 何もしない
+
         } else {
             goto err;
+        
         }
 
         while (tc[pc] != semi) pc++;
@@ -193,5 +207,39 @@ int main(int argc, const char **argv)
 
 err:
     printf("syntax error : %s %s %s %s\n", ts[tc[pc]], ts[tc[pc + 1]], ts[tc[pc + 2]], ts[tc[pc + 3]]);
-    exit(1);
+    return 1;
+}
+
+
+int main(int argc, const char **argv)
+{
+    unsigned char txt[10000];
+    int i;
+
+    if (argc >= 2) {
+        if (loadText((String)argv[1], txt, 10000) == 0) {
+            run(txt);
+        }
+        exit(0);
+    }
+
+    while (1) {    // Read-Eval-Print Loop
+        printf("\n>");
+
+        fgets(txt, 10000, stdin);
+        i = strlen(txt);
+        if (txt[i - 1] == '\n') {
+            txt[i - 1] = 0;    // 改行コードを消す
+        }
+
+        if (strncmp(txt, "run ", 4) == 0) {
+            if (loadText(&txt[4], txt, 10000) == 0) {
+                run(txt);
+            }
+        } else if (strcmp(txt, "exit") == 0) {
+            exit(0);
+        } else {
+            run(txt);
+        }
+    }
 }
