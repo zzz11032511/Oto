@@ -169,7 +169,7 @@ int phrCmp(int pid, String phr, int pc)
 
 typedef int *IntP;
 
-enum { OpCpy = 0, OpAdd, OpSub, OpPrint, OpGoto, OpJeq, OpJne, OpJlt, OpJge, OpJle, OpJgt, OpTime, OpEnd, OpAdd1 };
+enum { OpCpy = 0, OpAdd, OpSub, OpPrint, OpGoto, OpJeq, OpJne, OpJlt, OpJge, OpJle, OpJgt, OpLop, OpTime, OpEnd, OpAdd1 };
 
 IntP ic[10000];    // 内部コード
 IntP *icq;         // ic[]への書き込みポインタ
@@ -200,6 +200,9 @@ int compile(String s)
     for (pc = 0; pc < pc1;) {
         if (phrCmp(1, "!!*0 = !!*1;", pc)) {
             putIc(OpCpy, &var[tc[wpc[0]]], &var[tc[wpc[1]]], 0, 0);    // 単純代入
+
+        } else if (phrCmp(9, "!!*0 = !!*1 + 1; if (!!*2 < !!*3) goto !!*4;", pc) && tc[wpc[0]] == tc[wpc[1]] && tc[wpc[0]] == tc[wpc[2]]) {
+            putIc(OpLop, &var[tc[wpc[4]]], &var[tc[wpc[0]]], &var[tc[wpc[3]]], 0);
 
         } else if (phrCmp(2, "!!*0 = !!*1 + 1;", pc) && tc[wpc[0]] == tc[wpc[1]]) {
             putIc(OpAdd1, &var[tc[wpc[0]]], 0, 0, 0);    // 1の加算
@@ -238,7 +241,7 @@ int compile(String s)
     icq1 = icq;
     for (icq = ic; icq < icq1; icq += 5) {    // goto先の設定
         i = (int)icq[0];
-        if (OpGoto <= i && i <= OpJgt) {
+        if (OpGoto <= i && i <= OpLop) {
             icq[1] = (IntP)(*icq[1] + ic);
         }
     }
@@ -253,6 +256,7 @@ void exec()
 {
     clock_t t0 = clock();
     IntP *icp = ic;
+    int i;
     while (1) {
         switch ((int)icp[0]) {
             case OpCpy:
@@ -297,6 +301,17 @@ void exec()
 
             case OpJlt:
                 if (*icp[2] < *icp[3]) {
+                    icp = (IntP *)icp[1];
+                    continue;
+                }
+                icp += 5;
+                continue;
+
+            case OpLop:
+                i = *icp[2];
+                i++;
+                *icp[2] = i;
+                if (i < *icp[3]) {
                     icp = (IntP *)icp[1];
                     continue;
                 }
