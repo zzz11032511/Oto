@@ -12,10 +12,11 @@ int loadText(String path, String t, int siz)
     unsigned char s[1000];
     int i = 0, j;
 
-    if (path[0] == 34) {
+    if (path[0] == 34) {    // ダブルクオートを読み飛ばす
         i = 1;
     }
-    
+
+    // ファイル名取得    
     for (j = 0; ; j++) {
         if (path[i + j] == 0 || path[j + i] == 34) {
             break;    // ファイル名の末尾に来たらそこで終わり
@@ -24,6 +25,7 @@ int loadText(String path, String t, int siz)
     }
     s[j] = 0;
 
+    // ファイルオープン
     fp = fopen(s, "rt");
     if (fp == 0) {
         printf("fopen error : %s\n", path);
@@ -37,7 +39,7 @@ int loadText(String path, String t, int siz)
 }
 
 
-#define MAX_TC 1000       // トークンコードの最大値
+#define MAX_TC 255       // トークンコードの最大値
 String ts[MAX_TC + 1];    // トークンの内容(文字列)を記憶
 int tl[MAX_TC + 1];       // トークンの長さ
 unsigned char tcBuf[(MAX_TC + 1) * 10];    // トークン1つあたり平均10バイトを想定
@@ -125,6 +127,45 @@ int lexer(String s, int tc[])
 
 int tc[10000];
 
+enum { TcSemi = 0, TcDot, TcWiCard, Tc0, Tc1, Tc2, Tc3, Tc4, Tc5, Tc6, Tc7, Tc8, TcEEq, TcNEq, TcLt, TcGe, TcLe, TcGt };
+char tcInit[] = "; . !!* 0 1 2 3 4 5 6 7 8 == != < >= <= >";
+
+
+int phrCmp_tc[32 * 100];    // フレーズのlexer()結果を保存する
+int ppc1;                   // 一致したフレーズの次のトークンをさす
+int wpc[9];                 // ワイルドカードのトークンの場所をさす
+
+// tc[pc]からのトークンコード列がphrで指定されたトークン列と一致するかどうか調べる
+// pid : フレーズID
+//       phrCmp_tc[]のどこにphrのlexer結果をしまっておくかを決める
+int phrCmp(int pid, String phr, int pc)
+{
+    int i0 = pid * 32;
+    int i, i1, j;
+
+    if (phrCmp_tc[i0 + 31] == 0) {
+        i1 = lexer(phr, &phrCmp_tc[i0]);
+        phrCmp_tc[i0 + 31] = i1;
+    }
+    i1 = phrCmp_tc[i0 + 31];
+    for (i = 0; i < i1; i++) {
+        if (phrCmp_tc[i0 + i] == TcWiCard) {
+            i++;
+            j = phrCmp_tc[i0 + i] - Tc0;    // 後続の番号を取得
+            wpc[j] = pc;
+            pc++;
+            continue; 
+        }
+        if (phrCmp_tc[i0 + i] != tc[pc]) {    // マッチせず
+            return 0;
+        }
+        pc++;
+    }
+
+    ppc1 = pc;
+    return 1;
+}
+
 
 // プログラム実行
 int run(String s)
@@ -133,75 +174,72 @@ int run(String s)
     int pc, pc1;
 
     pc1 = lexer(s, tc);
-    tc[pc1++] = getTc(";", 1);    // 末尾に;をつけてあげる
-    tc[pc1] = tc[pc1 + 1] = tc[pc1 + 3] = getTc(".", 1);    // エラー表示のために末尾にピリオドを追加
+    tc[pc1++] = TcSemi;    // 末尾に;をつけてあげる
+    tc[pc1] = tc[pc1 + 1] = tc[pc1 + 2] = tc[pc1 + 3] = TcDot;    // エラー表示のために末尾にピリオドを追加
 
-    int semi = getTc(";", 1);
     for (pc = 0; pc < pc1; pc++) {    // ラベル定義命令を探して位置を登録
-        if (tc[pc + 1] == getTc(":", 1)) {
-            var[tc[pc]] = pc + 2;    // ラベル定義命令の次のpc値を変数に記憶させておく
+        if (phrCmp(0, "!!*0:", pc)) {
+            var[tc[pc]] = ppc1;    // ラベル定義命令の次のpc値を変数に記憶させておく
         }
     }
 
     for (pc = 0; pc < pc1;) {
-        if (tc[pc + 1] == getTc("=", 1) && tc[pc + 3] == semi) {
-            var[tc[pc]] = var[tc[pc + 2]];    // 変数の単純代入
+        if (phrCmp(1, "!!*0 = !!*1;", pc)) {
+            var[tc[wpc[0]]] = var[tc[wpc[1]]];    // 変数の単純代入
 
-        } else if (tc[pc + 1] == getTc("=", 1) && tc[pc + 3] == getTc("+", 1) && tc[pc + 5] == semi) {
-            var[tc[pc]] = var[tc[pc + 2]] + var[tc[pc + 4]];    // 足し算
+        } else if (phrCmp(2, "!!*0 = !!*1 + !!*2;", pc)) {
+            var[tc[wpc[0]]] = var[tc[wpc[1]]] + var[tc[wpc[2]]];    // 足し算
         
-        } else if (tc[pc + 1] == getTc("=", 1) && tc[pc + 3] == getTc("-", 1) && tc[pc + 5] == semi) {
-            var[tc[pc]] = var[tc[pc + 2]] - var[tc[pc + 4]];    // 引き算
+        } else if (phrCmp(3, "!!*0 = !!*1 - !!*2;", pc)) {
+            var[tc[wpc[0]]] = var[tc[wpc[1]]] - var[tc[wpc[2]]];    // 引き算
         
-        } else if (tc[pc + 1] == getTc("=", 1) && tc[pc + 3] == getTc("*", 1) && tc[pc + 5] == semi) {
-            var[tc[pc]] = var[tc[pc + 2]] * var[tc[pc + 4]];    // 掛け算
+        } else if (phrCmp(4, "!!*0 = !!*1 * !!*2;", pc)) {
+            var[tc[wpc[0]]] = var[tc[wpc[1]]] * var[tc[wpc[2]]];    // 掛け算
         
-        } else if (tc[pc + 1] == getTc("=", 1) && tc[pc + 3] == getTc("/", 1) && tc[pc + 5] == semi) {
-            var[tc[pc]] = var[tc[pc + 2]] / var[tc[pc + 4]];    // 割り算
+        } else if (phrCmp(5, "!!*0 = !!*1 / !!*2;", pc)) {
+            var[tc[wpc[0]]] = var[tc[wpc[1]]] / var[tc[wpc[2]]];    // 割り算
         
-        } else if (tc[pc] == getTc("print", 5) && tc[pc + 2] == semi) {
-            printf("%d\n", var[tc[pc + 1]]);    // print
+        } else if (phrCmp(6, "print !!*0;", pc)) {
+            printf("%d\n", var[tc[wpc[0]]]);    // print
         
-        } else if (tc[pc + 1] == getTc(":", 1)) {    // ラベル定義命令
-            pc += 2;    // 読み飛ばす
-            continue;
-        
-        } else if (tc[pc] == getTc("goto", 4) && tc[pc + 2] == semi) {
-            pc = var[tc[pc + 1]];    // goto
+        } else if (phrCmp(0, "!!*0:", pc)) {    // ラベル定義命令
+            // 何もしない
+
+        } else if (phrCmp(7, "goto !!*0;", pc)) {
+            pc = var[tc[wpc[0]]];    // goto
             continue;
 
-        } else if (tc[pc] == getTc("if", 2) && tc[pc + 1] == getTc("(", 1) && tc[pc + 5] == getTc(")", 1) && tc[pc + 6] == getTc("goto", 4) && tc[pc + 8] == semi) {
-            int gpc = var[tc[pc + 7]];
-            int v0  = var[tc[pc + 2]];
-            int v1  = var[tc[pc + 4]];
+        } else if (phrCmp(6, "if (!!*0 !!*1 !!*2) goto !!*3;", pc) && TcEEq <= tc[wpc[1]] && tc [wpc[1]] <= TcGt) {
+            int gpc = var[tc[wpc[3]]];
+            int v0  = var[tc[wpc[0]]];
+            int cc  = tc[wpc[1]];
+            int v1  = var[tc[wpc[2]]];
             
             // if (...) goto
-            if (tc[pc + 3] == getTc("!=", 2) && v0 != v1) {
+            if (cc == TcEEq && v0 != v1) {
                 pc = gpc;
                 continue;
             }
-            if (tc[pc + 3] == getTc("==", 2) && v0 == v1) {
+            if (cc == TcNEq && v0 == v1) {
                 pc = gpc;
                 continue;
             }
-            if (tc[pc + 3] == getTc("<", 1) && v0 < v1) {
+            if (cc == TcLt && v0 < v1) {
                 pc = gpc;
                 continue;
             }
 
-        } else if (tc[pc] == getTc("time", 4) && tc[pc + 1] == semi) {
-            printf("time: %.3f[sec]\n", clock() / (double)CLOCKS_PER_SEC);
+        } else if (phrCmp(7, "time;", pc)) {
+            printf("time: %.3f[sec]\n", (clock() - t0) / (double)CLOCKS_PER_SEC);
 
-        } else if (tc[pc] == semi) {
+        } else if (phrCmp(8, ";", pc)) {
             // 何もしない
 
         } else {
             goto err;
         
         }
-
-        while (tc[pc] != semi) pc++;
-        pc++;
+        pc = ppc1;
     }
     return 0;
 
@@ -216,6 +254,8 @@ int main(int argc, const char **argv)
     unsigned char txt[10000];
     int i;
 
+    lexer(tcInit, tc);    // あらかじめtcInitをlexer()する
+    
     if (argc >= 2) {
         if (loadText((String)argv[1], txt, 10000) == 0) {
             run(txt);
