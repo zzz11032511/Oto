@@ -167,71 +167,64 @@ int phrCmp(int pid, String phr, int pc)
 }
 
 
-// プログラム実行
-int run(String s)
+typedef int *IntP;
+
+enum { OpCpy = 0, OpAdd, OpSub, OpPrint, OpGoto, OpJeq, OpJne, OpJlt, OpJge, OpJle, OpJgt, OpTime, OpEnd, OpAdd1 };
+
+IntP ic[10000];    // 内部コード
+IntP *icq;         // ic[]への書き込みポインタ
+
+// ic[]へ簡単に書き込むための便利関数
+void putIc(int op, IntP p1, IntP p2, IntP p3, IntP p4)
 {
-    clock_t t0 = clock();
-    int pc, pc1;
+    icq[0] = (IntP)op;
+    icq[1] = p1;
+    icq[2] = p2;
+    icq[3] = p3;
+    icq[4] = p4;
+    icq += 5;
+}
+
+
+// 与えられた文字列をプログラムだと解釈して、内部コードを生成しic[]に出力する
+int compile(String s)
+{
+    int pc, pc1, i;
+    IntP *icq1;
 
     pc1 = lexer(s, tc);
-    tc[pc1++] = TcSemi;    // 末尾に;をつけてあげる
-    tc[pc1] = tc[pc1 + 1] = tc[pc1 + 2] = tc[pc1 + 3] = TcDot;    // エラー表示のために末尾にピリオドを追加
+    tc[pc1++] = TcSemi;    // 末尾に「;」を付け忘れることが多いので、付けてあげる.
+    tc[pc1] = tc[pc1 + 1] = tc[pc1 + 2] = tc[pc1 + 3] = TcDot;    // エラー表示用のために末尾にピリオドを登録しておく.
 
-    for (pc = 0; pc < pc1; pc++) {    // ラベル定義命令を探して位置を登録
-        if (phrCmp(0, "!!*0:", pc)) {
-            var[tc[pc]] = ppc1;    // ラベル定義命令の次のpc値を変数に記憶させておく
-        }
-    }
-
+    icq = ic;    // これでicqはic[0]を指すようになる。ここから書き始める
     for (pc = 0; pc < pc1;) {
         if (phrCmp(1, "!!*0 = !!*1;", pc)) {
-            var[tc[wpc[0]]] = var[tc[wpc[1]]];    // 変数の単純代入
+            putIc(OpCpy, &var[tc[wpc[0]]], &var[tc[wpc[1]]], 0, 0);    // 単純代入
+
+        } else if (phrCmp(2, "!!*0 = !!*1 + 1;", pc) && tc[wpc[0]] == tc[wpc[1]]) {
+            putIc(OpAdd1, &var[tc[wpc[0]]], 0, 0, 0);    // 1の加算
 
         } else if (phrCmp(2, "!!*0 = !!*1 + !!*2;", pc)) {
-            var[tc[wpc[0]]] = var[tc[wpc[1]]] + var[tc[wpc[2]]];    // 足し算
+            putIc(OpAdd, &var[tc[wpc[0]]], &var[tc[wpc[1]]], &var[tc[wpc[2]]], 0);    // 足し算
         
         } else if (phrCmp(3, "!!*0 = !!*1 - !!*2;", pc)) {
-            var[tc[wpc[0]]] = var[tc[wpc[1]]] - var[tc[wpc[2]]];    // 引き算
+            putIc(OpSub, &var[tc[wpc[0]]], &var[tc[wpc[1]]], &var[tc[wpc[2]]], 0);    // 引き算
         
-        } else if (phrCmp(4, "!!*0 = !!*1 * !!*2;", pc)) {
-            var[tc[wpc[0]]] = var[tc[wpc[1]]] * var[tc[wpc[2]]];    // 掛け算
-        
-        } else if (phrCmp(5, "!!*0 = !!*1 / !!*2;", pc)) {
-            var[tc[wpc[0]]] = var[tc[wpc[1]]] / var[tc[wpc[2]]];    // 割り算
-        
-        } else if (phrCmp(6, "print !!*0;", pc)) {
-            printf("%d\n", var[tc[wpc[0]]]);    // print
+        } else if (phrCmp(4, "print !!*0;", pc)) {
+            putIc(OpPrint, &var[tc[wpc[0]]], 0, 0, 0);    // print
         
         } else if (phrCmp(0, "!!*0:", pc)) {    // ラベル定義命令
-            // 何もしない
+            var[tc[wpc[0]]] = icq - ic;    // ラベルに対応するicqを記録しておく
 
-        } else if (phrCmp(7, "goto !!*0;", pc)) {
-            pc = var[tc[wpc[0]]];    // goto
-            continue;
+        } else if (phrCmp(5, "goto !!*0;", pc)) {
+            putIc(OpGoto, &var[tc[wpc[0]]], 0, 0, 0);    // goto
 
-        } else if (phrCmp(6, "if (!!*0 !!*1 !!*2) goto !!*3;", pc) && TcEEq <= tc[wpc[1]] && tc [wpc[1]] <= TcGt) {
-            int gpc = var[tc[wpc[3]]];
-            int v0  = var[tc[wpc[0]]];
-            int cc  = tc[wpc[1]];
-            int v1  = var[tc[wpc[2]]];
-            
-            // if (...) goto
-            if (cc == TcEEq && v0 != v1) {
-                pc = gpc;
-                continue;
-            }
-            if (cc == TcNEq && v0 == v1) {
-                pc = gpc;
-                continue;
-            }
-            if (cc == TcLt && v0 < v1) {
-                pc = gpc;
-                continue;
-            }
+        } else if (phrCmp(6, "if (!!*0 !!*1 !!*2) goto !!*3;", pc) && TcEEq <= tc[wpc[1]] && tc [wpc[1]] <= TcLt) {
+            putIc(OpJeq + (tc[wpc[1]] - TcEEq), &var[tc[wpc[3]]], &var[tc[wpc[0]]], &var[tc[wpc[2]]], 0); 
 
         } else if (phrCmp(7, "time;", pc)) {
-            printf("time: %.3f[sec]\n", (clock() - t0) / (double)CLOCKS_PER_SEC);
-
+            putIc(OpTime, 0, 0, 0, 0);
+            
         } else if (phrCmp(8, ";", pc)) {
             // 何もしない
 
@@ -241,11 +234,98 @@ int run(String s)
         }
         pc = ppc1;
     }
-    return 0;
-
+    putIc(OpEnd, 0, 0, 0, 0);
+    icq1 = icq;
+    for (icq = ic; icq < icq1; icq += 5) {    // goto先の設定
+        i = (int)icq[0];
+        if (OpGoto <= i && i <= OpJgt) {
+            icq[1] = (IntP)(*icq[1] + ic);
+        }
+    }
+    return icq1 - ic;
 err:
     printf("syntax error : %s %s %s %s\n", ts[tc[pc]], ts[tc[pc + 1]], ts[tc[pc + 2]], ts[tc[pc + 3]]);
     return 1;
+}
+
+// ic[]に格納された内部コードを高速に実行する
+void exec()
+{
+    clock_t t0 = clock();
+    IntP *icp = ic;
+    while (1) {
+        switch ((int)icp[0]) {
+            case OpCpy:
+                *icp[1] = *icp[2];
+                icp += 5;
+                continue;
+
+            case OpAdd:
+                *icp[1] = *icp[2] + *icp[3];
+                icp += 5;
+                continue;
+            
+            case OpSub:
+                *icp[1] = *icp[2] - *icp[3];
+                icp += 5;
+                continue;
+            
+            case OpPrint:
+                printf("%d\n", *icp[1]);
+                icp += 5;
+                continue;
+            
+            case OpGoto:
+                icp = (IntP *)icp[1];
+                continue;
+
+            case OpJeq:
+                if (*icp[2] == *icp[3]) {
+                    icp = (IntP *)icp[1];
+                    continue;
+                }
+                icp += 5;
+                continue;
+            
+            case OpJne:
+                if (*icp[2] != *icp[3]) {
+                    icp = (IntP *)icp[1];
+                    continue;
+                }
+                icp += 5;
+                continue;
+
+            case OpJlt:
+                if (*icp[2] < *icp[3]) {
+                    icp = (IntP *)icp[1];
+                    continue;
+                }
+                icp += 5;
+                continue;
+
+            case OpTime:
+                printf("time: %.3f[sec]\n", (clock() - t0) / (double) CLOCKS_PER_SEC);
+                icp += 5;
+                continue;
+
+            case OpEnd:
+                return;
+
+            case OpAdd1:
+                (*icp[1])++;
+                icp += 5;
+                continue;
+        }
+    }
+}
+
+// プログラム実行
+int run(String s)
+{
+    if (compile(s) < 0)
+        return 1;
+    exec();
+    return 0;
 }
 
 
@@ -255,7 +335,7 @@ int main(int argc, const char **argv)
     int i;
 
     lexer(tcInit, tc);    // あらかじめtcInitをlexer()する
-    
+
     if (argc >= 2) {
         if (loadText((String)argv[1], txt, 10000) == 0) {
             run(txt);
