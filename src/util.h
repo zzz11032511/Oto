@@ -1,0 +1,1 @@
+FILE *eOpen(char *filename, char *mode);    // エラーチェック付きのfopen
