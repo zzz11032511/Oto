@@ -20,7 +20,7 @@ unsigned char tcBuf[(MAX_TC + 1) * 10];    // トークン1つあたり平均10�
 int tcs = 0;                               // 今まで発行したトークンコードの個数
 int tcb = 0;                               // tcBuf[]の未使用領域の個数
 
-int var[MAX_TC + 1];
+int var[MAX_TC + 1];    // 変数
 
 /**
  * トークンコードを得るための関数
