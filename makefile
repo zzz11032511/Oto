@@ -1,14 +1,10 @@
-FILE = main
-BIN  = main
+default :
+	$(MAKE) build
 
-all:
-	$(BIN).exe
-
-$(BIN).exe: $(FILE).c
-	gcc -o $(BIN) $(FILE).c
-
-run: $(BIN).exe
-	./$(BIN).exe
-
-buildO2: $(FILE).c
-	gcc -o $(BIN) -O2 $(FILE).c
+build :
+	gcc -c main.c
+	gcc -c lexer.c
+	gcc -c compile.c
+	gcc -c exec.c
+	gcc -c util.c
+	gcc -o oto main.o lexer.o compile.o exec.o util.o

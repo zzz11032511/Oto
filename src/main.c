@@ -25,5 +25,7 @@ int main(int argc, const char **argv)
         run(src);
     }
 
+    free(src);
+
     return 0;
 }
