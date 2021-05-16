@@ -2,6 +2,7 @@
 test.txt
 
 *.exe
+*.o
 
 old/
 .vscode/

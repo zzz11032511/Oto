@@ -46,6 +46,6 @@ enum {
 
 #define TC_MAX 255    // トークンコードの最大値
 
-int lexer(String s, int tc[], int var[]);
+int lexer(String s, int *tc, int *var);
 
 #endif
