@@ -2,88 +2,75 @@
 #include <stdlib.h>
 #include <string.h>
 #include "lexer.h"
+#include "token.h"
 
-/* 変数名に使用出来る名前かどうか判定する */
+/**
+ *  変数名として使用可能かどうかを判定する
+ *  使えるのであれば1を返す
+ *  
+ *  現状では定数も変数名として扱っている
+ */
 int isValNameAvailable(unsigned char c)
 {
-    // TODO: 予約語も判定するようにする
     if ('0' <= c && c <= '9') return 1;
     if ('a' <= c && c <= 'z') return 1;
     if ('A' <= c && c <= 'Z') return 1;
-    if (c == '_') return 1;
     return 0;
 }
 
+const char operator[] = "=+-*/!%&~|<>?:.#";
 
-unsigned char *ts[TC_MAX + 1];             // トークンの内容(文字列)を記憶
-int tl[TC_MAX + 1];                        // トークンの長さ
-unsigned char tcBuf[(TC_MAX + 1) * 10];    // トークン1つあたり平均10バイトを想定
-int tcs = 0;                               // 今まで発行したトークンコードの個数
-int tcb = 0;                               // tcBuf[]の未使用領域の個数
-
-/* トークンコードを得るための関数 */
-int getTc(String s, int len, int *var)
+/**
+ * 文字が演算子であるかどうかを判定する
+ * もしそうなら1を返す
+ */
+int isCharOperator(unsigned char c)
 {
-    int i;
-    for (i = 0; i < tcs; i++) {    // 登録済みの中から探す. あったらそれを返す
-        if (len == tl[i] && strncmp(s, ts[i], len) == 0) {
-            break;
-        }
+    if (strchr(operator, c) != 0) {
+        return 1;
     }
-
-    if (i == tcs) {    // 登録されていなかった場合は新規登録
-        if (tcs >= TC_MAX) {
-            printf("too many tokens\n");
-            exit(1);
-        }
-        strncpy(&tcBuf[tcb], s, len);    // トークンの文字列を記憶
-        tcBuf[tcb + len] = 0;    // 終端文字コード
-        ts[i] = &tcBuf[tcb];
-        tl[i] = len;
-        tcb += len + 1;
-        tcs++;
-        var[i] = strtol(ts[i], 0, 0);    // 定数だった場合に初期値を設定
-    }
-
-    return i;
+    return 0;
 }
 
 /* プログラムをトークンコード列に変換する */
-int lexer(String s, int *tc, int *var)
+int lexer(String s, tokenBuf_t *tcBuf)
 {
-    int i = 0;    // 今s[]のどこを読んでいるか
-    int j = 0;    // これまでに変換したトークン列の長さ(トークン列の末尾のidx)
+    int i = 0;        // 現在参照している文字の位置
+    int tcCnt = 0;    // これまでに変換したトークンの数
 
     while (1) {
-        if (s[i] == ' ' || s[i] == '\t' || s[i] == '\n' || s[i] == '\r') {
-            // これらの文字は読み飛ばす
+        if (s[i] == 0) {
+            return tcCnt;
+        }
+        
+        if (s[i] == ' ' || s[i] == '\n' || s[i] == '\t' || s[i] == '\r') {    // 読み飛ばしていい文字 
             i++;
             continue;
+
+        } else if (s[i] == '/' && s[i + 1] == '*') {    // コメント部分は飛ばす
+            i = i + 2;    // "/*"を飛ばす
+            while (!(s[i] == '*' && s[i + 1] == '/')) i++;
+            continue; 
         }
 
-        if (s[i] == 0) {    // ファイル終端
-            return j;
-        }
-
-        int len = 0;    // トークンの文字列の長さを記憶するための変数
+        int len = 0;    // 変数などの長さを記録するための変数
         if (strchr("(){}[];,", s[i]) != 0) {
             len = 1;
 
         } else if (isValNameAvailable(s[i])) {    // 変数か定数
-            // IDEA: 1文字目が数字なら, 問答無用で数字と決め打ちしてもいいのでは？
             while (isValNameAvailable(s[i + len])) len++;
 
-        } else if (strchr("=+-*/!%&~|<>?:.#", s[i]) != 0) {
-            // TODO: "a =-2"などの文が"a =- 2"と分割されてしまうのでいつか修正
-            while (strchr("=+-*/!%&~|<>?:.#", s[i + len]) != 0 && s[i + len] != 0) len++;
+        } else if (isCharOperator(s[i]) != 0) {    // 演算子
+            while (isCharOperator(s[i + len]) != 0 && s[i + len] != 0) len++;
 
         } else {
-            printf("syntax error : %.10s\n", &s[i]);
+            // TODO: 真面目にエラー原因を書く
+            printf("syntax error\n");
             exit(1);
         }
 
-        tc[j] = getTc(&s[i], len, var);
+        getTc(&s[i], len, tcBuf);
         i += len;
-        j++;
+        tcCnt++;
     }
 }

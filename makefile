@@ -1,4 +1,4 @@
-OBJS      := main.o lexer.o compile.o exec.o util.o
+OBJS      := main.o lexer.o token.o util.o run.o
 
 SRCPATH   := ./src/
 TESTPATH  := ./test/

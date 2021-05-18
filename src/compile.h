@@ -32,6 +32,6 @@ enum {
     OpEnd
 };
 
-int compile(String s, int *tc, int *var);
+int compile(String s, int *tc);
 
 #endif

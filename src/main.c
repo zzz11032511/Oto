@@ -1,3 +1,10 @@
+/**
+ * Oto - Sound Programming Language
+ * 
+ * author : Furuta Naoki
+ *          2021/05/18
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -5,7 +12,7 @@
 #include "run.h"
 
 /* 使い方表示用の関数 */
-void usage(char *name) {
+void usage(const char *name) {
     // TODO: そのうち真面目に書く
     fprintf(stderr, "Example : %s XXX.oto\n", name);
     return;

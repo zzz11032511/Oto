@@ -2,6 +2,7 @@
 #define INCLUDED_LEXER 1
 
 #include "util.h"
+#include "token.h"
 
 /* 字句解析が返す値(トークンコード)の一覧 */
 enum {
@@ -44,10 +45,6 @@ enum {
     TcTmp0, TcTmp1, TcTmp2, TcTmp3, TcTmp4, TcTmp5, TcTmp6, TcTmp7, TcTmp8, TcTmp9,    // 一時変数
 };
 
-#define TC_MAX 255    // トークンコードの最大値
-
-extern unsigned char *ts[TC_MAX + 1];             // トークンの内容(文字列)を記憶
-
-int lexer(String s, int *tc, int *var);
+int lexer(String s, tokenBuf_t *tcBuf);
 
 #endif
