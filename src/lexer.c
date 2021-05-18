@@ -69,7 +69,8 @@ int lexer(String s, int *tc, int *var)
         if (strchr("(){}[];,", s[i]) != 0) {
             len = 1;
 
-        } else if (isValNameAvailable(s[i])) {
+        } else if (isValNameAvailable(s[i])) {    // 変数か定数
+            // IDEA: 1文字目が数字なら, 問答無用で数字と決め打ちしてもいいのでは？
             while (isValNameAvailable(s[i + len])) len++;
 
         } else if (strchr("=+-*/!%&~|<>?:.#", s[i]) != 0) {

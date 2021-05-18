@@ -2,19 +2,19 @@
 #include <stdlib.h>
 #include <string.h>
 #include "util.h"
-#include "exec.h"
+#include "run.h"
 
 /* 使い方表示用の関数 */
-void usage() {
+void usage(char *name) {
     // TODO: そのうち真面目に書く
-    printf("Example : oto XXX.oto\n");
+    fprintf(stderr, "Example : %s XXX.oto\n", name);
     return;
 }
 
 int main(int argc, const char **argv)
 {
     if (argc <= 1) {
-        usage();
+        usage(argv[0]);
         exit(1);
     }
     

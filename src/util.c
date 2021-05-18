@@ -15,7 +15,7 @@ int srcLoad(String path, String src, int size)
 {
     FILE *fp = fopen(path, "rt");
     if (fp == 0) {
-        printf("fopen error : %s\n");
+        fprintf(stderr, "fopen error : %s\n", path);
         return 1;
     }
     int end = fread(src, 1, size - 1, fp);    // ファイルの終端のidxが返る
