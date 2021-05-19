@@ -3,6 +3,7 @@
 
 #include "util.h"
 #include "token.h"
+#include "variable.h"
 
 /* 字句解析が返す値(トークンコード)の一覧 */
 enum {

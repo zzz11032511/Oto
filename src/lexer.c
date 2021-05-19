@@ -3,6 +3,7 @@
 #include <string.h>
 #include "lexer.h"
 #include "token.h"
+#include "variable.h"
 
 /**
  *  変数名として使用可能かどうかを判定する
@@ -19,7 +20,6 @@ int isValNameAvailable(unsigned char c)
 }
 
 const char operator[] = "=+-*/!%&~|<>?:.#";
-
 /**
  * 文字が演算子であるかどうかを判定する
  * もしそうなら1を返す
@@ -69,7 +69,7 @@ int lexer(String s, tokenBuf_t *tcBuf)
             exit(1);
         }
 
-        getTc(&s[i], len, tcBuf);
+        tcBuf->tc[tcCnt] = getTc(&s[i], len, tcBuf);
         i += len;
         tcCnt++;
     }

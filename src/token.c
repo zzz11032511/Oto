@@ -4,10 +4,11 @@
 #include "util.h"
 #include "token.h"
 #include "lexer.h"
+#include "variable.h"
 
 // TODO: free関数を必ず作る
 
-/* トークン保存領域を新しく作る */
+/* トークン保存領域を新しく作る(いらないかも) */
 tokenBuf_t *newTokenBuf()
 {
     tokenBuf_t *buf = (tokenBuf_t *)malloc(sizeof(tokenBuf_t));
@@ -19,12 +20,11 @@ tokenBuf_t *newTokenBuf()
 }
 
 /* トークンのメモリ領域を解放する(トークンコード列もついでに解放してくれる) */
-void freeTokenBuf(tokenBuf_t *tcBuf)
+void freeTokens(tokenBuf_t *tcBuf)
 {
     for (int i = tcBuf->tcs; i > 0; i--) {
         free(tcBuf->tokens[i]);
     }
-    free(tcBuf);
 }
 
 /* トークンを新しく作る */
@@ -90,6 +90,7 @@ int tcInit(tokenBuf_t *tcBuf)
 {
     /* 最初にlexerしておく文字列 */
     String symbols = "; . !!* 0 1 2 3 4 5 6 7 8 9 ( ) [ ] { } == != < >= <= > + - * / // % ++ -- = -> , !!** !!*** _t0 _t1 _t2 _t3 _t4 _t5 _t6 _t7 _t8 _t9";
+    symbols[sizeof(symbols) + 1] = 0;    // symbolsの最後に終端コードを付ける
 
     return lexer(symbols, tcBuf);
 }

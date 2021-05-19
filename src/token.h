@@ -17,16 +17,17 @@ struct token {
 };
 
 typedef struct tokenBuf {
-    struct token *tokens[TC_LIST_SIZE];    // トークンコード列
+    int tc[TC_LIST_SIZE];    // 文字列をトークンコード列に変換したものを入れる
+    struct token *tokens[MAX_TC];    // トークンコード列
     int tcs;    // 今まで発行したトークンコードの個数
     int tcb;    // tcsBuf[]の未使用領域
 } tokenBuf_t;
 
 /* トークン保存領域を新しく作る */
-tokenBuf_t *newTokenBuf();
+tokenBuf_t *newTokens();
 
 /* トークンのメモリ領域を解放する(トークンコード列もついでに解放してくれる) */
-void freeTokenBuf(tokenBuf_t *tcBuf);
+void freeTokens(tokenBuf_t *tcBuf);
 
 /**
  * トークンコードを得るための関数
