@@ -10,16 +10,15 @@ enum {
     TcSemi = 0,    // ';'
     TcDot,         // '.'
 
-    TcWiCard,      // ワイルドカード '!!*' この後ろにワイルドカードの番号を表す数字が入る
-    Tc0, Tc1, Tc2, Tc3, Tc4, Tc5, Tc6, Tc7, Tc8, Tc9,   // ワイルドカードの番号
-
+    // 括弧
     TcBrOpn,       // 丸括弧 開 '('
-    TcBrCls,       // 丸括弧 閉 '}'
+    TcBrCls,       // 丸括弧 閉 ')'
     TcSqBrOpn,     // 四角括弧 開 '['
     TcSqBrCls,     // 四角括弧 閉 ']'
     TcCrBrOpn,     // 波括弧 開 '{'
     TcCrBrCls,     // 波括弧 閉 '}'
 
+    // 比較演算子
     TcEEq,         // '=='
     TcNEq,         // '!='
     TcLt,          // '<'
@@ -27,6 +26,7 @@ enum {
     TcLe,          // '<='
     TcGt,          // '>'
 
+    // 算術演算子
     TcPlus,        // '+'
     TcMinus,       // '-'
     TcAster,       // '*'
@@ -41,9 +41,11 @@ enum {
 
     TcComma,       // ','
 
-    TcExpr,        // 式用ワイルドカード
-    TcExpr0,       // 式用ワイルドカード2
-    TcTmp0, TcTmp1, TcTmp2, TcTmp3, TcTmp4, TcTmp5, TcTmp6, TcTmp7, TcTmp8, TcTmp9,    // 一時変数
+    // 予約語
+    TcInt,         // int型
+    TcFloat,       // float型
+
+    TcEnd          // トークン定義がここまでだよーということを示す
 };
 
 int lexer(String s, tokenBuf_t *tcBuf);

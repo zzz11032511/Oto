@@ -34,6 +34,9 @@ enum {
     OpEnd
 };
 
-int compile(String s, tokenBuf_t *tcBuf, var_t **var);
+#define IC_LIST_SIZE 10000
+
+int compile(String s, tokenBuf_t *tcBuf, var_t **var, int **ic)
+;
 
 #endif

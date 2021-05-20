@@ -20,7 +20,7 @@ tokenBuf_t *newTokenBuf()
 }
 
 /* トークンのメモリ領域を解放する(トークンコード列もついでに解放してくれる) */
-void freeTokens(tokenBuf_t *tcBuf)
+void freeTokenBuf(tokenBuf_t *tcBuf)
 {
     for (int i = tcBuf->tcs; i > 0; i--) {
         free(tcBuf->tokens[i]);
@@ -78,9 +78,9 @@ int getTc(String s, int len, tokenBuf_t *tcBuf)
 
     if (i == tcBuf->tcs) {    // 新規作成
         putTc(i, len, s, tcBuf);
+        printf("tc : %d, ts : %s, tl : %d\n", i, s, len);    // デバッグ用
     } 
 
-    printf("tc : %d, ts : %s, tl : %d\n", i, s, len);
     return i;
 }
 
@@ -89,8 +89,7 @@ int getTc(String s, int len, tokenBuf_t *tcBuf)
 int tcInit(tokenBuf_t *tcBuf)
 {
     /* 最初にlexerしておく文字列 */
-    String symbols = "; . !!* 0 1 2 3 4 5 6 7 8 9 ( ) [ ] { } == != < >= <= > + - * / // % ++ -- = -> , !!** !!*** _t0 _t1 _t2 _t3 _t4 _t5 _t6 _t7 _t8 _t9";
-    symbols[sizeof(symbols) + 1] = 0;    // symbolsの最後に終端コードを付ける
+    String symbols = "; . ( ) [ ] { } == != < >= <= > + - * / // % ++ -- = -> , int float !**!\0";
 
     return lexer(symbols, tcBuf);
 }

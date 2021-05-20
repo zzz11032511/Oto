@@ -11,9 +11,10 @@ enum {
 
 typedef struct var {
     int type;       // 型
-    String name;    // 変数名
     void *value;    // 中身
     char scope;     // スコープ
 } var_t;
+
+int initVar(var_t **var, int i, int type, void *value, char scope);
 
 #endif
