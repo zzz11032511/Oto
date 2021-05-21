@@ -89,7 +89,7 @@ int getTc(String s, int len, tokenBuf_t *tcBuf)
 int tcInit(tokenBuf_t *tcBuf)
 {
     /* 最初にlexerしておく文字列 */
-    String symbols = "; . ( ) [ ] { } == != < >= <= > + - * / // % ++ -- = -> , int float !**!\0";
+    String symbols = "; . ( ) [ ] { } == != < >= <= > + - * / // % ++ -- = -> , int float print !**!\0";
 
     return lexer(symbols, tcBuf);
 }

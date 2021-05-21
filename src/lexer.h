@@ -45,6 +45,9 @@ enum {
     TcInt,         // int型
     TcFloat,       // float型
 
+    // マクロ
+    TcPrint,
+    
     TcEnd          // トークン定義がここまでだよーということを示す
 };
 

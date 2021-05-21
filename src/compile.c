@@ -59,8 +59,28 @@ int ptnCmp(tokenBuf_t *tcBuf, int *pc, int pattern, ...)
     return 1;
 }
 
+
+/**
+ * ic[]に書き込むための関数
+ * 
+ * args:
+ *      ic      : 内部コード列
+ *      icp     : 現在指しているicのインデックス
+ *                中で加算したりするのでポインタを渡してね
+ *      op      : 処理を表す内部コード
+ *      v1 ~ v4 : 渡す値(ポインタ)
+ */
+void putIc(var_t **ic, int *icp, int op, var_t *v1, var_t *v2, var_t *v3, var_t *v4)
+{
+    ic[(*icp)++] = (var_t *)op;
+    ic[(*icp)++] = v1;
+    ic[(*icp)++] = v2;
+    ic[(*icp)++] = v3;
+    ic[(*icp)++] = v4;
+}
+
 /* 内部コードに変換する関数 */
-int compile(String s, tokenBuf_t *tcBuf, var_t **var, int **ic)
+int compile(String s, tokenBuf_t *tcBuf, var_t **var, var_t **ic)
 {
     int pc, pc1;    // プログラムカウンタ
 
@@ -82,21 +102,31 @@ int compile(String s, tokenBuf_t *tcBuf, var_t **var, int **ic)
         if (ptnCmp(tcBuf, &pc, TcType, TcIdentifier, TcEqu, TcConst, TcSemi)) {
             /* <type> <identifier> = <const>; (変数宣言) */
             printf("<type> <identifier> = <const>;\n");
+
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcConst, TcSemi)) {
             /* <identifier> = <const>; (単純代入) */
             printf("<identifier> = <const>;\n");
+
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcConst, TcPlus,  TcConst, TcSemi)) {
             /* <identifier> = <const> + <const>; (加算) */
             printf("<identifier> = <const> + <const>;\n");
+
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcConst, TcMinus, TcConst, TcSemi)) {
             /* <identifier> = <const> - <const>; (減算) */
             printf("<identifier> = <const> - <const>;\n");
+
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcConst, TcAster, TcConst, TcSemi)) {
             /* <identifier> = <const> * <const>; (掛算) */
             printf("<identifier> = <const> * <const>;\n");
+
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcConst, TcSlash, TcConst, TcSemi)) {
             /* <identifier> = <const> / <const>; (割算) */
             printf("<identifier> = <const> / <const>;\n");
+
+        } else if (ptnCmp(tcBuf, &pc, TcPrint, TcIdentifier, TcSemi)) {
+            /* print <identifier>; (変数の表示(デバッグ用)) */
+            printf("print <identifier>;\n");
+
         } else {
             goto err;
         }

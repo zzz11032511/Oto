@@ -13,9 +13,8 @@ int run(String src) {
     // TODO: symbolsが0終端じゃないからエラー吐く
     tcInit(tcBuf);
 
-    int *ic[IC_LIST_SIZE];
+    var_t *ic[IC_LIST_SIZE];
     if (compile(src, tcBuf, var, ic) >= 1) {
-        fprintf(stderr, "compile error\n");
         exit(1);
     }
     
