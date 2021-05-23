@@ -34,7 +34,7 @@ int isCharOperator(unsigned char c)
 }
 
 /* プログラムをトークンコード列に変換する */
-int lexer(String s, tokenBuf_t *tcBuf)
+int lexer(String s, tokenBuf_t *tcBuf, int *var)
 {
     int i = 0;        // 現在参照している文字の位置
     int tcCnt = 0;    // これまでに変換したトークンの数
@@ -55,23 +55,26 @@ int lexer(String s, tokenBuf_t *tcBuf)
         }
 
         int len = 0;    // 変数などの長さを記録するための変数
+        int type = TyVoid;       // そのトークンが何の種類なのかを記録するための変数
         if (strchr("(){}[];,", s[i]) != 0) {
             len = 1;
 
-        } else if (isValNameAvailable(s[i])) {    // 変数か定数
+        } else if (isValNameAvailable(s[i])) {    // 変数
             while (isValNameAvailable(s[i + len])) len++;
 
         } else if (isCharOperator(s[i]) != 0) {    // 演算子
             while (isCharOperator(s[i + len]) != 0 && s[i + len] != 0) len++;
 
         } else {
-            // TODO: 真面目にエラー原因を書く
-            printf("syntax error\n");
-            exit(1);
+            goto err;
         }
 
-        tcBuf->tc[tcCnt] = getTc(&s[i], len, tcBuf);
+        tcBuf->tc[tcCnt] = getTc(&s[i], len, tcBuf, var);
         i += len;
         tcCnt++;
     }
+
+err:
+    fprintf(stderr, "syntax error\n");
+    exit(1);
 }

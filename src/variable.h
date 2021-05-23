@@ -5,16 +5,18 @@
 #include "token.h"
 
 enum {
-    TyInt = 0,
+    TyVoid = 0,
+    TyConstI,
+    TyConstF,
+    TyInt,
     TyFloat
 };
 
 typedef struct var {
     int type;       // 型
-    void *value;    // 中身
-    char scope;     // スコープ
+    int value;    // 中身
 } var_t;
 
-int initVar(var_t **var, int i, int type, void *value, char scope);
+int initVar(var_t **var, int i, int type, int value);
 
 #endif

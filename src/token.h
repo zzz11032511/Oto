@@ -33,9 +33,12 @@ void freeTokenBuf(tokenBuf_t *tcBuf);
  * トークンコードを得るための関数
  * もし登録されていないなら, 新しく作る
  */
-int getTc(String s, int len, tokenBuf_t *tcBuf);
+int getTc(String s, int len, tokenBuf_t *tcBuf, int *var);
+
+/* トークンの名前の開始アドレスを返す */
+char *getTcName(tokenBuf_t *tcBuf, int tc);
 
 /* 演算子記号などを最初にlexerしておく関数 */
-int tcInit(tokenBuf_t *tcBuf);
+int tcInit(tokenBuf_t *tcBuf, int *var);
 
 #endif

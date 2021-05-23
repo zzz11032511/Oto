@@ -6,11 +6,7 @@
 #include "token.h"
 #include "lexer.h"
 #include "variable.h"
- 
-#define TcExpr         -1
-#define TcType         -2
-#define TcIdentifier   -3
-#define TcConst        -4
+#include "compile.h"
 
 /* 引数に渡されたトークンのパターンと実際のコードが一致しているかを調べる関数 */
 int ptnCmp(tokenBuf_t *tcBuf, int *pc, int pattern, ...)
@@ -24,7 +20,7 @@ int ptnCmp(tokenBuf_t *tcBuf, int *pc, int pattern, ...)
     while (1) {
         // ネストの処理をいつか書く
         int tc = tcBuf->tc[*pc];
-        printf("tc : %d, ptnTc : %d\n", tc, ptnTc);
+        // printf("tc : %d, ptnTc : %d\n", tc, ptnTc);
 
         if (ptnTc == TcSemi && tc == TcSemi) {
             // セミコロンなら終わり
@@ -70,9 +66,9 @@ int ptnCmp(tokenBuf_t *tcBuf, int *pc, int pattern, ...)
  *      op      : 処理を表す内部コード
  *      v1 ~ v4 : 渡す値(ポインタ)
  */
-void putIc(var_t **ic, int *icp, int op, var_t *v1, var_t *v2, var_t *v3, var_t *v4)
+void putIc(int **ic, int *icp, int op, int *v1, int *v2, int *v3, int *v4)
 {
-    ic[(*icp)++] = (var_t *)op;
+    ic[(*icp)++] = (int *)op;
     ic[(*icp)++] = v1;
     ic[(*icp)++] = v2;
     ic[(*icp)++] = v3;
@@ -80,36 +76,61 @@ void putIc(var_t **ic, int *icp, int op, var_t *v1, var_t *v2, var_t *v3, var_t 
 }
 
 /* 内部コードに変換する関数 */
-int compile(String s, tokenBuf_t *tcBuf, var_t **var, var_t **ic)
+int compile(String s, tokenBuf_t *tcBuf, int *var, int **ic)
 {
     int pc, pc1;    // プログラムカウンタ
 
-    pc1 = lexer(s, tcBuf);
+    pc1 = lexer(s, tcBuf, var);
 
-    int pattern[20];    // 構文のパターン
+    int *tc = tcBuf->tc;
 
     // デバッグ用, tcの表示
-    printf("tc\n");
+    printf("tc : ");
     for (pc = 0; pc < pc1; pc++) {
         printf("%d ", tcBuf->tc[pc]);
     }
     printf("\n");
 
+    int icp = 0;    // icをどこまで書き込んだか
+    int ppc = 0;    // ptnCmp()前のpcの値を保存しておく
     pc = 0;
     while(pc < pc1) {
         // printf("pc : %d\n", pc);
+        ppc = pc;
 
         if (ptnCmp(tcBuf, &pc, TcType, TcIdentifier, TcEqu, TcConst, TcSemi)) {
             /* <type> <identifier> = <const>; (変数宣言) */
             printf("<type> <identifier> = <const>;\n");
 
+
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcConst, TcSemi)) {
             /* <identifier> = <const>; (単純代入) */
             printf("<identifier> = <const>;\n");
 
+        } else if (ptnCmp(tcBuf, &pc, TcConst, TcPlus,  TcConst, TcSemi)) {
+            /* <const> + <const>; (加算) */
+            printf("<const> + <const>;\n");
+            putIc(ic, &icp, OpAdd, &var[tc[ppc]], &var[tc[ppc + 2]], 0, 0);
+
+        } else if (ptnCmp(tcBuf, &pc, TcConst, TcMinus,  TcConst, TcSemi)) {
+            /* <const> - <const>; (引算) */
+            printf("<const> - <const>;\n");
+            putIc(ic, &icp, OpSub, &var[tc[ppc]], &var[tc[ppc + 2]], 0, 0);
+
+        } else if (ptnCmp(tcBuf, &pc, TcConst, TcAster,  TcConst, TcSemi)) {
+            /* <const> * <const>; (掛算) */
+            printf("<const> * <const>;\n");
+            putIc(ic, &icp, OpMul, &var[tc[ppc]], &var[tc[ppc + 2]], 0, 0);
+
+        } else if (ptnCmp(tcBuf, &pc, TcConst, TcSlash,  TcConst, TcSemi)) {
+            /* <const> / <const>; (割算) */
+            printf("<const> / <const>;\n");
+            putIc(ic, &icp, OpDiv, &var[tc[ppc]], &var[tc[ppc + 2]], 0, 0);
+
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcConst, TcPlus,  TcConst, TcSemi)) {
             /* <identifier> = <const> + <const>; (加算) */
             printf("<identifier> = <const> + <const>;\n");
+
 
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcConst, TcMinus, TcConst, TcSemi)) {
             /* <identifier> = <const> - <const>; (減算) */
@@ -136,6 +157,6 @@ int compile(String s, tokenBuf_t *tcBuf, var_t **var, var_t **ic)
 
 // エラー表示
 err:
-    fprintf(stderr, "syntax error\n");
+    fprintf(stderr, "compile error\n");
     return 1;
 }

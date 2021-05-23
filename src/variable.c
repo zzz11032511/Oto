@@ -4,7 +4,7 @@
 #include "util.h"
 #include "variable.h"
 
-int initVar(var_t **var, int i, int type, void *value, char scope)
+int initVar(var_t **var, int i, int type, int value)
 {
     var_t *v = (var_t *)malloc(sizeof(var_t));
     if (v == NULL) {
@@ -14,7 +14,6 @@ int initVar(var_t **var, int i, int type, void *value, char scope)
 
     v->type  = type;
     v->value = value;
-    v->scope = scope;
 
     var[i] = v;
 

@@ -5,19 +5,21 @@
 #include "compile.h"
 #include "token.h"
 #include "variable.h"
+#include "exec.h"
 
 int run(String src) {
     tokenBuf_t *tcBuf = newTokenBuf();    // トークン番号リスト
-    var_t *var[MAX_TC + 1];               // 変数リスト
-    
-    // TODO: symbolsが0終端じゃないからエラー吐く
-    tcInit(tcBuf);
+    int var[MAX_TC];
 
-    var_t *ic[IC_LIST_SIZE];
+    // TODO: symbolsが0終端じゃないからエラー吐く
+    tcInit(tcBuf, var);
+
+    int *ic[IC_LIST_SIZE];
     if (compile(src, tcBuf, var, ic) >= 1) {
         exit(1);
     }
-    
+    exec(ic, var);
+
     freeTokenBuf(tcBuf);
     return 0;
 }

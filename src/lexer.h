@@ -5,6 +5,13 @@
 #include "token.h"
 #include "variable.h"
 
+// トークンの識別子 
+#define TcExpr         -1
+#define TcType         -2
+#define TcIdentifier   -3
+#define TcConst        -4
+#define TcOperator     -5
+
 /* 字句解析が返す値(トークンコード)の一覧 */
 enum {
     TcSemi = 0,    // ';'
@@ -51,6 +58,6 @@ enum {
     TcEnd          // トークン定義がここまでだよーということを示す
 };
 
-int lexer(String s, tokenBuf_t *tcBuf);
+int lexer(String s, tokenBuf_t *tcBuf, int *var);
 
 #endif
