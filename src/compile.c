@@ -7,9 +7,10 @@
 #include "lexer.h"
 #include "variable.h"
 #include "compile.h"
+#include "expr.h"
 
-int tmpVpc[5];    // putIc()で指定するTcを入れる場所
-int vp = 0;
+int tVpc[5];    // putIc()で指定するTcを入れる場所(Temp Var Pcのつもり)
+int vp = 0;     // tVpcへのポインタ
 
 /* 引数に渡されたトークンのパターンと実際のコードが一致しているかを調べる関数 */
 int ptnCmp(tokenBuf_t *tcBuf, int *pc, int pattern, ...)
@@ -52,11 +53,11 @@ int ptnCmp(tokenBuf_t *tcBuf, int *pc, int pattern, ...)
 
         } else if (ptnTc == TcIdentifier && tc > TcEnd) {
             // 変数名, 識別子の時の処理
-            tmpVpc[vp++] = tc;
+            tVpc[vp++] = tc;
 
         } else if (ptnTc == TcConst && tc > TcEnd) {
             // 定数の時の処理
-            tmpVpc[vp++] = tc;
+            tVpc[vp++] = tc;
 
         } else if (ptnTc == TcExpr) {
             // 式の時の処理
@@ -138,22 +139,22 @@ int compile(String s, tokenBuf_t *tcBuf, int *var, int **ic)
         } else if (ptnCmp(tcBuf, &pc, TcConst, TcPlus,  TcConst, TcSemi)) {
             /* <const> + <const>; (加算) */
             printf("<const> + <const>;\n");
-            putIc(ic, &icp, OpAdd, &var[tmpVpc[0]], &var[tmpVpc[1]], 0, 0);
+            putIc(ic, &icp, OpAdd, &var[tVpc[0]], &var[tVpc[1]], 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcConst, TcMinus,  TcConst, TcSemi)) {
             /* <const> - <const>; (引算) */
             printf("<const> - <const>;\n");
-            putIc(ic, &icp, OpSub, &var[tmpVpc[0]], &var[tmpVpc[1]], 0, 0);
+            putIc(ic, &icp, OpSub, &var[tVpc[0]], &var[tVpc[1]], 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcConst, TcAster,  TcConst, TcSemi)) {
             /* <const> * <const>; (掛算) */
             printf("<const> * <const>;\n");
-            putIc(ic, &icp, OpMul, &var[tmpVpc[0]], &var[tmpVpc[1]], 0, 0);
+            putIc(ic, &icp, OpMul, &var[tVpc[0]], &var[tVpc[1]], 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcConst, TcSlash,  TcConst, TcSemi)) {
             /* <const> / <const>; (割算) */
             printf("<const> / <const>;\n");
-            putIc(ic, &icp, OpDiv, &var[tmpVpc[0]], &var[tmpVpc[1]], 0, 0);
+            putIc(ic, &icp, OpDiv, &var[tVpc[0]], &var[tVpc[1]], 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcConst, TcPlus,  TcConst, TcSemi)) {
             /* <identifier> = <const> + <const>; (加算) */
@@ -175,6 +176,7 @@ int compile(String s, tokenBuf_t *tcBuf, int *var, int **ic)
         } else if (ptnCmp(tcBuf, &pc, TcExpr)) {
             /* <expr>; (算術式) */
             printf("<expr>;\n");
+            expr(tcBuf, &pc, var, ic);
 
         } else {
             goto err;

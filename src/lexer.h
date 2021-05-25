@@ -40,9 +40,10 @@ enum {
     TcSlash,       // '/'
     TcWSlash,      // '//' 切り捨てて整数を返す割算
     TcPerce,       // '%'
+    TcEqu,         // '='
+
     TcPlPlus,      // '++'
     TcMiMinus,     // '--'
-    TcEqu,         // '='
 
     TcArrow,       // '->' 関数の返り値を示すときに使う...つもり(ex. -> int)
 
