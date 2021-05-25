@@ -51,10 +51,21 @@ enum {
     // 予約語
     TcInt,         // int型
     TcFloat,       // float型
-
-    // マクロ
+    
     TcPrint,
     
+    // 一時変数
+    TcTmp0, 
+    TcTmp1, 
+    TcTmp2, 
+    TcTmp3, 
+    TcTmp4, 
+    TcTmp5, 
+    TcTmp6, 
+    TcTmp7, 
+    TcTmp8, 
+    TcTmp9,
+
     TcEnd          // トークン定義がここまでだよーということを示す
 };
 

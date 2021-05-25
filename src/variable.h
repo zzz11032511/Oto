@@ -17,6 +17,11 @@ typedef struct var {
     int value;    // 中身
 } var_t;
 
-int initVar(var_t **var, int i, int type, int value);
+
+/* 未使用の一時変数の確保 */
+int tmpAlloc();
+
+/* iが一時変数を指すトークンコードであれば解放する */
+void tmpFree(int i);
 
 #endif

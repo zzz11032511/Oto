@@ -17,6 +17,7 @@ int isValNameAvailable(unsigned char c)
     if ('0' <= c && c <= '9') return 1;
     if ('a' <= c && c <= 'z') return 1;
     if ('A' <= c && c <= 'Z') return 1;
+    if (c == '_') return 1;
     return 0;
 }
 

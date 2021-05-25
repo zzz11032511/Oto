@@ -8,15 +8,19 @@
 #include "variable.h"
 #include "compile.h"
 
+int tmpVpc[5];    // putIc()で指定するTcを入れる場所
+int vp = 0;
+
 /* 引数に渡されたトークンのパターンと実際のコードが一致しているかを調べる関数 */
 int ptnCmp(tokenBuf_t *tcBuf, int *pc, int pattern, ...)
 {
     va_list ap;
-
     va_start(ap, pattern);    // 可変長引数
 
-    int ppc = *pc; // 最初のpcを保存しておく
+    int ppc = *pc;    // 最初のpcを保存しておく
     int ptnTc = pattern;    // パターンから読み込んだトークン
+    int nest = 0;    // ネストの深さ
+
     while (1) {
         // ネストの処理をいつか書く
         int tc = tcBuf->tc[*pc];
@@ -28,6 +32,18 @@ int ptnCmp(tokenBuf_t *tcBuf, int *pc, int pattern, ...)
             break;
         }
 
+        // (){}[]のときの処理
+        if ((tc == TcBrOpn) || (tc == TcSqBrOpn) || (tc == TcCrBrOpn)) {
+            nest++;
+            (*pc)++;
+            continue;
+
+        } else if ((tc == TcBrCls) || (tc == TcSqBrCls) || (tc == TcCrBrCls)) {
+            nest--;
+            (*pc)++;
+            continue;
+        }
+
         if (tc == ptnTc) {
             // 既にあるトークンと一致した
 
@@ -36,20 +52,32 @@ int ptnCmp(tokenBuf_t *tcBuf, int *pc, int pattern, ...)
 
         } else if (ptnTc == TcIdentifier && tc > TcEnd) {
             // 変数名, 識別子の時の処理
+            tmpVpc[vp++] = tc;
 
         } else if (ptnTc == TcConst && tc > TcEnd) {
             // 定数の時の処理
+            tmpVpc[vp++] = tc;
 
         } else if (ptnTc == TcExpr) {
             // 式の時の処理
+            (*pc) = ppc;    // 式と思われるときはpcを元に戻して返す
+            vp = 0;         // 違うときはvpも元に戻す
+            return 1;
 
         } else {
             (*pc) = ppc;    // もし一致しないときはpcをptnCmp()呼び出し前に戻す
+            vp = 0;
             return 0;    // 一致しなかったので0を返す
         }
         ptnTc = va_arg(ap, int);    // 次のトークンパータンを参照
         (*pc)++;
     }
+
+    if (nest != 0) {
+        vp = 0;
+        return 0;    // ネストが正常でないので不一致
+    }
+
     va_end(ap);
 
     return 1;
@@ -110,22 +138,22 @@ int compile(String s, tokenBuf_t *tcBuf, int *var, int **ic)
         } else if (ptnCmp(tcBuf, &pc, TcConst, TcPlus,  TcConst, TcSemi)) {
             /* <const> + <const>; (加算) */
             printf("<const> + <const>;\n");
-            putIc(ic, &icp, OpAdd, &var[tc[ppc]], &var[tc[ppc + 2]], 0, 0);
+            putIc(ic, &icp, OpAdd, &var[tmpVpc[0]], &var[tmpVpc[1]], 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcConst, TcMinus,  TcConst, TcSemi)) {
             /* <const> - <const>; (引算) */
             printf("<const> - <const>;\n");
-            putIc(ic, &icp, OpSub, &var[tc[ppc]], &var[tc[ppc + 2]], 0, 0);
+            putIc(ic, &icp, OpSub, &var[tmpVpc[0]], &var[tmpVpc[1]], 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcConst, TcAster,  TcConst, TcSemi)) {
             /* <const> * <const>; (掛算) */
             printf("<const> * <const>;\n");
-            putIc(ic, &icp, OpMul, &var[tc[ppc]], &var[tc[ppc + 2]], 0, 0);
+            putIc(ic, &icp, OpMul, &var[tmpVpc[0]], &var[tmpVpc[1]], 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcConst, TcSlash,  TcConst, TcSemi)) {
             /* <const> / <const>; (割算) */
             printf("<const> / <const>;\n");
-            putIc(ic, &icp, OpDiv, &var[tc[ppc]], &var[tc[ppc + 2]], 0, 0);
+            putIc(ic, &icp, OpDiv, &var[tmpVpc[0]], &var[tmpVpc[1]], 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcConst, TcPlus,  TcConst, TcSemi)) {
             /* <identifier> = <const> + <const>; (加算) */
@@ -144,9 +172,9 @@ int compile(String s, tokenBuf_t *tcBuf, int *var, int **ic)
             /* <identifier> = <const> / <const>; (割算) */
             printf("<identifier> = <const> / <const>;\n");
 
-        } else if (ptnCmp(tcBuf, &pc, TcPrint, TcIdentifier, TcSemi)) {
-            /* print <identifier>; (変数の表示(デバッグ用)) */
-            printf("print <identifier>;\n");
+        } else if (ptnCmp(tcBuf, &pc, TcExpr)) {
+            /* <expr>; (算術式) */
+            printf("<expr>;\n");
 
         } else {
             goto err;
