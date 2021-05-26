@@ -97,6 +97,7 @@ int ptnCmp(tokenBuf_t *tcBuf, int *pc, int pattern, ...)
  */
 void putIc(int **ic, int *icp, int op, int *v1, int *v2, int *v3, int *v4)
 {
+    printf("pc : %d | op : %d, v1 : %d, v2 : %d, v3 : %d, v4 : %d\n", *icp, op, v1, v2, v3, v4);
     ic[(*icp)++] = (int *)op;
     ic[(*icp)++] = v1;
     ic[(*icp)++] = v2;
@@ -131,47 +132,10 @@ int compile(String s, tokenBuf_t *tcBuf, int *var, int **ic)
             /* <type> <identifier> = <const>; (変数宣言) */
             printf("<type> <identifier> = <const>;\n");
 
-
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcConst, TcSemi)) {
             /* <identifier> = <const>; (単純代入) */
-            printf("<identifier> = <const>;\n");
-
-        } else if (ptnCmp(tcBuf, &pc, TcConst, TcPlus,  TcConst, TcSemi)) {
-            /* <const> + <const>; (加算) */
-            printf("<const> + <const>;\n");
-            putIc(ic, &icp, OpAdd, &var[tVpc[0]], &var[tVpc[1]], 0, 0);
-
-        } else if (ptnCmp(tcBuf, &pc, TcConst, TcMinus,  TcConst, TcSemi)) {
-            /* <const> - <const>; (引算) */
-            printf("<const> - <const>;\n");
-            putIc(ic, &icp, OpSub, &var[tVpc[0]], &var[tVpc[1]], 0, 0);
-
-        } else if (ptnCmp(tcBuf, &pc, TcConst, TcAster,  TcConst, TcSemi)) {
-            /* <const> * <const>; (掛算) */
-            printf("<const> * <const>;\n");
-            putIc(ic, &icp, OpMul, &var[tVpc[0]], &var[tVpc[1]], 0, 0);
-
-        } else if (ptnCmp(tcBuf, &pc, TcConst, TcSlash,  TcConst, TcSemi)) {
-            /* <const> / <const>; (割算) */
-            printf("<const> / <const>;\n");
-            putIc(ic, &icp, OpDiv, &var[tVpc[0]], &var[tVpc[1]], 0, 0);
-
-        } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcConst, TcPlus,  TcConst, TcSemi)) {
-            /* <identifier> = <const> + <const>; (加算) */
-            printf("<identifier> = <const> + <const>;\n");
-
-
-        } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcConst, TcMinus, TcConst, TcSemi)) {
-            /* <identifier> = <const> - <const>; (減算) */
-            printf("<identifier> = <const> - <const>;\n");
-
-        } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcConst, TcAster, TcConst, TcSemi)) {
-            /* <identifier> = <const> * <const>; (掛算) */
-            printf("<identifier> = <const> * <const>;\n");
-
-        } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcConst, TcSlash, TcConst, TcSemi)) {
-            /* <identifier> = <const> / <const>; (割算) */
-            printf("<identifier> = <const> / <const>;\n");
+            printf("<identifier> = <expr>;\n");
+            putIc(ic, &pc, OpCpy, &var[tVpc[0]], 0, 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcExpr)) {
             /* <expr>; (算術式) */

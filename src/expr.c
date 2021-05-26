@@ -7,32 +7,25 @@
 #include "lexer.h"
 #include "variable.h"
 #include "compile.h"
+#include "stack.h"
 
-
-#define MAX_STACK_SIZE 1000
-
-struct iStack {
-    int q[MAX_STACK_SIZE];
-    int sp;
-};
-
-void push(struct iStack *stack, int value)
+/* 演算子のトークンコードを対応する内部コードに変換する */
+int tc2op(int tc)
 {
-    stack->q[stack->sp++] = value;
+    switch (tc) {
+    case TcPlus:
+        return OpAdd;
+    case TcMinus:
+        return OpSub;
+    case TcAster:
+        return OpMul;
+    case TcSlash:
+        return OpDiv;
+    default:
+        // 一致しない(演算子でない)ときはOpNopを返す
+        return OpNop;
+    }
 }
-
-int pop(struct iStack *stack)
-{
-    stack->sp--;
-    return stack->q[stack->sp];
-}
-
-int peek(struct iStack *stack)
-{
-    int i = stack->sp - 1;
-    return stack->q[i];
-}
-
 
 /**
  *  演算子の優先度を比較する関数
@@ -117,31 +110,55 @@ void rpn(tokenBuf_t *tcBuf, int start, int end, int *rpnTc)
     }
 }
 
+
 int expr(tokenBuf_t *tcBuf, int *pc, int *var, int **ic)
 {
     int ppc = *pc; // 最初のpcを保存しておく
 
-    struct iStack opStack;     // 演算子を入れるスタック
     struct iStack varStack;    // 変数を入れるスタック
-    opStack.sp = 0;
     varStack.sp = 0;
 
     int start = *pc;
 
     int i = start;
     while (tcBuf->tc[i] != TcSemi) i++;    // 式の終わりを探す
-
     int end = i;
+
     int rpnTc[end - start];    // 逆ポーランド記法に書き替えたトークン列
 
     rpn(tcBuf, start, end, rpnTc);
 
     // デバッグ用
+    printf("rpnTc : ");
     for (int i = 0; i < (end - start); i++) {
-        printf("rpnTc : %d\n", rpnTc[i]);
+        printf("%d ", rpnTc[i]);
     }
+    printf("\n");
 
-    exit(1);
+    int t1 = 0;
+    int t2 = 0;
+    for (int i = 0; i < (end - start); i++) {
+        int tc = rpnTc[i];
+        printf("rpnTc[%d] : %d\n", i, tc);
+
+        if (TcEEq <= tc && tc <= TcEqu) {
+            // tcが演算子のときはputIc()する
+            int op = tc2op(tc);
+
+            t1 = pop(&varStack);
+            t2 = pop(&varStack);
+            
+            // printf("var[t1] = %d, var[t2] = %d\n", var[t1], var[t2]);
+            
+            // TODO: 計算結果をスタックに積む必要がある
+            putIc(ic, pc, op, 0, 0, 0, 0);
+
+        } else if (tc > TcEnd) {
+            // そうじゃなかったらスタックに積む
+            putIc(ic, pc, OpPush, &var[tc], 0, 0, 0);
+            push(&varStack, tc);
+        }
+    }
 
     return 0;
 }
