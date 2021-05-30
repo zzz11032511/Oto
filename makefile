@@ -30,4 +30,4 @@ clean :
 	-$(DEL) *.exe
 
 run : $(PROGRAM).exe
-	$(PROGRAM)
+	$(PROGRAM) aaa.oto

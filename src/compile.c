@@ -97,7 +97,7 @@ int ptnCmp(tokenBuf_t *tcBuf, int *pc, int pattern, ...)
  */
 void putIc(int **ic, int *icp, int op, int *v1, int *v2, int *v3, int *v4)
 {
-    printf("pc : %d | op : %d, v1 : %d, v2 : %d, v3 : %d, v4 : %d\n", *icp, op, v1, v2, v3, v4);
+    // printf("pc : %d | op : %d, v1 : %d, v2 : %d, v3 : %d, v4 : %d\n", *icp, op, v1, v2, v3, v4);
     ic[(*icp)++] = (int *)op;
     ic[(*icp)++] = v1;
     ic[(*icp)++] = v2;

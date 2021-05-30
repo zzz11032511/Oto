@@ -124,29 +124,27 @@ int expr(tokenBuf_t *tcBuf, int *pc, int *var, int **ic)
     while (tcBuf->tc[i] != TcSemi) i++;    // 式の終わりを探す
     int end = i;
 
-    int rpnTc[end - start];    // 逆ポーランド記法に書き替えたトークン列
+    int rpnTc[1000];    // 逆ポーランド記法に書き替えたトークン列
 
     rpn(tcBuf, start, end, rpnTc);
 
     // デバッグ用
-    printf("rpnTc : ");
-    for (int i = 0; i < (end - start); i++) {
-        printf("%d ", rpnTc[i]);
-    }
-    printf("\n");
+    // printf("rpnTc : ");
+    // for (int i = 0; i < (end - start); i++) {
+    //     printf("%d ", rpnTc[i]);
+    // }
+    // printf("\n");
 
     int t1 = 0;
     int t2 = 0;
     for (int i = 0; i < (end - start); i++) {
         int tc = rpnTc[i];
-        printf("rpnTc[%d] : %d\n", i, tc);
 
         if (TcEEq <= tc && tc <= TcEqu) {
             // tcが演算子のときはputIc()する
             int op = tc2op(tc);
 
-            t1 = pop(&varStack);
-            t2 = pop(&varStack);
+            varStack.sp -= 2;
             
             // printf("var[t1] = %d, var[t2] = %d\n", var[t1], var[t2]);
             
