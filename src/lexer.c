@@ -2,11 +2,18 @@
 #include <stdlib.h>
 #include <string.h>
 #include "lexer.h"
+#include "token.h"
+#include "variable.h"
 
-/* 変数名に使用出来る名前かどうか判定する */
+/**
+ *  変数名として使用可能かどうかを判定する
+ *  使えるのであれば1を返す
+ *  予約語だとしても結局getTc()で型のトークンは取得できるので一緒に扱う
+ *  
+ *  現状では定数も変数名として扱っている
+ */
 int isValNameAvailable(unsigned char c)
 {
-    // TODO: 予約語も判定するようにする
     if ('0' <= c && c <= '9') return 1;
     if ('a' <= c && c <= 'z') return 1;
     if ('A' <= c && c <= 'Z') return 1;
@@ -14,97 +21,61 @@ int isValNameAvailable(unsigned char c)
     return 0;
 }
 
-unsigned char *ts[MAX_TC + 1];             // トークンの内容(文字列)を記憶
-int tl[MAX_TC + 1];                        // トークンの長さ
-unsigned char tcBuf[(MAX_TC + 1) * 10];    // トークン1つあたり平均10バイトを想定
-int tcs = 0;                               // 今まで発行したトークンコードの個数
-int tcb = 0;                               // tcBuf[]の未使用領域の個数
-
-int var[MAX_TC + 1];
-
+const char operator[] = "=+-*/!%&~|<>?:.#";
 /**
- * トークンコードを得るための関数
- * 
- * params:
- *      s   : 対象の文字列
- *      len : 文字列の長さ
- * 
- * return:
- *      トークンコード
+ * 文字が演算子であるかどうかを判定する
+ * もしそうなら1を返す
  */
-int getTc(unsigned char *s, int len)
+int isCharOperator(unsigned char c)
 {
-    int i;
-    for (i = 0; i < tcs; i++) {    // 登録済みの中から探す
-        if (len == tl[i] && strncmp(s, ts[i], len) == 0) {
-            break;
-        }
+    if (strchr(operator, c) != 0) {
+        return 1;
     }
-
-    if (i == tcs) {    // 登録されていなかった場合は新規登録
-        if (tcs >= MAX_TC) {
-            printf("too many tokens\n");
-            exit(1);
-        }
-        strncpy(&tcBuf[tcb], s, len);
-        tcBuf[tcb + len] = 0;    // 終端文字コード
-        
-        ts[i] = &tcBuf[tcb];
-        tl[i] = len;
-        tcb += len + 1;
-        tcs++;
-
-        var[i] = strtol(ts[i], 0, 0);    // 定数だった場合に初期値を設定
-    }
-
-    return i;
+    return 0;
 }
 
-/**
- * プログラムをトークンコード列に変換する
- * 
- * params:
- *      s  : プログラム本体(txt)
- *      tc : トークンコード格納用の配列
- * 
- * return:
- *      これまでに変換したトークン列の長さ
- */
-int lexer(unsigned char *s, int tc[])
+/* プログラムをトークンコード列に変換する */
+int lexer(String s, tokenBuf_t *tcBuf, int *var)
 {
-    int len;
-    int i = 0;    // 今s[]のどこを呼んでいるか
-    int j = 0;    // これまでに変換したトークン列の長さ
-
-    const char *operators = "=+-*/!%&~|<>?:.#";    // 演算子群
+    int i = 0;        // 現在参照している文字の位置
+    int tcCnt = 0;    // これまでに変換したトークンの数
 
     while (1) {
-        if (s[i] == ' ' || s[i] == '\t' || s[i] == '\n' || s[i] == '\r') {
+        if (s[i] == 0 || s[i] == '\0') {
+            return tcCnt;
+        }
+        
+        if (s[i] == ' ' || s[i] == '\n' || s[i] == '\t' || s[i] == '\r') {    // 読み飛ばしていい文字 
             i++;
             continue;
-        } 
 
-        if (s[i] == 0)    // ファイル終端
-            return j;
-
-        len = 0;
-        if (strchr("(){}[];,", s[i]) != 0) {
-            len = 1;    // これらの記号は1文字でトークンとみなす
-
-        } else if (isValNameAvailable(s[i])) {    // 変数名か定数
-            while (isValNameAvailable(s[i + len])) len++;
-        
-        } else if (strchr(operators, s[i]) != 0) {    // 演算子
-            while (strchr(operators, s[i + len]) != 0 && s[i + len] != 0) len++;
-        
-        } else {
-            printf("syntax error : %.10s\n", &s[i]);
-            exit(1);
+        } else if (s[i] == '/' && s[i + 1] == '*') {    // コメント部分は飛ばす
+            i = i + 2;    // "/*"を飛ばす
+            while (!(s[i] == '*' && s[i + 1] == '/')) i++;
+            continue; 
         }
 
-        // TODO: 予約語のlexer処理もちゃんと書く
-        tc[j] = getTc(&s[i], len);
+        int len = 0;    // 変数などの長さを記録するための変数
+        int type = TyVoid;       // そのトークンが何の種類なのかを記録するための変数
+        if (strchr("(){}[];,", s[i]) != 0) {
+            len = 1;
+
+        } else if (isValNameAvailable(s[i])) {    // 変数
+            while (isValNameAvailable(s[i + len])) len++;
+
+        } else if (isCharOperator(s[i]) != 0) {    // 演算子
+            while (isCharOperator(s[i + len]) != 0 && s[i + len] != 0) len++;
+
+        } else {
+            goto err;
+        }
+
+        tcBuf->tc[tcCnt] = getTc(&s[i], len, tcBuf, var);
         i += len;
-        j++;
+        tcCnt++;
     }
+
+err:
+    fprintf(stderr, "syntax error\n");
+    exit(1);
 }

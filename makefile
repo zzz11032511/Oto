@@ -1,14 +1,33 @@
-FILE = main
-BIN  = main
+OBJS      := main.o lexer.o token.o util.o run.o variable.o compile.o exec.o expr.o stack.o
 
-all:
-	$(BIN).exe
+SRCPATH   := ./src/
+TESTPATH  := ./test/
 
-$(BIN).exe: $(FILE).c
-	gcc -o $(BIN) $(FILE).c
+PROGRAM   := oto
+MAKE      := make.exe -r
+DEL       := del
+MAKEOBJ   := gcc -c
+CC        := gcc
+CFLAGS    := -o $(PROGRAM) -O2 -Wall
 
-run: $(BIN).exe
-	./$(BIN).exe
+TESTFLAGS := -O2 -Wall
 
-buildO2: $(FILE).c
-	gcc -o $(BIN) -O2 $(FILE).c
+all : $(PROGRAM)
+
+%.o : $(SRCPATH)%.c makefile
+	$(MAKEOBJ) $(SRCPATH)$*.c
+
+$(PROGRAM) : $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS)
+
+test_% : $(OBJS)
+	$(MAKEOBJ) $(TESTPATH)test_$*.c
+	$(CC) $(TESTFLAGS) -o test_$* $(filter-out main.o, $(OBJS)) test_$*.o
+	test_$*.exe
+
+clean : 
+	-$(DEL) *.o
+	-$(DEL) *.exe
+
+run : $(PROGRAM).exe
+	$(PROGRAM) aaa.oto
