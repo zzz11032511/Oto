@@ -3,8 +3,8 @@
 #include "util.h"
 #include "lexer.h"
 #include "compile.h"
+#include "ic.h"
 #include "token.h"
-#include "variable.h"
 #include "exec.h"
 
 int run(String src) {

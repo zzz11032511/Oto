@@ -6,8 +6,6 @@
 #include "lexer.h"
 #include "variable.h"
 
-// TODO: free関数を必ず作る
-
 /* トークン保存領域を新しく作る(いらないかも) */
 tokenBuf_t *newTokenBuf()
 {
@@ -19,6 +17,7 @@ tokenBuf_t *newTokenBuf()
     return buf;
 }
 
+
 /* トークンのメモリ領域を解放する(トークンコード列もついでに解放してくれる) */
 void freeTokenBuf(tokenBuf_t *tcBuf)
 {
@@ -26,6 +25,7 @@ void freeTokenBuf(tokenBuf_t *tcBuf)
         free(tcBuf->tokens[i]);
     }
 }
+
 
 /* トークンを新しく作る */
 struct token *newToken(int tc, int len, String s)
@@ -41,7 +41,15 @@ struct token *newToken(int tc, int len, String s)
     return t;
 }
 
-unsigned char tcsBuf[(MAX_TC + 1) * 10];    // トークンの内容(文字列)を記憶するための領域
+
+/**
+ * トークンの内容(文字列)を記憶するための領域
+ * 
+ * 文字列の実体はこのバッファに保存されている
+ * tcsBuf自体は基本的にtoken.c内部からしか参照しないため気にしなくてもいい
+ */
+unsigned char tcsBuf[(MAX_TC + 1) * 10];
+
 
 /**
  * 新しいトークンを作り, tcBuf->tokensに追加する関数
@@ -62,6 +70,7 @@ int putTc(int tc, int len, String s, tokenBuf_t *tcBuf)
     tcBuf->tcs++;
     return 0;
 }
+
 
 /**
  * トークンコードを得るための関数
@@ -90,7 +99,7 @@ int getTc(String s, int len, tokenBuf_t *tcBuf, int *var)
 int tcInit(tokenBuf_t *tcBuf, int *var)
 {
     /* 最初にlexerしておく文字列 */
-    String symbols = "; . ( ) [ ] { } == != < >= <= > + - * / // % = ++ -- -> , int float print _t0 _t1 _t2 _t3 _t4 _t5 _t6 _t7 _t8 _t9 !**! \0";
+    String symbols = "; . ( ) [ ] { } == != < >= <= > + - * / // % = ++ -- -> , int float print !**! \0";
 
     return lexer(symbols, tcBuf, var);
 }

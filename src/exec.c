@@ -1,9 +1,6 @@
 #include <stdio.h>
 #include "util.h"
-#include "token.h"
-#include "lexer.h"
-#include "variable.h"
-#include "compile.h"
+#include "ic.h"
 #include "stack.h"
 
 void exec(int **ic, int *var)

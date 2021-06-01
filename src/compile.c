@@ -6,8 +6,8 @@
 #include "token.h"
 #include "lexer.h"
 #include "variable.h"
-#include "compile.h"
 #include "expr.h"
+#include "ic.h"
 
 int tVpc[5];    // putIc()で指定するTcを入れる場所(Temp Var Pcのつもり)
 int vp = 0;     // tVpcへのポインタ

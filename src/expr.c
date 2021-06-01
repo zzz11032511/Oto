@@ -8,6 +8,7 @@
 #include "variable.h"
 #include "compile.h"
 #include "stack.h"
+#include "ic.h"
 
 /* 演算子のトークンコードを対応する内部コードに変換する */
 int tc2op(int tc)
@@ -57,6 +58,8 @@ int priorityCmp(int tc1, int tc2)
 
     return p1 - p2;
 }
+
+#define RPN_TC_LIST_SIZE 1000
 
 /**
  *  トークンコード列を逆ポーランド記法に並び替える関数
@@ -156,7 +159,7 @@ int expr(tokenBuf_t *tcBuf, int *pc, int *var, int **ic)
     while (tcBuf->tc[i] != TcSemi) i++;    // 式の終わりを探す
     int end = i;
 
-    int rpnTc[1000];    // 逆ポーランド記法に書き替えたトークン列
+    int rpnTc[RPN_TC_LIST_SIZE];    // 逆ポーランド記法に書き替えたトークン列
 
     int rpnTcN = rpn(tcBuf, start, end, rpnTc, 0);    // 逆ポーランド記法に書き替えたトークン列の長さ
 
