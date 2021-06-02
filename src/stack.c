@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include "stack.h"
 
-void push(struct iStack *stack, int value)
+int push(struct iStack *stack, int value)
 {
     stack->q[stack->sp++] = value;
+    return value;
 }
 
 int pop(struct iStack *stack)

@@ -8,7 +8,7 @@ struct iStack {
     int sp;
 };
 
-void push(struct iStack *stack, int value);
+int push(struct iStack *stack, int value);
 int pop(struct iStack *stack);
 int peek(struct iStack *stack);
 

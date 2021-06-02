@@ -20,10 +20,11 @@ all : $(PROGRAM)
 $(PROGRAM) : $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS)
 
+# テスト用
 test_% : $(OBJS)
 	$(MAKEOBJ) $(TESTPATH)test_$*.c
-	$(CC) $(TESTFLAGS) -o test_$* $(filter-out main.o, $(OBJS)) test_$*.o
-	test_$*.exe
+	$(CC) $(TESTFLAGS) -o $(TESTPATH)test_$* $(filter-out main.o, $(OBJS)) test_$*.o
+	$(TESTPATH)test_$*.exe
 
 clean : 
 	-$(DEL) *.o
