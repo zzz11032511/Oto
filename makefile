@@ -1,5 +1,7 @@
 OBJS      := main.o lexer.o token.o util.o run.o variable.o compile.o exec.o expr.o stack.o
 
+TESTFILE  := test_lexer test_stack
+
 SRCPATH   := ./src/
 TESTPATH  := ./test/
 
@@ -23,12 +25,12 @@ $(PROGRAM) : $(OBJS)
 # テスト用
 test_% : $(OBJS)
 	$(MAKEOBJ) $(TESTPATH)test_$*.c
-	$(CC) $(TESTFLAGS) -o $(TESTPATH)test_$* $(filter-out main.o, $(OBJS)) test_$*.o
-	$(TESTPATH)test_$*.exe
+	$(CC) $(TESTFLAGS) -o test_$* $(filter-out main.o, $(OBJS)) test_$*.o
+	test_$*.exe
 
 clean : 
 	-$(DEL) *.o
 	-$(DEL) *.exe
 
-run : $(PROGRAM).exe
+run : $(PROGRAM)
 	$(PROGRAM) aaa.oto

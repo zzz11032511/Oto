@@ -24,7 +24,7 @@ int main(int argc, const char **argv)
         usage(argv[0]);
         exit(1);
     }
-    
+
     // ソースファイルを確保しておく領域
     String src = (String)malloc(sizeof(char) * SOURCE_BUF_SIZE);
     

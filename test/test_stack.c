@@ -26,5 +26,7 @@ int main(void)
     assert(peek(&stack) == testarray[i]);
     assert(pop(&stack)  == testarray[i--]);
 
+    printf("success\n");
+    
     return 0;
 }
