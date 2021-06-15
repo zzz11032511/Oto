@@ -23,7 +23,6 @@ void exec(int **ic, int *var)
         case OpAdd:
             t1 = pop(&stack);
             t2 = pop(&stack);
-            printf("%d\n", t2 + t1);
             push(&stack, t2 + t1);
             // printf("push : %d\n",  t2 + t1);
             icp += 5;
@@ -32,7 +31,6 @@ void exec(int **ic, int *var)
         case OpSub:
             t1 = pop(&stack);
             t2 = pop(&stack);
-            printf("%d\n", t2 - t1);
             push(&stack, t2 - t1);
             // printf("push : %d\n",  t2 - t1);
             icp += 5;
@@ -41,7 +39,6 @@ void exec(int **ic, int *var)
         case OpMul:
             t1 = pop(&stack);
             t2 = pop(&stack);
-            printf("%d\n", t2 * t1);
             push(&stack, t2 * t1);
             // printf("push : %d\n",  t2 * t1);
             icp += 5;
@@ -51,7 +48,6 @@ void exec(int **ic, int *var)
             // TODO: 0除算などを考慮すべき
             t1 = pop(&stack);
             t2 = pop(&stack);
-            printf("%d\n", t2 / t1);
             push(&stack, t2 / t1);
             // printf("push : %d\n",  t2 / t1);
             icp += 5;

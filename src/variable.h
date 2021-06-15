@@ -11,7 +11,7 @@ enum {
 
 typedef struct var {
     int type;       // 型
-    int value;    // 中身
+    void* value;    // 中身
 } var_t;
 
 #endif
