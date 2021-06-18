@@ -93,7 +93,7 @@ int lexer(String s, tokenBuf_t *tcBuf, int *var)
             goto err;
         }
 
-        tcBuf->tc[tcCnt] = getTc(&s[i], len, tcBuf, var);
+        tcBuf->tc[tcCnt] = getTc(&s[i], len, tcBuf, var, type);
         i += len;
         tcCnt++;
     }
