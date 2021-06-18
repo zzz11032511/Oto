@@ -70,11 +70,12 @@ int lexer(String s, tokenBuf_t *tcBuf, int *var)
             len = 1;
 
         } else if (isConst(s[i])) {    // 定数
+            type = TyConstI;
             while (1) {
                 if (isConst(s[i + len])) {
                     len++;
                 } else if (s[i + len] == '.' && type != TyConstF) {
-                    // 1回目の'.'ならfloat型の定数なので継続
+                    // 1回目の'.'ならfloat型の定数として継続
                     len++;
                     type = TyConstF;
                 } else {

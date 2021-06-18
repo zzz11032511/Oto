@@ -76,7 +76,7 @@ int putTc(int tc, int len, String s, tokenBuf_t *tcBuf)
  * トークンコードを得るための関数
  * もし登録されていないなら, 新しく作る
  */
-int getTc(String s, int len, tokenBuf_t *tcBuf, int *var)
+int getTc(String s, int len, tokenBuf_t *tcBuf, int *var, int type)
 {
     int i;
     for (i = 0; i < tcBuf->tcs; i++) {    // 登録済みの中から探す

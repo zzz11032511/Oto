@@ -90,7 +90,7 @@ void freeTokenBuf(tokenBuf_t *tcBuf);
  * トークンコードを得るための関数
  * もし登録されていないなら, 新しく作る
  */
-int getTc(String s, int len, tokenBuf_t *tcBuf, int *var);
+int getTc(String s, int len, tokenBuf_t *tcBuf, int *var, int type);
 
 
 /* トークンの名前の開始アドレスを返す */
