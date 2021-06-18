@@ -12,7 +12,7 @@ int main(void)
 
     tcInit(tcBuf, var);
 
-    String src = "int 1 = 0;\n 1 + 3 * 4 / 1;";
+    String src = "int 1 = 0;\n 1 + 23.5671 * 4 / 1;";
     int truetc[] = {25, 29, 20, 30, 0, 29, 14, 31, 16, 32, 17, 29, 0};
 
     int len = lexer(src, tcBuf, var);
@@ -20,8 +20,13 @@ int main(void)
 
     for (int i = 0; i < len; i++) {
         tc = tcBuf->tc[i];
-        assert(truetc[i] == tc);
-        printf("%d,", tc);
+        // assert(truetc[i] == tc);
+        printf("tc : %d, ts : ", tc, tcBuf->tokens[tc]->ts);
+
+        for (int j = 0; j < tcBuf->tokens[tc]->tl; j++) {
+            printf("%c", tcBuf->tokens[tc]->ts[j]);
+        }
+        printf("\n");
     }
     printf("\n");
     

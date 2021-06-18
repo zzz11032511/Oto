@@ -21,6 +21,15 @@ int isValNameAvailable(unsigned char c)
     return 0;
 }
 
+/**
+ * 定数かどうかを判定する
+ */
+int isConst(unsigned char c)
+{
+    if ('0' <= c && c <= '9') return 1;
+    return 0;
+}
+
 const char operator[] = "=+-*/!%&~|<>?:.#";
 /**
  * 文字が演算子であるかどうかを判定する
@@ -59,6 +68,19 @@ int lexer(String s, tokenBuf_t *tcBuf, int *var)
         int type = TyVoid;       // そのトークンが何の種類なのかを記録するための変数
         if (strchr("(){}[];,", s[i]) != 0) {
             len = 1;
+
+        } else if (isConst(s[i])) {    // 定数
+            while (1) {
+                if (isConst(s[i + len])) {
+                    len++;
+                } else if (s[i + len] == '.' && type != TyConstF) {
+                    // 1回目の'.'ならfloat型の定数なので継続
+                    len++;
+                    type = TyConstF;
+                } else {
+                    break;
+                }
+            }
 
         } else if (isValNameAvailable(s[i])) {    // 変数
             while (isValNameAvailable(s[i + len])) len++;
