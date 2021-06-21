@@ -106,7 +106,7 @@ void putIc(int **ic, int *icp, int op, int *v1, int *v2, int *v3, int *v4)
 }
 
 /* 内部コードに変換する関数 */
-int compile(String s, tokenBuf_t *tcBuf, int *var, int **ic)
+int compile(String s, tokenBuf_t *tcBuf, var_t **var, int **ic)
 {
     int pc, pc1;    // プログラムカウンタ
 
@@ -135,7 +135,7 @@ int compile(String s, tokenBuf_t *tcBuf, int *var, int **ic)
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcConst, TcSemi)) {
             /* <identifier> = <const>; (単純代入) */
             printf("<identifier> = <expr>;\n");
-            putIc(ic, &pc, OpCpy, &var[tVpc[0]], 0, 0, 0);
+            putIc(ic, &pc, OpCpy, var[tVpc[0]], 0, 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcExpr)) {
             /* <expr>; (算術式) */

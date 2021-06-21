@@ -76,7 +76,7 @@ int putTc(int tc, int len, String s, tokenBuf_t *tcBuf)
  * トークンコードを得るための関数
  * もし登録されていないなら, 新しく作る
  */
-int getTc(String s, int len, tokenBuf_t *tcBuf, int *var, int type)
+int getTc(String s, int len, tokenBuf_t *tcBuf, var_t **var, int type)
 {
     int i;
     for (i = 0; i < tcBuf->tcs; i++) {    // 登録済みの中から探す
@@ -85,10 +85,27 @@ int getTc(String s, int len, tokenBuf_t *tcBuf, int *var, int type)
         }
     }
 
-    if (i == tcBuf->tcs) {    // 新規作成
+    if (i == tcBuf->tcs) {    // 新規作成時の処理
         putTc(i, len, s, tcBuf);
         // printf("tc : %d, ts : %s, tl : %d\n", i, tcBuf->tokens[i]->ts, len);    // デバッグ用
-        var[i] = strtol(tcBuf->tokens[i]->ts, 0, 0);    // 定数だった場合に初期値を設定
+        
+        // var[i] = strtol(tcBuf->tokens[i]->ts, 0, 0);    
+        
+        // 定数だった場合に初期値を設定
+        switch (type) {
+        case TyInt:
+            varDef(var[i], type, strtol(tcBuf->tokens[i]->ts, 0, 0));
+            break;
+        case TyFloat:
+            varDef(var[i], type, strtod(tcBuf->tokens[i]->ts, 0));
+            break;
+        case TyConstI:
+            varDef(var[i], type, strtol(tcBuf->tokens[i]->ts, 0, 0));
+            break;
+        case TyConstF:
+            varDef(var[i], type, strtod(tcBuf->tokens[i]->ts, 0));
+            break;
+        }
     } 
 
     return i;
@@ -96,7 +113,7 @@ int getTc(String s, int len, tokenBuf_t *tcBuf, int *var, int type)
 
 
 /* 演算子記号などを最初にlexerしておく関数 */
-int tcInit(tokenBuf_t *tcBuf, int *var)
+int tcInit(tokenBuf_t *tcBuf, var_t **var)
 {
     /* 最初にlexerしておく文字列 */
     String symbols = "; . ( ) [ ] { } == != < >= <= > + - * / // % = ++ -- -> , int float print !**! \0";

@@ -9,7 +9,7 @@
 
 int run(String src) {
     tokenBuf_t *tcBuf = newTokenBuf();    // トークン番号リスト
-    int var[MAX_TC];
+    var_t *var[MAX_TC];
 
     // TODO: symbolsが0終端じゃないからエラー吐く
     tcInit(tcBuf, var);

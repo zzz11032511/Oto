@@ -7,7 +7,7 @@
 #include "lexer.h"
 #include "variable.h"
 #include "compile.h"
-#include "stack.h"
+#include "iStack.h"
 #include "ic.h"
 
 /* 演算子のトークンコードを対応する内部コードに変換する */
@@ -146,7 +146,7 @@ int rpn(tokenBuf_t *tcBuf, int start, int end, int *rpnTc, int rpnTcP)
 }
 
 
-int expr(tokenBuf_t *tcBuf, int *pc, int *var, int **ic)
+int expr(tokenBuf_t *tcBuf, int *pc, var_t **var, int **ic)
 {
     int ppc = *pc; // 最初のpcを保存しておく
 
@@ -180,15 +180,12 @@ int expr(tokenBuf_t *tcBuf, int *pc, int *var, int **ic)
             int op = tc2op(tc);
 
             varStack.sp -= 2;
-            
-            // printf("var[t1] = %d, var[t2] = %d\n", var[t1], var[t2]);
-            
-            // TODO: 計算結果をスタックに積む必要がある
+
             putIc(ic, pc, op, 0, 0, 0, 0);
 
         } else if (tc > TcEnd) {
             // そうじゃなかったらスタックに積む
-            putIc(ic, pc, OpPush, &var[tc], 0, 0, 0);
+            putIc(ic, pc, OpPush, var[tc], 0, 0, 0);
             push(&varStack, tc);
         }
     }

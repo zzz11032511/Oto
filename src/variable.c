@@ -47,18 +47,34 @@ int varDef(var_t *var, int type, ...)
     int iValue = 0;
     double fValue = 0;
 
+    int errFlag = 0;
     switch (type) {
     case TyInt:
-        iValue = va_arg(ap, int);
+        iValue = va_arg(ap, long);
         var->value = iVarAlloc(iValue);
         break;
+        
+    case TyConstI:
+        iValue = va_arg(ap, long);
+        var->value = iVarAlloc(iValue);
+        break;
+    
     case TyFloat:
         fValue = va_arg(ap, double);
         var->value = fVarAlloc(fValue);
         break;
+    
+    case TyConstF:
+        fValue = va_arg(ap, double);
+        var->value = fVarAlloc(fValue);
+        break;
+    
     default:
+        errFlag = 1;
         break;
     }
 
     va_end(ap);
+
+    return errFlag;
 }

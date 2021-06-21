@@ -1,6 +1,8 @@
 #ifndef INCLUDED_EXEC
 #define INCLUDED_EXEC 1
 
-void exec(int **ic, int *var);
+#include "variable.h"
+
+void exec(int **ic, var_t **var);
 
 #endif

@@ -1,23 +1,23 @@
 #include <stdio.h>
 #include "util.h"
 #include "ic.h"
-#include "stack.h"
+#include "vPtrStack.h"
+#include "variable.h"
 
-void exec(int **ic, int *var)
+void exec(int **ic, var_t **var)
 {
     int **icp = ic;
 
     // 計算用のスタック
-    struct iStack stack;
+    struct vPtrStack stack;
     stack.sp = 0;
-    int t1;    // 演算用の一時変数
-    int t2;   
+    var_t *t1;    // 演算用の一時変数
+    var_t *t2;   
 
     while (1) {
         // printf("opcode : %d\n", (int)icp[0]);
         switch ((int) icp[0]) {
         case OpCpy:
-            *icp[1] = pop(&stack);
             continue;
 
         case OpAdd:
@@ -32,7 +32,6 @@ void exec(int **ic, int *var)
             t1 = pop(&stack);
             t2 = pop(&stack);
             push(&stack, t2 - t1);
-            // printf("push : %d\n",  t2 - t1);
             icp += 5;
             continue;
 
@@ -40,7 +39,6 @@ void exec(int **ic, int *var)
             t1 = pop(&stack);
             t2 = pop(&stack);
             push(&stack, t2 * t1);
-            // printf("push : %d\n",  t2 * t1);
             icp += 5;
             continue;
 
@@ -49,13 +47,11 @@ void exec(int **ic, int *var)
             t1 = pop(&stack);
             t2 = pop(&stack);
             push(&stack, t2 / t1);
-            // printf("push : %d\n",  t2 / t1);
             icp += 5;
             continue;
 
         case OpPush:
-            push(&stack, (*icp[1]));
-            // printf("push : %d\n",  (*icp[1]));
+            push(&stack, icp[1]);
             icp += 5;
             continue;
         

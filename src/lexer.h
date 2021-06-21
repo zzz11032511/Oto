@@ -5,6 +5,6 @@
 #include "token.h"
 #include "variable.h"
 
-int lexer(String s, tokenBuf_t *tcBuf, int *var);
+int lexer(String s, tokenBuf_t *tcBuf, var_t **var);
 
 #endif

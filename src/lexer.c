@@ -44,7 +44,7 @@ int isCharOperator(unsigned char c)
 }
 
 /* プログラムをトークンコード列に変換する */
-int lexer(String s, tokenBuf_t *tcBuf, int *var)
+int lexer(String s, tokenBuf_t *tcBuf, var_t **var)
 {
     int i = 0;        // 現在参照している文字の位置
     int tcCnt = 0;    // これまでに変換したトークンの数

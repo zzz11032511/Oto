@@ -14,4 +14,6 @@ typedef struct var {
     void* value;    // 中身
 } var_t;
 
+int varDef(var_t *var, int type, ...);
+
 #endif
