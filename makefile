@@ -1,4 +1,4 @@
-OBJS      := main.o lexer.o token.o util.o run.o variable.o compile.o exec.o expr.o stack.o
+OBJS      := main.o lexer.o token.o util.o run.o variable.o compile.o exec.o expr.o iStack.o vPtrStack.o
 
 TESTFILE  := test_lexer test_stack
 
