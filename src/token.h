@@ -93,7 +93,7 @@ void freeTokenBuf(tokenBuf_t *tcBuf);
 int32_t getTc(str_t s, int32_t len, tokenBuf_t *tcBuf, var_t **var, int32_t type);
 
 
-/* トークンの名前の開始アドレスを返す(未実装) */
+/* トークンの名前の開始アドレスを返す */
 uint8_t *getTcName(tokenBuf_t *tcBuf, int32_t tc);
 
 

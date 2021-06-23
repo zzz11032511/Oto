@@ -10,7 +10,6 @@
 #include "expr.h"
 #include "ic.h"
 
-
 int32_t tVpc[5];    // putIc()で指定するTcを入れる場所(Temp Var Pcのつもり)
 int32_t vp = 0;     // tVpcへのポインタ
 

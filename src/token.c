@@ -112,6 +112,11 @@ int32_t getTc(str_t s, int32_t len, tokenBuf_t *tcBuf, var_t **var, int32_t type
     return i;
 }
 
+/* トークンの名前の開始アドレスを返す */
+uint8_t *getTcName(tokenBuf_t *tcBuf, int32_t tc)
+{
+    return tcBuf->tokens[tc]->ts;
+}
 
 /* 演算子記号などを最初にlexerしておく関数 */
 int32_t tcInit(tokenBuf_t *tcBuf, var_t **var)
