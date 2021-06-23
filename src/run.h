@@ -1,8 +1,6 @@
-#ifndef INCLUDED_EXEC
-#define INCLUDED_EXEC 1
+#pragma once
 
+#include <stdint.h>
 #include "util.h"
 
-int run(String s);
-
-#endif
+int32_t run(str_t s);

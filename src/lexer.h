@@ -1,10 +1,8 @@
-#ifndef INCLUDED_LEXER
-#define INCLUDED_LEXER 1
+#pragma once
 
+#include "stdint.h"
 #include "util.h"
 #include "token.h"
 #include "variable.h"
 
-int lexer(String s, tokenBuf_t *tcBuf, var_t **var);
-
-#endif
+int32_t lexer(str_t s, tokenBuf_t *tcBuf, var_t **var);

@@ -1,5 +1,6 @@
-#ifndef INCLUDED_VARIABLE
-#define INCLUDED_VARIABLE 1
+#pragma once
+
+#include <stdint.h>
 
 enum {
     TyVoid = 0,
@@ -10,10 +11,6 @@ enum {
 };
 
 typedef struct var {
-    int type;       // 型
+    int32_t type;       // 型
     void* value;    // 中身
 } var_t;
-
-int varDef(var_t *var, int type, ...);
-
-#endif

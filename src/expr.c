@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+#include <stdint.h>
 #include "util.h"
 #include "token.h"
 #include "lexer.h"
@@ -11,7 +12,7 @@
 #include "ic.h"
 
 /* 演算子のトークンコードを対応する内部コードに変換する */
-int tc2op(int tc)
+int32_t tc2op(int32_t tc)
 {
     switch (tc) {
     case TcPlus:
@@ -36,10 +37,10 @@ int tc2op(int tc)
  *      tc1 = tc2 ~ return 0;
  *      tc1 < tc2 ~ return -1;
  */
-int priorityCmp(int tc1, int tc2)
+int32_t priorityCmp(int32_t tc1, int32_t tc2)
 {
-    int p1 = 1;
-    int p2 = 1;
+    int32_t p1 = 1;
+    int32_t p2 = 1;
 
     // TcEndのときは優先度-99とする
     if (tc1 == TcEnd) {
@@ -70,7 +71,7 @@ int priorityCmp(int tc1, int tc2)
  *      rpnTc:  逆ポーランド記法に並べ替えたトークン列の配列
  *      rpnTcP: 逆ポーランド記法に並べ替えたトークン列をどこまで書いたか
  */
-int rpn(tokenBuf_t *tcBuf, int start, int end, int *rpnTc, int rpnTcP)
+int32_t rpn(tokenBuf_t *tcBuf, int32_t start, int32_t end, int32_t *rpnTc, int32_t rpnTcP)
 {
     struct iStack stack;
     stack.sp = 0;
@@ -78,8 +79,8 @@ int rpn(tokenBuf_t *tcBuf, int start, int end, int *rpnTc, int rpnTcP)
     // NULL参照を防ぐためにTcEndをpushしておく(push,popをもっと安全にすべき)
     // push(&stack, TcEnd);
 
-    for (int pc = start; pc < end; pc++) {
-        int tc = tcBuf->tc[pc];    // 現在指しているトークンを取ってくる
+    for (int32_t pc = start; pc < end; pc++) {
+        int32_t tc = tcBuf->tc[pc];    // 現在指しているトークンを取ってくる
 
         if (tc > TcEnd) {
             // ただの変数,定数ならそのまま書き込む
@@ -88,13 +89,13 @@ int rpn(tokenBuf_t *tcBuf, int start, int end, int *rpnTc, int rpnTcP)
 
         } else if (tc == TcBrOpn) {
             // もし括弧があったときは、括弧の範囲についてrpn()を再帰的に呼ぶ
-            int start1 = pc + 1;
-            int end1   = pc + 1;
+            int32_t start1 = pc + 1;
+            int32_t end1   = pc + 1;
 
             // 括弧の範囲を調べる
-            int nest = 0;
+            int32_t nest = 0;
             while (1) {
-                int ttc = tcBuf->tc[end1++];
+                int32_t ttc = tcBuf->tc[end1++];
                 if (ttc == TcBrCls) {
                     if (nest == 0) {
                         break;
@@ -146,38 +147,38 @@ int rpn(tokenBuf_t *tcBuf, int start, int end, int *rpnTc, int rpnTcP)
 }
 
 
-int expr(tokenBuf_t *tcBuf, int *pc, var_t **var, int **ic)
+int32_t expr(tokenBuf_t *tcBuf, int32_t *pc, var_t **var, int32_t **ic)
 {
-    int ppc = *pc; // 最初のpcを保存しておく
+    int32_t ppc = *pc; // 最初のpcを保存しておく
 
     struct iStack varStack;    // 変数を入れるスタック
     varStack.sp = 0;
 
-    int start = *pc;
+    int32_t start = *pc;
 
-    int i = start;
+    int32_t i = start;
     while (tcBuf->tc[i] != TcSemi) i++;    // 式の終わりを探す
-    int end = i;
+    int32_t end = i;
 
-    int rpnTc[RPN_TC_LIST_SIZE];    // 逆ポーランド記法に書き替えたトークン列
+    int32_t rpnTc[RPN_TC_LIST_SIZE];    // 逆ポーランド記法に書き替えたトークン列
 
-    int rpnTcN = rpn(tcBuf, start, end, rpnTc, 0);    // 逆ポーランド記法に書き替えたトークン列の長さ
+    int32_t rpnTcN = rpn(tcBuf, start, end, rpnTc, 0);    // 逆ポーランド記法に書き替えたトークン列の長さ
 
     // デバッグ用
     printf("rpnTc : ");
-    for (int i = 0; i < rpnTcN; i++) {
+    for (int32_t i = 0; i < rpnTcN; i++) {
         printf("%d ", rpnTc[i]);
     }
     printf("\n");
 
-    int t1 = 0;
-    int t2 = 0;
-    for (int i = 0; i < rpnTcN; i++) {
-        int tc = rpnTc[i];
+    int32_t t1 = 0;
+    int32_t t2 = 0;
+    for (int32_t i = 0; i < rpnTcN; i++) {
+        int32_t tc = rpnTc[i];
 
         if (TcEEq <= tc && tc <= TcEqu) {
             // tcが演算子のときはputIc()する
-            int op = tc2op(tc);
+            int32_t op = tc2op(tc);
 
             varStack.sp -= 2;
 

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+#include <stdint.h>
 #include "util.h"
 #include "token.h"
 #include "lexer.h"
@@ -9,23 +10,24 @@
 #include "expr.h"
 #include "ic.h"
 
-int tVpc[5];    // putIc()で指定するTcを入れる場所(Temp Var Pcのつもり)
-int vp = 0;     // tVpcへのポインタ
+
+int32_t tVpc[5];    // putIc()で指定するTcを入れる場所(Temp Var Pcのつもり)
+int32_t vp = 0;     // tVpcへのポインタ
 
 /* 引数に渡されたトークンのパターンと実際のコードが一致しているかを調べる関数 */
-int ptnCmp(tokenBuf_t *tcBuf, int *pc, int pattern, ...)
+int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...)
 {
     va_list ap;
     va_start(ap, pattern);    // 可変長引数
 
-    int ppc = *pc;    // 最初のpcを保存しておく
-    int ptnTc = pattern;    // パターンから読み込んだトークン
-    int nest = 0;    // ネストの深さ
+    int32_t ppc = *pc;    // 最初のpcを保存しておく
+    int32_t ptnTc = pattern;    // パターンから読み込んだトークン
+    int32_t nest = 0;    // ネストの深さ
 
     while (1) {
         // ネストの処理をいつか書く
-        int tc = tcBuf->tc[*pc];
-        // printf("tc : %d, ptnTc : %d\n", tc, ptnTc);
+        int32_t tc = tcBuf->tc[*pc];
+        // print32_tf("tc : %d, ptnTc : %d\n", tc, ptnTc);
 
         if (ptnTc == TcSemi && tc == TcSemi) {
             // セミコロンなら終わり
@@ -48,7 +50,7 @@ int ptnCmp(tokenBuf_t *tcBuf, int *pc, int pattern, ...)
         if (tc == ptnTc) {
             // 既にあるトークンと一致した
 
-        } else if (ptnTc == TcType && (TcInt <= tc && tc <= TcFloat)) {
+        } else if (ptnTc == TcType && (Tcint32_t <= tc && tc <= TcFloat)) {
             // 変数の型
 
         } else if (ptnTc == TcIdentifier && tc > TcEnd) {
@@ -70,7 +72,7 @@ int ptnCmp(tokenBuf_t *tcBuf, int *pc, int pattern, ...)
             vp = 0;
             return 0;    // 一致しなかったので0を返す
         }
-        ptnTc = va_arg(ap, int);    // 次のトークンパータンを参照
+        ptnTc = va_arg(ap, int32_t);    // 次のトークンパータンを参照
         (*pc)++;
     }
 
@@ -95,10 +97,10 @@ int ptnCmp(tokenBuf_t *tcBuf, int *pc, int pattern, ...)
  *      op      : 処理を表す内部コード
  *      v1 ~ v4 : 渡す値(ポインタ)
  */
-void putIc(int **ic, int *icp, int op, int *v1, int *v2, int *v3, int *v4)
+void putIc(int32_t **ic, int32_t *icp, int32_t op, int32_t *v1, int32_t *v2, int32_t *v3, int32_t *v4)
 {
-    // printf("pc : %d | op : %d, v1 : %d, v2 : %d, v3 : %d, v4 : %d\n", *icp, op, v1, v2, v3, v4);
-    ic[(*icp)++] = (int *)op;
+    // printtf("pc : %d | op : %d, v1 : %d, v2 : %d, v3 : %d, v4 : %d\n", *icp, op, v1, v2, v3, v4);
+    ic[(*icp)++] = (int32_t *)op;
     ic[(*icp)++] = v1;
     ic[(*icp)++] = v2;
     ic[(*icp)++] = v3;
@@ -106,13 +108,13 @@ void putIc(int **ic, int *icp, int op, int *v1, int *v2, int *v3, int *v4)
 }
 
 /* 内部コードに変換する関数 */
-int compile(String s, tokenBuf_t *tcBuf, var_t **var, int **ic)
+int32_t compile(String s, tokenBuf_t *tcBuf, var_t **var, int32_t **ic)
 {
-    int pc, pc1;    // プログラムカウンタ
+    int32_t pc, pc1;    // プログラムカウンタ
 
     pc1 = lexer(s, tcBuf, var);
 
-    int *tc = tcBuf->tc;
+    int32_t *tc = tcBuf->tc;
 
     // デバッグ用, tcの表示
     printf("tc : ");
@@ -121,11 +123,11 @@ int compile(String s, tokenBuf_t *tcBuf, var_t **var, int **ic)
     }
     printf("\n");
 
-    int icp = 0;    // icをどこまで書き込んだか
-    int ppc = 0;    // ptnCmp()前のpcの値を保存しておく
+    int32_t icp = 0;    // icをどこまで書き込んだか
+    int32_t ppc = 0;    // ptnCmp()前のpcの値を保存しておく
     pc = 0;
     while(pc < pc1) {
-        // printf("pc : %d\n", pc);
+        // print32_tf("pc : %d\n", pc);
         ppc = pc;
 
         if (ptnCmp(tcBuf, &pc, TcType, TcIdentifier, TcEqu, TcConst, TcSemi)) {

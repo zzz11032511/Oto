@@ -1,9 +1,7 @@
-#ifndef INCLUDED_EXPR
-#define INCLUDED_EXPR 1
+#pragma once
 
+#include <stdint.h>
 #include "util.h"
 #include "variable.h"
 
-int expr(tokenBuf_t *tcBuf, int *pc, var_t **var, int **ic);
-
-#endif
+int32_t expr(tokenBuf_t *tcBuf, int32_t *pc, var_t **var, int32_t **ic);

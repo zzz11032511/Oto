@@ -1,12 +1,13 @@
 #include <stdio.h>
+#include <stdint.h>
 #include "util.h"
 #include "ic.h"
 #include "vPtrStack.h"
 #include "variable.h"
 
-void exec(int **ic, var_t **var)
+void exec(int32_t **ic, var_t **var)
 {
-    int **icp = ic;
+    int32_t **icp = ic;
 
     // 計算用のスタック
     struct vPtrStack stack;
@@ -15,8 +16,8 @@ void exec(int **ic, var_t **var)
     var_t *t2;   
 
     while (1) {
-        // printf("opcode : %d\n", (int)icp[0]);
-        switch ((int) icp[0]) {
+        // printf("opcode : %d\n", (int32_t)icp[0]);
+        switch ((int32_t) icp[0]) {
         case OpCpy:
             continue;
 

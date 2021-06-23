@@ -1,15 +1,12 @@
-#ifndef INCLUDED_STACK
-#define INCLUDED_STACK 1
+#pragma once
 
 #define MAX_STACK_SIZE 1000
 
 struct iStack {
-    int q[MAX_STACK_SIZE];
-    int sp;
+    int32_t q[MAX_STACK_SIZE];
+    int32_t sp;
 };
 
-int push(struct iStack *stack, int value);
-int pop(struct iStack *stack);
-int peek(struct iStack *stack);
-
-#endif 
+int32_t push(struct iStack *stack, int32_t value);
+int32_t pop(struct iStack *stack);
+int32_t peek(struct iStack *stack);

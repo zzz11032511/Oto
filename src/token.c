@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 #include "util.h"
 #include "token.h"
 #include "lexer.h"
@@ -11,7 +12,7 @@ tokenBuf_t *newTokenBuf()
 {
     tokenBuf_t *buf = (tokenBuf_t *)malloc(sizeof(tokenBuf_t));
     if (buf == NULL) {
-        fprintf(stderr, "malloc error\n");
+        fprint32_tf(stderr, "malloc error\n");
         exit(1);
     }
     return buf;
@@ -21,18 +22,18 @@ tokenBuf_t *newTokenBuf()
 /* トークンのメモリ領域を解放する(トークンコード列もついでに解放してくれる) */
 void freeTokenBuf(tokenBuf_t *tcBuf)
 {
-    for (int i = tcBuf->tcs; i > 0; i--) {
+    for (int32_t i = tcBuf->tcs; i > 0; i--) {
         free(tcBuf->tokens[i]);
     }
 }
 
 
 /* トークンを新しく作る */
-struct token *newToken(int tc, int len, String s)
+struct token *newToken(int32_t tc, int32_t len, str_t s)
 {
     struct token *t = (struct token *)malloc(sizeof(struct token));
     if (t == NULL) {
-        fprintf(stderr, "malloc error\n");
+        fprint32_tf(stderr, "malloc error\n");
         exit(1);
     }
     t->tc = tc;
@@ -56,7 +57,7 @@ unsigned char tcsBuf[(MAX_TC + 1) * 10];
  * 
  * 名前の割にはやってることが多い...要改善
  */
-int putTc(int tc, int len, String s, tokenBuf_t *tcBuf)
+int32_t putTc(int32_t tc, int32_t len, str_t s, tokenBuf_t *tcBuf)
 {
     if (tcBuf->tcs >= MAX_TC) {
         fprintf(stderr, "too many tokens\n");
@@ -76,9 +77,9 @@ int putTc(int tc, int len, String s, tokenBuf_t *tcBuf)
  * トークンコードを得るための関数
  * もし登録されていないなら, 新しく作る
  */
-int getTc(String s, int len, tokenBuf_t *tcBuf, var_t **var, int type)
+int32_t getTc(str_t s, int32_t len, tokenBuf_t *tcBuf, var_t **var, int32_t type)
 {
-    int i;
+    int32_t i;
     for (i = 0; i < tcBuf->tcs; i++) {    // 登録済みの中から探す
         if (len == tcBuf->tokens[i]->tl && strncmp(s, tcBuf->tokens[i]->ts, len) == 0) {
             break;
@@ -113,10 +114,10 @@ int getTc(String s, int len, tokenBuf_t *tcBuf, var_t **var, int type)
 
 
 /* 演算子記号などを最初にlexerしておく関数 */
-int tcInit(tokenBuf_t *tcBuf, var_t **var)
+int32_t tcInit(tokenBuf_t *tcBuf, var_t **var)
 {
     /* 最初にlexerしておく文字列 */
-    String symbols = "; . ( ) [ ] { } == != < >= <= > + - * / // % = ++ -- -> , int float print !**! \0";
+    str_t symbols = "; . ( ) [ ] { } == != < >= <= > + - * / // % = ++ -- -> , int32_t float print32_t !**! \0";
 
     return lexer(symbols, tcBuf, var);
 }

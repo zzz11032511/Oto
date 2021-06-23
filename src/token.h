@@ -1,6 +1,6 @@
-#ifndef INCLUDED_TOKEN
-#define INCLUDED_TOKEN 1
+#pragma once
 
+#include <stdint.h>
 #include "util.h"
 
 // 認識するトークンの数の最大値
@@ -49,32 +49,32 @@ enum {
     TcPlPlus,      // '++'
     TcMiMinus,     // '--'
 
-    TcArrow,       // '->' 関数の返り値を示すときに使う...つもり(ex. -> int)
+    TcArrow,       // '->' 関数の返り値を示すときに使う...つもり(ex. -> int32_t)
 
     TcComma,       // ','
 
     // 予約語
-    TcInt,         // int型
+    TcInt,         // int32_t型
     TcFloat,       // float型
     
-    TcPrint,       // print文
+    TcPrint,       // print32_t文
 
     TcEnd          // トークン定義がここまでだよーということを示す
 };
 
 
 struct token {
-    int tc;    // トークン番号
-    int tl;    // トークンの文字列の長さ
-    String ts;    // トークンの内容(文字列)を記憶, tcsBuf(token.c内)へのポインタ
+    int32_t tc;    // トークン番号
+    int32_t tl;    // トークンの文字列の長さ
+    str_t ts;    // トークンの内容(文字列)を記憶, tcsBuf(token.c内)へのポインタ
 };
 
 
 typedef struct tokenBuf {
-    int tc[TC_LIST_SIZE];    // 文字列をトークンコード列に変換したものを入れる
+    int32_t tc[TC_LIST_SIZE];    // 文字列をトークンコード列に変換したものを入れる
     struct token *tokens[MAX_TC];    // 変換済みトークンコード一覧
-    int tcs;    // 今まで発行したトークンコードの個数
-    int tcb;    // tcsBuf[]の未使用領域
+    int32_t tcs;    // 今まで発行したトークンコードの個数
+    int32_t tcb;    // tcsBuf[]の未使用領域
 } tokenBuf_t;
 
 
@@ -90,14 +90,12 @@ void freeTokenBuf(tokenBuf_t *tcBuf);
  * トークンコードを得るための関数
  * もし登録されていないなら, 新しく作る
  */
-int getTc(String s, int len, tokenBuf_t *tcBuf, var_t **var, int type);
+int32_t getTc(str_t s, int32_t len, tokenBuf_t *tcBuf, var_t **var, int32_t type);
 
 
-/* トークンの名前の開始アドレスを返す */
-char *getTcName(tokenBuf_t *tcBuf, int tc);
+/* トークンの名前の開始アドレスを返す(未実装) */
+uint8_t *getTcName(tokenBuf_t *tcBuf, int32_t tc);
 
 
 /* 演算子記号などを最初にlexerしておく関数 */
-int tcInit(tokenBuf_t *tcBuf, var_t **var);
-
-#endif
+int32_t tcInit(tokenBuf_t *tcBuf, var_t **var);

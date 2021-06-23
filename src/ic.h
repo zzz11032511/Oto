@@ -1,5 +1,4 @@
-#ifndef INCLUDED_IC
-#define INCLUDED_IC 1
+#pragma once
 
 // 内部コード列の長さ
 #define IC_LIST_SIZE 10000
@@ -17,5 +16,3 @@ enum {
     OpTime,       // 時間計測
     OpEnd         // 終了
 };
-
-#endif

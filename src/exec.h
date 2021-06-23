@@ -1,8 +1,6 @@
-#ifndef INCLUDED_EXEC
-#define INCLUDED_EXEC 1
+#pragma once
 
+#include <stdint.h>
 #include "variable.h"
 
-void exec(int **ic, var_t **var);
-
-#endif
+void exec(int32_t **ic, var_t **var);
