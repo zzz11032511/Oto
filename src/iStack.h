@@ -7,6 +7,6 @@ struct iStack {
     int32_t sp;
 };
 
-int32_t push(struct iStack *stack, int32_t value);
-int32_t pop(struct iStack *stack);
-int32_t peek(struct iStack *stack);
+int32_t iPush(struct iStack *stack, int32_t value);
+int32_t iPop(struct iStack *stack);
+int32_t iPeek(struct iStack *stack);

@@ -1,19 +1,19 @@
 #include <stdio.h>
-#include "vPtrStack.h"
+#include "vStack.h"
 
-var_t *push(struct vPtrStack *stack, var_t *var)
+var_t push(struct vStack *stack, var_t var)
 {
     stack->q[stack->sp++] = var;
     return var;
 }
 
-var_t *pop(struct vPtrStack *stack)
+var_t pop(struct vStack *stack)
 {
     stack->sp--;
     return stack->q[stack->sp];
 }
 
-var_t *peek(struct vPtrStack *stack)
+var_t peek(struct vStack *stack)
 {
     return stack->q[stack->sp - 1];
 }

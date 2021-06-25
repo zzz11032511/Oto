@@ -5,4 +5,4 @@
 #include "token.h"
 #include "variable.h"
 
-int32_t lexer(str_t s, tokenBuf_t *tcBuf, var_t **var);
+int32_t lexer(str_t s, tokenBuf_t *tcBuf, var_t *var);

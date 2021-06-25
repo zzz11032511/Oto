@@ -46,7 +46,7 @@ int32_t isCharOperator(unsigned char c)
 }
 
 /* プログラムをトークンコード列に変換する */
-int32_t lexer(str_t s, tokenBuf_t *tcBuf, var_t **var)
+int32_t lexer(str_t s, tokenBuf_t *tcBuf, var_t *var)
 {
     int32_t i = 0;        // 現在参照している文字の位置
     int32_t tcCnt = 0;    // これまでに変換したトークンの数
@@ -63,7 +63,7 @@ int32_t lexer(str_t s, tokenBuf_t *tcBuf, var_t **var)
         } else if (s[i] == '/' && s[i + 1] == '*') {    // コメント部分は飛ばす
             i = i + 2;    // "/*"を飛ばす
             while (!(s[i] == '*' && s[i + 1] == '/')) i++;
-            continue; 
+            continue;
         }
 
         int32_t len = 0;    // 変数などの長さを記録するための変数

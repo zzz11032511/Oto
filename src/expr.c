@@ -120,18 +120,18 @@ int32_t rpn(tokenBuf_t *tcBuf, int32_t start, int32_t end, int32_t *rpnTc, int32
 
         } else if (TcEEq <= tc && tc <= TcEqu) {
             // 演算子のとき
-            if (priorityCmp(tc, peek(&stack)) > 0) {
-                push(&stack, tc);
+            if (priorityCmp(tc, iPeek(&stack)) > 0) {
+                iPush(&stack, tc);
                 // printf("push : %d\n", tc);
 
             } else {
                 // スタックの一番上の演算子よりも優先度が低いときには
                 // スタックの先頭の優先度が低くなるか, spが0になるまで書き込む
-                while (stack.sp > 0 && (priorityCmp(tc, peek(&stack)) <= 0)) {
-                    rpnTc[rpnTcP++] = pop(&stack);
+                while (stack.sp > 0 && (priorityCmp(tc, iPeek(&stack)) <= 0)) {
+                    rpnTc[rpnTcP++] = iPop(&stack);
                     // printf("pop : %d\n", rpnTc[rpnTcP - 1]);
                 }
-                push(&stack, tc);
+                iPush(&stack, tc);
                 // printf("push : %d\n", tc);
             }
         }
@@ -140,14 +140,14 @@ int32_t rpn(tokenBuf_t *tcBuf, int32_t start, int32_t end, int32_t *rpnTc, int32
     while (stack.sp > 0) {
         // 最後にスタックに残ったものをpopする
         // stack.sp > 0でないのは, 冒頭のpush(TcEnd)の分
-        rpnTc[rpnTcP++] = pop(&stack);
+        rpnTc[rpnTcP++] = iPop(&stack);
     }
 
     return rpnTcP;
 }
 
 
-int32_t expr(tokenBuf_t *tcBuf, int32_t *pc, var_t **var, int32_t **ic)
+int32_t expr(tokenBuf_t *tcBuf, int32_t *pc, var_t *var, var_t **ic)
 {
     int32_t ppc = *pc; // 最初のpcを保存しておく
 
@@ -186,8 +186,8 @@ int32_t expr(tokenBuf_t *tcBuf, int32_t *pc, var_t **var, int32_t **ic)
 
         } else if (tc > TcEnd) {
             // そうじゃなかったらスタックに積む
-            putIc(ic, pc, OpPush, var[tc], 0, 0, 0);
-            push(&varStack, tc);
+            putIc(ic, pc, OpPush, &var[tc], 0, 0, 0);
+            iPush(&varStack, tc);
         }
     }
 

@@ -10,12 +10,12 @@
 
 int32_t run(str_t src) {
     tokenBuf_t *tcBuf = newTokenBuf();    // トークン番号リスト
-    var_t *var[MAX_TC];
-
+    var_t var[MAX_TC];
+    
     // TODO: symbolsが0終端じゃないからエラー吐く
     tcInit(tcBuf, var);
 
-    int32_t *ic[IC_LIST_SIZE];
+    var_t *ic[IC_LIST_SIZE];
     if (compile(src, tcBuf, var, ic) >= 1) {
         exit(1);
     }

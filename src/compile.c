@@ -49,7 +49,7 @@ int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...)
         if (tc == ptnTc) {
             // 既にあるトークンと一致した
 
-        } else if (ptnTc == TcType && (Tcint32_t <= tc && tc <= TcFloat)) {
+        } else if (ptnTc == TcType && (TcInt <= tc && tc <= TcFloat)) {
             // 変数の型
 
         } else if (ptnTc == TcIdentifier && tc > TcEnd) {
@@ -96,10 +96,9 @@ int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...)
  *      op      : 処理を表す内部コード
  *      v1 ~ v4 : 渡す値(ポインタ)
  */
-void putIc(int32_t **ic, int32_t *icp, int32_t op, int32_t *v1, int32_t *v2, int32_t *v3, int32_t *v4)
+void putIc(var_t **ic, int32_t *icp, int32_t op, var_t *v1, var_t *v2, var_t *v3, var_t *v4)
 {
-    // printtf("pc : %d | op : %d, v1 : %d, v2 : %d, v3 : %d, v4 : %d\n", *icp, op, v1, v2, v3, v4);
-    ic[(*icp)++] = (int32_t *)op;
+    ic[(*icp)++] = (var_t *)op;
     ic[(*icp)++] = v1;
     ic[(*icp)++] = v2;
     ic[(*icp)++] = v3;
@@ -107,7 +106,7 @@ void putIc(int32_t **ic, int32_t *icp, int32_t op, int32_t *v1, int32_t *v2, int
 }
 
 /* 内部コードに変換する関数 */
-int32_t compile(String s, tokenBuf_t *tcBuf, var_t **var, int32_t **ic)
+int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic)
 {
     int32_t pc, pc1;    // プログラムカウンタ
 
@@ -126,7 +125,7 @@ int32_t compile(String s, tokenBuf_t *tcBuf, var_t **var, int32_t **ic)
     int32_t ppc = 0;    // ptnCmp()前のpcの値を保存しておく
     pc = 0;
     while(pc < pc1) {
-        // print32_tf("pc : %d\n", pc);
+        // printf("pc : %d\n", pc);
         ppc = pc;
 
         if (ptnCmp(tcBuf, &pc, TcType, TcIdentifier, TcEqu, TcConst, TcSemi)) {
@@ -136,7 +135,11 @@ int32_t compile(String s, tokenBuf_t *tcBuf, var_t **var, int32_t **ic)
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcConst, TcSemi)) {
             /* <identifier> = <const>; (単純代入) */
             printf("<identifier> = <expr>;\n");
-            putIc(ic, &pc, OpCpy, var[tVpc[0]], 0, 0, 0);
+            putIc(ic, &pc, OpCpy, &var[tVpc[0]], 0, 0, 0);
+
+        } else if (ptnCmp(tcBuf, &pc, TcPrint, TcSemi)) {
+            printf("<print> <tos>\n");
+            putIc(ic, &pc, OpPrint, 0, 0, 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcExpr)) {
             /* <expr>; (算術式) */
