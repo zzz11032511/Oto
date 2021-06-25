@@ -82,6 +82,11 @@ void exec(var_t **ic, var_t *var)
             t1 = pop(&stack);
             t2 = pop(&stack);
             
+            if (t1.value.iVal == 0) {
+                fprintf(stderr, "Zero division error!\n");
+                exit(1);
+            }
+
             t3.type = TyInt;
             t3.value.iVal = t2.value.iVal / t1.value.iVal;
             
