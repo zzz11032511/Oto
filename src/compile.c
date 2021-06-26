@@ -115,23 +115,24 @@ int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic)
     int32_t *tc = tcBuf->tc;
 
     // デバッグ用, tcの表示
-    printf("tc : ");
-    for (pc = 0; pc < pc1; pc++) {
-        printf("%d ", tcBuf->tc[pc]);
-    }
-    printf("\n");
+    // printf("tc : ");
+    // for (pc = 0; pc < pc1; pc++) {
+    //     printf("%d ", tcBuf->tc[pc]);
+    // }
+    // printf("\n");
 
     int32_t icp = 0;    // icをどこまで書き込んだか
     int32_t ppc = 0;    // ptnCmp()前のpcの値を保存しておく
 
     pc = 0;
     while(pc < pc1) {
-        printf("pc : %d, tc : %d\n", pc, tc[pc]);
+        // printf("pc : %d, tc : %d\n", pc, tc[pc]);
         ppc = pc;
 
         if (ptnCmp(tcBuf, &pc, TcType, TcIdentifier, TcEqu, TcConst, TcSemi)) {
             /* <type> <identifier> = <const>; (変数宣言) */
             printf("<type> <identifier> = <const>;\n");
+            putIc(ic, &icp, OpCpy, &var[tVpc[0]], 0, 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcConst, TcSemi)) {
             /* <identifier> = <const>; (単純代入) */

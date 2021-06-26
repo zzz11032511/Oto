@@ -165,11 +165,11 @@ int32_t expr(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t **i
     int32_t rpnTcN = rpn(tcBuf, start, end, rpnTc, 0);    // 逆ポーランド記法に書き替えたトークン列の長さ
 
     // デバッグ用
-    printf("rpnTc : ");
-    for (int32_t i = 0; i < rpnTcN; i++) {
-        printf("%d ", rpnTc[i]);
-    }
-    printf("\n");
+    // printf("rpnTc : ");
+    // for (int32_t i = 0; i < rpnTcN; i++) {
+    //     printf("%d ", rpnTc[i]);
+    // }
+    // printf("\n");
 
     int32_t t1 = 0;
     int32_t t2 = 0;
