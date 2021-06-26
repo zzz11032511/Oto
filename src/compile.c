@@ -123,9 +123,10 @@ int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic)
 
     int32_t icp = 0;    // icをどこまで書き込んだか
     int32_t ppc = 0;    // ptnCmp()前のpcの値を保存しておく
+
     pc = 0;
     while(pc < pc1) {
-        // printf("pc : %d\n", pc);
+        printf("pc : %d, tc : %d\n", pc, tc[pc]);
         ppc = pc;
 
         if (ptnCmp(tcBuf, &pc, TcType, TcIdentifier, TcEqu, TcConst, TcSemi)) {
@@ -135,16 +136,16 @@ int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic)
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcConst, TcSemi)) {
             /* <identifier> = <const>; (単純代入) */
             printf("<identifier> = <expr>;\n");
-            putIc(ic, &pc, OpCpy, &var[tVpc[0]], 0, 0, 0);
+            putIc(ic, &icp, OpCpy, &var[tVpc[0]], 0, 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcPrint, TcSemi)) {
-            printf("<print> <tos>\n");
-            putIc(ic, &pc, OpPrint, 0, 0, 0, 0);
+            printf("<print>;\n");
+            putIc(ic, &icp, OpPrint, 0, 0, 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcExpr)) {
             /* <expr>; (算術式) */
             printf("<expr>;\n");
-            expr(tcBuf, &pc, var, ic);
+            expr(tcBuf, &icp, &pc, var, ic);
 
         } else {
             goto err;

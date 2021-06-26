@@ -32,5 +32,5 @@ clean :
 	-$(DEL) *.o
 	-$(DEL) *.exe
 
-run : $(PROGRAM)
+run : $(PROGRAM).exe
 	$(PROGRAM) aaa.oto

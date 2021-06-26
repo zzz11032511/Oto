@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdint.h>
 #include "util.h"
 #include "ic.h"
@@ -33,13 +34,13 @@ void exec(var_t **ic, var_t *var)
     struct vStack stack;
     stack.sp = 0;
 
-    // 演算用の一時変数
+    // 計算用の一時変数
     var_t t1;
     var_t t2;
     var_t t3;
 
     while (1) {
-        printf("opcode : %d\n", (int32_t)icp[0]);
+        // printf("opcode : %d\n", (int32_t)icp[0]);
         switch ((int32_t) icp[0]) {
         case OpCpy:
             continue;
@@ -83,7 +84,7 @@ void exec(var_t **ic, var_t *var)
             t2 = pop(&stack);
             
             if (t1.value.iVal == 0) {
-                fprintf(stderr, "Zero division error!\n");
+                fprintf(stderr, "Zero division error.\n");
                 exit(1);
             }
 

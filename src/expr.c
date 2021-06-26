@@ -147,7 +147,7 @@ int32_t rpn(tokenBuf_t *tcBuf, int32_t start, int32_t end, int32_t *rpnTc, int32
 }
 
 
-int32_t expr(tokenBuf_t *tcBuf, int32_t *pc, var_t *var, var_t **ic)
+int32_t expr(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t **ic)
 {
     int32_t ppc = *pc; // 最初のpcを保存しておく
 
@@ -182,14 +182,16 @@ int32_t expr(tokenBuf_t *tcBuf, int32_t *pc, var_t *var, var_t **ic)
 
             varStack.sp -= 2;
 
-            putIc(ic, pc, op, 0, 0, 0, 0);
+            putIc(ic, icp, op, 0, 0, 0, 0);
 
         } else if (tc > TcEnd) {
             // そうじゃなかったらスタックに積む
-            putIc(ic, pc, OpPush, &var[tc], 0, 0, 0);
+            putIc(ic, icp, OpPush, &var[tc], 0, 0, 0);
             iPush(&varStack, tc);
         }
     }
+
+    *pc = ppc + (end - start) + 1;    // PCを(式の長さ + 1)分進める
 
     return 0;
 }
