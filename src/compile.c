@@ -51,6 +51,7 @@ int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...)
 
         } else if (ptnTc == TcType && (TcInt <= tc && tc <= TcFloat)) {
             // 変数の型
+            tVpc[vp++] = tc;
 
         } else if (ptnTc == TcIdentifier && tc > TcEnd) {
             // 変数名, 識別子の時の処理
@@ -64,11 +65,13 @@ int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...)
             // 式の時の処理
             (*pc) = ppc;    // 式と思われるときはpcを元に戻して返す
             vp = 0;         // 違うときはvpも元に戻す
+            va_end(ap);
             return 1;
 
         } else {
             (*pc) = ppc;    // もし一致しないときはpcをptnCmp()呼び出し前に戻す
             vp = 0;
+            va_end(ap);
             return 0;    // 一致しなかったので0を返す
         }
         ptnTc = va_arg(ap, int32_t);    // 次のトークンパータンを参照
@@ -77,11 +80,13 @@ int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...)
 
     if (nest != 0) {
         vp = 0;
+        va_end(ap);
         return 0;    // ネストが正常でないので不一致
     }
 
+    vp = 0;
     va_end(ap);
-
+    
     return 1;
 }
 
@@ -132,7 +137,8 @@ int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic)
         if (ptnCmp(tcBuf, &pc, TcType, TcIdentifier, TcEqu, TcConst, TcSemi)) {
             /* <type> <identifier> = <const>; (変数宣言) */
             printf("<type> <identifier> = <const>;\n");
-            putIc(ic, &icp, OpCpy, &var[tVpc[0]], 0, 0, 0);
+            // printf("tVpc[0] : %d, tVpc[1] : %d, tVpc[2] : %d\n", tVpc[0], tVpc[1], tVpc[2]);
+            putIc(ic, &icp, OpDef, (var_t *)tVpc[0], &var[tVpc[1]], &var[tVpc[2]], 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcConst, TcSemi)) {
             /* <identifier> = <const>; (単純代入) */
@@ -145,6 +151,7 @@ int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic)
 
         } else if (ptnCmp(tcBuf, &pc, TcExpr)) {
             /* <expr>; (算術式) */
+            // TODO: 今はマッチしなければなんでも式だと思うので、エラー処理をちゃんとする
             printf("<expr>;\n");
             expr(tcBuf, &icp, &pc, var, ic);
 

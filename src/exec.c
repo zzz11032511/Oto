@@ -42,7 +42,15 @@ void exec(var_t **ic, var_t *var)
     while (1) {
         // printf("opcode : %d\n", (int32_t)icp[0]);
         switch ((int32_t) icp[0]) {
+        case OpDef:
+            icp[2]->type = (int32_t)icp[1];
+            icp[2]->value.iVal = icp[3]->value.iVal;
+            // printf("type : %d, value : %d\n", (int32_t)icp[1], icp[3]->value.iVal);
+            icp += 5;
+            continue;
+
         case OpCpy:
+            icp += 5;
             continue;
 
         case OpAdd:
