@@ -152,13 +152,13 @@ int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic)
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcExpr)) {
             /* <identifier> = <expr>; (数式の結果の代入) */
             printf("<identifier> = <expr>;\n");
-            pc += 2;
+            pc += 2;    // 式の先頭までpcを進める
             expr(tcBuf, &icp, &pc, var, ic);
             putIc(ic, &icp, OpCpyP, &var[tVpc[0]], 0, 0, 0);
 
-        } else if (ptnCmp(tcBuf, &pc, TcPrint, TcSemi)) {
-            printf("<print>;\n");
-            putIc(ic, &icp, OpPrint, 0, 0, 0, 0);
+        } else if (ptnCmp(tcBuf, &pc, TcPrint, TcIdentifier, TcSemi)) {
+            printf("<print> <identifier>;\n");
+            putIc(ic, &icp, OpPrint, &var[tVpc[0]], 0, 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcExpr)) {
             /* <expr>; (算術式) */

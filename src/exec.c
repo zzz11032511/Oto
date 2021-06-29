@@ -112,8 +112,7 @@ void exec(var_t **ic, var_t *var)
             continue;
 
         case OpPrint:
-            t1 = peek(&stack);
-            printVal(t1);
+            printVal(*icp[1]);
             icp += 5;
             continue;
         
