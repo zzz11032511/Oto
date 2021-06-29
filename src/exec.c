@@ -5,6 +5,7 @@
 #include "ic.h"
 #include "vStack.h"
 #include "variable.h"
+#include "alu.h"
 
 void printVal(var_t var) {
     switch (var.type) {
@@ -15,7 +16,7 @@ void printVal(var_t var) {
         printf("%d\n", var.value.iVal);
         break;
     case TyFloat:
-        printf("%d\n", var.value.fVal);
+        printf("%f\n", var.value.fVal);
         break;
     case TyConstF:
         printf("%f\n", var.value.fVal);
@@ -57,8 +58,7 @@ void exec(var_t **ic, var_t *var)
             t1 = pop(&stack);
             t2 = pop(&stack);
             
-            t3.type = TyInt;
-            t3.value.iVal = t2.value.iVal + t1.value.iVal;
+            t3 = add2(t1, t2);
             
             push(&stack, t3);
             icp += 5;
@@ -68,8 +68,7 @@ void exec(var_t **ic, var_t *var)
             t1 = pop(&stack);
             t2 = pop(&stack);
             
-            t3.type = TyInt;
-            t3.value.iVal = t2.value.iVal - t1.value.iVal;
+            t3 = sub2(t1, t2);
             
             push(&stack, t3);
             icp += 5;
@@ -78,26 +77,18 @@ void exec(var_t **ic, var_t *var)
         case OpMul:
             t1 = pop(&stack);
             t2 = pop(&stack);
-            
-            t3.type = TyInt;
-            t3.value.iVal = t2.value.iVal * t1.value.iVal;
-            
+
+            t3 = mul2(t1, t2);
+
             push(&stack, t3);
             icp += 5;
             continue;
 
         case OpDiv:
-            // TODO: 0除算などを考慮すべき
             t1 = pop(&stack);
             t2 = pop(&stack);
-            
-            if (t1.value.iVal == 0) {
-                fprintf(stderr, "Zero division error.\n");
-                exit(1);
-            }
 
-            t3.type = TyInt;
-            t3.value.iVal = t2.value.iVal / t1.value.iVal;
+            t3 = div2(t1, t2);
             
             push(&stack, t3);
             icp += 5;
@@ -105,7 +96,7 @@ void exec(var_t **ic, var_t *var)
 
         case OpPush:
             push(&stack, *icp[1]);
-            // printf("push : %d\n", (*icp[1]).value.iVal);
+            printf("push : %d\n", (*icp[1]).value.iVal);
 
             icp += 5;
             continue;

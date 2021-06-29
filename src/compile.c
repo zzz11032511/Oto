@@ -51,7 +51,11 @@ int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...)
 
         } else if (ptnTc == TcType && (TcInt <= tc && tc <= TcFloat)) {
             // 変数の型
-            tVpc[vp++] = tc;
+            if (tc == TcInt) {
+                tVpc[vp++] = TyInt;
+            } else if (tc == TcFloat) {
+                tVpc[vp++] = TyFloat;
+            }
 
         } else if (ptnTc == TcIdentifier && tc > TcEnd) {
             // 変数名, 識別子の時の処理
