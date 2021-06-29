@@ -45,12 +45,22 @@ void exec(var_t **ic, var_t *var)
         switch ((int32_t) icp[0]) {
         case OpDef:
             icp[2]->type = (int32_t)icp[1];
-            icp[2]->value.iVal = icp[3]->value.iVal;
+            icp[2]->value.iVal = icp[3]->value.iVal;    // intだろうがfloatだろうがこれで代入できる
+
             // printf("type : %d, value : %d\n", (int32_t)icp[1], icp[3]->value.iVal);
             icp += 5;
             continue;
 
-        case OpCpy:
+        case OpCpyS:
+            icp[1]->type = icp[2]->type;
+            icp[1]->value.iVal = icp[2]->value.iVal;
+            icp += 5;
+            continue;
+
+        case OpCpyP:
+            t1 = pop(&stack);
+            icp[1]->type = t1.type;
+            icp[1]->value.iVal = t1.value.iVal;
             icp += 5;
             continue;
 
@@ -58,7 +68,7 @@ void exec(var_t **ic, var_t *var)
             t1 = pop(&stack);
             t2 = pop(&stack);
             
-            t3 = add2(t1, t2);
+            t3 = add2(t2, t1);
             
             push(&stack, t3);
             icp += 5;
@@ -68,7 +78,7 @@ void exec(var_t **ic, var_t *var)
             t1 = pop(&stack);
             t2 = pop(&stack);
             
-            t3 = sub2(t1, t2);
+            t3 = sub2(t2, t1);
             
             push(&stack, t3);
             icp += 5;
@@ -78,7 +88,7 @@ void exec(var_t **ic, var_t *var)
             t1 = pop(&stack);
             t2 = pop(&stack);
 
-            t3 = mul2(t1, t2);
+            t3 = mul2(t2, t1);
 
             push(&stack, t3);
             icp += 5;
@@ -88,7 +98,7 @@ void exec(var_t **ic, var_t *var)
             t1 = pop(&stack);
             t2 = pop(&stack);
 
-            t3 = div2(t1, t2);
+            t3 = div2(t2, t1);
             
             push(&stack, t3);
             icp += 5;

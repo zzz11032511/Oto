@@ -146,8 +146,15 @@ int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic)
 
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcConst, TcSemi)) {
             /* <identifier> = <const>; (単純代入) */
+            printf("<identifier> = <const>;\n");
+            putIc(ic, &icp, OpCpyS, &var[tVpc[0]], &var[tVpc[1]], 0, 0);
+
+        } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcExpr)) {
+            /* <identifier> = <expr>; (数式の結果の代入) */
             printf("<identifier> = <expr>;\n");
-            putIc(ic, &icp, OpCpy, &var[tVpc[0]], 0, 0, 0);
+            pc += 2;
+            expr(tcBuf, &icp, &pc, var, ic);
+            putIc(ic, &icp, OpCpyP, &var[tVpc[0]], 0, 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcPrint, TcSemi)) {
             printf("<print>;\n");
