@@ -1,44 +1,45 @@
+#include <stdarg.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdarg.h>
-#include <stdint.h>
-#include "util.h"
-#include "token.h"
-#include "lexer.h"
-#include "variable.h"
+
 #include "compile.h"
 #include "iStack.h"
 #include "ic.h"
+#include "lexer.h"
+#include "token.h"
+#include "util.h"
+#include "variable.h"
 
 /* 演算子のトークンコードを対応する内部コードに変換する */
-int32_t tc2op(int32_t tc)
-{
+int32_t tc2op(int32_t tc) {
     switch (tc) {
-    case TcPlus:
-        return OpAdd;
-    case TcMinus:
-        return OpSub;
-    case TcAster:
-        return OpMul;
-    case TcSlash:
-        return OpDiv;
-    default:
-        // 一致しない(演算子でない)ときはOpNopを返す
-        return OpNop;
+        case TcPlus:
+            return OpAdd;
+        case TcMinus:
+            return OpSub;
+        case TcAster:
+            return OpMul;
+        case TcSlash:
+            return OpDiv;
+        case TcPerce:
+            return OpMod;
+        default:
+            // 一致しない(演算子でない)ときはOpNopを返す
+            return OpNop;
     }
 }
 
 /**
  *  演算子の優先度を比較する関数
- * 
+ *
  *  examples:
  *      tc1 > tc2 ~ return 1;
  *      tc1 = tc2 ~ return 0;
  *      tc1 < tc2 ~ return -1;
  */
-int32_t priorityCmp(int32_t tc1, int32_t tc2)
-{
+int32_t priorityCmp(int32_t tc1, int32_t tc2) {
     int32_t p1 = 1;
     int32_t p2 = 1;
 
@@ -50,10 +51,12 @@ int32_t priorityCmp(int32_t tc1, int32_t tc2)
         p2 = -99;
     }
 
-    if (tc1 == TcAster || tc1 == TcSlash || tc1 == TcWSlash || tc1 == TcPerce) {
+    if (tc1 == TcAster || tc1 == TcSlash || tc1 == TcWSlash ||
+        tc1 == TcPerce) {
         p1 = 2;
     }
-    if (tc2 == TcAster || tc2 == TcSlash || tc2 == TcWSlash || tc2 == TcPerce) {
+    if (tc2 == TcAster || tc2 == TcSlash || tc2 == TcWSlash ||
+        tc2 == TcPerce) {
         p2 = 2;
     }
 
@@ -64,15 +67,15 @@ int32_t priorityCmp(int32_t tc1, int32_t tc2)
 
 /**
  *  トークンコード列を逆ポーランド記法に並び替える関数
- * 
- *  args: 
+ *
+ *  args:
  *      start:  式を表すトークン列の先頭
  *      end:    式を表すトークン列の末尾
  *      rpnTc:  逆ポーランド記法に並べ替えたトークン列の配列
  *      rpnTcP: 逆ポーランド記法に並べ替えたトークン列をどこまで書いたか
  */
-int32_t rpn(tokenBuf_t *tcBuf, int32_t start, int32_t end, int32_t *rpnTc, int32_t rpnTcP)
-{
+int32_t rpn(tokenBuf_t *tcBuf, int32_t start, int32_t end, int32_t *rpnTc,
+            int32_t rpnTcP) {
     struct iStack stack;
     stack.sp = 0;
 
@@ -80,7 +83,7 @@ int32_t rpn(tokenBuf_t *tcBuf, int32_t start, int32_t end, int32_t *rpnTc, int32
     // push(&stack, TcEnd);
 
     for (int32_t pc = start; pc < end; pc++) {
-        int32_t tc = tcBuf->tc[pc];    // 現在指しているトークンを取ってくる
+        int32_t tc = tcBuf->tc[pc];  // 現在指しているトークンを取ってくる
 
         if (tc > TcEnd) {
             // ただの変数,定数ならそのまま書き込む
@@ -99,8 +102,7 @@ int32_t rpn(tokenBuf_t *tcBuf, int32_t start, int32_t end, int32_t *rpnTc, int32
                 if (ttc == TcBrCls) {
                     if (nest == 0) {
                         break;
-                    }
-                    else {
+                    } else {
                         // 「)」でもネストが合わないとき
                         nest--;
                     }
@@ -116,7 +118,7 @@ int32_t rpn(tokenBuf_t *tcBuf, int32_t start, int32_t end, int32_t *rpnTc, int32
 
             rpnTcP = rpn(tcBuf, start1, end1, rpnTc, rpnTcP);
 
-            pc += end1 - start1;    // ()の中の分だけ進める
+            pc += end1 - start1;  // ()の中の分だけ進める
 
         } else if (TcEEq <= tc && tc <= TcEqu) {
             // 演算子のとき
@@ -147,22 +149,23 @@ int32_t rpn(tokenBuf_t *tcBuf, int32_t start, int32_t end, int32_t *rpnTc, int32
 }
 
 
-int32_t expr(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t **ic)
-{
-    int32_t ppc = *pc; // 最初のpcを保存しておく
+int32_t expr(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var,
+             var_t **ic) {
+    int32_t ppc = *pc;  // 最初のpcを保存しておく
 
-    struct iStack varStack;    // 変数を入れるスタック
+    struct iStack varStack;  // 変数を入れるスタック
     varStack.sp = 0;
 
     int32_t start = *pc;
 
     int32_t i = start;
-    while (tcBuf->tc[i] != TcSemi) i++;    // 式の終わりを探す
+    while (tcBuf->tc[i] != TcSemi) i++;  // 式の終わりを探す
     int32_t end = i;
 
-    int32_t rpnTc[RPN_TC_LIST_SIZE];    // 逆ポーランド記法に書き替えたトークン列
+    int32_t rpnTc[RPN_TC_LIST_SIZE];  // 逆ポーランド記法に書き替えたトークン列
 
-    int32_t rpnTcN = rpn(tcBuf, start, end, rpnTc, 0);    // 逆ポーランド記法に書き替えたトークン列の長さ
+    int32_t rpnTcN = rpn(tcBuf, start, end, rpnTc,
+                         0);  // 逆ポーランド記法に書き替えたトークン列の長さ
 
     // デバッグ用
     // printf("rpnTc : ");
@@ -191,7 +194,7 @@ int32_t expr(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t **i
         }
     }
 
-    *pc = ppc + (end - start) + 1;    // PCを(式の長さ + 1)分進める
+    *pc = ppc + (end - start) + 1;  // PCを(式の長さ + 1)分進める
 
     return 0;
 }

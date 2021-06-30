@@ -71,9 +71,7 @@ void exec(var_t **ic, var_t *var) {
             case OpAdd:
                 t1 = pop(&stack);
                 t2 = pop(&stack);
-
                 t3 = add2(t2, t1);
-
                 push(&stack, t3);
                 icp += 5;
                 continue;
@@ -81,9 +79,7 @@ void exec(var_t **ic, var_t *var) {
             case OpSub:
                 t1 = pop(&stack);
                 t2 = pop(&stack);
-
                 t3 = sub2(t2, t1);
-
                 push(&stack, t3);
                 icp += 5;
                 continue;
@@ -91,9 +87,7 @@ void exec(var_t **ic, var_t *var) {
             case OpMul:
                 t1 = pop(&stack);
                 t2 = pop(&stack);
-
                 t3 = mul2(t2, t1);
-
                 push(&stack, t3);
                 icp += 5;
                 continue;
@@ -101,9 +95,15 @@ void exec(var_t **ic, var_t *var) {
             case OpDiv:
                 t1 = pop(&stack);
                 t2 = pop(&stack);
-
                 t3 = div2(t2, t1);
+                push(&stack, t3);
+                icp += 5;
+                continue;
 
+            case OpMod:
+                t1 = pop(&stack);
+                t2 = pop(&stack);
+                t3 = mod2(t2, t1);
                 push(&stack, t3);
                 icp += 5;
                 continue;
@@ -111,7 +111,6 @@ void exec(var_t **ic, var_t *var) {
             case OpPush:
                 push(&stack, *icp[1]);
                 // printf("push : %d\n", (*icp[1]).value.iVal);
-
                 icp += 5;
                 continue;
 

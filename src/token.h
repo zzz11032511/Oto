@@ -18,7 +18,7 @@
 #define TcOperator     -5    // 演算子
 
 /* 字句解析が返す値(トークンコード)の一覧 */
-enum {
+enum TOKEN_CODE {
     TcSemi = 0,    // ';'
     TcDot,         // '.'
 
