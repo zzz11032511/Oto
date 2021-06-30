@@ -14,6 +14,8 @@ enum OP_CODE {
     OpMul,        // 掛算
     OpDiv,        // 割算
     OpMod,        // 余り
+    OpAdd1,        // 1加算
+    OpSub1,        // 1減算
     OpPrint,      // 変数の出力
 
     OpEnd         // 終了

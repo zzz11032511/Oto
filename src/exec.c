@@ -108,6 +108,16 @@ void exec(var_t **ic, var_t *var) {
                 icp += 5;
                 continue;
 
+            case OpAdd1:
+                icp[1]->value.iVal += 1;
+                icp += 5;
+                continue;
+
+            case OpSub1:
+                icp[1]->value.iVal -= 1;
+                icp += 5;
+                continue;
+
             case OpPush:
                 push(&stack, *icp[1]);
                 // printf("push : %d\n", (*icp[1]).value.iVal);
