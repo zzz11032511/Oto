@@ -1,27 +1,28 @@
+#include <stdarg.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdarg.h>
-#include <stdint.h>
-#include "util.h"
-#include "token.h"
-#include "lexer.h"
-#include "variable.h"
+
 #include "expr.h"
 #include "ic.h"
+#include "lexer.h"
+#include "token.h"
+#include "util.h"
+#include "variable.h"
 
-int32_t tVpc[5];    // putIc()で指定するTcを入れる場所(Temp Var Pcのつもり)
-int32_t vp = 0;     // tVpcへのポインタ
+int32_t tVpc[5];  // putIc()で指定するTcを入れる場所(Temp Var Pcのつもり)
+int32_t vp = 0;  // tVpcへのポインタ
 
-/* 引数に渡されたトークンのパターンと実際のコードが一致しているかを調べる関数 */
-int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...)
-{
+/* 引数に渡されたトークンのパターンと実際のコードが一致しているかを調べる関数
+ */
+int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...) {
     va_list ap;
-    va_start(ap, pattern);    // 可変長引数
+    va_start(ap, pattern);  // 可変長引数
 
-    int32_t ppc = *pc;    // 最初のpcを保存しておく
-    int32_t ptnTc = pattern;    // パターンから読み込んだトークン
-    int32_t nest = 0;    // ネストの深さ
+    int32_t ppc   = *pc;      // 最初のpcを保存しておく
+    int32_t ptnTc = pattern;  // パターンから読み込んだトークン
+    int32_t nest  = 0;        // ネストの深さ
 
     while (1) {
         // ネストの処理をいつか書く
@@ -30,7 +31,7 @@ int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...)
 
         if (ptnTc == TcSemi && tc == TcSemi) {
             // セミコロンなら終わり
-            (*pc)++;    // 進めとく
+            (*pc)++;  // 進めとく
             break;
         }
 
@@ -67,37 +68,37 @@ int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...)
 
         } else if (ptnTc == TcExpr) {
             // 式の時の処理
-            (*pc) = ppc;    // 式と思われるときはpcを元に戻して返す
-            vp = 0;         // 違うときはvpも元に戻す
+            (*pc) = ppc;  // 式と思われるときはpcを元に戻して返す
+            vp    = 0;  // 違うときはvpも元に戻す
             va_end(ap);
             return 1;
 
         } else {
-            (*pc) = ppc;    // もし一致しないときはpcをptnCmp()呼び出し前に戻す
+            (*pc) = ppc;  // もし一致しないときはpcをptnCmp()呼び出し前に戻す
             vp = 0;
             va_end(ap);
-            return 0;    // 一致しなかったので0を返す
+            return 0;  // 一致しなかったので0を返す
         }
-        ptnTc = va_arg(ap, int32_t);    // 次のトークンパータンを参照
+        ptnTc = va_arg(ap, int32_t);  // 次のトークンパータンを参照
         (*pc)++;
     }
 
     if (nest != 0) {
         vp = 0;
         va_end(ap);
-        return 0;    // ネストが正常でないので不一致
+        return 0;  // ネストが正常でないので不一致
     }
 
     vp = 0;
     va_end(ap);
-    
+
     return 1;
 }
 
 
 /**
  * ic[]に書き込むための関数
- * 
+ *
  * args:
  *      ic      : 内部コード列
  *      icp     : 現在指しているicのインデックス
@@ -105,9 +106,9 @@ int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...)
  *      op      : 処理を表す内部コード
  *      v1 ~ v4 : 渡す値(ポインタ)
  */
-void putIc(var_t **ic, int32_t *icp, int32_t op, var_t *v1, var_t *v2, var_t *v3, var_t *v4)
-{
-    ic[(*icp)++] = (var_t *)op;
+void putIc(var_t **ic, int32_t *icp, int32_t op, var_t *v1, var_t *v2,
+           var_t *v3, var_t *v4) {
+    ic[(*icp)++] = (var_t *)((int64_t)op);
     ic[(*icp)++] = v1;
     ic[(*icp)++] = v2;
     ic[(*icp)++] = v3;
@@ -115,9 +116,8 @@ void putIc(var_t **ic, int32_t *icp, int32_t op, var_t *v1, var_t *v2, var_t *v3
 }
 
 /* 内部コードに変換する関数 */
-int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic)
-{
-    int32_t pc, pc1;    // プログラムカウンタ
+int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic) {
+    int32_t pc, pc1;  // プログラムカウンタ
 
     pc1 = lexer(s, tcBuf, var);
 
@@ -130,19 +130,21 @@ int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic)
     // }
     // printf("\n");
 
-    int32_t icp = 0;    // icをどこまで書き込んだか
-    int32_t ppc = 0;    // ptnCmp()前のpcの値を保存しておく
+    int32_t icp = 0;  // icをどこまで書き込んだか
+    int32_t ppc = 0;  // ptnCmp()前のpcの値を保存しておく
 
     pc = 0;
-    while(pc < pc1) {
+    while (pc < pc1) {
         // printf("pc : %d, tc : %d\n", pc, tc[pc]);
         ppc = pc;
 
         if (ptnCmp(tcBuf, &pc, TcType, TcIdentifier, TcEqu, TcConst, TcSemi)) {
             /* <type> <identifier> = <const>; (変数宣言) */
             printf("<type> <identifier> = <const>;\n");
-            // printf("tVpc[0] : %d, tVpc[1] : %d, tVpc[2] : %d\n", tVpc[0], tVpc[1], tVpc[2]);
-            putIc(ic, &icp, OpDef, (var_t *)tVpc[0], &var[tVpc[1]], &var[tVpc[2]], 0);
+            // printf("tVpc[0] : %d, tVpc[1] : %d, tVpc[2] : %d\n", tVpc[0],
+            // tVpc[1], tVpc[2]);
+            putIc(ic, &icp, OpDef, (var_t *)((int64_t)tVpc[0]), &var[tVpc[1]],
+                  &var[tVpc[2]], 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcConst, TcSemi)) {
             /* <identifier> = <const>; (単純代入) */
@@ -152,7 +154,7 @@ int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic)
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcExpr)) {
             /* <identifier> = <expr>; (数式の結果の代入) */
             printf("<identifier> = <expr>;\n");
-            pc += 2;    // 式の先頭までpcを進める
+            pc += 2;  // 式の先頭までpcを進める
             expr(tcBuf, &icp, &pc, var, ic);
             putIc(ic, &icp, OpCpyP, &var[tVpc[0]], 0, 0, 0);
 
@@ -162,7 +164,8 @@ int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic)
 
         } else if (ptnCmp(tcBuf, &pc, TcExpr)) {
             /* <expr>; (算術式) */
-            // TODO: 今はマッチしなければなんでも式だと思うので、エラー処理をちゃんとする
+            // TODO:
+            // 今はマッチしなければなんでも式だと思うので、エラー処理をちゃんとする
             printf("<expr>;\n");
             expr(tcBuf, &icp, &pc, var, ic);
 
