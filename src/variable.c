@@ -1,8 +1,10 @@
+#include "variable.h"
+
+#include <stdarg.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
 #include <string.h>
-#include <stdarg.h>
-#include "util.h"
+
 #include "lexer.h"
-#include "variable.h"
+#include "util.h"

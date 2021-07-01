@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-enum {
+enum TYPE {
     TyVoid = 0,
     TyConstI,
     TyConstF,
