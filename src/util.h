@@ -4,8 +4,8 @@
 
 typedef uint8_t *str_t;  // 文字列
 
-#define SOURCE_BUF_SIZE \
-    10000  // ファイルから読み取ったソースを確保する領域のサイズ
+// ファイルから読み取ったソースを確保する領域のサイズ
+#define SOURCE_BUF_SIZE 10000
 
 /**
  * pathに指定されたソースファイルをsrcに読み込む

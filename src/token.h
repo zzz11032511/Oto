@@ -5,7 +5,7 @@
 #include "util.h"
 
 // 認識するトークンの数の最大値
-#define MAX_TC 255
+#define MAX_TC 1024
 
 // トークンコード列の大きさ
 #define TC_LIST_SIZE 10000
@@ -58,7 +58,8 @@ enum TOKEN_CODE {
     TcInt,         // int32_t型
     TcFloat,       // float型
     
-    TcPrint,       // print32_t文
+    TcIf,          // if文
+    TcPrint,       // print文
 
     TcEnd          // トークン定義がここまでだよーということを示す
 };

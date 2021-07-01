@@ -168,6 +168,7 @@ int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic) {
             printf("<identifier>--;\n");
             putIc(ic, &icp, OpSub1, &var[tVpc[0]], 0, 0, 0);
 
+        } else if (ptnCmp(tcBuf, &pc, TcIf, TcBrOpn, TcIdentifier)) {
         } else if (ptnCmp(tcBuf, &pc, TcPrint, TcIdentifier, TcSemi)) {
             /* <print> <identifier>; (変数の値の出力) */
             printf("<print> <identifier>;\n");
@@ -175,8 +176,7 @@ int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic) {
 
         } else if (ptnCmp(tcBuf, &pc, TcExpr)) {
             /* <expr>; (算術式) */
-            // TODO:
-            // 今はマッチしなければなんでも式だと思うので、エラー処理をちゃんとする
+            // TODO: エラー処理をちゃんとする
             printf("<expr>;\n");
             expr(tcBuf, &icp, &pc, var, ic);
         } else {

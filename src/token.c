@@ -119,7 +119,7 @@ int32_t tcInit(tokenBuf_t *tcBuf, var_t *var) {
     /* 最初にlexerしておく文字列 */
     str_t symbols =
         "; . ( ) [ ] { } == != < >= <= > + - * / // % = ++ -- -> , int float "
-        "print !**! \0";
+        "if print !**! \0";
 
     return lexer(symbols, tcBuf, var);
 }
