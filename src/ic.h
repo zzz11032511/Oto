@@ -16,7 +16,15 @@ enum OP_CODE {
     OpMod,        // 余り
     OpAdd1,       // 1加算
     OpSub1,       // 1減算
-    OpPrint,      // 変数の出力
 
+    OpEq,         // == 
+    OpNEq,        // !=
+    OpLtCmp,      // <
+    OpLtEqCmp,    // <=
+    OpRiCmp,      // >
+    OpRiEqCmp,    // >=
+
+    OpPrint,      // 変数の出力
+    
     OpEnd         // 終了
 };

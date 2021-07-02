@@ -45,10 +45,7 @@ void exec(var_t **ic, var_t *var) {
         switch ((int64_t)icp[0]) {
             case OpDef:
                 icp[2]->type = (int32_t)((int64_t)icp[1]);
-                icp[2]->value.iVal =
-                    icp[3]
-                        ->value
-                        .iVal;  // intだろうがfloatだろうがこれで代入できる
+                icp[2]->value.iVal =icp[3]->value.iVal;  // intだろうがfloatだろうがこれで代入できる
 
                 // printf("type : %d, value : %d\n", (int32_t)icp[1],
                 // icp[3]->value.iVal);
@@ -121,6 +118,19 @@ void exec(var_t **ic, var_t *var) {
             case OpPush:
                 push(&stack, *icp[1]);
                 // printf("push : %d\n", (*icp[1]).value.iVal);
+                icp += 5;
+                continue;
+
+            // 比較命令
+            case OpEq:
+            case OpNEq:
+            case OpLtCmp:
+            case OpLtEqCmp:
+            case OpRiCmp:
+            case OpRiEqCmp:
+                t1.type = TyConstI;
+                t1.value.iVal = compare(*icp[1], *icp[2], (int64_t)icp[0]);
+                push(&stack, t1);
                 icp += 5;
                 continue;
 

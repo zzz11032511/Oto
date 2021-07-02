@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdint.h>
+
 #define MAX_STACK_SIZE 1000
 
 struct iStack {

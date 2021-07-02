@@ -146,3 +146,37 @@ var_t mod2(var_t v1, var_t v2) {
 
     return t;
 }
+
+int32_t compare(var_t v1, var_t v2, int32_t opcode) {
+    int64_t v1Val;
+    int64_t v2Val;
+
+    if (v1.type == TyFloat || v1.type == TyConstF) {
+        v1Val = (int64_t)v1.value.fVal;
+    } else {
+        v1Val = v1.value.iVal;
+    }
+
+    if (v2.type == TyFloat || v2.type == TyConstF) {
+        v2Val = (int64_t)v2.value.fVal;
+    } else {
+        v2Val = v2.value.iVal;
+    }
+
+    switch (opcode) {
+        case OpEq:
+            return v1Val == v2Val;
+        case OpNEq:
+            return v1Val != v2Val;
+        case OpLtCmp:
+            return v1Val < v2Val;
+        case OpLtEqCmp:
+            return v1Val <= v2Val;
+        case OpRiCmp:
+            return v1Val > v2Val;
+        case OpRiEqCmp:
+            return v1Val >= v2Val;
+        default:
+            return 0;
+    }
+}
