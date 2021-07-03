@@ -43,6 +43,33 @@ int32_t tc2op(int32_t tc) {
     }
 }
 
+/* 演算子のトークンコードを優先度に変換する */
+int32_t tc2priority(int32_t tc) {
+    switch (tc) {
+        case TcPlus:
+        case TcMinus:
+            return 3;
+        case TcAster:
+        case TcSlash:
+        case TcWSlash:
+        case TcPerce:
+            return 4;
+        case TcEEq:
+        case TcNEq:
+        case TcLt:
+        case TcGe:
+        case TcLe:
+        case TcGt:
+            return 2;
+        // TcEndのときは優先度-99とする
+        case TcEnd:
+            return -99;
+        default:
+            // 一致しない(演算子でない)ときはOpNopを返す
+            return -99;
+    }    
+}
+
 /**
  *  演算子の優先度を比較する関数
  *
@@ -52,32 +79,8 @@ int32_t tc2op(int32_t tc) {
  *      tc1 < tc2 ~ return -1;
  */
 int32_t priorityCmp(int32_t tc1, int32_t tc2) {
-    int32_t p1 = 1;
-    int32_t p2 = 1;
-
-    // TcEndのときは優先度-99とする
-    if (tc1 == TcEnd) {
-        p1 = -99;
-    }
-    if (tc2 == TcEnd) {
-        p2 = -99;
-    }
-
-    if (tc1 == TcAster || tc1 == TcSlash || tc1 == TcWSlash ||
-        tc1 == TcPerce) {
-        p1 = 2;
-    }
-    if (tc2 == TcAster || tc2 == TcSlash || tc2 == TcWSlash ||
-        tc2 == TcPerce) {
-        p2 = 2;
-    }
-
-    if (tc1 <= TcEEq && tc1 <= TcGt) {
-        p1 = 3;
-    }
-    if (tc2 <= TcEEq && tc2 <= TcGt) {
-        p2 = 3;
-    }
+    int32_t p1 = tc2priority(tc1);
+    int32_t p2 = tc2priority(tc2);
 
     return p1 - p2;
 }
@@ -93,8 +96,7 @@ int32_t priorityCmp(int32_t tc1, int32_t tc2) {
  *      rpnTc:  逆ポーランド記法に並べ替えたトークン列の配列
  *      rpnTcP: 逆ポーランド記法に並べ替えたトークン列をどこまで書いたか
  */
-int32_t rpn(tokenBuf_t *tcBuf, int32_t start, int32_t end, int32_t *rpnTc,
-            int32_t rpnTcP) {
+int32_t rpn(tokenBuf_t *tcBuf, int32_t start, int32_t end, int32_t *rpnTc, int32_t rpnTcP) {
     struct iStack stack;
     stack.sp = 0;
 
@@ -168,8 +170,7 @@ int32_t rpn(tokenBuf_t *tcBuf, int32_t start, int32_t end, int32_t *rpnTc,
 }
 
 
-int32_t expr(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var,
-             var_t **ic) {
+int32_t expr(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t **ic) {
     int32_t ppc = *pc;  // 最初のpcを保存しておく
 
     struct iStack varStack;  // 変数を入れるスタック

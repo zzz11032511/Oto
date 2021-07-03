@@ -10,6 +10,7 @@
 #include "token.h"
 #include "util.h"
 #include "variable.h"
+#include "control.h"
 
 int32_t tVpc[5];  // putIc()で指定するTcを入れる場所(Temp Var Pcのつもり)
 int32_t vp = 0;  // tVpcへのポインタ
@@ -167,13 +168,15 @@ int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic) {
             printf("<print> <identifier>;\n");
             putIc(ic, &icp, OpPrint, &var[tVpc[0]], 0, 0, 0);
 
-        } else if (ptnCmp(tcBuf, &pc, TcIf, TcBrOpn)) {
+        } else if (ptnCmp(tcBuf, &pc, TcIf, TcBrOpn, TcExpr)) {
             printf("<if> (<expr>) {};\n");
+            ifControl(tcBuf, &icp, &ppc, var, ic);
             
         } else if (ptnCmp(tcBuf, &pc, TcExpr)) {
             // TODO: エラー処理をちゃんとする
             printf("<expr>;\n");
             expr(tcBuf, &icp, &pc, var, ic);
+
         } else {
             goto err;
         }
