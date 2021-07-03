@@ -139,7 +139,6 @@ int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic) {
         ppc = pc;
 
         if (ptnCmp(tcBuf, &pc, TcType, TcIdentifier, TcEqu, TcConst, TcSemi)) {
-            /* <type> <identifier> = <const>; (変数宣言) */
             printf("<type> <identifier> = <const>;\n");
             // printf("tVpc[0] : %d, tVpc[1] : %d, tVpc[2] : %d\n", tVpc[0],
             // tVpc[1], tVpc[2]);
@@ -147,35 +146,31 @@ int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic) {
                   &var[tVpc[2]], 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcConst, TcSemi)) {
-            /* <identifier> = <const>; (単純代入) */
             printf("<identifier> = <const>;\n");
             putIc(ic, &icp, OpCpyS, &var[tVpc[0]], &var[tVpc[1]], 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcExpr)) {
-            /* <identifier> = <expr>; (数式の結果の代入) */
             printf("<identifier> = <expr>;\n");
             pc += 2;  // 式の先頭までpcを進める
             expr(tcBuf, &icp, &pc, var, ic);
             putIc(ic, &icp, OpCpyP, &var[tVpc[0]], 0, 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcPlPlus, TcSemi)) {
-            /* <identifier>++;*/
             printf("<identifier>++;\n");
             putIc(ic, &icp, OpAdd1, &var[tVpc[0]], 0, 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcMiMinus, TcSemi)) {
-            /* <identifier>--;*/
             printf("<identifier>--;\n");
             putIc(ic, &icp, OpSub1, &var[tVpc[0]], 0, 0, 0);
 
-        } else if (ptnCmp(tcBuf, &pc, TcIf, TcBrOpn, TcIdentifier)) {
         } else if (ptnCmp(tcBuf, &pc, TcPrint, TcIdentifier, TcSemi)) {
-            /* <print> <identifier>; (変数の値の出力) */
             printf("<print> <identifier>;\n");
             putIc(ic, &icp, OpPrint, &var[tVpc[0]], 0, 0, 0);
 
+        } else if (ptnCmp(tcBuf, &pc, TcIf, TcBrOpn)) {
+            printf("<if> (<expr>) {};\n");
+            
         } else if (ptnCmp(tcBuf, &pc, TcExpr)) {
-            /* <expr>; (算術式) */
             // TODO: エラー処理をちゃんとする
             printf("<expr>;\n");
             expr(tcBuf, &icp, &pc, var, ic);

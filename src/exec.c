@@ -128,9 +128,11 @@ void exec(var_t **ic, var_t *var) {
             case OpLtEqCmp:
             case OpRiCmp:
             case OpRiEqCmp:
-                t1.type = TyConstI;
-                t1.value.iVal = compare(*icp[1], *icp[2], (int64_t)icp[0]);
-                push(&stack, t1);
+                t1 = pop(&stack);
+                t2 = pop(&stack);
+                t3.type = TyConstI;
+                t3.value.iVal = compare(t2, t1, (int64_t)icp[0]);
+                push(&stack, t3);
                 icp += 5;
                 continue;
 

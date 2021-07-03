@@ -25,6 +25,18 @@ int32_t tc2op(int32_t tc) {
             return OpDiv;
         case TcPerce:
             return OpMod;
+        case TcEEq:
+            return OpEq;
+        case TcNEq:
+            return OpNEq;
+        case TcLt:
+            return OpLtCmp;
+        case TcGe:
+            return OpRiEqCmp;
+        case TcLe:
+            return OpLtEqCmp;
+        case TcGt:
+            return OpRiCmp;
         default:
             // 一致しない(演算子でない)ときはOpNopを返す
             return OpNop;
@@ -58,6 +70,13 @@ int32_t priorityCmp(int32_t tc1, int32_t tc2) {
     if (tc2 == TcAster || tc2 == TcSlash || tc2 == TcWSlash ||
         tc2 == TcPerce) {
         p2 = 2;
+    }
+
+    if (tc1 <= TcEEq && tc1 <= TcGt) {
+        p1 = 3;
+    }
+    if (tc2 <= TcEEq && tc2 <= TcGt) {
+        p2 = 3;
     }
 
     return p1 - p2;
