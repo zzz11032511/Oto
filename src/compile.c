@@ -27,8 +27,8 @@ int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...) {
 
     while (1) {
         // ネストの処理をいつか書く
-
         int32_t tc = tcBuf->tc[*pc];
+        printf("ptnTc : %d, tc : %d, pc : %d\n", ptnTc, tc, *pc);
 
         if (ptnTc == TcSemi && tc == TcSemi) {
             // セミコロンなら終わり
@@ -42,26 +42,8 @@ int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...) {
             return 1;              
         }
 
-        if ((tc == TcBrCls) || (tc == TcSqBrCls) || (tc == TcCrBrCls)) {
-            ptnTc = va_arg(ap, int32_t);  // 次のトークンパータンを参照
-        }
-
-        if (tc == ptnTc) {
+        if (tc == ptnTc || ptnTc == TcExpr) {
             // 既にあるトークンと一致した
-            // (){}[]のときの処理
-            if ((tc == TcBrOpn) || (tc == TcSqBrOpn) || (tc == TcCrBrOpn)) {
-                nest++;
-                tVpc[vp++] = (*pc)++;
-                ptnTc = va_arg(ap, int32_t);  // 次のトークンパータンを参照
-                continue;
-
-            } else if ((tc == TcBrCls) || (tc == TcSqBrCls) || (tc == TcCrBrCls)) {
-                nest--;
-                tVpc[vp++] = (*pc)++;
-            
-                ptnTc = va_arg(ap, int32_t);  // 次のトークンパータンを参照
-                continue;
-            }
 
         } else if (ptnTc == TcType && (TcInt <= tc && tc <= TcFloat)) {
             // 変数の型
@@ -81,15 +63,10 @@ int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...) {
 
         } else if (ptnTc == TcExpr) {
             // 式の時の処理
-            if (nest == 0) {
-                (*pc) = ppc;  // 式と思われるときはpcを元に戻して返す
-                vp    = 0;  // 違うときはvpも元に戻す
-                va_end(ap);
-                return 1;                
-            } else {
-                (*pc)++;
-                continue;
-            }
+            (*pc) = ppc;  // 式と思われるときはpcを元に戻して返す
+            vp    = 0;  // 違うときはvpも元に戻す
+            va_end(ap);
+            return 1;                
 
         } else {
             (*pc) = ppc;  // もし一致しないときはpcをptnCmp()呼び出し前に戻す
@@ -173,9 +150,9 @@ void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_
             printf("<print> <identifier>;\n");
             putIc(ic, icp, OpPrint, &var[tVpc[0]], 0, 0, 0);
 
-        } else if (ptnCmp(tcBuf, &pc, TcIf, TcBrOpn, TcExpr, TcBrCls, TcStop)) {
+        } else if (ptnCmp(tcBuf, &pc, TcIf, TcBrOpn, TcStop)) {
             printf("<if> (<expr>) {};\n");
-            ifControl(tcBuf, icp, &pc, var, ic, tVpc[0], tVpc[1]);
+            ifControl(tcBuf, icp, &pc, var, ic);
             
         } else if (ptnCmp(tcBuf, &pc, TcExpr)) {
             // TODO: エラー処理をちゃんとする
