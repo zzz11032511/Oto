@@ -1,8 +1,6 @@
-# テスト用ファイル
-test.txt
-
 *.exe
 *.o
+*.log
 
 old/
 .vscode/

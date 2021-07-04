@@ -27,29 +27,41 @@ int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...) {
 
     while (1) {
         // ネストの処理をいつか書く
+
         int32_t tc = tcBuf->tc[*pc];
-        // print32_tf("tc : %d, ptnTc : %d\n", tc, ptnTc);
 
         if (ptnTc == TcSemi && tc == TcSemi) {
             // セミコロンなら終わり
             (*pc)++;  // 進めとく
             break;
+        } 
+        if (ptnTc == TcStop) {
+            (*pc) = ppc;  // TcStopのとき(if, whileなど)はpcを元に戻して返す        
+            vp    = 0;  // 違うときはvpも元に戻す
+            va_end(ap);
+            return 1;              
         }
 
-        // (){}[]のときの処理
-        if ((tc == TcBrOpn) || (tc == TcSqBrOpn) || (tc == TcCrBrOpn)) {
-            nest++;
-            (*pc)++;
-            continue;
-
-        } else if ((tc == TcBrCls) || (tc == TcSqBrCls) || (tc == TcCrBrCls)) {
-            nest--;
-            (*pc)++;
-            continue;
+        if ((tc == TcBrCls) || (tc == TcSqBrCls) || (tc == TcCrBrCls)) {
+            ptnTc = va_arg(ap, int32_t);  // 次のトークンパータンを参照
         }
 
         if (tc == ptnTc) {
             // 既にあるトークンと一致した
+            // (){}[]のときの処理
+            if ((tc == TcBrOpn) || (tc == TcSqBrOpn) || (tc == TcCrBrOpn)) {
+                nest++;
+                tVpc[vp++] = (*pc)++;
+                ptnTc = va_arg(ap, int32_t);  // 次のトークンパータンを参照
+                continue;
+
+            } else if ((tc == TcBrCls) || (tc == TcSqBrCls) || (tc == TcCrBrCls)) {
+                nest--;
+                tVpc[vp++] = (*pc)++;
+            
+                ptnTc = va_arg(ap, int32_t);  // 次のトークンパータンを参照
+                continue;
+            }
 
         } else if (ptnTc == TcType && (TcInt <= tc && tc <= TcFloat)) {
             // 変数の型
@@ -69,10 +81,15 @@ int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...) {
 
         } else if (ptnTc == TcExpr) {
             // 式の時の処理
-            (*pc) = ppc;  // 式と思われるときはpcを元に戻して返す
-            vp    = 0;  // 違うときはvpも元に戻す
-            va_end(ap);
-            return 1;
+            if (nest == 0) {
+                (*pc) = ppc;  // 式と思われるときはpcを元に戻して返す
+                vp    = 0;  // 違うときはvpも元に戻す
+                va_end(ap);
+                return 1;                
+            } else {
+                (*pc)++;
+                continue;
+            }
 
         } else {
             (*pc) = ppc;  // もし一致しないときはpcをptnCmp()呼び出し前に戻す
@@ -109,6 +126,7 @@ int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...) {
  */
 void putIc(var_t **ic, int32_t *icp, int32_t op, var_t *v1, var_t *v2,
            var_t *v3, var_t *v4) {
+    // printf("icp : %3d, Opcode : %3d, v1 : %d, v2 : %d, v3 : %d, v4 : %d\n", *icp, (int64_t)op, v1, v2, v3, v4);
     ic[(*icp)++] = (var_t *)((int64_t)op);
     ic[(*icp)++] = v1;
     ic[(*icp)++] = v2;
@@ -116,76 +134,81 @@ void putIc(var_t **ic, int32_t *icp, int32_t op, var_t *v1, var_t *v2,
     ic[(*icp)++] = v4;
 }
 
-/* 内部コードに変換する関数 */
-int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic) {
-    int32_t pc, pc1;  // プログラムカウンタ
+/* token列を内部コードに変換する */
+void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_t start, int32_t end) {
+    // プログラムカウンタ
+    int32_t pc = start;
 
-    pc1 = lexer(s, tcBuf, var);
-
-    int32_t *tc = tcBuf->tc;
-
-    // デバッグ用, tcの表示
-    // printf("tc : ");
-    // for (pc = 0; pc < pc1; pc++) {
-    //     printf("%d ", tcBuf->tc[pc]);
-    // }
-    // printf("\n");
-
-    int32_t icp = 0;  // icをどこまで書き込んだか
     int32_t ppc = 0;  // ptnCmp()前のpcの値を保存しておく
-
-    pc = 0;
-    while (pc < pc1) {
-        // printf("pc : %d, tc : %d\n", pc, tc[pc]);
+    while (pc < end) {
+        // printf("pc : %d, tc : %d\n", pc, tcBuf->tc[pc]);
         ppc = pc;
 
         if (ptnCmp(tcBuf, &pc, TcType, TcIdentifier, TcEqu, TcConst, TcSemi)) {
             printf("<type> <identifier> = <const>;\n");
             // printf("tVpc[0] : %d, tVpc[1] : %d, tVpc[2] : %d\n", tVpc[0],
             // tVpc[1], tVpc[2]);
-            putIc(ic, &icp, OpDef, (var_t *)((int64_t)tVpc[0]), &var[tVpc[1]],
+            putIc(ic, icp, OpDef, (var_t *)((int64_t)tVpc[0]), &var[tVpc[1]],
                   &var[tVpc[2]], 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcConst, TcSemi)) {
             printf("<identifier> = <const>;\n");
-            putIc(ic, &icp, OpCpyS, &var[tVpc[0]], &var[tVpc[1]], 0, 0);
+            putIc(ic, icp, OpCpyS, &var[tVpc[0]], &var[tVpc[1]], 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcExpr)) {
             printf("<identifier> = <expr>;\n");
             pc += 2;  // 式の先頭までpcを進める
-            expr(tcBuf, &icp, &pc, var, ic);
-            putIc(ic, &icp, OpCpyP, &var[tVpc[0]], 0, 0, 0);
+            expr(tcBuf, icp, &pc, var, ic, 0);
+            putIc(ic, icp, OpCpyP, &var[tVpc[0]], 0, 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcPlPlus, TcSemi)) {
             printf("<identifier>++;\n");
-            putIc(ic, &icp, OpAdd1, &var[tVpc[0]], 0, 0, 0);
+            putIc(ic, icp, OpAdd1, &var[tVpc[0]], 0, 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcMiMinus, TcSemi)) {
             printf("<identifier>--;\n");
-            putIc(ic, &icp, OpSub1, &var[tVpc[0]], 0, 0, 0);
+            putIc(ic, icp, OpSub1, &var[tVpc[0]], 0, 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcPrint, TcIdentifier, TcSemi)) {
             printf("<print> <identifier>;\n");
-            putIc(ic, &icp, OpPrint, &var[tVpc[0]], 0, 0, 0);
+            putIc(ic, icp, OpPrint, &var[tVpc[0]], 0, 0, 0);
 
-        } else if (ptnCmp(tcBuf, &pc, TcIf, TcBrOpn, TcExpr)) {
+        } else if (ptnCmp(tcBuf, &pc, TcIf, TcBrOpn, TcExpr, TcBrCls, TcStop)) {
             printf("<if> (<expr>) {};\n");
-            ifControl(tcBuf, &icp, &ppc, var, ic);
+            ifControl(tcBuf, icp, &pc, var, ic, tVpc[0], tVpc[1]);
             
         } else if (ptnCmp(tcBuf, &pc, TcExpr)) {
             // TODO: エラー処理をちゃんとする
             printf("<expr>;\n");
-            expr(tcBuf, &icp, &pc, var, ic);
+            expr(tcBuf, icp, &pc, var, ic, 0);
 
         } else {
             goto err;
         }
     }
-
-    return 0;
+    return;
 
 // エラー表示
 err:
     fprintf(stderr, "compile error\n");
-    return 1;
+    exit(1);
+}
+
+
+/* 文字列sを内部コード列にコンパイルする関数 */
+int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic) {
+    int32_t end;    // コードの終わり
+    end = lexer(s, tcBuf, var);
+
+    // デバッグ用, tcの表示
+    printf("tc : ");
+    for (int i = 0; i < end; i++) {
+        printf("%d ", tcBuf->tc[i]);
+    }
+    printf("\n");
+
+    int32_t icp = 0;  // icをどこまで書き込んだか
+    compile_sub(tcBuf, var, ic, &icp, 0, end);
+
+    return 0;
 }

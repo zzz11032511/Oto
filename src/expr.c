@@ -15,28 +15,17 @@
 /* 演算子のトークンコードを対応する内部コードに変換する */
 int32_t tc2op(int32_t tc) {
     switch (tc) {
-        case TcPlus:
-            return OpAdd;
-        case TcMinus:
-            return OpSub;
-        case TcAster:
-            return OpMul;
-        case TcSlash:
-            return OpDiv;
-        case TcPerce:
-            return OpMod;
-        case TcEEq:
-            return OpEq;
-        case TcNEq:
-            return OpNEq;
-        case TcLt:
-            return OpLtCmp;
-        case TcGe:
-            return OpRiEqCmp;
-        case TcLe:
-            return OpLtEqCmp;
-        case TcGt:
-            return OpRiCmp;
+        case TcPlus:  return OpAdd;
+        case TcMinus: return OpSub;
+        case TcAster: return OpMul;
+        case TcSlash: return OpDiv;
+        case TcPerce: return OpMod;
+        case TcEEq:   return OpEq;
+        case TcNEq:   return OpNEq;
+        case TcLt:    return OpLtCmp;
+        case TcGe:    return OpRiEqCmp;
+        case TcLe:    return OpLtEqCmp;
+        case TcGt:    return OpRiCmp;
         default:
             // 一致しない(演算子でない)ときはOpNopを返す
             return OpNop;
@@ -132,7 +121,7 @@ int32_t rpn(tokenBuf_t *tcBuf, int32_t start, int32_t end, int32_t *rpnTc, int32
                     nest++;
                 } else if (end1 > end) {
                     // 括弧が見つからないならsyntax error
-                    fprintf(stderr, "syntax error\n");
+                    fprintf(stderr, "syntax error : expr()\n");
                     exit(1);
                 }
             }
@@ -170,7 +159,7 @@ int32_t rpn(tokenBuf_t *tcBuf, int32_t start, int32_t end, int32_t *rpnTc, int32
 }
 
 
-int32_t expr(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t **ic) {
+int32_t expr(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t **ic, int32_t end) {
     int32_t ppc = *pc;  // 最初のpcを保存しておく
 
     struct iStack varStack;  // 変数を入れるスタック
@@ -178,14 +167,15 @@ int32_t expr(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t **i
 
     int32_t start = *pc;
 
-    int32_t i = start;
-    while (tcBuf->tc[i] != TcSemi) i++;  // 式の終わりを探す
-    int32_t end = i;
+    if (end == 0) {
+        int32_t i = start;
+        while (tcBuf->tc[i] != TcSemi) i++;  // 式の終わりを探す
+        end = i;        
+    }
 
     int32_t rpnTc[RPN_TC_LIST_SIZE];  // 逆ポーランド記法に書き替えたトークン列
 
-    int32_t rpnTcN = rpn(tcBuf, start, end, rpnTc,
-                         0);  // 逆ポーランド記法に書き替えたトークン列の長さ
+    int32_t rpnTcN = rpn(tcBuf, start, end, rpnTc, 0);  // 逆ポーランド記法に書き替えたトークン列の長さ
 
     // デバッグ用
     // printf("rpnTc : ");

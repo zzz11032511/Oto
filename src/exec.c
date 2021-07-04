@@ -30,6 +30,7 @@ void printVal(var_t var) {
 
 void exec(var_t **ic, var_t *var) {
     var_t **icp = ic;
+    var_t **base = ic;
 
     // 計算用のスタック
     struct vStack stack;
@@ -134,6 +135,28 @@ void exec(var_t **ic, var_t *var) {
                 t3.value.iVal = compare(t2, t1, (int64_t)icp[0]);
                 push(&stack, t3);
                 icp += 5;
+                continue;
+            
+            case OpJmp:
+                icp = base + (int64_t)icp[1];
+                continue;
+
+            case OpJz:
+                t1 = pop(&stack);
+                if (t1.value.iVal == 0) {
+                    icp = base + (int64_t)icp[1];
+                } else {
+                    icp += 5;
+                }
+                continue;
+
+            case OpJnz:
+                t1 = pop(&stack);
+                if (t1.value.iVal != 0) {
+                    icp = base + (int64_t)icp[1];
+                } else {
+                    icp += 5;
+                }
                 continue;
 
             case OpPrint:

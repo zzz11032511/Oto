@@ -3,7 +3,7 @@
 // 内部コード列の長さ
 #define IC_LIST_SIZE 10000
 
-enum OP_CODE {
+enum {
     OpNop = 0,    // 何もしない
     OpDef,        // 変数定義
     OpCpyS,       // 変数への単純代入
@@ -23,6 +23,10 @@ enum OP_CODE {
     OpLtEqCmp,    // <=
     OpRiCmp,      // >
     OpRiEqCmp,    // >=
+
+    OpJmp,        // 無条件ジャンプ
+    OpJz,         // スタックの上が0ならジャンプ
+    OpJnz,        // スタックの上が0でないならジャンプ
 
     OpPrint,      // 変数の出力
     

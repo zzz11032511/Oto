@@ -17,5 +17,8 @@
  */
 void putIc(var_t **ic, int32_t *icp, int32_t op, var_t *v1, var_t *v2, var_t *v3, var_t *v4);
 
-/* 内部コードに変換する関数 */
+/* token列を内部コードに変換する */
+void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_t start, int32_t end);
+
+/* 文字列sを内部コード列にコンパイルする関数 */
 int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic);

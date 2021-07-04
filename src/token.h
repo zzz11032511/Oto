@@ -16,9 +16,10 @@
 #define TcIdentifier   -3    // 識別子(変数やラベル)
 #define TcConst        -4    // 定数
 #define TcOperator     -5    // 演算子
+#define TcStop         -99   // 都合により構文評価を止めたいとき
 
 /* 字句解析が返す値(トークンコード)の一覧 */
-enum TOKEN_CODE {
+enum {
     TcSemi = 0,    // ';'
     TcDot,         // '.'
 
@@ -79,14 +80,11 @@ typedef struct tokenBuf {
     int32_t tcb;    // tcsBuf[]の未使用領域
 } tokenBuf_t;
 
-
 /* トークン保存領域を新しく作る */
 tokenBuf_t *newTokenBuf();
 
-
 /* トークンのメモリ領域を解放する(トークンコード列もついでに解放してくれる) */
 void freeTokenBuf(tokenBuf_t *tcBuf);
-
 
 /**
  * トークンコードを得るための関数
@@ -94,10 +92,8 @@ void freeTokenBuf(tokenBuf_t *tcBuf);
  */
 int32_t getTc(str_t s, int32_t len, tokenBuf_t *tcBuf, var_t *var, int32_t type);
 
-
 /* トークンの名前の開始アドレスを返す */
 uint8_t *getTcName(tokenBuf_t *tcBuf, int32_t tc);
-
 
 /* 演算子記号などを最初にlexerしておく関数 */
 int32_t tcInit(tokenBuf_t *tcBuf, var_t *var);
