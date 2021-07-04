@@ -15,17 +15,19 @@
 /* 演算子のトークンコードを対応する内部コードに変換する */
 int32_t tc2op(int32_t tc) {
     switch (tc) {
-        case TcPlus:  return OpAdd;
-        case TcMinus: return OpSub;
-        case TcAster: return OpMul;
-        case TcSlash: return OpDiv;
-        case TcPerce: return OpMod;
-        case TcEEq:   return OpEq;
-        case TcNEq:   return OpNEq;
-        case TcLt:    return OpLtCmp;
-        case TcGe:    return OpRiEqCmp;
-        case TcLe:    return OpLtEqCmp;
-        case TcGt:    return OpRiCmp;
+        case TcPlus:   return OpAdd;
+        case TcMinus:  return OpSub;
+        case TcAster:  return OpMul;
+        case TcSlash:  return OpDiv;
+        case TcPerce:  return OpMod;
+        case TcEEq:    return OpEq;
+        case TcNEq:    return OpNEq;
+        case TcLt:     return OpLtCmp;
+        case TcGe:     return OpRiEqCmp;
+        case TcLe:     return OpLtEqCmp;
+        case TcGt:     return OpRiCmp;
+        case TcAndAnd: return OpAnd;
+        case TcBarBar: return OpOr;
         default:
             // 一致しない(演算子でない)ときはOpNopを返す
             return OpNop;
@@ -37,19 +39,23 @@ int32_t tc2priority(int32_t tc) {
     switch (tc) {
         case TcPlus:
         case TcMinus:
-            return 3;
+            return 7;
         case TcAster:
         case TcSlash:
         case TcWSlash:
         case TcPerce:
-            return 4;
+            return 8;
         case TcEEq:
         case TcNEq:
         case TcLt:
         case TcGe:
         case TcLe:
         case TcGt:
-            return 2;
+            return 6;
+        case TcAndAnd:
+            return 5;
+        case TcBarBar:
+            return 4;
         // TcEndのときは優先度-99とする
         case TcEnd:
             return -99;

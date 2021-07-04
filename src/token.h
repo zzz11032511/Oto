@@ -48,6 +48,10 @@ enum {
     TcPerce,       // '%'
     TcEqu,         // '='
 
+    // 論理演算子(あんま使わない)
+    TcAndAnd,      // '&&'
+    TcBarBar,      // '||'
+    
     TcPlPlus,      // '++'
     TcMiMinus,     // '--'
 

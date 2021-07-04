@@ -136,7 +136,25 @@ void exec(var_t **ic, var_t *var) {
                 push(&stack, t3);
                 icp += 5;
                 continue;
-            
+
+            case OpAnd:
+                t1 = pop(&stack);
+                t2 = pop(&stack);
+                t3.type = TyConstI;
+                t3.value.iVal = t1.value.iVal * t1.value.iVal;
+                push(&stack, t3);
+                icp += 5;
+                continue;
+
+            case OpOr:
+                t1 = pop(&stack);
+                t2 = pop(&stack);
+                t3.type = TyConstI;
+                t3.value.iVal = t1.value.iVal + t1.value.iVal;
+                push(&stack, t3);
+                icp += 5;
+                continue;
+
             case OpJmp:
                 icp = base + (int64_t)icp[1];
                 continue;
