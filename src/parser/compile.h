@@ -1,9 +1,9 @@
 #pragma once
 
 #include <stdint.h>
-#include "util.h"
-#include "token.h"
-#include "variable.h"
+#include "../utils/util.h"
+#include "../lexer/token.h"
+#include "../variable/variable.h"
 
 /**
  * ic[]に書き込むための関数

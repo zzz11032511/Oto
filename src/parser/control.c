@@ -5,13 +5,13 @@
 #include <string.h>
 
 #include "compile.h"
-#include "iStack.h"
-#include "ic.h"
 #include "expr.h"
-#include "lexer.h"
-#include "token.h"
-#include "util.h"
-#include "variable.h"
+#include "../utils/iStack.h"
+#include "../utils/util.h"
+#include "../vm/ic.h"
+#include "../lexer/lexer.h"
+#include "../lexer/token.h"
+#include "../variable/variable.h"
 
 void ifControl(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t **ic) {
     int32_t cmpStartPc = *pc + 1;
@@ -36,13 +36,13 @@ void ifControl(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t *
     }
     cmpEndPc = ppc - 1;
 
-    printf("cmpStartPc : %d, cmpEndPc : %d\n", cmpStartPc, cmpEndPc);
+    // printf("cmpStartPc : %d, cmpEndPc : %d\n", cmpStartPc, cmpEndPc);
     expr(tcBuf, icp, &cmpStartPc, var, ic, cmpEndPc + 1);
     *pc = cmpStartPc;
-    
+
     // ここの地点ではtrueだったとき実行する箇所の先頭のpcが入ってるはず
     ppc = *pc - 1;
-    printf("ppc : %d\n", ppc);
+    // printf("ppc : %d\n", ppc);
 
     int32_t start = *pc;
 
@@ -65,7 +65,7 @@ void ifControl(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t *
     }
 
     int32_t end = ppc - 2;
-    printf("start : %d, end : %d\n", start, end);
+    // printf("start : %d, end : %d\n", start, end);
 
     // 空のJZ命令をputし、JZ命令が格納されているicpを保存する
     int32_t jmpIcp = *icp;

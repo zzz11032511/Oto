@@ -6,8 +6,8 @@
 #include <string.h>
 
 #include "lexer.h"
-#include "util.h"
-#include "variable.h"
+#include "../utils/util.h"
+#include "../variable/variable.h"
 
 /* トークン保存領域を新しく作る(いらないかも) */
 tokenBuf_t *newTokenBuf() {

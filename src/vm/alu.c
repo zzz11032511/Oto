@@ -3,8 +3,8 @@
 #include <stdlib.h>
 
 #include "ic.h"
-#include "util.h"
-#include "variable.h"
+#include "../utils/util.h"
+#include "../variable/variable.h"
 
 var_t add2(var_t v1, var_t v2) {
     var_t t;

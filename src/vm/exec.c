@@ -4,9 +4,9 @@
 
 #include "alu.h"
 #include "ic.h"
-#include "util.h"
-#include "vStack.h"
-#include "variable.h"
+#include "../utils/util.h"
+#include "../variable/vStack.h"
+#include "../variable/variable.h"
 
 void printVal(var_t var) {
     switch (var.type) {

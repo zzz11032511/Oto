@@ -1,16 +1,18 @@
+#include "compile.h"
+
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "expr.h"
-#include "ic.h"
-#include "lexer.h"
-#include "token.h"
-#include "util.h"
-#include "variable.h"
 #include "control.h"
+#include "expr.h"
+#include "../utils/util.h"
+#include "../vm/ic.h"
+#include "../lexer/lexer.h"
+#include "../lexer/token.h"
+#include "../variable/variable.h"
 
 int32_t tVpc[5];  // putIc()で指定するTcを入れる場所(Temp Var Pcのつもり)
 int32_t vp = 0;  // tVpcへのポインタ

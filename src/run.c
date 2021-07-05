@@ -2,12 +2,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "compile.h"
-#include "exec.h"
-#include "ic.h"
-#include "lexer.h"
-#include "token.h"
-#include "util.h"
+#include "parser/compile.h"
+#include "vm/exec.h"
+#include "vm/ic.h"
+#include "lexer/lexer.h"
+#include "lexer/token.h"
+#include "utils/util.h"
 
 int32_t run(str_t src) {
     tokenBuf_t *tcBuf = newTokenBuf();  // トークン番号リスト

@@ -6,7 +6,8 @@
 #include <string.h>
 
 #include "token.h"
-#include "variable.h"
+#include "../utils/util.h"
+#include "../variable/variable.h"
 
 /**
  *  変数名として使用可能かどうかを判定する

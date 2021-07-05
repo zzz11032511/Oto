@@ -1,8 +1,8 @@
 #pragma once
 
 #include <stdint.h>
-#include "variable.h"
-#include "util.h"
+#include "../utils/util.h"
+#include "../variable/variable.h"
 
 // 認識するトークンの数の最大値
 #define MAX_TC 1024

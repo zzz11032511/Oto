@@ -5,12 +5,12 @@
 #include <string.h>
 
 #include "compile.h"
-#include "iStack.h"
-#include "ic.h"
-#include "lexer.h"
-#include "token.h"
-#include "util.h"
-#include "variable.h"
+#include "../utils/iStack.h"
+#include "../utils/util.h"
+#include "../vm/ic.h"
+#include "../lexer/lexer.h"
+#include "../lexer/token.h"
+#include "../variable/variable.h"
 
 /* 演算子のトークンコードを対応する内部コードに変換する */
 int32_t tc2op(int32_t tc) {

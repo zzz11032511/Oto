@@ -11,7 +11,7 @@
 #include <string.h>
 
 #include "run.h"
-#include "util.h"
+#include "utils/util.h"
 
 /* 使い方表示用の関数 */
 void usage(str_t name) {

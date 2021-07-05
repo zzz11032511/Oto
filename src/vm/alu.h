@@ -1,6 +1,6 @@
 #pragma once
 
-#include "variable.h"
+#include "../variable/variable.h"
 
 var_t add2(var_t v1, var_t v2);
 var_t sub2(var_t v1, var_t v2);
