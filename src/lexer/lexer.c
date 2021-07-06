@@ -64,6 +64,11 @@ int32_t lexer(str_t s, tokenBuf_t *tcBuf, var_t *var) {
             i = i + 2;                                // "/*"を飛ばす
             while (!(s[i] == '*' && s[i + 1] == '/')) i++;
             continue;
+            
+        } else if (s[i] == '#') {
+            i = i + 2;
+            while (!(s[i] == '\n')) i++;
+            continue;
         }
 
         int32_t len = 0;  // 変数などの長さを記録するための変数

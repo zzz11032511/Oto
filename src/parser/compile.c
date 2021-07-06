@@ -124,41 +124,41 @@ void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_
         ppc = pc;
 
         if (ptnCmp(tcBuf, &pc, TcType, TcIdentifier, TcEqu, TcConst, TcSemi)) {
-            printf("<type> <identifier> = <const>;\n");
+            // printf("<type> <identifier> = <const>;\n");
             // printf("tVpc[0] : %d, tVpc[1] : %d, tVpc[2] : %d\n", tVpc[0],
             // tVpc[1], tVpc[2]);
             putIc(ic, icp, OpDef, (var_t *)((int64_t)tVpc[0]), &var[tVpc[1]],
                   &var[tVpc[2]], 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcConst, TcSemi)) {
-            printf("<identifier> = <const>;\n");
+            // printf("<identifier> = <const>;\n");
             putIc(ic, icp, OpCpyS, &var[tVpc[0]], &var[tVpc[1]], 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcExpr)) {
-            printf("<identifier> = <expr>;\n");
+            // printf("<identifier> = <expr>;\n");
             pc += 2;  // 式の先頭までpcを進める
             expr(tcBuf, icp, &pc, var, ic, 0);
             putIc(ic, icp, OpCpyP, &var[tVpc[0]], 0, 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcPlPlus, TcSemi)) {
-            printf("<identifier>++;\n");
+            // printf("<identifier>++;\n");
             putIc(ic, icp, OpAdd1, &var[tVpc[0]], 0, 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcMiMinus, TcSemi)) {
-            printf("<identifier>--;\n");
+            // printf("<identifier>--;\n");
             putIc(ic, icp, OpSub1, &var[tVpc[0]], 0, 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcPrint, TcIdentifier, TcSemi)) {
-            printf("<print> <identifier>;\n");
+            // printf("<print> <identifier>;\n");
             putIc(ic, icp, OpPrint, &var[tVpc[0]], 0, 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcIf, TcBrOpn, TcStop)) {
-            printf("<if> (<expr>) {};\n");
+            // printf("<if> (<expr>) {};\n");
             ifControl(tcBuf, icp, &pc, var, ic);
             
         } else if (ptnCmp(tcBuf, &pc, TcExpr)) {
             // TODO: エラー処理をちゃんとする
-            printf("<expr>;\n");
+            // printf("<expr>;\n");
             expr(tcBuf, icp, &pc, var, ic, 0);
 
         } else {
@@ -180,11 +180,11 @@ int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic) {
     end = lexer(s, tcBuf, var);
 
     // デバッグ用, tcの表示
-    printf("tc : ");
-    for (int i = 0; i < end; i++) {
-        printf("%d ", tcBuf->tc[i]);
-    }
-    printf("\n");
+    // printf("tc : ");
+    // for (int i = 0; i < end; i++) {
+    //     printf("%d ", tcBuf->tc[i]);
+    // }
+    // printf("\n");
 
     int32_t icp = 0;  // icをどこまで書き込んだか
     compile_sub(tcBuf, var, ic, &icp, 0, end);
