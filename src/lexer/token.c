@@ -118,8 +118,8 @@ uint8_t *getTcName(tokenBuf_t *tcBuf, int32_t tc) {
 int32_t tcInit(tokenBuf_t *tcBuf, var_t *var) {
     /* 最初にlexerしておく文字列 */
     str_t symbols =
-        "; . ( ) [ ] { } == != < >= <= > + - * / // % = && || ++ -- -> , int float "
-        "if print !**! \0";
+        "; . ( ) [ ] { } == != < >= <= > + - * / // % = && || ++ -- , int float "
+        "if else while print !**! \0";
 
     return lexer(symbols, tcBuf, var);
 }

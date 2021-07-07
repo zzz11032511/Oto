@@ -1,4 +1,16 @@
-OBJS      := main.o lexer.o token.o util.o run.o variable.o compile.o exec.o expr.o iStack.o vStack.o alu.o control.o
+SRCS      := main.c run.c \
+			 lexer/lexer.c lexer/token.c \
+			 utils/util.c utils/iStack.c \
+			 variable/vStack.c \
+			 parser/compile.c parser/control.c parser/expr.c \
+			 vm/exec.c  vm/alu.c
+
+OBJS      := main.o run.o \
+			 lexer/lexer.o lexer/token.o \
+			 utils/util.o utils/iStack.o \
+			 variable/vStack.o \
+			 parser/compile.o parser/control.o parser/expr.o \
+			 vm/exec.o vm/alu.o
 
 TESTFILE  := test_lexer test_stack
 
@@ -14,13 +26,13 @@ CFLAGS    := -o $(PROGRAM) -O2 -Wall
 
 TESTFLAGS := -O2 -Wall
 
-all : $(PROGRAM)
+all : $(PROGRAM).exe
 
-%.o : $(SRCPATH)%.c makefile
+%.o : 
 	$(MAKEOBJ) $(SRCPATH)$*.c
 
-$(PROGRAM) : $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS)
+$(PROGRAM).exe : $(OBJS)
+	$(CC) $(CFLAGS) $(notdir $(OBJS))
 
 # テスト用
 test_% : $(OBJS)
@@ -32,5 +44,5 @@ clean :
 	-$(DEL) *.o
 	-$(DEL) *.exe
 
-run : $(PROGRAM).exe
+run :
 	$(PROGRAM) aaa.oto

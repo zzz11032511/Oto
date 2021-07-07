@@ -55,15 +55,15 @@ enum {
     TcPlPlus,      // '++'
     TcMiMinus,     // '--'
 
-    TcArrow,       // '->' 関数の返り値を示すときに使う...つもり(ex. -> int32_t)
-
     TcComma,       // ','
 
     // 予約語
-    TcInt,         // int32_t型
+    TcInt,         // int型
     TcFloat,       // float型
     
     TcIf,          // if文
+    TcElse,        // else文
+    TcWhile,       // while文
     TcPrint,       // print文
 
     TcEnd          // トークン定義がここまでだよーということを示す

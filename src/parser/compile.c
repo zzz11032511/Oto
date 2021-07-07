@@ -156,6 +156,10 @@ void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_
             // printf("<if> (<expr>) {};\n");
             ifControl(tcBuf, icp, &pc, var, ic);
             
+        } else if (ptnCmp(tcBuf, &pc, TcWhile, TcBrOpn, TcStop)) {
+            // printf("<while> (<expr>) {};\n");
+            whileControl(tcBuf, icp, &pc, var, ic);
+
         } else if (ptnCmp(tcBuf, &pc, TcExpr)) {
             // TODO: エラー処理をちゃんとする
             // printf("<expr>;\n");
