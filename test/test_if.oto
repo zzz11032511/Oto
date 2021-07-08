@@ -1,0 +1,17 @@
+int a = 2;
+int b = 3;
+
+if ((a < 2) || (3 == 3)) {    # true
+    if ((b > 2) && (3 == 2)) {    # false
+        print a;
+    }
+    if ((b > 2) && (4 == 4)) {    # true
+        print b;
+    }
+}
+
+float c = 4.0;
+print c;
+
+c = c + 5.5;
+print c;

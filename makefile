@@ -1,48 +1,42 @@
-SRCS      := main.c run.c \
-			 lexer/lexer.c lexer/token.c \
-			 utils/util.c utils/iStack.c \
-			 variable/vStack.c \
-			 parser/compile.c parser/control.c parser/expr.c \
-			 vm/exec.c  vm/alu.c
+SRCSLIST := main.c run.c \
+		    lexer/lexer.c lexer/token.c \
+			utils/util.c utils/iStack.c \
+			variable/vStack.c \
+			parser/compile.c parser/control.c parser/expr.c \
+			vm/exec.c  vm/alu.c
 
-OBJS      := main.o run.o \
-			 lexer/lexer.o lexer/token.o \
-			 utils/util.o utils/iStack.o \
-			 variable/vStack.o \
-			 parser/compile.o parser/control.o parser/expr.o \
-			 vm/exec.o vm/alu.o
+PROGRAM  := oto
+SRCDIR   := src
+TESTDIR  := test
+OUTDIR   := build
+TARGET   := $(OUTDIR)/$(PROGRAM)
 
-TESTFILE  := test_lexer test_stack
+SRCS := $(addprefix $(SRCDIR)/,$(SRCSLIST))
+OBJS := $(addprefix $(OUTDIR)/,$(patsubst %.c,%.o,$(SRCS)))
+$(warning $(OBJS))
 
-SRCPATH   := ./src/
-TESTPATH  := ./test/
+DEL := rmdir
 
-PROGRAM   := oto
-MAKE      := make.exe -r
-DEL       := del
-MAKEOBJ   := gcc -c
-CC        := gcc
-CFLAGS    := -o $(PROGRAM) -O2 -Wall
+CC = gcc
+CFLAGS = -Wall -O2
 
-TESTFLAGS := -O2 -Wall
+.PHONY: 
+	all clean
 
-all : $(PROGRAM).exe
+all: $(TARGET)
 
-%.o : 
-	$(MAKEOBJ) $(SRCPATH)$*.c
+$(TARGET): $(OBJS)
+	$(CC) $(CFLAGS) -o $@ $^
 
-$(PROGRAM).exe : $(OBJS)
-	$(CC) $(CFLAGS) $(notdir $(OBJS))
+$(OUTDIR)/%.o: %.c
+	@if [ ! -e `dirname $@` ]; then mkdir -p `dirname $@`; fi
+	$(CC) $(CFLAGS) -o $@ -c $<
 
-# テスト用
-test_% : $(OBJS)
-	$(MAKEOBJ) $(TESTPATH)test_$*.c
-	$(CC) $(TESTFLAGS) -o test_$* $(filter-out main.o, $(OBJS)) test_$*.o
-	test_$*.exe
+# runするときに実行するファイル名
+TESTSRCPATH = aaa.oto
 
-clean : 
-	-$(DEL) *.o
-	-$(DEL) *.exe
+run: $(TARGET)
+	$(TARGET) ${TESTSRCPATH}
 
-run :
-	$(PROGRAM) aaa.oto
+clean:
+	rm -rf $(OUTDIR)

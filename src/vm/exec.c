@@ -11,16 +11,16 @@
 void printVal(var_t var) {
     switch (var.type) {
         case TyInt:
-            printf("%d\n", var.value.iVal);
+            printf("%ld\n", var.value.iVal);
             break;
         case TyConstI:
-            printf("%d\n", var.value.iVal);
+            printf("%ld\n", var.value.iVal);
             break;
         case TyFloat:
-            printf("%f\n", var.value.fVal);
+            printf("%.3lf\n", var.value.fVal);
             break;
         case TyConstF:
-            printf("%f\n", var.value.fVal);
+            printf("%.3lf\n", var.value.fVal);
             break;
         default:
             break;
@@ -46,7 +46,7 @@ void exec(var_t **ic, var_t *var) {
         switch ((int64_t)icp[0]) {
             case OpDef:
                 icp[2]->type = (int32_t)((int64_t)icp[1]);
-                icp[2]->value.iVal =icp[3]->value.iVal;  // intだろうがfloatだろうがこれで代入できる
+                icp[2]->value.iVal = icp[3]->value.iVal;  // intだろうがfloatだろうがこれで代入できる
 
                 // printf("type : %d, value : %d\n", (int32_t)icp[1],
                 // icp[3]->value.iVal);
@@ -160,7 +160,7 @@ void exec(var_t **ic, var_t *var) {
                 continue;
 
             case OpJz:
-                t1 = pop(&stack);
+                t1 = peek(&stack);
                 if (t1.value.iVal == 0) {
                     icp = base + (int64_t)icp[1];
                 } else {
@@ -169,7 +169,7 @@ void exec(var_t **ic, var_t *var) {
                 continue;
 
             case OpJnz:
-                t1 = pop(&stack);
+                t1 = peek(&stack);
                 if (t1.value.iVal != 0) {
                     icp = base + (int64_t)icp[1];
                 } else {

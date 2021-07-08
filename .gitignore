@@ -3,6 +3,7 @@
 *.log
 
 old/
+build/
 .vscode/
 
-*.oto
+aaa.oto
