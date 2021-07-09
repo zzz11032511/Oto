@@ -33,7 +33,7 @@ int32_t isConst(unsigned char c) {
     return 0;
 }
 
-const int8_t operator[] = "=+-*/!%&~|<>?:.#";
+const char operator[] = "=+-*/!%&~|<>?:.#";
 /**
  * 文字が演算子であるかどうかを判定する
  * もしそうなら1を返す

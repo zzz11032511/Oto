@@ -1,4 +1,4 @@
-SRCSLIST := main.c run.c \
+SRCSLIST := main.c run.c debug.c \
 		    lexer/lexer.c lexer/token.c \
 			utils/util.c utils/iStack.c \
 			variable/vStack.c \
@@ -34,6 +34,9 @@ $(OUTDIR)/%.o: %.c
 
 # runするときに実行するファイル名
 TESTSRCPATH = aaa.oto
+
+debug: $(TARGET)
+	$(TARGET) ${TESTSRCPATH}
 
 run: $(TARGET)
 	$(TARGET) ${TESTSRCPATH}

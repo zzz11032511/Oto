@@ -8,6 +8,7 @@
 
 #include "control.h"
 #include "expr.h"
+#include "../debug.h"
 #include "../utils/util.h"
 #include "../vm/ic.h"
 #include "../lexer/lexer.h"
@@ -105,7 +106,9 @@ int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...) {
  */
 void putIc(var_t **ic, int32_t *icp, int32_t op, var_t *v1, var_t *v2,
            var_t *v3, var_t *v4) {
-    // printf("icp : %3d, Opcode : %3d, v1 : %d, v2 : %d, v3 : %d, v4 : %d\n", *icp, (int64_t)op, v1, v2, v3, v4);
+#ifdef DEBUG
+    printIc(ic, icp, op, v1, v2, v3, v4);
+#endif
     ic[(*icp)++] = (var_t *)((int64_t)op);
     ic[(*icp)++] = v1;
     ic[(*icp)++] = v2;
@@ -117,16 +120,12 @@ void putIc(var_t **ic, int32_t *icp, int32_t op, var_t *v1, var_t *v2,
 void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_t start, int32_t end) {
     // プログラムカウンタ
     int32_t pc = start;
-
-    int32_t ppc = 0;  // ptnCmp()前のpcの値を保存しておく
+    
     while (pc < end) {
         // printf("pc : %d, tc : %d\n", pc, tcBuf->tc[pc]);
-        ppc = pc;
 
         if (ptnCmp(tcBuf, &pc, TcType, TcIdentifier, TcEqu, TcConst, TcSemi)) {
             // printf("<type> <identifier> = <const>;\n");
-            // printf("tVpc[0] : %d, tVpc[1] : %d, tVpc[2] : %d\n", tVpc[0],
-            // tVpc[1], tVpc[2]);
             putIc(ic, icp, OpDef, (var_t *)((int64_t)tVpc[0]), &var[tVpc[1]],
                   &var[tVpc[2]], 0);
 
@@ -183,12 +182,9 @@ int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic) {
     int32_t end;    // コードの終わり
     end = lexer(s, tcBuf, var);
 
-    // デバッグ用, tcの表示
-    // printf("tc : ");
-    // for (int i = 0; i < end; i++) {
-    //     printf("%d ", tcBuf->tc[i]);
-    // }
-    // printf("\n");
+#ifdef DEBUG
+    printTokenCode(tcBuf, end);
+#endif
 
     int32_t icp = 0;  // icをどこまで書き込んだか
     compile_sub(tcBuf, var, ic, &icp, 0, end);

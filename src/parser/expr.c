@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "compile.h"
+#include "../debug.h"
 #include "../utils/iStack.h"
 #include "../utils/util.h"
 #include "../vm/ic.h"
@@ -136,7 +137,7 @@ int32_t rpn(tokenBuf_t *tcBuf, int32_t start, int32_t end, int32_t *rpnTc, int32
 
             pc += end1 - start1;  // ()の中の分だけ進める
 
-        } else if (TcEEq <= tc && tc <= TcEqu) {
+        } else if (TcEEq <= tc && tc <= TcBarBar) {
             // 演算子のとき
             if (priorityCmp(tc, iPeek(&stack)) > 0) {
                 iPush(&stack, tc);
@@ -183,19 +184,14 @@ int32_t expr(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t **i
 
     int32_t rpnTcN = rpn(tcBuf, start, end, rpnTc, 0);  // 逆ポーランド記法に書き替えたトークン列の長さ
 
-    // デバッグ用
-    // printf("rpnTc : ");
-    // for (int32_t i = 0; i < rpnTcN; i++) {
-    //     printf("%d ", rpnTc[i]);
-    // }
-    // printf("\n");
+#ifdef DEBUG
+    printRpnTc(tcBuf, rpnTc, rpnTcN);
+#endif
 
-    int32_t t1 = 0;
-    int32_t t2 = 0;
     for (int32_t i = 0; i < rpnTcN; i++) {
         int32_t tc = rpnTc[i];
 
-        if (TcEEq <= tc && tc <= TcEqu) {
+        if (TcEEq <= tc && tc <= TcBarBar) {
             // tcが演算子のときはputIc()する
             int32_t op = tc2op(tc);
 

@@ -48,7 +48,7 @@ struct token *newToken(int32_t tc, int32_t len, str_t s) {
  * 文字列の実体はこのバッファに保存されている
  * tcsBuf自体は基本的にtoken.c内部からしか参照しないため気にしなくてもいい
  */
-unsigned char tcsBuf[(MAX_TC + 1) * 10];
+char tcsBuf[(MAX_TC + 1) * 10];
 
 
 /**
@@ -107,11 +107,6 @@ int32_t getTc(str_t s, int32_t len, tokenBuf_t *tcBuf, var_t *var,
     }
 
     return i;
-}
-
-/* トークンの名前の開始アドレスを返す */
-uint8_t *getTcName(tokenBuf_t *tcBuf, int32_t tc) {
-    return tcBuf->tokens[tc]->ts;
 }
 
 /* 演算子記号などを最初にlexerしておく関数 */

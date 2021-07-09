@@ -5,6 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+// 1のときにデバッグのための情報が出力される
+#define DEBUG 0
+
 /**
  * pathに指定されたソースファイルをsrcに読み込む
  *
@@ -13,7 +16,7 @@
  *     src  : ファイルを読み込む先の場所
  *     size : srcのサイズ
  */
-int32_t srcLoad(str_t path, str_t src, int size) {
+int32_t srcLoad(str_t path, str_t src, int32_t size) {
     FILE *fp = fopen(path, "rt");
     if (fp == 0) {
         fprintf(stderr, "fopen error : %s\n", path);

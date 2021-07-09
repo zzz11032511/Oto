@@ -4,6 +4,7 @@
 
 #include "alu.h"
 #include "ic.h"
+#include "../debug.h"
 #include "../utils/util.h"
 #include "../variable/vStack.h"
 #include "../variable/variable.h"
@@ -141,7 +142,7 @@ void exec(var_t **ic, var_t *var) {
                 t1 = pop(&stack);
                 t2 = pop(&stack);
                 t3.type = TyConstI;
-                t3.value.iVal = t1.value.iVal * t1.value.iVal;
+                t3.value.iVal = t1.value.iVal * t2.value.iVal;
                 push(&stack, t3);
                 icp += 5;
                 continue;
@@ -150,7 +151,7 @@ void exec(var_t **ic, var_t *var) {
                 t1 = pop(&stack);
                 t2 = pop(&stack);
                 t3.type = TyConstI;
-                t3.value.iVal = t1.value.iVal + t1.value.iVal;
+                t3.value.iVal = t1.value.iVal + t2.value.iVal;
                 push(&stack, t3);
                 icp += 5;
                 continue;

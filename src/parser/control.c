@@ -68,12 +68,47 @@ void ifControl(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t *
     // printf("start : %d, end : %d\n", start, end);
 
     // 空のJZ命令をputし、JZ命令が格納されているicpを保存する
-    int32_t jmpIcp = *icp;
+    int32_t jmpIcp1 = *icp;
     putIc(ic, icp, OpJz, 0, 0, 0, 0);
 
     compile_sub(tcBuf, var, ic, icp, start, end);
 
-    putIc(ic, &jmpIcp, OpJz, (var_t *)((int64_t)*icp), 0, 0, 0);
+    if (tcBuf->tc[ppc] == TcElse) {
+        int32_t jmpIcp2 = *icp;
+        putIc(ic, icp, OpJmp, 0, 0, 0, 0);
+        putIc(ic, &jmpIcp1, OpJz, (var_t *)((int64_t)*icp), 0, 0, 0);
+
+        ppc++; // elseの分1個進める
+
+        start = ppc + 1;
+
+        // else文の終わりを探す
+        nest = 0;
+        while (1) {
+            int32_t tc = tcBuf->tc[ppc++];
+            if (tc == TcCrBrOpn) {
+                nest++;
+                continue;
+
+            } else if (tc == TcCrBrCls) {
+                nest--;
+                if (nest != 0) {
+                    continue;
+                } else {
+                    break;
+                }
+            }
+        }
+
+        end = ppc - 2;
+
+        compile_sub(tcBuf, var, ic, icp, start, end);
+
+        putIc(ic, &jmpIcp2, OpJmp, (var_t *)((int64_t)*icp), 0, 0, 0);
+
+    } else {
+        putIc(ic, &jmpIcp1, OpJz, (var_t *)((int64_t)*icp), 0, 0, 0);
+    }
 
     *pc = ppc;
 
