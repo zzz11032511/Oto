@@ -161,7 +161,7 @@ void exec(var_t **ic, var_t *var) {
                 continue;
 
             case OpJz:
-                t1 = peek(&stack);
+                t1 = pop(&stack);
                 if (t1.value.iVal == 0) {
                     icp = base + (int64_t)icp[1];
                 } else {
@@ -170,7 +170,7 @@ void exec(var_t **ic, var_t *var) {
                 continue;
 
             case OpJnz:
-                t1 = peek(&stack);
+                t1 = pop(&stack);
                 if (t1.value.iVal != 0) {
                     icp = base + (int64_t)icp[1];
                 } else {

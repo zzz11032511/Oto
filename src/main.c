@@ -4,6 +4,7 @@
  * author : Furuta Naoki
  *          2021/05/18
  */
+#define DEBUG 1
 
 #include <stdint.h>
 #include <stdio.h>
@@ -14,7 +15,6 @@
 #include "utils/util.h"
 
 // 1のときにデバッグのための情報が出力される
-#define DEBUG 0
 
 /* 使い方表示用の関数 */
 void usage(str_t name) {
