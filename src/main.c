@@ -13,6 +13,9 @@
 #include "run.h"
 #include "utils/util.h"
 
+// 1のときにデバッグのための情報が出力される
+#define DEBUG 0
+
 /* 使い方表示用の関数 */
 void usage(str_t name) {
     // TODO: そのうち真面目に書く
@@ -29,7 +32,7 @@ int main(int argc, const char **argv) {
     // ソースファイルを確保しておく領域
     str_t src = (str_t)malloc(sizeof(char) * SOURCE_BUF_SIZE);
 
-    if (srcLoad((str_t)argv[1], src, SOURCE_BUF_SIZE) == 0) {
+    if (srcLoad(argv[1], src, SOURCE_BUF_SIZE) == 0) {
         run(src);
     }
 

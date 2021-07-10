@@ -10,7 +10,7 @@
 #include "variable/variable.h"
 #include "utils/util.h"
 
-static str_t opName[] = {
+static const str_t opName[] = {
     "Nop",
     "Def",
     "CpyS",

@@ -62,7 +62,7 @@ int32_t putTc(int32_t tc, int32_t len, str_t s, tokenBuf_t *tcBuf) {
         exit(1);
     }
 
-    strncpy(&tcsBuf[tcBuf->tcb], s, len);  // tcsBufにsをコピー
+    strncpy(&tcsBuf[tcBuf->tcb], (char *)s, len);  // tcsBufにsをコピー
     tcsBuf[tcBuf->tcb + len] = 0;  // tcsBufの終わりに終端コードを付ける
     tcBuf->tokens[tc]        = newToken(tc, len, s);
     tcBuf->tcb += len + 1;
@@ -80,7 +80,7 @@ int32_t getTc(str_t s, int32_t len, tokenBuf_t *tcBuf, var_t *var,
     int32_t i;
     for (i = 0; i < tcBuf->tcs; i++) {  // 登録済みの中から探す
         if (len == tcBuf->tokens[i]->tl &&
-            strncmp(s, tcBuf->tokens[i]->ts, len) == 0) {
+            strncmp((char *)s, (char *)(tcBuf->tokens[i]->ts), len) == 0) {
             break;
         }
     }
@@ -95,10 +95,10 @@ int32_t getTc(str_t s, int32_t len, tokenBuf_t *tcBuf, var_t *var,
 
         switch (type) {
             case TyConstI:
-                var[i].value.iVal = strtol(tcBuf->tokens[i]->ts, 0, 0);
+                var[i].value.iVal = strtol((char *)(tcBuf->tokens[i]->ts), 0, 0);
                 break;
             case TyConstF:
-                var[i].value.fVal = strtod(tcBuf->tokens[i]->ts, 0);
+                var[i].value.fVal = strtod((char *)(tcBuf->tokens[i]->ts), 0);
                 break;
             default:
                 var[i].value.iVal = 0;
@@ -109,12 +109,10 @@ int32_t getTc(str_t s, int32_t len, tokenBuf_t *tcBuf, var_t *var,
     return i;
 }
 
+/* 最初にlexerしておく文字列 */
+static const str_t symbols = "; . ( ) [ ] { } == != < >= <= > + - * / // % = && || ++ -- , int float if else while print !**! \0";
+
 /* 演算子記号などを最初にlexerしておく関数 */
 int32_t tcInit(tokenBuf_t *tcBuf, var_t *var) {
-    /* 最初にlexerしておく文字列 */
-    str_t symbols =
-        "; . ( ) [ ] { } == != < >= <= > + - * / // % = && || ++ -- , int float "
-        "if else while print !**! \0";
-
     return lexer(symbols, tcBuf, var);
 }
