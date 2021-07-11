@@ -176,7 +176,6 @@ err:
     exit(1);
 }
 
-
 /* 文字列sを内部コード列にコンパイルする関数 */
 int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic) {
     int32_t end;    // コードの終わり

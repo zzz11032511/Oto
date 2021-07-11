@@ -4,10 +4,10 @@
 #include "../utils/util.h"
 #include "../variable/variable.h"
 
-// 認識するトークンの数の最大値
+/* 認識するトークンの数の最大値 */
 #define MAX_TC 1024
 
-// トークンコード列の大きさ
+/* トークンコード列の大きさ */
 #define TC_LIST_SIZE 10000
 
 /* トークンの識別子 */ 
@@ -44,11 +44,10 @@ enum {
     TcMinus,       // '-'
     TcAster,       // '*'
     TcSlash,       // '/'
-    TcWSlash,      // '//' 切り捨てて整数を返す割算
     TcPerce,       // '%'
     TcEqu,         // '='
 
-    // 論理演算子(あんま使わない)
+    // 論理演算子
     TcAndAnd,      // '&&'
     TcBarBar,      // '||'
     
@@ -69,16 +68,16 @@ enum {
     TcEnd          // トークン定義がここまでだよーということを示す
 };
 
-
+/* トークンの番号、文字列、文字数を保持する構造体 */
 struct token {
     int32_t tc;    // トークン番号
     int32_t tl;    // トークンの文字列の長さ
     str_t ts;    // トークンの内容(文字列)を記憶, tcsBuf(token.c内)へのポインタ
 };
 
-
+/* 変換したトークンコードの情報や、ソースコードをトークンコード列に変換したものを含む構造体 */
 typedef struct tokenBuf {
-    int32_t tc[TC_LIST_SIZE];    // 文字列をトークンコード列に変換したものを入れる
+    int32_t tc[TC_LIST_SIZE];    // ソースコードをトークンコード列に変換したものを入れる
     struct token *tokens[MAX_TC];    // 変換済みトークンコード一覧
     int32_t tcs;    // 今まで発行したトークンコードの個数
     int32_t tcb;    // tcsBuf[]の未使用領域
@@ -93,6 +92,13 @@ void freeTokenBuf(tokenBuf_t *tcBuf);
 /**
  * トークンコードを得るための関数
  * もし登録されていないなら, 新しく作る
+ * 
+ * args:
+ *     s     : トークンの文字列
+ *     len   : トークンの長さ
+ *     tcBuf : トークンコードの情報
+ *     var   : 変数リスト
+ *     type  : (定数の場合)型
  */
 int32_t getTc(str_t s, int32_t len, tokenBuf_t *tcBuf, var_t *var, int32_t type);
 

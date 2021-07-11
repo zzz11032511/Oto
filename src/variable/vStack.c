@@ -12,4 +12,6 @@ var_t pop(struct vStack *stack) {
     return stack->q[stack->sp];
 }
 
-var_t peek(struct vStack *stack) { return stack->q[stack->sp - 1]; }
+var_t peek(struct vStack *stack) {
+    return stack->q[stack->sp - 1]; 
+}

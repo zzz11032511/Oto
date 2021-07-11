@@ -13,7 +13,6 @@ int32_t run(str_t src) {
     tokenBuf_t *tcBuf = newTokenBuf();  // トークン番号リスト
     var_t var[MAX_TC];
 
-    // TODO: symbolsが0終端じゃないからエラー吐く
     tcInit(tcBuf, var);
 
     var_t *ic[IC_LIST_SIZE];

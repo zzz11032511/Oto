@@ -43,7 +43,6 @@ int32_t tc2priority(int32_t tc) {
             return 7;
         case TcAster:
         case TcSlash:
-        case TcWSlash:
         case TcPerce:
             return 8;
         case TcEEq:

@@ -27,12 +27,16 @@ int32_t countSrcByte(const char *path) {
 }
 
 /* pathに指定されたソースファイルをsrcに読み込む */
-int32_t srcLoad(const char *path, str_t src, int32_t size) {
+int32_t srcLoad(const str_t path, str_t src, int32_t size) {
 
 #ifdef DEBUG
     printf("Source file info\n");
     printf("name : %s, size : %d bytes\n\n", path, countSrcByte(path));
 #endif
+    if (!isOtoFile(path)) {
+        fprintf(stderr, "%s is not Oto file\n", path);
+        return 1;
+    }
 
     FILE *fp = fopen(path, "rt");
     if (fp == 0) {
@@ -43,6 +47,18 @@ int32_t srcLoad(const char *path, str_t src, int32_t size) {
     fclose(fp);
 
     src[end] = 0;  // 終端マークを置いておく
+
+    return 0;
+}
+
+/* ファイルがotoの拡張子かを判定する */
+int32_t isOtoFile(const str_t path) {
+    const char *ext = strrchr(path, '.');
+
+    int32_t isOto = strcmp(ext, ".oto");
+    if (!isOto) {
+        return 1;
+    }
 
     return 0;
 }

@@ -32,7 +32,7 @@ int main(int argc, const char **argv) {
     // ソースファイルを確保しておく領域
     str_t src = (str_t)malloc(sizeof(char) * SOURCE_BUF_SIZE);
 
-    if (srcLoad(argv[1], src, SOURCE_BUF_SIZE) == 0) {
+    if (srcLoad((str_t)argv[1], src, SOURCE_BUF_SIZE) == 0) {
         run(src);
     }
 

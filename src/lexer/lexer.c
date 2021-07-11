@@ -12,12 +12,9 @@
 /**
  *  変数名として使用可能かどうかを判定する
  *  使えるのであれば1を返す
- *  予約語だとしても結局getTc()で型のトークンは取得できるので一緒に扱う
- *
- *  現状では定数も変数名として扱っている
  */
 int32_t isValNameAvailable(unsigned char c) {
-    // TODO: ♯や♭を変数名に使えるようにする
+    // TODO?: ♯や♭を変数名に使えるようにする
     if ('0' <= c && c <= '9') return 1;
     if ('a' <= c && c <= 'z') return 1;
     if ('A' <= c && c <= 'Z') return 1;
@@ -25,23 +22,19 @@ int32_t isValNameAvailable(unsigned char c) {
     return 0;
 }
 
-/**
- * 定数かどうかを判定する
- */
+/* 定数かどうかを判定する */
 int32_t isConst(unsigned char c) {
     if ('0' <= c && c <= '9') return 1;
     return 0;
 }
 
-const char operator[] = "=+-*/!%&~|<>?:.#";
+const str_t operator = "=+-*/!%&~|<>?:.#";
 /**
  * 文字が演算子であるかどうかを判定する
- * もしそうなら1を返す
+ * 演算子であれば1を返す
  */
 int32_t isCharOperator(unsigned char c) {
-    if (strchr(operator, c) != 0) {
-        return 1;
-    }
+    if (strchr(operator, c) != 0) return 1;
     return 0;
 }
 
@@ -55,25 +48,17 @@ int32_t lexer(str_t s, tokenBuf_t *tcBuf, var_t *var) {
             return tcCnt;
         }
 
-        if (s[i] == ' ' || s[i] == '\n' || s[i] == '\t' ||
-            s[i] == '\r') {  // 読み飛ばしていい文字
+        if (s[i] == ' ' || s[i] == '\n' || s[i] == '\t' || s[i] == '\r') {  // 読み飛ばしていい文字
             i++;
             continue;
 
-        } else if (s[i] == '/' && s[i + 1] == '*') {  // コメント部分は飛ばす
-            i = i + 2;                                // "/*"を飛ばす
-            while (!(s[i] == '*' && s[i + 1] == '/')) i++;
-            continue;
-            
         } else if (s[i] == '#') {
-            i = i + 2;
             while (!(s[i] == '\n')) i++;
             continue;
         }
 
         int32_t len = 0;  // 変数などの長さを記録するための変数
-        int32_t type =
-            TyVoid;  // そのトークンが何の種類なのかを記録するための変数
+        int32_t type = TyVoid;  // そのトークンが何の種類なのかを記録するための変数
         if (strchr("(){}[];,", s[i]) != 0) {
             len = 1;
 

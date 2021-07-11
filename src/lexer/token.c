@@ -19,14 +19,12 @@ tokenBuf_t *newTokenBuf() {
     return buf;
 }
 
-
 /* トークンのメモリ領域を解放する(トークンコード列もついでに解放してくれる) */
 void freeTokenBuf(tokenBuf_t *tcBuf) {
     for (int32_t i = tcBuf->tcs; i > 0; i--) {
         free(tcBuf->tokens[i]);
     }
 }
-
 
 /* トークンを新しく作る */
 struct token *newToken(int32_t tc, int32_t len, str_t s) {
@@ -41,21 +39,13 @@ struct token *newToken(int32_t tc, int32_t len, str_t s) {
     return t;
 }
 
-
 /**
  * トークンの内容(文字列)を記憶するための領域
- *
  * 文字列の実体はこのバッファに保存されている
- * tcsBuf自体は基本的にtoken.c内部からしか参照しないため気にしなくてもいい
  */
 char tcsBuf[(MAX_TC + 1) * 10];
 
-
-/**
- * 新しいトークンを作り, tcBuf->tokensに追加する関数
- *
- * 名前の割にはやってることが多い...要改善
- */
+/* 新しいトークンを作り, tcBuf->tokensに追加する関数 */
 int32_t putTc(int32_t tc, int32_t len, str_t s, tokenBuf_t *tcBuf) {
     if (tcBuf->tcs >= MAX_TC) {
         fprintf(stderr, "too many tokens\n");
@@ -70,11 +60,7 @@ int32_t putTc(int32_t tc, int32_t len, str_t s, tokenBuf_t *tcBuf) {
     return 0;
 }
 
-
-/**
- * トークンコードを得るための関数
- * もし登録されていないなら, 新しく作る
- */
+/* トークンコードを得るための関数 */
 int32_t getTc(str_t s, int32_t len, tokenBuf_t *tcBuf, var_t *var,
               int32_t type) {
     int32_t i;
@@ -87,12 +73,13 @@ int32_t getTc(str_t s, int32_t len, tokenBuf_t *tcBuf, var_t *var,
 
     if (i == tcBuf->tcs) {  // 新規作成時の処理
         putTc(i, len, s, tcBuf);
-        // printf("tc : %d, ts : %s, tl : %d\n", i, tcBuf->tokens[i]->ts, len);
-        // // デバッグ用
 
-        // 定数だった場合に初期値を設定
+#ifdef DEBUG
+        printf("tc : %d, ts : %s, tl : %d\n", i, tcBuf->tokens[i]->ts, len);
+#endif
+
+        // 定数だった場合に型を設定し、初期値を設定する
         var[i].type = type;
-
         switch (type) {
             case TyConstI:
                 var[i].value.iVal = strtol((char *)(tcBuf->tokens[i]->ts), 0, 0);
@@ -110,7 +97,7 @@ int32_t getTc(str_t s, int32_t len, tokenBuf_t *tcBuf, var_t *var,
 }
 
 /* 最初にlexerしておく文字列 */
-static const str_t symbols = "; . ( ) [ ] { } == != < >= <= > + - * / // % = && || ++ -- , int float if else while print !**! \0";
+static const str_t symbols = "; . ( ) [ ] { } == != < >= <= > + - * / % = && || ++ -- , int float if else while print !**! \0";
 
 /* 演算子記号などを最初にlexerしておく関数 */
 int32_t tcInit(tokenBuf_t *tcBuf, var_t *var) {
