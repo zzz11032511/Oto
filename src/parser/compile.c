@@ -104,11 +104,7 @@ int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...) {
  *      op      : 処理を表す内部コード
  *      v1 ~ v4 : 渡す値(ポインタ)
  */
-void putIc(var_t **ic, int32_t *icp, int32_t op, var_t *v1, var_t *v2,
-           var_t *v3, var_t *v4) {
-#ifdef DEBUG
-    printIc(ic, icp, op, v1, v2, v3, v4);
-#endif
+void putIc(var_t **ic, int32_t *icp, int32_t op, var_t *v1, var_t *v2, var_t *v3, var_t *v4) {
     ic[(*icp)++] = (var_t *)((int64_t)op);
     ic[(*icp)++] = v1;
     ic[(*icp)++] = v2;
@@ -120,48 +116,45 @@ void putIc(var_t **ic, int32_t *icp, int32_t op, var_t *v1, var_t *v2,
 void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_t start, int32_t end) {
     // プログラムカウンタ
     int32_t pc = start;
-    
-    while (pc < end) {
-        // printf("pc : %d, tc : %d\n", pc, tcBuf->tc[pc]);
 
+    while (pc < end) {
         if (ptnCmp(tcBuf, &pc, TcType, TcIdentifier, TcEqu, TcConst, TcSemi)) {
-            // printf("<type> <identifier> = <const>;\n");
+            // <type> <identifier> = <const>;
             putIc(ic, icp, OpDef, (var_t *)((int64_t)tVpc[0]), &var[tVpc[1]],
                   &var[tVpc[2]], 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcConst, TcSemi)) {
-            // printf("<identifier> = <const>;\n");
+            // <identifier> = <const>;
             putIc(ic, icp, OpCpyS, &var[tVpc[0]], &var[tVpc[1]], 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcExpr)) {
-            // printf("<identifier> = <expr>;\n");
+            // <identifier> = <expr>;
             pc += 2;  // 式の先頭までpcを進める
             expr(tcBuf, icp, &pc, var, ic, 0);
             putIc(ic, icp, OpCpyP, &var[tVpc[0]], 0, 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcPlPlus, TcSemi)) {
-            // printf("<identifier>++;\n");
+            // <identifier>++;
             putIc(ic, icp, OpAdd1, &var[tVpc[0]], 0, 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcMiMinus, TcSemi)) {
-            // printf("<identifier>--;\n");
+            // <identifier>--;
             putIc(ic, icp, OpSub1, &var[tVpc[0]], 0, 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcPrint, TcIdentifier, TcSemi)) {
-            // printf("<print> <identifier>;\n");
+            // <print> <identifier>;
             putIc(ic, icp, OpPrint, &var[tVpc[0]], 0, 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcIf, TcBrOpn, TcStop)) {
-            // printf("<if> (<expr>) {};\n");
+            // <if> (<expr>) {};
             ifControl(tcBuf, icp, &pc, var, ic);
             
         } else if (ptnCmp(tcBuf, &pc, TcWhile, TcBrOpn, TcStop)) {
-            // printf("<while> (<expr>) {};\n");
+            // <while> (<expr>) {};
             whileControl(tcBuf, icp, &pc, var, ic);
 
         } else if (ptnCmp(tcBuf, &pc, TcExpr)) {
-            // TODO: エラー処理をちゃんとする
-            // printf("<expr>;\n");
+            // <expr>;
             expr(tcBuf, icp, &pc, var, ic, 0);
 
         } else {
@@ -178,8 +171,9 @@ err:
 
 /* 文字列sを内部コード列にコンパイルする関数 */
 int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic) {
-    int32_t end;    // コードの終わり
-    end = lexer(s, tcBuf, var);
+    tcInit(tcBuf, var);
+
+    int32_t end = lexer(s, tcBuf, var);
 
 #ifdef DEBUG
     printTokenCode(tcBuf, end);
@@ -187,6 +181,8 @@ int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic) {
 
     int32_t icp = 0;  // icをどこまで書き込んだか
     compile_sub(tcBuf, var, ic, &icp, 0, end);
+
+    putIc(ic, &icp, OpEnd, 0, 0, 0, 0);
 
     return 0;
 }

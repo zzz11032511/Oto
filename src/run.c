@@ -10,15 +10,11 @@
 #include "utils/util.h"
 
 int32_t run(str_t src) {
-    tokenBuf_t *tcBuf = newTokenBuf();  // トークン番号リスト
+    tokenBuf_t *tcBuf = newTokenBuf();  // トークン情報
     var_t var[MAX_TC];
-
-    tcInit(tcBuf, var);
-
     var_t *ic[IC_LIST_SIZE];
-    if (compile(src, tcBuf, var, ic) >= 1) {
-        exit(1);
-    }
+
+    compile(src, tcBuf, var, ic);
     exec(ic, var);
 
     freeTokenBuf(tcBuf);

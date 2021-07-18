@@ -5,14 +5,17 @@ SRCSLIST := main.c run.c debug.c \
 			parser/compile.c parser/control.c parser/expr.c \
 			vm/exec.c  vm/alu.c
 
-PROGRAM  := oto
-SRCDIR   := src
-TESTDIR  := test
-OUTDIR   := build
-TARGET   := $(OUTDIR)/$(PROGRAM)
+PROGRAM       := oto
+DEBUGPROGRAM  := debug
+SRCDIR        := src
+TESTDIR       := test
+OUTDIR        := build
+TARGET        := $(OUTDIR)/$(PROGRAM)
+DEBUGTARGET   := $(OUTDIR)/$(DEBUGPROGRAM)
 
-SRCS := $(addprefix $(SRCDIR)/,$(SRCSLIST))
-OBJS := $(addprefix $(OUTDIR)/,$(patsubst %.c,%.o,$(SRCS)))
+SRCS      := $(addprefix $(SRCDIR)/,$(SRCSLIST))
+OBJS      := $(addprefix $(OUTDIR)/,$(patsubst %.c,%.o,$(SRCS)))
+DEBUGOBJS := $(addprefix $(OUTDIR)/,$(patsubst %.c,%_debug.o,$(SRCS)))
 $(warning $(OBJS))
 
 DEL := rmdir
@@ -25,6 +28,7 @@ CFLAGS = -Wall -O2
 
 all: $(TARGET)
 
+# 本番用
 $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^
 
@@ -32,14 +36,21 @@ $(OUTDIR)/%.o: %.c
 	@if [ ! -e `dirname $@` ]; then mkdir -p `dirname $@`; fi
 	$(CC) $(CFLAGS) -o $@ -c $<
 
+# デバッグ用の表示
+$(DEBUGTARGET): $(DEBUGOBJS)
+	$(CC) $(CFLAGS) -o $@ $^
+
+$(OUTDIR)/%_debug.o: %.c
+	@if [ ! -e `dirname $@` ]; then mkdir -p `dirname $@`; fi
+	$(CC) $(CFLAGS) -D DEBUG -o $@ -c $<
+
 # runするときに実行するファイル名
 TESTSRCPATH = aaa.oto
-
-debug: $(TARGET)
-	$(TARGET) ${TESTSRCPATH}
-
 run: $(TARGET)
-	$(TARGET) ${TESTSRCPATH}
+	$(TARGET) $(TESTSRCPATH)
+
+debug: $(DEBUGTARGET)
+	$(DEBUGTARGET) $(TESTSRCPATH)
 
 clean:
 	rm -rf $(OUTDIR)

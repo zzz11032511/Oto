@@ -74,10 +74,6 @@ int32_t getTc(str_t s, int32_t len, tokenBuf_t *tcBuf, var_t *var,
     if (i == tcBuf->tcs) {  // 新規作成時の処理
         putTc(i, len, s, tcBuf);
 
-#ifdef DEBUG
-        printf("tc : %d, ts : %s, tl : %d\n", i, tcBuf->tokens[i]->ts, len);
-#endif
-
         // 定数だった場合に型を設定し、初期値を設定する
         var[i].type = type;
         switch (type) {

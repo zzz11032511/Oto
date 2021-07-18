@@ -1,11 +1,3 @@
-/**
- * Oto - Sound Programming Language
- *
- * author : Furuta Naoki
- *          2021/05/18
- */
-#define DEBUG 1
-
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,12 +22,12 @@ int main(int argc, const char **argv) {
     }
 
     // ソースファイルを確保しておく領域
-    str_t src = (str_t)malloc(sizeof(char) * SOURCE_BUF_SIZE);
+    str_t src = NULL;
 
-    if (srcLoad((str_t)argv[1], src, SOURCE_BUF_SIZE) == 0) {
+    if (srcLoad((str_t)argv[1], &src) == 0) {
         run(src);
     }
-
+    
     free(src);
 
     return 0;

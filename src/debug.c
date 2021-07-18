@@ -36,11 +36,23 @@ static const str_t opName[] = {
     "End",
 };
 
-void printIc(var_t **ic, int32_t *icp, int32_t op, var_t *v1, var_t *v2, var_t *v3, var_t *v4) {
-    printf(
-        "%5d : %9s, v1 : %16ld, v2 : %16ld, v3 : %16ld, v4 : %16ld\n",
-        *icp, opName[op], (uint64_t)v1, (uint64_t)v2, (uint64_t)v3, (uint64_t)v4
-    );
+void printIc(var_t **icp) {
+    var_t **p = icp;
+    uint64_t icNum = 0;
+
+    while (1) {
+        uint64_t op = (uint64_t)p[0];
+        printf(
+            "%5ld : %9s, v1 : %16ld, v2 : %16ld, v3 : %16ld, v4 : %16ld\n",
+            icNum, opName[op], (uint64_t)p[1], (uint64_t)p[2], (uint64_t)p[3], (uint64_t)p[4]
+        );
+        if (op == OpEnd) {
+            break;
+        }
+        icNum += 5;
+        p += 5;
+    }
+    printf("\n");
 }
 
 void printTokenCode(tokenBuf_t *tcBuf, int32_t length) {
