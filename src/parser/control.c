@@ -13,52 +13,41 @@
 #include "../lexer/token.h"
 #include "../variable/variable.h"
 
-int32_t blockCompile(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t **ic) {
-    int32_t ppc = *pc;
+/* "{"と"}"で囲まれたブロックの最後のトークン位置を返す */
+int32_t searchBlockEnd(tokenBuf_t *tcBuf, int32_t pc) {
     int32_t nest = 0;
 
     while (1) {
-        int32_t tc = tcBuf->tc[ppc++];
-        if (tc == TcCrBrOpn) {
+        int32_t tc = tcBuf->tc[pc++];
+        if (tc == TcCrBrOpn || tc == TcBrOpn) {
             nest++;
             continue;
-        } else if (tc == TcCrBrCls) {
+        } else if (tc == TcCrBrCls || tc == TcBrCls) {
             nest--;
             if (nest != 0) continue;
             else break;
         }
     }
 
+    return pc - 2;
+}
+
+int32_t blockCompile(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t **ic) {
     int32_t start = *pc + 1;
-    int32_t end   = ppc - 2;
+    int32_t end   = searchBlockEnd(tcBuf, *pc);
 
     compile_sub(tcBuf, var, ic, icp, start, end);
 
-    return ppc;
+    return end + 2;    // ブロックの外に持っていくため2足す
 }
 
 int32_t cmpBlockCompile(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t **ic) {
-    int32_t ppc = *pc;
-    int32_t nest = 0;
-
-    while (1) {
-        int32_t tc = tcBuf->tc[ppc++];
-        if (tc == TcBrOpn) {
-            nest++;
-            continue;
-        } else if (tc == TcBrCls) {
-            nest--;
-            if (nest != 0) continue;
-            else break;
-        }       
-    }
-
     int32_t start = *pc + 1;
-    int32_t end   = ppc - 2;
+    int32_t end   = searchBlockEnd(tcBuf, *pc);
 
-    expr(tcBuf, icp, &start, var, ic, end + 1);
+    expr(tcBuf, icp, &start, var, ic, end);
 
-    return ppc;    // "{"の位置を返す
+    return end + 2;
 }
 
 void ifControl(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t **ic) {

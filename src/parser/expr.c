@@ -180,7 +180,6 @@ int32_t expr(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t **i
     } else {
         // expr()はendの"手前"まで変換を行うので、呼び出し元がこの仕様を考慮しなくてもいいように1足す
         end++;
-        printf("end = %d\n", end);
     }
 
     int32_t rpnTc[RPN_TC_LIST_SIZE];  // 逆ポーランド記法に書き替えたトークン列
