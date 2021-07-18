@@ -175,8 +175,12 @@ int32_t expr(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t **i
 
     if (end == 0) {
         int32_t i = start;
-        while (tcBuf->tc[i] != TcSemi) i++;  // 式の終わりを探す
+        while (tcBuf->tc[i] != TcSemi) i++;
         end = i;        
+    } else {
+        // expr()はendの"手前"まで変換を行うので、呼び出し元がこの仕様を考慮しなくてもいいように1足す
+        end++;
+        printf("end = %d\n", end);
     }
 
     int32_t rpnTc[RPN_TC_LIST_SIZE];  // 逆ポーランド記法に書き替えたトークン列
@@ -199,7 +203,6 @@ int32_t expr(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t **i
             putIc(ic, icp, op, 0, 0, 0, 0);
 
         } else if (tc > TcEnd) {
-            // そうじゃなかったらスタックに積む
             putIc(ic, icp, OpPush, &var[tc], 0, 0, 0);
             iPush(&varStack, tc);
         }
