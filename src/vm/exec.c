@@ -71,42 +71,21 @@ void exec(var_t **ic, var_t *var) {
                 icp += 5;
                 continue;
 
+            case OpPush:
+                push(&stack, *icp[1]);
+                icp += 5;
+                continue;
+
             case OpAdd:
-                t1 = pop(&stack);
-                t2 = pop(&stack);
-                t3 = add2(t2, t1);
-                push(&stack, t3);
-                icp += 5;
-                continue;
-
             case OpSub:
-                t1 = pop(&stack);
-                t2 = pop(&stack);
-                t3 = sub2(t2, t1);
-                push(&stack, t3);
-                icp += 5;
-                continue;
-
             case OpMul:
-                t1 = pop(&stack);
-                t2 = pop(&stack);
-                t3 = mul2(t2, t1);
-                push(&stack, t3);
-                icp += 5;
-                continue;
-
             case OpDiv:
-                t1 = pop(&stack);
-                t2 = pop(&stack);
-                t3 = div2(t2, t1);
-                push(&stack, t3);
-                icp += 5;
-                continue;
-
             case OpMod:
+            case OpAnd:
+            case OpOr:
                 t1 = pop(&stack);
                 t2 = pop(&stack);
-                t3 = mod2(t2, t1);
+                t3 = calculation(t2, t1, (int64_t)icp[0]);
                 push(&stack, t3);
                 icp += 5;
                 continue;
@@ -121,12 +100,6 @@ void exec(var_t **ic, var_t *var) {
                 icp += 5;
                 continue;
 
-            case OpPush:
-                push(&stack, *icp[1]);
-                icp += 5;
-                continue;
-
-            // 比較命令
             case OpEq:
             case OpNEq:
             case OpLtCmp:
@@ -137,24 +110,6 @@ void exec(var_t **ic, var_t *var) {
                 t2 = pop(&stack);
                 t3.type = TyConstI;
                 t3.value.iVal = compare(t2, t1, (int64_t)icp[0]);
-                push(&stack, t3);
-                icp += 5;
-                continue;
-
-            case OpAnd:
-                t1 = pop(&stack);
-                t2 = pop(&stack);
-                t3.type = TyConstI;
-                t3.value.iVal = t1.value.iVal * t2.value.iVal;
-                push(&stack, t3);
-                icp += 5;
-                continue;
-
-            case OpOr:
-                t1 = pop(&stack);
-                t2 = pop(&stack);
-                t3.type = TyConstI;
-                t3.value.iVal = t1.value.iVal + t2.value.iVal;
                 push(&stack, t3);
                 icp += 5;
                 continue;

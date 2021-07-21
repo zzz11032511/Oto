@@ -14,10 +14,10 @@ enum {
     OpMul,        // 掛算
     OpDiv,        // 割算
     OpMod,        // 余り
-    OpAdd1,       // 1加算
-    OpSub1,       // 1減算
     OpAnd,        // 論理積
     OpOr,         // 論理和
+    OpAdd1,       // 1加算
+    OpSub1,       // 1減算
 
     OpEq,         // == 
     OpNEq,        // !=

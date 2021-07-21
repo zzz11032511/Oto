@@ -143,6 +143,40 @@ var_t mod2(var_t v1, var_t v2) {
     return t;
 }
 
+var_t calculation(var_t v1, var_t v2, int32_t opcode) {
+    var_t t;
+
+    switch (opcode) {
+    case OpAdd:
+        t = add2(v1, v2);
+        break;
+    case OpSub:
+        t = sub2(v1, v2);
+        break;
+    case OpMul:
+        t = mul2(v1, v2);
+        break;
+    case OpDiv:
+        t = div2(v1, v2);
+        break;
+    case OpMod:
+        t = mod2(v1, v2);
+        break;
+    case OpAnd:
+        t.type = TyConstI;
+        t.value.iVal = v1.value.iVal * v2.value.iVal;
+        break;
+    case OpOr:
+        t.type = TyConstI;
+        t.value.iVal = v1.value.iVal + v2.value.iVal;
+        break;
+    default:
+        exception(ERROR);
+    }
+
+    return t;
+}
+
 int32_t compare(var_t v1, var_t v2, int32_t opcode) {
     int64_t v1Val;
     int64_t v2Val;
