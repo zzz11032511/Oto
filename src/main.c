@@ -22,6 +22,8 @@ int main(int argc, const char **argv) {
         exit(1);
     }
 
+    initErrorHandle();
+    
     // ソースファイルを確保しておく領域
     str_t src = NULL;
 

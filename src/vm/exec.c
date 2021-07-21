@@ -145,7 +145,7 @@ void exec(var_t **ic, var_t *var) {
                 return;
 
             default:
-                exception(ERROR);
+                callException(ERROR);
                 return;
         }
     }

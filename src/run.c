@@ -15,11 +15,11 @@ int32_t run(str_t src) {
     var_t var[MAX_TC];
     var_t *ic[IC_LIST_SIZE];
 
-    compile(src, tcBuf, var, ic);
-
     setTcBuf(tcBuf);
     setVar(var);
     setIc(ic);
+
+    compile(src, tcBuf, var, ic);
 
     exec(ic, var);
 

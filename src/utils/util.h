@@ -10,6 +10,8 @@ typedef int boolean;
 #define true     1
 #define false    0
 
+#define GET_ARRAY_LENGTH(a) (sizeof(a)/sizeof(a[0]))
+
 /**
  * pathに指定されたソースファイルをsrcに読み込む
  *

@@ -6,6 +6,7 @@
 
 #include "compile.h"
 #include "../debug.h"
+#include "../errorHandle.h"
 #include "../utils/iStack.h"
 #include "../utils/util.h"
 #include "../vm/ic.h"
@@ -60,7 +61,7 @@ int32_t tc2priority(int32_t tc) {
         case TcEnd:
             return -99;
         default:
-            // 一致しない(演算子でない)ときはOpNopを返す
+            // 一致しない(演算子でない)ときは-99を返す
             return -99;
     }    
 }
@@ -82,21 +83,13 @@ int32_t priorityCmp(int32_t tc1, int32_t tc2) {
 
 #define RPN_TC_LIST_SIZE 1000
 
-/**
- *  トークンコード列を逆ポーランド記法に並び替える関数
- *
- *  args:
- *      start:  式を表すトークン列の先頭
- *      end:    式を表すトークン列の末尾
- *      rpnTc:  逆ポーランド記法に並べ替えたトークン列の配列
- *      rpnTcP: 逆ポーランド記法に並べ替えたトークン列をどこまで書いたか
- */
+/* トークンコード列を逆ポーランド記法に並び替える関数 */
 int32_t rpn(tokenBuf_t *tcBuf, int32_t start, int32_t end, int32_t *rpnTc, int32_t rpnTcP) {
     struct iStack stack;
     stack.sp = 0;
 
-    // NULL参照を防ぐためにTcEndをpushしておく(push,popをもっと安全にすべき)
-    // push(&stack, TcEnd);
+    // 直前のトークンが演算子だったか
+    int32_t beforeOpe = 0;
 
     for (int32_t pc = start; pc < end; pc++) {
         int32_t tc = tcBuf->tc[pc];  // 現在指しているトークンを取ってくる
@@ -104,6 +97,7 @@ int32_t rpn(tokenBuf_t *tcBuf, int32_t start, int32_t end, int32_t *rpnTc, int32
         if (tc > TcEnd) {
             // ただの変数,定数ならそのまま書き込む
             rpnTc[rpnTcP++] = tc;
+            beforeOpe = 0;
             continue;
 
         } else if (tc == TcBrOpn) {
@@ -119,16 +113,13 @@ int32_t rpn(tokenBuf_t *tcBuf, int32_t start, int32_t end, int32_t *rpnTc, int32
                     if (nest == 0) {
                         break;
                     } else {
-                        // 「)」でもネストが合わないとき
                         nest--;
                     }
                 } else if (ttc == TcBrOpn) {
-                    // 「(」がまた1つ増えた
                     nest++;
                 } else if (end1 > end) {
-                    // 括弧が見つからないならsyntax error
-                    fprintf(stderr, "syntax error : expr()\n");
-                    exit(1);
+                    // 括弧が見つからない
+                    callError(SYNTAX_ERROR);
                 }
             }
 
@@ -138,26 +129,28 @@ int32_t rpn(tokenBuf_t *tcBuf, int32_t start, int32_t end, int32_t *rpnTc, int32
 
         } else if (TcEEq <= tc && tc <= TcBarBar) {
             // 演算子のとき
+
+            if (beforeOpe) {
+                callError(SYNTAX_ERROR);
+            } else {
+                beforeOpe = 1;
+            }
+
             if (priorityCmp(tc, iPeek(&stack)) > 0) {
                 iPush(&stack, tc);
-                // printf("push : %d\n", tc);
 
             } else {
                 // スタックの一番上の演算子よりも優先度が低いときには
                 // スタックの先頭の優先度が低くなるか, spが0になるまで書き込む
                 while (stack.sp > 0 && (priorityCmp(tc, iPeek(&stack)) <= 0)) {
                     rpnTc[rpnTcP++] = iPop(&stack);
-                    // printf("pop : %d\n", rpnTc[rpnTcP - 1]);
                 }
                 iPush(&stack, tc);
-                // printf("push : %d\n", tc);
             }
         }
     }
 
     while (stack.sp > 0) {
-        // 最後にスタックに残ったものをpopする
-        // stack.sp > 0でないのは, 冒頭のpush(TcEnd)の分
         rpnTc[rpnTcP++] = iPop(&stack);
     }
 

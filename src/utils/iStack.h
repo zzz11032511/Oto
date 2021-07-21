@@ -2,10 +2,10 @@
 
 #include <stdint.h>
 
-#define MAX_STACK_SIZE 1000
+#define ISTACK_SIZE 1000
 
 struct iStack {
-    int32_t q[MAX_STACK_SIZE];
+    int32_t q[ISTACK_SIZE];
     int32_t sp;
 };
 

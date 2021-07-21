@@ -8,6 +8,7 @@
 
 #include "control.h"
 #include "expr.h"
+#include "../errorHandle.h"
 #include "../debug.h"
 #include "../utils/util.h"
 #include "../vm/ic.h"
@@ -56,11 +57,11 @@ int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...) {
                 tVpc[vp++] = TyFloat;
             }
 
-        } else if (ptnTc == TcIdentifier && tc > TcEnd) {
+        } else if (ptnTc == TcIdentifier && tc >= TcEnd) {
             // 変数名, 識別子の時の処理
             tVpc[vp++] = tc;
 
-        } else if (ptnTc == TcConst && tc > TcEnd) {
+        } else if (ptnTc == TcConst && tc >= TcEnd) {
             // 定数の時の処理
             tVpc[vp++] = tc;
 
@@ -153,20 +154,11 @@ void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_
             // <while> (<expr>) {};
             whileControl(tcBuf, icp, &pc, var, ic);
 
-        } else if (ptnCmp(tcBuf, &pc, TcExpr)) {
-            // <expr>;
-            expr(tcBuf, icp, &pc, var, ic, 0);
-
         } else {
-            goto err;
+            callError(SYNTAX_ERROR);
         }
     }
     return;
-
-// エラー表示
-err:
-    fprintf(stderr, "compile error\n");
-    exit(1);
 }
 
 /* 文字列sを内部コード列にコンパイルする関数 */

@@ -6,13 +6,11 @@
 #include <string.h>
 
 #include "token.h"
+#include "../errorHandle.h"
 #include "../utils/util.h"
 #include "../variable/variable.h"
 
-/**
- *  変数名として使用可能かどうかを判定する
- *  使えるのであれば1を返す
- */
+/* 変数名として使用可能かどうかを判定する */
 int32_t isValNameAvailable(unsigned char c) {
     // TODO?: ♯や♭を変数名に使えるようにする
     if ('0' <= c && c <= '9') return 1;
@@ -28,13 +26,27 @@ int32_t isConst(unsigned char c) {
     return 0;
 }
 
-const str_t operator = "=+-*/!%&~|<>?:.#";
-/**
- * 文字が演算子であるかどうかを判定する
- * 演算子であれば1を返す
- */
+const str_t symbol = "=+-*/!%&~|<>?:.#";
+/* 文字が演算子であるかどうかを判定する */
 int32_t isCharOperator(unsigned char c) {
-    if (strchr(operator, c) != 0) return 1;
+    if (strchr(symbol, c) != 0) return 1;
+    return 0;
+}
+
+static const str_t operators[] = {
+    "==", "!=", "<", ">=", "<=", ">",
+    "+", "-", "*", "/", "%", "=", "&&", "||", "++", "--"
+};
+
+/* s[i] ~ s[i + len]の文字列が演算子なのかを判定する */
+int32_t isTrueOperator(str_t s, int32_t i, int32_t len) {
+    int opNum = GET_ARRAY_LENGTH(operators);
+    for (int i = 0; i < opNum; i++) {
+        // printf("a : %d\n", strncmp(operators[i], s, len));
+        if (strncmp(operators[i], s, len) == 0) {
+            return 1;
+        }
+    }
     return 0;
 }
 
@@ -80,18 +92,20 @@ int32_t lexer(str_t s, tokenBuf_t *tcBuf, var_t *var) {
             while (isValNameAvailable(s[i + len])) len++;
 
         } else if (isCharOperator(s[i]) != 0) {  // 演算子
-            while (isCharOperator(s[i + len]) != 0 && s[i + len] != 0) len++;
+            while (isCharOperator(s[i + len]) != 0 && s[i + len] != 0) {
+                len++;
+            }
+
+            if (!isTrueOperator(&s[i], i, len)) {
+                callError(SYNTAX_ERROR);
+            }
 
         } else {
-            goto err;
+            callError(SYNTAX_ERROR);
         }
 
         tcBuf->tc[tcCnt] = getTc(&s[i], len, tcBuf, var, type);
         i += len;
         tcCnt++;
     }
-
-err:
-    fprintf(stderr, "syntax error\n");
-    exit(1);
 }

@@ -14,10 +14,22 @@ enum {
     STACK_OVERFLOW_ERROR    // 内部スタックのオーバーフロー
 };
 
+// error
+enum {
+    SYSTEM_ERROR,
+    FAILURE_MAKE_TOKENBUFFER_ERROR,
+    FAILURE_MAKE_TOKEN_ERROR,
+    TOO_MANY_TOKEN_ERROR,
+    SYNTAX_ERROR,
+};
+
+void initErrorHandle();
+
 void setFname(str_t filename);
 void setSrc(str_t src);
 void setTcBuf(tokenBuf_t *tcBuf);
 void setVar(var_t *var);
 void setIc(var_t **ic);
 
-void exception(int32_t errorCode);
+void callException(int32_t exceptionCode);
+void callError(int32_t errorCode);

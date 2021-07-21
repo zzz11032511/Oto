@@ -3,10 +3,10 @@
 #include <stdint.h>
 #include "variable.h"
 
-#define STACK_SIZE 1000
+#define VSTACK_SIZE 1000
 
 struct vStack {
-    var_t q[STACK_SIZE];
+    var_t q[VSTACK_SIZE];
     int32_t sp;
 };
 

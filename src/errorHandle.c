@@ -19,6 +19,14 @@ static tokenBuf_t *eTcBuf;
 static var_t *eVar;
 static var_t **eIc;
 
+void initErrorHandle() {
+    eFilename = NULL;
+    eSrc = NULL;
+    eTcBuf = NULL;
+    eVar = NULL;
+    eIc = NULL;
+}
+
 void setFname(str_t filename) {
     eFilename = filename;
 }
@@ -47,8 +55,10 @@ void quit(int32_t exit_status) {
     exit(exit_status);
 }
 
-void exception(int32_t errorCode) {
-    switch (errorCode) {
+/* 実行時例外 */
+void callException(int32_t exceptionCode) {
+    fprintf(stderr, "Exception : ");
+    switch (exceptionCode) {
     case ERROR:
         fprintf(stderr, "Error\n");
         break;
@@ -68,6 +78,21 @@ void exception(int32_t errorCode) {
     case STACK_OVERFLOW_ERROR:
         fprintf(stderr, "StackOverflowError\n");
         break;
+    }
+
+    quit(EXIT_FAILURE);
+}
+
+/* コンパイルエラー */
+void callError(int32_t errorCode) {
+    fprintf(stderr, "Compile error : ");
+    switch (errorCode) {
+    case SYNTAX_ERROR:
+        fprintf(stderr, "SyntaxError\n");
+        break;
+    default:
+        fprintf(stderr, "SystemError (Errorcode : %d)\n", errorCode);
+        break;        
     }
 
     quit(EXIT_FAILURE);
