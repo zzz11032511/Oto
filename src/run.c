@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "errorHandle.h"
 #include "parser/compile.h"
 #include "vm/exec.h"
 #include "vm/ic.h"
@@ -15,6 +16,11 @@ int32_t run(str_t src) {
     var_t *ic[IC_LIST_SIZE];
 
     compile(src, tcBuf, var, ic);
+
+    setTcBuf(tcBuf);
+    setVar(var);
+    setIc(ic);
+
     exec(ic, var);
 
     freeTokenBuf(tcBuf);

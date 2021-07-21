@@ -1,4 +1,4 @@
-SRCSLIST := main.c run.c debug.c \
+SRCSLIST := main.c run.c debug.c errorHandle.c \
 		    lexer/lexer.c lexer/token.c \
 			utils/util.c utils/iStack.c \
 			variable/vStack.c \
@@ -16,7 +16,7 @@ DEBUGTARGET   := $(OUTDIR)/$(DEBUGPROGRAM)
 SRCS      := $(addprefix $(SRCDIR)/,$(SRCSLIST))
 OBJS      := $(addprefix $(OUTDIR)/,$(patsubst %.c,%.o,$(SRCS)))
 DEBUGOBJS := $(addprefix $(OUTDIR)/,$(patsubst %.c,%_debug.o,$(SRCS)))
-$(warning $(OBJS))
+# $(warning $(OBJS))
 
 DEL := rmdir
 
@@ -36,7 +36,7 @@ $(OUTDIR)/%.o: %.c
 	@if [ ! -e `dirname $@` ]; then mkdir -p `dirname $@`; fi
 	$(CC) $(CFLAGS) -o $@ -c $<
 
-# デバッグ用の表示
+# デバッグ用
 $(DEBUGTARGET): $(DEBUGOBJS)
 	$(CC) $(CFLAGS) -o $@ $^
 

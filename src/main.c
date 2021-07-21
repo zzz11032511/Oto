@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "run.h"
+#include "errorHandle.h"
 #include "utils/util.h"
 
 // 1のときにデバッグのための情報が出力される
@@ -24,7 +25,11 @@ int main(int argc, const char **argv) {
     // ソースファイルを確保しておく領域
     str_t src = NULL;
 
+    // エラー出力用
+    setFname((str_t)argv[1]);
+
     if (srcLoad((str_t)argv[1], &src) == 0) {
+        setSrc(src);
         run(src);
     }
     

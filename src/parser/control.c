@@ -32,15 +32,17 @@ int32_t searchBlockEnd(tokenBuf_t *tcBuf, int32_t pc) {
     return pc - 2;
 }
 
+/* "{}"で囲まれたブロック内のコードをコンパイルし、ブロックを抜けた場所のpcを返す */
 int32_t blockCompile(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t **ic) {
     int32_t start = *pc + 1;
     int32_t end   = searchBlockEnd(tcBuf, *pc);
 
     compile_sub(tcBuf, var, ic, icp, start, end);
-
+    
     return end + 2;    // ブロックの外に持っていくため2足す
 }
 
+/* "()"で囲まれた比較式をコンパイルし、その後ろのpcを返す */
 int32_t cmpBlockCompile(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t **ic) {
     int32_t start = *pc + 1;
     int32_t end   = searchBlockEnd(tcBuf, *pc);
@@ -98,3 +100,4 @@ void whileControl(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_
 
     return; 
 }
+

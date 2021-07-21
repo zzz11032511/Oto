@@ -4,6 +4,7 @@
 
 #include "alu.h"
 #include "ic.h"
+#include "../errorHandle.h"
 #include "../debug.h"
 #include "../utils/util.h"
 #include "../variable/vStack.h"
@@ -189,7 +190,7 @@ void exec(var_t **ic, var_t *var) {
                 return;
 
             default:
-                printf("ERROR End\n");
+                exception(ERROR);
                 return;
         }
     }

@@ -3,12 +3,12 @@
 #include <stdlib.h>
 
 #include "ic.h"
+#include "../errorHandle.h"
 #include "../utils/util.h"
 #include "../variable/variable.h"
 
 var_t add2(var_t v1, var_t v2) {
     var_t t;
-    // printf("type : %d, %d\n", v1.type, v2.type);
     if (v1.type == TyInt || v1.type == TyConstI) {
         if (v2.type == TyInt || v2.type == TyConstI) {
             // int + int
@@ -93,9 +93,8 @@ var_t mul2(var_t v1, var_t v2) {
 var_t div2(var_t v1, var_t v2) {
     var_t t;
 
-    if (v1.value.iVal == 0) {
-        fprintf(stderr, "Zero division error.\n");
-        exit(1);
+    if (v2.value.iVal == 0) {
+        exception(ZERO_DIVISION_ERROR);
     }
 
     if (v1.type == TyInt || v1.type == TyConstI) {
@@ -125,9 +124,8 @@ var_t div2(var_t v1, var_t v2) {
 var_t mod2(var_t v1, var_t v2) {
     var_t t;
 
-    if (v1.value.iVal == 0) {
-        fprintf(stderr, "zero division error.\n");
-        exit(1);
+    if (v2.value.iVal == 0) {
+        exception(ZERO_DIVISION_ERROR);
     }
 
     if (v1.type == TyInt || v1.type == TyConstI) {
@@ -136,12 +134,10 @@ var_t mod2(var_t v1, var_t v2) {
             t.value.iVal = v1.value.iVal % v2.value.iVal;
             t.type       = TyConstI;
         } else {
-            fprintf(stderr, "float type cannot modulo.\n");
-            exit(1);
+            exception(FLOAT_MODULO_ERROR);
         }
     } else {
-        fprintf(stderr, "float type cannot modulo.\n");
-        exit(1);
+        exception(FLOAT_MODULO_ERROR);
     }
 
     return t;
