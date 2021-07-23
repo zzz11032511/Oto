@@ -61,6 +61,7 @@ enum {
     
     TcIf,          // if文
     TcElse,        // else文
+    TcElsif,       // elsif文
     TcWhile,       // while文
     TcPrint,       // print文
 

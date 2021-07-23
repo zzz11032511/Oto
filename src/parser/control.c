@@ -36,9 +36,7 @@ int32_t searchBlockEnd(tokenBuf_t *tcBuf, int32_t pc) {
 int32_t blockCompile(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t **ic) {
     int32_t start = *pc + 1;
     int32_t end   = searchBlockEnd(tcBuf, *pc);
-
     compile_sub(tcBuf, var, ic, icp, start, end);
-    
     return end + 2;    // ブロックの外に持っていくため2足す
 }
 
@@ -46,9 +44,7 @@ int32_t blockCompile(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, v
 int32_t cmpBlockCompile(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t **ic) {
     int32_t start = *pc + 1;
     int32_t end   = searchBlockEnd(tcBuf, *pc);
-
     expr(tcBuf, icp, &start, var, ic, end);
-
     return end + 2;
 }
 
@@ -61,10 +57,17 @@ void ifControl(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t *
     int32_t jmpIcp1 = *icp;
     putIc(ic, icp, OpJz, 0, 0, 0, 0);
 
-    ppc = blockCompile(tcBuf, icp, &ppc, var, ic);
+    ppc = blockCompile(tcBuf, icp, &ppc, var, ic); 
 
-    if (tcBuf->tc[ppc] == TcElse) {
+    if (tcBuf->tc[ppc] == TcElsif) {
         int32_t jmpIcp2 = *icp;
+        putIc(ic, icp, OpJmp, 0, 0, 0, 0);
+        putIc(ic, &jmpIcp1, OpJz, (var_t *)((int64_t)*icp), 0, 0, 0);
+        ifControl(tcBuf, icp, &ppc, var, ic);
+        putIc(ic, &jmpIcp2, OpJmp, (var_t *)((int64_t)*icp), 0, 0, 0);
+
+    } else if (tcBuf->tc[ppc] == TcElse) {
+        int32_t jmpIcp3 = *icp;
         putIc(ic, icp, OpJmp, 0, 0, 0, 0);
         putIc(ic, &jmpIcp1, OpJz, (var_t *)((int64_t)*icp), 0, 0, 0);
 
@@ -72,9 +75,11 @@ void ifControl(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t *
 
         ppc = blockCompile(tcBuf, icp, &ppc, var, ic);
 
-        putIc(ic, &jmpIcp2, OpJmp, (var_t *)((int64_t)*icp), 0, 0, 0);
+        putIc(ic, &jmpIcp3, OpJmp, (var_t *)((int64_t)*icp), 0, 0, 0);
+
     } else {
         putIc(ic, &jmpIcp1, OpJz, (var_t *)((int64_t)*icp), 0, 0, 0);
+
     }
 
     *pc = ppc;

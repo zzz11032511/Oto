@@ -94,7 +94,7 @@ int32_t rpn(tokenBuf_t *tcBuf, int32_t start, int32_t end, int32_t *rpnTc, int32
     for (int32_t pc = start; pc < end; pc++) {
         int32_t tc = tcBuf->tc[pc];  // 現在指しているトークンを取ってくる
 
-        if (tc > TcEnd) {
+        if (tc >= TcEnd) {
             // ただの変数,定数ならそのまま書き込む
             rpnTc[rpnTcP++] = tc;
             beforeOpe = 0;
@@ -194,7 +194,7 @@ int32_t expr(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t **i
 
             putIc(ic, icp, op, 0, 0, 0, 0);
 
-        } else if (tc > TcEnd) {
+        } else if (tc >= TcEnd) {
             putIc(ic, icp, OpPush, &var[tc], 0, 0, 0);
             iPush(&varStack, tc);
         }
