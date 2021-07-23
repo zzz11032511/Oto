@@ -49,15 +49,6 @@ void exec(var_t **ic, var_t *var) {
 
     while (1) {
         switch ((int64_t)icp[0]) {
-            case OpDef:
-                icp[2]->type = (int32_t)((int64_t)icp[1]);
-                
-                // intだろうがfloatだろうがこれで代入できる
-                icp[2]->value.iVal = icp[3]->value.iVal;  
-
-                icp += 5;
-                continue;
-
             case OpCpyS:
                 icp[1]->type       = icp[2]->type;
                 icp[1]->value.iVal = icp[2]->value.iVal;

@@ -85,13 +85,18 @@ void callException(int32_t exceptionCode) {
 
 /* コンパイルエラー */
 void callError(int32_t errorCode) {
-    fprintf(stderr, "Compile error : ");
     switch (errorCode) {
+    case INVALID_SYNTAX_ERROR:
+        fprintf(stderr, "SyntaxError : invalid syntax\n");
+        break;        
+    case ASSIGN_TO_LITERAL_ERROR:
+        fprintf(stderr, "SyntaxError : can't assign to literal\n");
+        break;
     case SYNTAX_ERROR:
         fprintf(stderr, "SyntaxError\n");
         break;
     default:
-        fprintf(stderr, "SystemError (Errorcode : %d)\n", errorCode);
+        fprintf(stderr, "SystemError : (Errorcode : %d)\n", errorCode);
         break;        
     }
 

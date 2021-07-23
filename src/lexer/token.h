@@ -56,9 +56,6 @@ enum {
     TcComma,       // ','
 
     // 予約語
-    TcInt,         // int型
-    TcFloat,       // float型
-    
     TcIf,          // if文
     TcElse,        // else文
     TcElsif,       // elsif文

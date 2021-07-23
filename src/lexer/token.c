@@ -91,7 +91,7 @@ int32_t getTc(str_t s, int32_t len, tokenBuf_t *tcBuf, var_t *var, int32_t type)
 }
 
 /* 最初にlexerしておく文字列 */
-static const str_t symbols = "; ( ) [ ] { } == != < >= <= > + - * / % = && || ++ -- , int float if else elsif while print \0";
+static const str_t symbols = "; ( ) [ ] { } == != < >= <= > + - * / % = && || ++ -- , if else elsif while print \0";
 
 /* 演算子記号などを最初にlexerしておく関数 */
 int32_t tcInit(tokenBuf_t *tcBuf, var_t *var) {

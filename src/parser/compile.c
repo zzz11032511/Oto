@@ -49,14 +49,6 @@ int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...) {
         if (tc == ptnTc) {
             // 既にあるトークンと一致した
 
-        } else if (ptnTc == TcType && (TcInt <= tc && tc <= TcFloat)) {
-            // 変数の型
-            if (tc == TcInt) {
-                tVpc[vp++] = TyInt;
-            } else if (tc == TcFloat) {
-                tVpc[vp++] = TyFloat;
-            }
-
         } else if (ptnTc == TcIdentifier && tc >= TcEnd) {
             // 変数名, 識別子の時の処理
             tVpc[vp++] = tc;
@@ -119,17 +111,18 @@ void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_
     int32_t pc = start;
 
     while (pc < end) {
-        if (ptnCmp(tcBuf, &pc, TcType, TcIdentifier, TcEqu, TcConst, TcSemi)) {
-            // <type> <identifier> = <const>;
-            putIc(ic, icp, OpDef, (var_t *)((int64_t)tVpc[0]), &var[tVpc[1]],
-                  &var[tVpc[2]], 0);
-
-        } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcConst, TcSemi)) {
+        if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcConst, TcSemi)) {
             // <identifier> = <const>;
+            if (var[tVpc[0]].type == TyConstI || var[tVpc[0]].type == TyConstF) {
+                callError(ASSIGN_TO_LITERAL_ERROR);
+            }
             putIc(ic, icp, OpCpyS, &var[tVpc[0]], &var[tVpc[1]], 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcExpr)) {
             // <identifier> = <expr>;
+            if (var[tVpc[0]].type == TyConstI || var[tVpc[0]].type == TyConstF) {
+                callError(ASSIGN_TO_LITERAL_ERROR);
+            }
             pc += 2;  // 式の先頭までpcを進める
             expr(tcBuf, icp, &pc, var, ic, 0);
             putIc(ic, icp, OpCpyP, &var[tVpc[0]], 0, 0, 0);
@@ -155,7 +148,7 @@ void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_
             whileControl(tcBuf, icp, &pc, var, ic);
 
         } else {
-            callError(SYNTAX_ERROR);
+            callError(INVALID_SYNTAX_ERROR);
         }
     }
     return;
