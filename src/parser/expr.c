@@ -119,7 +119,7 @@ int32_t rpn(tokenBuf_t *tcBuf, int32_t start, int32_t end, int32_t *rpnTc, int32
                     nest++;
                 } else if (end1 > end) {
                     // 括弧が見つからない
-                    callError(SYNTAX_ERROR);
+                    callError(INVALID_SYNTAX_ERROR);
                 }
             }
 
@@ -131,7 +131,7 @@ int32_t rpn(tokenBuf_t *tcBuf, int32_t start, int32_t end, int32_t *rpnTc, int32
             // 演算子のとき
 
             if (beforeOpe) {
-                callError(SYNTAX_ERROR);
+                callError(INVALID_SYNTAX_ERROR);
             } else {
                 beforeOpe = 1;
             }

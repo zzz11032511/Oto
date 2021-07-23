@@ -10,7 +10,6 @@
 
 static const str_t opName[] = {
     "Nop",
-    "Def",
     "CpyS",
     "CpyP",
     "Push",
@@ -43,7 +42,7 @@ void printIc(var_t **icp) {
     while (1) {
         uint64_t op = (uint64_t)p[0];
         printf(
-            "%5ld : %9s, v1 : %16ld, v2 : %16ld, v3 : %16ld, v4 : %16ld\n",
+            "%5ld : %9s, v1 : %16lx, v2 : %16lx, v3 : %16lx, v4 : %16lx\n",
             icNum, opName[op], (uint64_t)p[1], (uint64_t)p[2], (uint64_t)p[3], (uint64_t)p[4]
         );
         if (op == OpEnd) {

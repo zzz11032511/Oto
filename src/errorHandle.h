@@ -27,6 +27,8 @@ enum {
 
 void initErrorHandle();
 
+void otoQuit(int32_t exit_status);
+
 void setFname(str_t filename);
 void setSrc(str_t src);
 void setTcBuf(tokenBuf_t *tcBuf);

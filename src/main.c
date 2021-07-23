@@ -7,8 +7,6 @@
 #include "errorHandle.h"
 #include "utils/util.h"
 
-// 1のときにデバッグのための情報が出力される
-
 /* 使い方表示用の関数 */
 void usage(str_t name) {
     // TODO: そのうち真面目に書く
@@ -23,19 +21,17 @@ int main(int argc, const char **argv) {
     }
 
     initErrorHandle();
-    
-    // ソースファイルを確保しておく領域
+
     str_t src = NULL;
 
-    // エラー出力用
     setFname((str_t)argv[1]);
 
     if (srcLoad((str_t)argv[1], &src) == 0) {
         setSrc(src);
         run(src);
     }
-    
-    free(src);
+
+    otoQuit(EXIT_SUCCESS);
 
     return 0;
 }

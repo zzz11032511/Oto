@@ -19,11 +19,10 @@
 int32_t tVpc[5];  // putIc()で指定するTcを入れる場所(Temp Var Pcのつもり)
 int32_t vp = 0;  // tVpcへのポインタ
 
-/* 引数に渡されたトークンのパターンと実際のコードが一致しているかを調べる関数
- */
+/* 引数に渡されたトークンのパターンと実際のコードが一致しているかを調べる関数 */
 int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...) {
     va_list ap;
-    va_start(ap, pattern);  // 可変長引数
+    va_start(ap, pattern);
 
     int32_t ppc   = *pc;      // 最初のpcを保存しておく
     int32_t ptnTc = pattern;  // パターンから読み込んだトークン
@@ -32,11 +31,10 @@ int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...) {
     while (1) {
         // ネストの処理をいつか書く
         int32_t tc = tcBuf->tc[*pc];
-        // printf("ptnTc : %d, tc : %d, pc : %d\n", ptnTc, tc, *pc);
 
         if (ptnTc == TcSemi && tc == TcSemi) {
             // セミコロンなら終わり
-            (*pc)++;  // 進めとく
+            (*pc)++;
             break;
         } 
         if (ptnTc == TcStop) {
@@ -86,17 +84,6 @@ int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...) {
     return 1;
 }
 
-
-/**
- * ic[]に書き込むための関数
- *
- * args:
- *      ic      : 内部コード列
- *      icp     : 現在指しているicのインデックス
- *                中で加算したりするのでポインタを渡してね
- *      op      : 処理を表す内部コード
- *      v1 ~ v4 : 渡す値(ポインタ)
- */
 void putIc(var_t **ic, int32_t *icp, int32_t op, var_t *v1, var_t *v2, var_t *v3, var_t *v4) {
     ic[(*icp)++] = (var_t *)((int64_t)op);
     ic[(*icp)++] = v1;
@@ -105,7 +92,6 @@ void putIc(var_t **ic, int32_t *icp, int32_t op, var_t *v1, var_t *v2, var_t *v3
     ic[(*icp)++] = v4;
 }
 
-/* token列を内部コードに変換する */
 void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_t start, int32_t end) {
     // プログラムカウンタ
     int32_t pc = start;
@@ -154,7 +140,6 @@ void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_
     return;
 }
 
-/* 文字列sを内部コード列にコンパイルする関数 */
 int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic) {
     tcInit(tcBuf, var);
 

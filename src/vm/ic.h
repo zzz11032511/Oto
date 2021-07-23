@@ -1,8 +1,5 @@
 #pragma once
 
-// 内部コード列の長さ
-#define IC_LIST_SIZE 10000
-
 enum {
     OpNop = 0,    // 何もしない
     OpCpyS,       // 変数への単純代入

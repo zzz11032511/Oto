@@ -5,10 +5,10 @@
 #include "../variable/variable.h"
 
 /* 認識するトークンの数の最大値 */
-#define MAX_TC 1024
+#define MAX_TC 4096
 
 /* トークンコード列の大きさ */
-#define TC_LIST_SIZE 10000
+#define TC_LIST_SIZE 20000
 
 /* トークンの識別子 */ 
 #define TcExpr         -1    // 式
@@ -22,7 +22,6 @@
 enum {
     TcSemi = 0,    // ';'
 
-    // 括弧
     TcBrOpn,       // 丸括弧 開 '('
     TcBrCls,       // 丸括弧 閉 ')'
     TcSqBrOpn,     // 四角括弧 開 '['
@@ -30,7 +29,6 @@ enum {
     TcCrBrOpn,     // 波括弧 開 '{'
     TcCrBrCls,     // 波括弧 閉 '}'
 
-    // 比較演算子
     TcEEq,         // '=='
     TcNEq,         // '!='
     TcLt,          // '<'
@@ -38,7 +36,6 @@ enum {
     TcLe,          // '<='
     TcGt,          // '>'
 
-    // 算術演算子
     TcPlus,        // '+'
     TcMinus,       // '-'
     TcAster,       // '*'
@@ -46,7 +43,6 @@ enum {
     TcPerce,       // '%'
     TcEqu,         // '='
 
-    // 論理演算子
     TcAndAnd,      // '&&'
     TcBarBar,      // '||'
     
@@ -55,7 +51,6 @@ enum {
 
     TcComma,       // ','
 
-    // 予約語
     TcIf,          // if文
     TcElse,        // else文
     TcElsif,       // elsif文

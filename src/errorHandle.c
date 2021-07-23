@@ -48,10 +48,13 @@ void setIc(var_t **ic) {
 }
 
 /* 終了処理 */
-void quit(int32_t exit_status) {
+void otoQuit(int32_t exit_status) {
     free(eSrc);
     freeTokenBuf(eTcBuf);
 
+    eSrc = NULL;
+    eTcBuf = NULL;
+    
     exit(exit_status);
 }
 
@@ -62,25 +65,21 @@ void callException(int32_t exceptionCode) {
     case ERROR:
         fprintf(stderr, "Error\n");
         break;
-
     case TYPE_ERROR:
         fprintf(stderr, "TypeError\n");
         break;
-
     case FLOAT_MODULO_ERROR:
         fprintf(stderr, "FloatModuloError\n");
         break;
-    
     case ZERO_DIVISION_ERROR:
         fprintf(stderr, "ZeroDivisionError\n");
         break;
-
     case STACK_OVERFLOW_ERROR:
         fprintf(stderr, "StackOverflowError\n");
         break;
     }
 
-    quit(EXIT_FAILURE);
+    otoQuit(EXIT_FAILURE);
 }
 
 /* コンパイルエラー */
@@ -100,5 +99,5 @@ void callError(int32_t errorCode) {
         break;        
     }
 
-    quit(EXIT_FAILURE);
+    otoQuit(EXIT_FAILURE);
 }

@@ -25,7 +25,7 @@ void printVal(var_t var) {
             printf("%.3lf\n", var.value.fVal);
             break;
         default:
-            break;
+            callException(TYPE_ERROR);
     }
     return;
 }

@@ -5,10 +5,10 @@
 #include "errorHandle.h"
 #include "parser/compile.h"
 #include "vm/exec.h"
-#include "vm/ic.h"
-#include "lexer/lexer.h"
 #include "lexer/token.h"
 #include "utils/util.h"
+
+#define IC_LIST_SIZE 20000    // 内部コード列の長さ
 
 int32_t run(str_t src) {
     tokenBuf_t *tcBuf = newTokenBuf();  // トークン情報
@@ -23,6 +23,5 @@ int32_t run(str_t src) {
 
     exec(ic, var);
 
-    freeTokenBuf(tcBuf);
     return 0;
 }
