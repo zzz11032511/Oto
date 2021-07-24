@@ -1,8 +1,5 @@
 *.exe
-*.o
-*.log
 
-old/
 build/
 .vscode/
 

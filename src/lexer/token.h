@@ -51,12 +51,14 @@ enum {
     TcComma,       // ','
 
     TcMain,        // main
-    TcChannel,     // channel
-    TcSound,       // sound
+    TcChannel,     // channel(未実装)
+    TcSound,       // sound(未実装)
+    TcFunc,        // func(未実装)
     TcIf,          // if文
     TcElse,        // else文
     TcElsif,       // elsif文
     TcWhile,       // while文
+    TcFor,         // for文(未実装)
     TcPrint,       // print文
 
     // トークン定義がここまでだよーということを示す(トークン列の末尾にもある)
