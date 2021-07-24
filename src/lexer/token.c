@@ -43,7 +43,7 @@ struct token *newToken(int32_t tc, int32_t len, str_t s) {
  * トークンの内容(文字列)を記憶するための領域
  * 文字列の実体はこのバッファに保存されている
  */
-char tcsBuf[(MAX_TC + 1) * 10];
+static char tcsBuf[(MAX_TC + 1) * 10];
 
 /* 新しいトークンを作り, tcBuf->tokensに追加する関数 */
 int32_t putTc(int32_t tc, int32_t len, str_t s, tokenBuf_t *tcBuf) {
@@ -88,6 +88,31 @@ int32_t getTc(str_t s, int32_t len, tokenBuf_t *tcBuf, var_t *var, int32_t type)
     }
 
     return i;
+}
+
+/* 予約語一覧 */
+struct rsvWord_t {
+    str_t name;
+    int tc;
+};
+
+static struct rsvWord_t rsvWord[] = {
+    {"if",    TcIf   }, {"else",  TcElse },
+    {"elsif", TcElsif}, {"while", TcWhile},
+    {"print", TcPrint}
+};
+
+/* 予約語かどうか調べる */
+int32_t isRsvWord(tokenBuf_t *tcBuf, int32_t tc) {
+    int32_t rsvWordNum = GET_ARRAY_LENGTH(rsvWord);
+    for (int32_t i = 0; i < rsvWordNum; i++) {
+        int32_t rsvWordLen = strlen(rsvWord[i].name);
+        int32_t isRW = strncmp(rsvWord[i].name, tcBuf->tokens[tc]->ts, rsvWordLen);
+        if (isRW == 0) {
+            return 1;
+        }
+    }
+    return 0;
 }
 
 /* 最初にlexerしておく文字列 */

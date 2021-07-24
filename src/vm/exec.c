@@ -137,7 +137,6 @@ void exec(var_t **ic, var_t *var) {
 
             default:
                 callException(ERROR);
-                return;
         }
     }
 }

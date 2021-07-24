@@ -14,8 +14,7 @@
 #define TcExpr         -1    // 式
 #define TcType         -2    // 型
 #define TcIdentifier   -3    // 識別子(変数やラベル)
-#define TcConst        -4    // 定数
-#define TcOperator     -5    // 演算子
+#define TcOperator     -4    // 演算子
 #define TcStop         -99   // 都合により構文評価を止めたいとき
 
 /* 字句解析が返す値(トークンコード)の一覧 */
@@ -93,6 +92,9 @@ void freeTokenBuf(tokenBuf_t *tcBuf);
  *     type  : (定数の場合)型
  */
 int32_t getTc(str_t s, int32_t len, tokenBuf_t *tcBuf, var_t *var, int32_t type);
+
+/* 予約語かどうか調べる */
+int32_t isRsvWord(tokenBuf_t *tcBuf, int32_t tc);
 
 /* 演算子記号などを最初にlexerしておく関数 */
 int32_t tcInit(tokenBuf_t *tcBuf, var_t *var);

@@ -47,12 +47,8 @@ int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...) {
         if (tc == ptnTc) {
             // 既にあるトークンと一致した
 
-        } else if (ptnTc == TcIdentifier && tc >= TcEnd) {
+        } else if (ptnTc == TcIdentifier && tc > TcComma) {
             // 変数名, 識別子の時の処理
-            tVpc[vp++] = tc;
-
-        } else if (ptnTc == TcConst && tc >= TcEnd) {
-            // 定数の時の処理
             tVpc[vp++] = tc;
 
         } else if (ptnTc == TcExpr) {
@@ -97,10 +93,12 @@ void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_
     int32_t pc = start;
 
     while (pc < end) {
-        if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcConst, TcSemi)) {
-            // <identifier> = <const>;
+        if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcIdentifier, TcSemi)) {
+            // <identifier> = <identifier>;
             if (var[tVpc[0]].type == TyConstI || var[tVpc[0]].type == TyConstF) {
                 callError(ASSIGN_TO_LITERAL_ERROR);
+            } else if (isRsvWord(tcBuf, tVpc[0])) {
+                callError(NAME_ERROR);
             }
             putIc(ic, icp, OpCpyS, &var[tVpc[0]], &var[tVpc[1]], 0, 0);
 
@@ -108,6 +106,8 @@ void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_
             // <identifier> = <expr>;
             if (var[tVpc[0]].type == TyConstI || var[tVpc[0]].type == TyConstF) {
                 callError(ASSIGN_TO_LITERAL_ERROR);
+            } else if (isRsvWord(tcBuf, tVpc[0])) {
+                callError(NAME_ERROR);
             }
             pc += 2;  // 式の先頭までpcを進める
             expr(tcBuf, icp, &pc, var, ic, 0);
@@ -122,15 +122,15 @@ void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_
             putIc(ic, icp, OpSub1, &var[tVpc[0]], 0, 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcPrint, TcIdentifier, TcSemi)) {
-            // <print> <identifier>;
+            // print <identifier>;
             putIc(ic, icp, OpPrint, &var[tVpc[0]], 0, 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcIf, TcBrOpn, TcStop)) {
-            // <if> (<expr>) {};
+            // if (<expr>);
             ifControl(tcBuf, icp, &pc, var, ic);
             
         } else if (ptnCmp(tcBuf, &pc, TcWhile, TcBrOpn, TcStop)) {
-            // <while> (<expr>) {};
+            // while (<expr>);
             whileControl(tcBuf, icp, &pc, var, ic);
 
         } else {

@@ -91,6 +91,10 @@ void callError(int32_t errorCode) {
     case ASSIGN_TO_LITERAL_ERROR:
         fprintf(stderr, "SyntaxError : can't assign to literal\n");
         break;
+    case NAME_ERROR:
+        fprintf(stderr, "SyntaxError : can't use reserved words as variable names\n");
+        break;
+
     case SYNTAX_ERROR:
         fprintf(stderr, "SyntaxError\n");
         break;
