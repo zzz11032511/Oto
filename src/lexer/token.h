@@ -50,6 +50,9 @@ enum {
 
     TcComma,       // ','
 
+    TcMain,        // main
+    TcChannel,     // channel
+    TcSound,       // sound
     TcIf,          // if文
     TcElse,        // else文
     TcElsif,       // elsif文

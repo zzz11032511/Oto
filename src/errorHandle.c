@@ -85,6 +85,9 @@ void callException(int32_t exceptionCode) {
 /* コンパイルエラー */
 void callError(int32_t errorCode) {
     switch (errorCode) {
+    case NOT_FOUND_MAIN_ERROR:
+        fprintf(stderr, "SyntaxError : main-block not found\n");
+        break;
     case INVALID_SYNTAX_ERROR:
         fprintf(stderr, "SyntaxError : invalid syntax\n");
         break;        

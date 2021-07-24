@@ -46,6 +46,7 @@ int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...) {
             // 既にあるトークンと一致した
 
         } else if (ptnTc == TcIdentifier && tc > TcComma) {
+            // 演算子でないか(予約語も含む)
             tVpc[vp++] = tc;
 
         } else if (ptnTc == TcExpr) {
@@ -131,6 +132,28 @@ void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_
     return;
 }
 
+void searchMain(tokenBuf_t *tcBuf, int32_t tcEnd, int32_t *mainStart, int32_t *mainEnd) {
+    int32_t pc = 0;
+    int32_t start = 0;
+
+    while (pc < tcEnd) {
+        if (tcBuf->tc[pc] == TcMain) {
+            if (start != 0) {    // mainが2つある場合
+                callError(NOT_FOUND_MAIN_ERROR);
+            }
+            start = pc;
+            break;
+        }
+        pc++;
+    }
+    if (pc == tcEnd) {
+        callError(NOT_FOUND_MAIN_ERROR);
+    }
+
+    *mainStart = start + 2;
+    *mainEnd = searchBlockEnd(tcBuf, start + 1);
+}
+
 int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic) {
     tcInit(tcBuf, var);
 
@@ -139,9 +162,12 @@ int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic) {
 #ifdef DEBUG
     printTokenCode(tcBuf, end);
 #endif
+    int32_t mainStart = 0;
+    int32_t mainEnd   = 0;
+    searchMain(tcBuf, end, &mainStart, &mainEnd);
 
     int32_t icp = 0;  // icをどこまで書き込んだか
-    compile_sub(tcBuf, var, ic, &icp, 0, end);
+    compile_sub(tcBuf, var, ic, &icp, mainStart, mainEnd);
 
     putIc(ic, &icp, OpEnd, 0, 0, 0, 0);
 
