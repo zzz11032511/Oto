@@ -6,6 +6,7 @@
 
 #include "compile.h"
 #include "expr.h"
+#include "../errorHandle.h"
 #include "../utils/iStack.h"
 #include "../utils/util.h"
 #include "../vm/ic.h"
@@ -26,6 +27,8 @@ int32_t searchBlockEnd(tokenBuf_t *tcBuf, int32_t pc) {
             nest--;
             if (nest != 0) continue;
             else break;
+        } else if (tc == TcEnd) {
+            callError(INVALID_SYNTAX_ERROR);
         }
     }
 

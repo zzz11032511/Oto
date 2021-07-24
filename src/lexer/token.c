@@ -43,7 +43,7 @@ struct token *newToken(int32_t tc, int32_t len, str_t s) {
  * トークンの内容(文字列)を記憶するための領域
  * 文字列の実体はこのバッファに保存されている
  */
-static char tcsBuf[(MAX_TC + 1) * 10];
+static char tcsBuf[(MAX_TC + 1) * 6];
 
 /* 新しいトークンを作り, tcBuf->tokensに追加する関数 */
 int32_t putTc(int32_t tc, int32_t len, str_t s, tokenBuf_t *tcBuf) {
@@ -119,7 +119,7 @@ int32_t isRsvWord(tokenBuf_t *tcBuf, int32_t tc) {
 }
 
 /* 最初にlexerしておく文字列 */
-static const str_t symbols = "; ( ) [ ] { } == != < >= <= > + - * / % = && || ++ -- , main channel sound if else elsif while print \0";
+static const str_t symbols = "; ( ) [ ] { } == != < >= <= > + - * / % = && || ++ -- , main channel sound if else elsif while print end \0";
 
 /* 演算子記号などを最初にlexerしておく関数 */
 int32_t tcInit(tokenBuf_t *tcBuf, var_t *var) {

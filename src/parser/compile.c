@@ -125,13 +125,13 @@ void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_
             whileControl(tcBuf, icp, &pc, var, ic);
 
         } else {
-            printf("aaa\n");
             callError(INVALID_SYNTAX_ERROR);
         }
     }
     return;
 }
 
+/* mainブロックの始点と終点を探す */
 void searchMain(tokenBuf_t *tcBuf, int32_t tcEnd, int32_t *mainStart, int32_t *mainEnd) {
     int32_t pc = 0;
     int32_t start = 0;

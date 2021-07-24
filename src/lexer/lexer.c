@@ -57,6 +57,7 @@ int32_t lexer(str_t s, tokenBuf_t *tcBuf, var_t *var) {
 
     while (1) {
         if (s[i] == 0 || s[i] == '\0') {
+            tcBuf->tc[tcCnt + 1] = TcEnd;
             return tcCnt;
         }
 
