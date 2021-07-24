@@ -94,7 +94,6 @@ void callError(int32_t errorCode) {
     case NAME_ERROR:
         fprintf(stderr, "SyntaxError : can't use reserved words as variable names\n");
         break;
-
     case SYNTAX_ERROR:
         fprintf(stderr, "SyntaxError\n");
         break;

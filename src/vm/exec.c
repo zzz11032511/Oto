@@ -30,7 +30,7 @@ void printVal(var_t var) {
     return;
 }
 
-void exec(var_t **ic, var_t *var) {
+void exec(var_t **ic, var_t *var, tokenBuf_t *tcBuf) {
     var_t **icp = ic;
     var_t **base = ic;
 
@@ -44,7 +44,7 @@ void exec(var_t **ic, var_t *var) {
     var_t t3;
 
 #ifdef DEBUG
-    printIc(icp);
+    printIc(icp, tcBuf);
 #endif
 
     while (1) {

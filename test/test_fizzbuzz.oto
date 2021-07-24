@@ -1,8 +1,8 @@
-int Fizz = 3333;
-int Buzz = 5555;
-int FizzBuzz = 33335555;
+Fizz = 3333;
+Buzz = 5555;
+FizzBuzz = 33335555;
 
-int i = 1;
+i = 1;
 while (i <= 30) {
     if ((i % 5 == 0) && (i % 3 == 0)) {
         print FizzBuzz;

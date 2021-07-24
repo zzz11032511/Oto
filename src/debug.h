@@ -6,7 +6,7 @@
 #include "variable/variable.h"
 
 /* 内部コードを出力する */
-void printIc(var_t **icp);
+void printIc(var_t **icp, tokenBuf_t *tcBuf);
 
 /* ソースコードをトークンに変換したものを出力する */
 void printTokenCode(tokenBuf_t *tcBuf, int32_t length);

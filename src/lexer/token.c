@@ -74,6 +74,8 @@ int32_t getTc(str_t s, int32_t len, tokenBuf_t *tcBuf, var_t *var, int32_t type)
 
         // 定数だった場合に型を設定し、初期値を設定する
         var[i].type = type;
+        var[i].tc = i;
+
         switch (type) {
             case TyConstI:
                 var[i].value.iVal = strtol((char *)(tcBuf->tokens[i]->ts), 0, 0);

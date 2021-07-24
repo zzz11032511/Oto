@@ -21,7 +21,7 @@ int32_t run(str_t src) {
 
     compile(src, tcBuf, var, ic);
 
-    exec(ic, var);
+    exec(ic, var, tcBuf);
 
     return 0;
 }

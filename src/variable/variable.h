@@ -17,4 +17,5 @@ typedef struct var {
         double   fVal;
         void *pVal;
     } value;
+    int32_t tc;    // 割り当てられたトークンコード
 } var_t;

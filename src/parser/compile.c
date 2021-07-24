@@ -26,10 +26,8 @@ int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...) {
 
     int32_t ppc   = *pc;      // 最初のpcを保存しておく
     int32_t ptnTc = pattern;  // パターンから読み込んだトークン
-    int32_t nest  = 0;        // ネストの深さ
 
     while (1) {
-        // ネストの処理をいつか書く
         int32_t tc = tcBuf->tc[*pc];
 
         if (ptnTc == TcSemi && tc == TcSemi) {
@@ -38,8 +36,8 @@ int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...) {
             break;
         } 
         if (ptnTc == TcStop) {
-            (*pc) = ppc;  // TcStopのとき(if, whileなど)はpcを元に戻して返す        
-            vp    = 0;  // 違うときはvpも元に戻す
+            (*pc) = ppc;       
+            vp    = 0;
             va_end(ap);
             return 1;              
         }
@@ -48,30 +46,22 @@ int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...) {
             // 既にあるトークンと一致した
 
         } else if (ptnTc == TcIdentifier && tc > TcComma) {
-            // 変数名, 識別子の時の処理
             tVpc[vp++] = tc;
 
         } else if (ptnTc == TcExpr) {
-            // 式の時の処理
-            (*pc) = ppc;  // 式と思われるときはpcを元に戻して返す
-            vp    = 0;  // 違うときはvpも元に戻す
+            (*pc) = ppc;
+            vp    = 0;
             va_end(ap);
             return 1;                
 
         } else {
-            (*pc) = ppc;  // もし一致しないときはpcをptnCmp()呼び出し前に戻す
+            (*pc) = ppc;
             vp = 0;
             va_end(ap);
-            return 0;  // 一致しなかったので0を返す
+            return 0;
         }
-        ptnTc = va_arg(ap, int32_t);  // 次のトークンパータンを参照
+        ptnTc = va_arg(ap, int32_t);
         (*pc)++;
-    }
-
-    if (nest != 0) {
-        vp = 0;
-        va_end(ap);
-        return 0;  // ネストが正常でないので不一致
     }
 
     vp = 0;
@@ -134,6 +124,7 @@ void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_
             whileControl(tcBuf, icp, &pc, var, ic);
 
         } else {
+            printf("aaa\n");
             callError(INVALID_SYNTAX_ERROR);
         }
     }

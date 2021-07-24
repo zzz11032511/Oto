@@ -3,4 +3,4 @@
 #include <stdint.h>
 #include "../variable/variable.h"
 
-void exec(var_t **ic, var_t *var);
+void exec(var_t **ic, var_t *var, tokenBuf_t *tcBuf);
