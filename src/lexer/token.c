@@ -103,7 +103,7 @@ static struct rsvWord_t rsvWord[] = {
     {"sound",   TcSound   }, {"func"   , TcFunc    },
     {"if",      TcIf      }, {"else",    TcElse    }, 
     {"elsif",   TcElsif   }, {"while",   TcWhile   }, 
-    {"for",     TcFor     }, {"print",   TcPrint   },
+    {"print",   TcPrint   },
 };
 
 /* 予約語かどうか調べる */
@@ -120,7 +120,7 @@ int32_t isRsvWord(tokenBuf_t *tcBuf, int32_t tc) {
 }
 
 /* 最初にlexerしておく文字列 */
-static const str_t symbols = "; ( ) [ ] { } == != < >= <= > + - * / % = && || ++ -- , main channel sound func if else elsif while for print end \0";
+static const str_t symbols = "; ( ) [ ] { } == != < >= <= > + - * / % = && || ++ -- , main channel sound func if else elsif while print end \0";
 
 /* 演算子記号などを最初にlexerしておく関数 */
 int32_t tcInit(tokenBuf_t *tcBuf, var_t *var) {
