@@ -7,58 +7,145 @@
 #include "../utils/util.h"
 #include "../variable/variable.h"
 
-var_t mod2(var_t v1, var_t v2) {
-    var_t t;
-    t.type = TyConst;
-    double v1Val = v1.value.fVal;
-    double v2Val = v2.value.fVal;
+int32_t typeChecker(var_t v) {
+    if (v.type == TyConstI) return TyConstI;
+    if (v.type == TyConstF || v.type == TyFloat) return TyConstF;
+    return TyVoid;
+}
 
-    if (v2Val < 0) {
-        v2Val = -v2Val;
+var_t add2(var_t v1, var_t v2) {
+    var_t t;
+    t.type = TyConstF;
+
+    if (typeChecker(v1) == TyConstI && typeChecker(v2) == TyConstI) {
+        t.value.iVal = v1.value.iVal + v2.value.iVal;
+        t.type       = TyConstI;
+    } else if (typeChecker(v1) == TyConstF && typeChecker(v2) == TyConstI) {     
+        t.value.fVal = v1.value.fVal + (double)v2.value.iVal;
+    } else if (typeChecker(v1) == TyConstI && typeChecker(v2) == TyConstF) {     
+        t.value.fVal = (double)v1.value.iVal + v2.value.fVal;
+    } else {
+        t.value.fVal = v1.value.fVal + v2.value.fVal;
     }
 
-    if (v1Val > 0) {
-        while (v1Val - v2Val >= 0) {
-            v1Val -= v2Val;
-        }
-    } else if (v1Val < 0) {
-        do {
-            v1Val += v2Val;
-        } while (v1Val < 0);
+    return t;
+}
+
+var_t sub2(var_t v1, var_t v2) {
+    var_t t;
+    t.type = TyConstF;
+
+    if (typeChecker(v1) == TyConstI && typeChecker(v2) == TyConstI) {
+        t.value.iVal = v1.value.iVal - v2.value.iVal;
+        t.type       = TyConstI;
+    } else if (typeChecker(v1) == TyConstF && typeChecker(v2) == TyConstI) {     
+        t.value.fVal = v1.value.fVal - (double)v2.value.iVal;
+    } else if (typeChecker(v1) == TyConstI && typeChecker(v2) == TyConstF) {     
+        t.value.fVal = (double)v1.value.iVal - v2.value.fVal;
     } else {
+        t.value.fVal = v1.value.fVal - v2.value.fVal;
+    }
+
+    return t;
+}
+
+var_t mul2(var_t v1, var_t v2) {
+    var_t t;
+    t.type = TyConstF;
+
+    if (typeChecker(v1) == TyConstI && typeChecker(v2) == TyConstI) {
+        t.value.iVal = v1.value.iVal * v2.value.iVal;
+        t.type       = TyConstI;
+    } else if (typeChecker(v1) == TyConstF && typeChecker(v2) == TyConstI) {     
+        t.value.fVal = v1.value.fVal * (double)v2.value.iVal;
+    } else if (typeChecker(v1) == TyConstI && typeChecker(v2) == TyConstF) {     
+        t.value.fVal = (double)v1.value.iVal * v2.value.fVal;
+    } else {
+        t.value.fVal = v1.value.fVal * v2.value.fVal;
+    }
+
+    return t;
+}
+
+var_t div2(var_t v1, var_t v2) {
+    var_t t;
+    t.type       = TyConstF;
+
+    if (v2.value.iVal == 0) {
         callException(ZERO_DIVISION_ERROR);
     }
 
-    t.value.fVal = v1Val;
+    if (typeChecker(v1) == TyConstI && typeChecker(v2) == TyConstI) {
+        t.value.iVal = v1.value.iVal / v2.value.iVal;
+        t.type       = TyConstI;
+    } else if (typeChecker(v1) == TyConstF && typeChecker(v2) == TyConstI) {     
+        t.value.fVal = v1.value.fVal / (double)v2.value.iVal;
+    } else if (typeChecker(v1) == TyConstI && typeChecker(v2) == TyConstF) {     
+        t.value.fVal = (double)v1.value.iVal / v2.value.fVal;
+    } else {
+        t.value.fVal = v1.value.fVal / v2.value.fVal;
+    }
+
+    return t;
+}
+
+var_t mod2(var_t v1, var_t v2) {
+    var_t t;
+
+    if (v2.value.iVal == 0) {
+        callException(ZERO_DIVISION_ERROR);
+    }
+
+    if (typeChecker(v1) == TyConstI && typeChecker(v2) == TyConstI) {
+        t.value.iVal = v1.value.iVal % v2.value.iVal;
+        t.type = TyConstI;
+
+    } else {
+        double v1Val = v1.value.fVal;
+        double v2Val = v2.value.fVal;
+
+        if (v2Val < 0) v2Val = -v2Val;
+
+        if (v1Val > 0) {
+            while (v1Val - v2Val >= 0) v1Val -= v2Val;
+        } else if (v1Val < 0) {
+            do {
+                v1Val += v2Val;
+            } while (v1Val < 0);
+        }
+        t.value.fVal = v1Val;
+        t.type = TyConstF;
+    }
+
     return t;
 }
 
 var_t calculation(var_t v1, var_t v2, int32_t opcode) {
     var_t t;
-    t.type = TyConst;
+
     switch (opcode) {
     case OpAdd:
-        t.value.fVal = v1.value.fVal + v2.value.fVal;
+        t = add2(v1, v2);
         break;
     case OpSub:
-        t.value.fVal = v1.value.fVal - v2.value.fVal;
+        t = sub2(v1, v2);
         break;
     case OpMul:
-        t.value.fVal = v1.value.fVal * v2.value.fVal;
+        t = mul2(v1, v2);
         break;
     case OpDiv:
-        t.value.fVal = v1.value.fVal / v2.value.fVal;
+        t = div2(v1, v2);
         break;
     case OpMod:
         t = mod2(v1, v2);
         break;
     case OpAnd:
-        t.type = TyConst;
-        t.value.iVal = (int32_t)v1.value.fVal & (int32_t)v2.value.fVal;
+        t.type = TyConstI;
+        t.value.iVal = v1.value.iVal & v2.value.iVal;
         break;
     case OpOr:
-        t.type = TyConst;
-        t.value.iVal = (int32_t)v1.value.fVal | (int32_t)v2.value.fVal;
+        t.type = TyConstI;
+        t.value.iVal = v1.value.iVal | v2.value.iVal;
         break;
     default:
         callException(ERROR);
@@ -71,12 +158,16 @@ int32_t compare(var_t v1, var_t v2, int32_t opcode) {
     int64_t v1Val;
     int64_t v2Val;
 
-    if (v1.type == TyFloat || v1.type == TyConst) {
+    if (v1.type == TyFloat || v1.type == TyConstF) {
         v1Val = (int64_t)v1.value.fVal;
+    } else {
+        v1Val = v1.value.iVal;
     }
 
-    if (v2.type == TyFloat || v2.type == TyConst) {
+    if (v2.type == TyFloat || v2.type == TyConstF) {
         v2Val = (int64_t)v2.value.fVal;
+    } else {
+        v2Val = v2.value.iVal;
     }
 
     switch (opcode) {

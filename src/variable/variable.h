@@ -4,7 +4,8 @@
 
 enum TYPE {
     TyVoid = 0,
-    TyConst,
+    TyConstI,
+    TyConstF,
     TyFloat,
     TyChannel,
     TySound,

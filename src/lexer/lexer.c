@@ -75,13 +75,12 @@ int32_t lexer(str_t s, tokenBuf_t *tcBuf, var_t *var) {
             len = 1;
 
         } else if (isConst(s[i])) {  // 定数
-            type = TyConst;
-            int32_t decimal = 0;  // 小数点の出現回数
+            type = TyConstI;
             while (1) {
                 if (isConst(s[i + len])) {
                     len++;
-                } else if (s[i + len] == '.' && decimal == 0) {
-                    decimal = 1;
+                } else if (s[i + len] == '.' && type == TyConstI) {
+                    type = TyConstF;
                     len++;
                 } else {
                     break;

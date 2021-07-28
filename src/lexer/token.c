@@ -77,8 +77,11 @@ int32_t getTc(str_t s, int32_t len, tokenBuf_t *tcBuf, var_t *var, int32_t type)
         var[i].tc = i;
 
         switch (type) {
-            case TyConst:
+            case TyConstF:
                 var[i].value.fVal = strtod((char *)(tcBuf->tokens[i]->ts), 0);
+                break;
+            case TyConstI:
+                var[i].value.iVal = strtol((char *)(tcBuf->tokens[i]->ts), 0, 0);
                 break;
             default:
                 var[i].value.iVal = 0;

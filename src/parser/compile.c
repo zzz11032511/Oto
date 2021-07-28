@@ -86,7 +86,7 @@ void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_
     while (pc < end) {
         if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcIdentifier, TcLF)) {
             // <identifier> = <identifier>;
-            if (var[tVpc[0]].type == TyConst) {
+            if (var[tVpc[0]].type == TyConstI || var[tVpc[0]].type == TyConstF) {
                 callError(ASSIGN_TO_LITERAL_ERROR);
             } else if (isRsvWord(tcBuf, tVpc[0])) {
                 callError(NAME_ERROR);
@@ -95,7 +95,7 @@ void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_
 
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcExpr)) {
             // <identifier> = <expr>;
-            if (var[tVpc[0]].type == TyConst) {
+            if (var[tVpc[0]].type == TyConstI || var[tVpc[0]].type == TyConstF) {
                 callError(ASSIGN_TO_LITERAL_ERROR);
             } else if (isRsvWord(tcBuf, tVpc[0])) {
                 callError(NAME_ERROR);
