@@ -39,7 +39,7 @@ static const str_t opName[] = {
     "Jz",
     "Jnz",
     "Print",
-    "End",
+    "Exit",
 };
 
 void printIc(var_t **icp, tokenBuf_t *tcBuf) {
@@ -68,7 +68,7 @@ void printIc(var_t **icp, tokenBuf_t *tcBuf) {
         }
         printf("\n");
  
-        if (op == OpEnd) {
+        if (op == OpExit) {
             break;
         }
         icNum += 5;
@@ -80,8 +80,26 @@ void printIc(var_t **icp, tokenBuf_t *tcBuf) {
 void printTokenCode(tokenBuf_t *tcBuf, int32_t length) {
     for (int i = 0; i < length; i++) {
         int32_t tcNum = tcBuf->tc[i];
-        printf("tc[%d] : ", i);
-        printVarName(tcBuf, tcNum);
+        if (tcNum == TcLF) {
+            printf("tc[%d] : \\n", i);
+        } else {
+            printf("tc[%d] : ", i);
+            printVarName(tcBuf, tcNum);
+        }
+        printf("\n");
+    }
+    printf("\n");
+}
+
+void printTokenList(tokenBuf_t *tcBuf) {
+    for (int i = 0; i < tcBuf->tcs; i++) {
+        int32_t tcNum = tcBuf->tokens[i]->tc;
+        if (tcNum == TcLF) {
+            printf("tc[%d] : \\n", i);
+        } else {
+            printf("tc[%d] : ", i);
+            printVarName(tcBuf, tcNum);
+        }
         printf("\n");
     }
     printf("\n");

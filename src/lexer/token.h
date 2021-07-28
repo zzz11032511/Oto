@@ -21,7 +21,6 @@ enum TOKENCODE {
     TcLF = 0,    // \n
     TcComma,     // ,
     TcColon,     // :
-    TcWQuote,    // "
 
     TcSqBrOpn,   // [
     TcSqBrCls,   // ]

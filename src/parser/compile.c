@@ -108,6 +108,10 @@ void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_
             // print <identifier>
             putIc(ic, icp, OpPrint, &var[tVpc[0]], 0, 0, 0);
 
+        } else if (ptnCmp(tcBuf, &pc, TcExit)) {
+            // exit
+            putIc(ic, icp, OpExit, 0, 0, 0, 0);
+
         } else {
             callError(INVALID_SYNTAX_ERROR);
         }
@@ -121,6 +125,9 @@ int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic) {
     int32_t end = lexer(s, tcBuf, var);
 
 #ifdef DEBUG
+    printf("Tokenize result\n");
+    printTokenList(tcBuf);
+    printf("Converted source code\n");
     printTokenCode(tcBuf, end);
 #endif
 

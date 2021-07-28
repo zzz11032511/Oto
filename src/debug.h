@@ -11,5 +11,7 @@ void printIc(var_t **icp, tokenBuf_t *tcBuf);
 /* ソースコードをトークンに変換したものを出力する */
 void printTokenCode(tokenBuf_t *tcBuf, int32_t length);
 
+void printTokenList(tokenBuf_t *tcBuf);
+
 /* 数式を表すトークンをRPNにしたものを出力する */
 void printRpnTc(tokenBuf_t *tcBuf, int32_t *rpnTc, int32_t length);

@@ -35,7 +35,7 @@ $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^
 
 $(OUTDIR)/%.o: %.c
-# 	@if [ ! -e `dirname $@` ]; then mkdir -p `dirname $@`; fi
+	@if [ ! -e `dirname $@` ]; then mkdir -p `dirname $@`; fi
 	$(CC) $(CFLAGS) -o $@ -c $< 
 
 # ----------------------------------------------
@@ -45,7 +45,7 @@ $(DEBUGTARGET): $(DEBUGOBJS)
 	$(CC) $(CFLAGS) -o $@ $^
 
 $(OUTDIR)/%_debug.o: %.c
-# 	@if [ ! -e `dirname $@` ]; then mkdir -p `dirname $@`; fi
+	@if [ ! -e `dirname $@` ]; then mkdir -p `dirname $@`; fi
 	$(CC) $(CFLAGS) -D DEBUG -o $@ -c $<
 
 # ----------------------------------------------
@@ -61,18 +61,18 @@ debug: $(DEBUGTARGET)
 # ----------------------------------------------
 
 # linux
-# clean:
-#     rm -rf $(OUTDIR)
+clean:
+	rm -rf $(OUTDIR)
 
 # windows
 # powershellがmakefileだと上手く使えなかったのでベタ書き(いつか改善する)
-WIN_BUILD_DIR := $(OUTDIR)/$(SRCDIR)
-builddir:
-	mkdir "./$(WIN_BUILD_DIR)/lexer"
-	mkdir "./$(WIN_BUILD_DIR)/parser"
-	mkdir "./$(WIN_BUILD_DIR)/utils"
-	mkdir "./$(WIN_BUILD_DIR)/variable"
-	mkdir "./$(WIN_BUILD_DIR)/vm"
+# WIN_BUILD_DIR := $(OUTDIR)/$(SRCDIR)
+# builddir:
+# 	mkdir "./$(WIN_BUILD_DIR)/lexer"
+# 	mkdir "./$(WIN_BUILD_DIR)/parser"
+# 	mkdir "./$(WIN_BUILD_DIR)/utils"
+# 	mkdir "./$(WIN_BUILD_DIR)/variable"
+# 	mkdir "./$(WIN_BUILD_DIR)/vm"
 
-clean:
-	del /s /q %cd%\build\*
+# clean:
+# 	del /s /q %cd%\build\*

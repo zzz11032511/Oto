@@ -56,7 +56,7 @@ int32_t lexer(str_t s, tokenBuf_t *tcBuf, var_t *var) {
 
     while (1) {
         if (s[i] == 0 || s[i] == '\0') {
-            tcBuf->tc[tcCnt + 1] = TcExit;
+            tcBuf->tc[tcCnt] = TcLF;
             return tcCnt;
         }
 
@@ -71,7 +71,7 @@ int32_t lexer(str_t s, tokenBuf_t *tcBuf, var_t *var) {
 
         int32_t len = 0;  // 変数などの長さを記録するための変数
         int32_t type = TyVoid;  // そのトークンが何の種類なのかを記録するための変数
-        if (strchr("(){}[];,\n", s[i]) != 0) {
+        if (strchr("(){}[]:,\n", s[i]) != 0) {
             len = 1;
 
         } else if (isConst(s[i])) {  // 定数

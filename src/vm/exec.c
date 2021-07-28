@@ -12,16 +12,8 @@
 
 void printVal(var_t var) {
     switch (var.type) {
-        case TyInt:
-            printf("%ld\n", var.value.iVal);
-            break;
-        case TyConstI:
-            printf("%ld\n", var.value.iVal);
-            break;
         case TyFloat:
-            printf("%.3lf\n", var.value.fVal);
-            break;
-        case TyConstF:
+        case TyConst:
             printf("%.3lf\n", var.value.fVal);
             break;
         default:
@@ -99,7 +91,7 @@ void exec(var_t **ic, var_t *var, tokenBuf_t *tcBuf) {
             case OpRiEqCmp:
                 t1 = pop(&stack);
                 t2 = pop(&stack);
-                t3.type = TyConstI;
+                t3.type = TyConst;
                 t3.value.iVal = compare(t2, t1, (int64_t)icp[0]);
                 push(&stack, t3);
                 icp += 5;
@@ -132,7 +124,7 @@ void exec(var_t **ic, var_t *var, tokenBuf_t *tcBuf) {
                 icp += 5;
                 continue;
 
-            case OpEnd:
+            case OpExit:
                 return;
 
             default:
