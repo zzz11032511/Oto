@@ -14,6 +14,8 @@
 #include "../lexer/token.h"
 #include "../variable/variable.h"
 
+#define IS_OPERATION(tc) (TcPlus <= tc && tc <= TcPerce)
+
 /* 演算子のトークンコードを対応する内部コードに変換する */
 int32_t tc2op(int32_t tc) {
     switch (tc) {
@@ -22,14 +24,14 @@ int32_t tc2op(int32_t tc) {
         case TcAster:  return OpMul;
         case TcSlash:  return OpDiv;
         case TcPerce:  return OpMod;
-        case TcEEq:    return OpEq;
-        case TcNEq:    return OpNEq;
-        case TcLt:     return OpLtCmp;
-        case TcGe:     return OpRiEqCmp;
-        case TcLe:     return OpLtEqCmp;
-        case TcGt:     return OpRiCmp;
-        case TcAndAnd: return OpAnd;
-        case TcBarBar: return OpOr;
+        // case TcEEq:    return OpEq;
+        // case TcNEq:    return OpNEq;
+        // case TcLt:     return OpLtCmp;
+        // case TcGe:     return OpRiEqCmp;
+        // case TcLe:     return OpLtEqCmp;
+        // case TcGt:     return OpRiCmp;
+        // case TcAndAnd: return OpAnd;
+        // case TcBarBar: return OpOr;
         default:
             // 一致しない(演算子でない)ときはOpNopを返す
             return OpNop;
@@ -46,19 +48,19 @@ int32_t tc2priority(int32_t tc) {
         case TcSlash:
         case TcPerce:
             return 8;
-        case TcEEq:
-        case TcNEq:
-        case TcLt:
-        case TcGe:
-        case TcLe:
-        case TcGt:
-            return 6;
-        case TcAndAnd:
-            return 5;
-        case TcBarBar:
-            return 4;
+        // case TcEEq:
+        // case TcNEq:
+        // case TcLt:
+        // case TcGe:
+        // case TcLe:
+        // case TcGt:
+        //     return 6;
+        // case TcAndAnd:
+        //     return 5;
+        // case TcBarBar:
+        //     return 4;
         // TcEndのときは優先度-99とする
-        case TcEnd:
+        case TcExit:
             return -99;
         default:
             // 一致しない(演算子でない)ときは-99を返す
@@ -127,9 +129,7 @@ int32_t rpn(tokenBuf_t *tcBuf, int32_t start, int32_t end, int32_t *rpnTc, int32
 
             pc += end1 - start1;  // ()の中の分だけ進める
 
-        } else if (TcEEq <= tc && tc <= TcBarBar) {
-            // 演算子のとき
-
+        } else if (IS_OPERATION(tc)) {
             if (beforeOpe) {
                 callError(INVALID_SYNTAX_ERROR);
             } else {
@@ -168,7 +168,7 @@ int32_t expr(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t **i
 
     if (end == 0) {
         int32_t i = start;
-        while (tcBuf->tc[i] != TcSemi) i++;
+        while (tcBuf->tc[i] != TcLF) i++;
         end = i;        
     } else {
         // expr()はendの"手前"まで変換を行うので、呼び出し元がこの仕様を考慮しなくてもいいように1足す
@@ -186,7 +186,7 @@ int32_t expr(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t **i
     for (int32_t i = 0; i < rpnTcN; i++) {
         int32_t tc = rpnTc[i];
 
-        if (TcEEq <= tc && tc <= TcBarBar) {
+        if (IS_OPERATION(tc)) {
             // tcが演算子のときはputIc()する
             int32_t op = tc2op(tc);
 

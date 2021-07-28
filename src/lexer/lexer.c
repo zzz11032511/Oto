@@ -42,7 +42,6 @@ static const str_t operators[] = {
 int32_t isTrueOperator(str_t s, int32_t i, int32_t len) {
     int opNum = GET_ARRAY_LENGTH(operators);
     for (int i = 0; i < opNum; i++) {
-        // printf("a : %d\n", strncmp(operators[i], s, len));
         if (strncmp(operators[i], s, len) == 0) {
             return 1;
         }
@@ -77,10 +76,12 @@ int32_t lexer(str_t s, tokenBuf_t *tcBuf, var_t *var) {
 
         } else if (isConst(s[i])) {  // 定数
             type = TyConst;
+            int32_t decimal = 0;  // 小数点の出現回数
             while (1) {
                 if (isConst(s[i + len])) {
                     len++;
-                } else if (s[i + len] == '.') {
+                } else if (s[i + len] == '.' && decimal == 0) {
+                    decimal = 1;
                     len++;
                 } else {
                     break;

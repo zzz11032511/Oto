@@ -28,5 +28,5 @@ enum {
 
     OpPrint,      // 変数の出力
     
-    OpEnd         // 終了
+    OpExit         // 終了
 };

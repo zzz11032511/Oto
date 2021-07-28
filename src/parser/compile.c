@@ -30,7 +30,7 @@ int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...) {
     while (1) {
         int32_t tc = tcBuf->tc[*pc];
 
-        if (ptnTc == TcSemi && tc == TcSemi) {
+        if (ptnTc == TcLF && tc == TcLF) {
             // セミコロンなら終わり
             (*pc)++;
             break;
@@ -45,7 +45,7 @@ int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...) {
         if (tc == ptnTc) {
             // 既にあるトークンと一致した
 
-        } else if (ptnTc == TcIdentifier && tc > TcComma) {
+        } else if (ptnTc == TcIdentifier && tc >= TcBegin) {
             // 演算子でないか(予約語も含む)
             tVpc[vp++] = tc;
 
@@ -84,9 +84,9 @@ void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_
     int32_t pc = start;
 
     while (pc < end) {
-        if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcIdentifier, TcSemi)) {
+        if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcIdentifier, TcLF)) {
             // <identifier> = <identifier>;
-            if (var[tVpc[0]].type == TyConstI || var[tVpc[0]].type == TyConstF) {
+            if (var[tVpc[0]].type == TyConst) {
                 callError(ASSIGN_TO_LITERAL_ERROR);
             } else if (isRsvWord(tcBuf, tVpc[0])) {
                 callError(NAME_ERROR);
@@ -95,7 +95,7 @@ void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_
 
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcExpr)) {
             // <identifier> = <expr>;
-            if (var[tVpc[0]].type == TyConstI || var[tVpc[0]].type == TyConstF) {
+            if (var[tVpc[0]].type == TyConst) {
                 callError(ASSIGN_TO_LITERAL_ERROR);
             } else if (isRsvWord(tcBuf, tVpc[0])) {
                 callError(NAME_ERROR);
@@ -104,54 +104,15 @@ void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_
             expr(tcBuf, icp, &pc, var, ic, 0);
             putIc(ic, icp, OpCpyP, &var[tVpc[0]], 0, 0, 0);
 
-        } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcPlPlus, TcSemi)) {
-            // <identifier>++;
-            putIc(ic, icp, OpAdd1, &var[tVpc[0]], 0, 0, 0);
-
-        } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcMiMinus, TcSemi)) {
-            // <identifier>--;
-            putIc(ic, icp, OpSub1, &var[tVpc[0]], 0, 0, 0);
-
-        } else if (ptnCmp(tcBuf, &pc, TcPrint, TcIdentifier, TcSemi)) {
-            // print <identifier>;
+        } else if (ptnCmp(tcBuf, &pc, TcPrint, TcIdentifier, TcLF)) {
+            // print <identifier>
             putIc(ic, icp, OpPrint, &var[tVpc[0]], 0, 0, 0);
-
-        } else if (ptnCmp(tcBuf, &pc, TcIf, TcBrOpn, TcStop)) {
-            // if (<expr>);
-            ifControl(tcBuf, icp, &pc, var, ic);
-            
-        } else if (ptnCmp(tcBuf, &pc, TcWhile, TcBrOpn, TcStop)) {
-            // while (<expr>);
-            whileControl(tcBuf, icp, &pc, var, ic);
 
         } else {
             callError(INVALID_SYNTAX_ERROR);
         }
     }
     return;
-}
-
-/* mainブロックの始点と終点を探す */
-void searchMain(tokenBuf_t *tcBuf, int32_t tcEnd, int32_t *mainStart, int32_t *mainEnd) {
-    int32_t pc = 0;
-    int32_t start = 0;
-
-    while (pc < tcEnd) {
-        if (tcBuf->tc[pc] == TcMain) {
-            if (start != 0) {    // mainが2つある場合
-                callError(NOT_FOUND_MAIN_ERROR);
-            }
-            start = pc;
-            break;
-        }
-        pc++;
-    }
-    if (pc == tcEnd) {
-        callError(NOT_FOUND_MAIN_ERROR);
-    }
-
-    *mainStart = start + 2;
-    *mainEnd = searchBlockEnd(tcBuf, start + 1);
 }
 
 int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic) {
@@ -162,14 +123,11 @@ int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic) {
 #ifdef DEBUG
     printTokenCode(tcBuf, end);
 #endif
-    int32_t mainStart = 0;
-    int32_t mainEnd   = 0;
-    searchMain(tcBuf, end, &mainStart, &mainEnd);
 
     int32_t icp = 0;  // icをどこまで書き込んだか
-    compile_sub(tcBuf, var, ic, &icp, mainStart, mainEnd);
+    compile_sub(tcBuf, var, ic, &icp, 0, end);
 
-    putIc(ic, &icp, OpEnd, 0, 0, 0, 0);
+    putIc(ic, &icp, OpExit, 0, 0, 0, 0);
 
     return 0;
 }

@@ -23,11 +23,16 @@ enum TOKENCODE {
     TcColon,     // :
     TcWQuote,    // "
 
+    TcSqBrOpn,   // [
+    TcSqBrCls,   // ]
+
+    TcBrOpn,     // (
+    TcBrCls,     // )
+
     TcLArrow,    // <-
     TcRArrow,    // ->
 
-    TcSqBrOpn,   // [
-    TcSqBrCls,   // ]
+    TcEqu,       // =
 
     TcPlus,      // +
     TcMinus,     // -
