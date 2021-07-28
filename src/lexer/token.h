@@ -12,56 +12,55 @@
 
 /* トークンの識別子 */ 
 #define TcExpr         -1    // 式
-#define TcType         -2    // 型
-#define TcIdentifier   -3    // 識別子(変数やラベル)
-#define TcOperator     -4    // 演算子
+#define TcIdentifier   -2    // 識別子(変数やラベル)
+#define TcOperator     -3    // 演算子
 #define TcStop         -99   // 都合により構文評価を止めたいとき
 
 /* 字句解析が返す値(トークンコード)の一覧 */
-enum {
-    TcSemi = 0,    // ';'
+enum TOKENCODE {
+    TcLF = 0,    // \n
+    TcComma,     // ,
+    TcColon,     // :
+    TcWQuote,    // "
 
-    TcBrOpn,       // 丸括弧 開 '('
-    TcBrCls,       // 丸括弧 閉 ')'
-    TcSqBrOpn,     // 四角括弧 開 '['
-    TcSqBrCls,     // 四角括弧 閉 ']'
-    TcCrBrOpn,     // 波括弧 開 '{'
-    TcCrBrCls,     // 波括弧 閉 '}'
+    TcLArrow,    // <-
+    TcRArrow,    // ->
 
-    TcEEq,         // '=='
-    TcNEq,         // '!='
-    TcLt,          // '<'
-    TcGe,          // '>='
-    TcLe,          // '<='
-    TcGt,          // '>'
+    TcSqBrOpn,   // [
+    TcSqBrCls,   // ]
 
-    TcPlus,        // '+'
-    TcMinus,       // '-'
-    TcAster,       // '*'
-    TcSlash,       // '/'
-    TcPerce,       // '%'
-    TcEqu,         // '='
+    TcPlus,      // +
+    TcMinus,     // -
+    TcAster,     // *
+    TcSlash,     // /
+    TcPerce,     // %
 
-    TcAndAnd,      // '&&'
-    TcBarBar,      // '||'
+    TcBegin,     // begin BEGIN
+    TcEnd,       // end END
     
-    TcPlPlus,      // '++'
-    TcMiMinus,     // '--'
+    TcIn,        // in IN
+    TcOut,       // out OUT
+    
+    TcImport,    // import IMPORT
+    TcDefine,    // define DEFINE
+    TcChannel,   // channel CHANNEL
+    TcSound,     // sound SOUND
+    TcFilter,    // filter FILTER
 
-    TcComma,       // ','
+    TcIf,        // if IF
+    TcElsif,     // elsif ELSIF
+    TcElse,      // else ELSE
+    TcLoop,      // loop LOOP
+    
+    TcNot,       // not NOT
 
-    TcMain,        // main
-    TcChannel,     // channel(未実装)
-    TcSound,       // sound(未実装)
-    TcFunc,        // func(未実装)
-    TcIf,          // if文
-    TcElse,        // else文
-    TcElsif,       // elsif文
-    TcWhile,       // while文
-    TcPrint,       // print文
-
-    // トークン定義がここまでだよーということを示す(トークン列の末尾にもある)
-    TcEnd          
+    TcPlay,      // play PLAY
+    TcBpm,       // bpm BPM
+    TcNote,      // note NOTE
+    TcMute,      // mute MUTE
+    
+    TcPrint,     // print PRINT
+    TcExit       // exit EXIT
 };
 
 /* トークンの番号、文字列、文字数を保持する構造体 */

@@ -4,10 +4,14 @@
 
 enum TYPE {
     TyVoid = 0,
-    TyConstI,
-    TyConstF,
-    TyInt,
-    TyFloat
+    TyConst,
+    TyFloat,
+    TyChannel,
+    TySound,
+    TyFilter,
+    TyFile,
+    TyINDevice,
+    TyOUTDevice,
 };
 
 typedef struct var {
