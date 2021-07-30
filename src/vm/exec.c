@@ -38,13 +38,15 @@ void exec(var_t **ic, var_t *var, tokenBuf_t *tcBuf) {
     var_t t2;
     var_t t3;
 
+    int64_t tmp = 0;
+
 #ifdef DEBUG
     printIc(icp, tcBuf);
 #endif
 
     while (1) {
         switch ((int64_t)icp[0]) {
-            case OpCpyS:
+            case OpCpyD:
                 icp[1]->type       = icp[2]->type;
                 icp[1]->value.iVal = icp[2]->value.iVal;
                 icp += 5;
@@ -97,6 +99,17 @@ void exec(var_t **ic, var_t *var, tokenBuf_t *tcBuf) {
                 t3.type = TyConstI;
                 t3.value.iVal = compare(t2, t1, (int64_t)icp[0]);
                 push(&stack, t3);
+                icp += 5;
+                continue;
+
+            case OpLoop:
+                tmp = (int64_t)icp[3];
+                tmp++;
+                icp[3] = (var_t *)tmp;
+                if (tmp > icp[2]->value.iVal) {
+                    icp = base + (int64_t)icp[1];
+                    continue;
+                }
                 icp += 5;
                 continue;
 

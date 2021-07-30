@@ -84,14 +84,17 @@ void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_
     int32_t pc = start;
 
     while (pc < end) {
-        if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcIdentifier, TcLF)) {
+        if (tcBuf->tc[pc] == TcLF) {
+            pc++;
+
+        } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcIdentifier, TcLF)) {
             // <identifier> = <identifier>;
             if (var[tVpc[0]].type == TyConstI || var[tVpc[0]].type == TyConstF) {
                 callError(ASSIGN_TO_LITERAL_ERROR);
             } else if (isRsvWord(tcBuf, tVpc[0])) {
                 callError(NAME_ERROR);
             }
-            putIc(ic, icp, OpCpyS, &var[tVpc[0]], &var[tVpc[1]], 0, 0);
+            putIc(ic, icp, OpCpyD, &var[tVpc[0]], &var[tVpc[1]], 0, 0);
 
         } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcExpr)) {
             // <identifier> = <expr>;
@@ -107,6 +110,9 @@ void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_
         } else if (ptnCmp(tcBuf, &pc, TcPrint, TcIdentifier, TcLF)) {
             // print <identifier>
             putIc(ic, icp, OpPrint, &var[tVpc[0]], 0, 0, 0);
+
+        } else if (ptnCmp(tcBuf, &pc, TcLoop, TcSqBrOpn, TcStop)) {
+            loopControl(tcBuf, icp, &pc, var, ic);
 
         } else if (ptnCmp(tcBuf, &pc, TcExit)) {
             // exit

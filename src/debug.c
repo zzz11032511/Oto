@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 
 #include "errorHandle.h"
 #include "vm/ic.h"
@@ -17,7 +18,7 @@ void printVarName(tokenBuf_t *tcBuf, int32_t tc) {
 
 static const str_t opName[] = {
     "Nop",
-    "CpyS",
+    "CpyD",
     "CpyP",
     "Push",
     "Add",
@@ -35,6 +36,7 @@ static const str_t opName[] = {
     "LtEqCmp",
     "RiCmp",
     "RiEqCmp",
+    "Loop",
     "Jmp",
     "Jz",
     "Jnz",

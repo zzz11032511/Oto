@@ -2,7 +2,7 @@
 
 enum {
     OpNop = 0,    // 何もしない
-    OpCpyS,       // 変数への単純代入
+    OpCpyD,       // 変数への単純代入
     OpCpyP,       // スタックからポップしたものを代入する
     OpPush,       // スタックからプッシュする
     OpAdd,        // 加算
@@ -22,6 +22,7 @@ enum {
     OpRiCmp,      // >
     OpRiEqCmp,    // >=
 
+    OpLoop,       // ループ
     OpJmp,        // 無条件ジャンプ
     OpJz,         // スタックの上が0ならジャンプ
     OpJnz,        // スタックの上が0でないならジャンプ

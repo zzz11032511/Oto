@@ -39,6 +39,13 @@ enum TOKENCODE {
     TcSlash,     // /
     TcPerce,     // %
 
+    TcEEq,         // '=='
+    TcNEq,         // '!='
+    TcLt,          // '<'
+    TcGe,          // '>='
+    TcLe,          // '<='
+    TcGt,          // '>'
+    
     TcBegin,     // begin BEGIN
     TcEnd,       // end END
     
