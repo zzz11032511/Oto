@@ -59,7 +59,7 @@ void printIc(var_t **icp, tokenBuf_t *tcBuf) {
         printf("%5ld : %9s    ", icNum, opName[op]);
 
         for (int i = 1; i <= 4; i++) {
-            if ((OpJmp <= op && op <= OpJnz) && i == 1) {
+            if ((OpLoop <= op && op <= OpJnz) && i == 1) {
                 printf("%lu", (int64_t)p[i]);
             } else if (p[i] == 0) {
                 break;
