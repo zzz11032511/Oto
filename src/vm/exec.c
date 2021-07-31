@@ -47,15 +47,24 @@ void exec(var_t **ic, var_t *var, tokenBuf_t *tcBuf) {
     while (1) {
         switch ((int64_t)icp[0]) {
             case OpCpyD:
-                icp[1]->type       = icp[2]->type;
-                icp[1]->value.iVal = icp[2]->value.iVal;
+                icp[1]->type = TyFloat;
+                tmp = icp[2]->type;
+                if (tmp == TyConstI)
+                    icp[1]->value.fVal = (double)icp[2]->value.iVal;
+                else 
+                    icp[1]->value.fVal = icp[2]->value.fVal;
+                
                 icp += 5;
                 continue;
 
             case OpCpyP:
-                t1                 = pop(&stack);
-                icp[1]->type       = t1.type;
-                icp[1]->value.iVal = t1.value.iVal;
+                t1 = pop(&stack);
+                icp[1]->type = TyFloat;
+                tmp = t1.type;
+                if (tmp == TyConstI)
+                    icp[1]->value.fVal = (double)t1.value.iVal;
+                else 
+                    icp[1]->value.fVal = t1.value.fVal;
                 icp += 5;
                 continue;
 
@@ -106,7 +115,14 @@ void exec(var_t **ic, var_t *var, tokenBuf_t *tcBuf) {
                 tmp = (int64_t)icp[3];
                 tmp++;
                 icp[3] = (var_t *)tmp;
-                if (tmp > icp[2]->value.iVal) {
+
+                int64_t loopCnt = 0;
+                if (icp[2]->type == TyConstI) {
+                    loopCnt = icp[2]->value.iVal;
+                } else {
+                    loopCnt = (int64_t)icp[2]->value.fVal;
+                }
+                if (tmp > loopCnt) {
                     icp = base + (int64_t)icp[1];
                     continue;
                 }

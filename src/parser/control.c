@@ -76,7 +76,7 @@ void loopControl(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t
     int32_t end = searchBlockEnd(tcBuf, start);
 
     int32_t argLen = getArgs(tcBuf, start, end, argv, GET_ARRAY_LENGTH(argv));
-
+    printf("arglen : %d\n", argLen);
     ppc = end + 1;
 
     int32_t jmpIcp1 = *icp;
