@@ -66,3 +66,20 @@ int32_t srcLoad(const str_t path, str_t *src) {
 
     return 0;
 }
+
+union di_u {
+    int64_t i;
+    double d;
+};
+
+double itod(int64_t i){
+    union di_u u;
+    u.i = i;
+    return u.d;
+}
+
+int64_t dtoi(double d){
+    union di_u u;
+    u.d = d;
+    return u.i;
+}

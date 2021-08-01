@@ -18,9 +18,9 @@ enum TYPE {
 typedef struct var {
     int32_t type;      // 型
     union value_u {    // 中身
-        int64_t  iVal;
-        double   fVal;
-        void *pVal;
+        int64_t iVal;
+        double  fVal;
+        struct var *pVal;
     } value;
     int32_t tc;    // 割り当てられたトークンコード
 } var_t;

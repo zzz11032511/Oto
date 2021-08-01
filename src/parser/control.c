@@ -20,10 +20,16 @@ int32_t getArgs(tokenBuf_t *tcBuf, int32_t start, int32_t end, int32_t *argv, in
 
     while (ppc < end) {
         int32_t tc = tcBuf->tc[ppc];
-        if (tc != TcComma) {
+        
+        int32_t cnt = 0;
+        while((ppc + cnt) < end && tcBuf->tc[ppc + cnt] != TcComma) cnt++;
+
+        if (cnt >= 2)
+            argv[argCnt++] = TcExpr;
+        else
             argv[argCnt++] = tc;
-        }
-        ppc++;
+
+        ppc += cnt;
     }
 
     if (argLen < argCnt) {
@@ -76,15 +82,14 @@ void loopControl(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t
     int32_t end = searchBlockEnd(tcBuf, start);
 
     int32_t argLen = getArgs(tcBuf, start, end, argv, GET_ARRAY_LENGTH(argv));
-    printf("arglen : %d\n", argLen);
     ppc = end + 1;
 
     int32_t jmpIcp1 = *icp;
-    putIc(ic, icp, OpLoop, 0, &var[argv[0]], 0, 0);
+    putIc(ic, icp, OpLoop, 0, 0, 0, 0);
 
     ppc = blockCompile(tcBuf, icp, &ppc, var, ic);
 
-    putIc(ic, icp, OpJmp, (var_t *)((int64_t)jmpIcp1), 0, &var[argv[0]], 0);
+    putIc(ic, icp, OpJmp, (var_t *)((int64_t)jmpIcp1), 0, 0, 0);
 
     putIc(ic, &jmpIcp1, OpLoop, (var_t *)((int64_t)*icp), &var[argv[0]], 0, 0);
 

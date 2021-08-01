@@ -5,6 +5,7 @@ enum {
     OpCpyD,       // 変数への単純代入
     OpCpyP,       // スタックからポップしたものを代入する
     OpPush,       // スタックからプッシュする
+    OpPushC,      // 定数をプッシュする
     OpAdd,        // 加算
     OpSub,        // 引算
     OpMul,        // 掛算

@@ -20,3 +20,9 @@ typedef int boolean;
  *     src  : ファイルを読み込む先の場所
  */
 int32_t srcLoad(const str_t path, str_t *src);
+
+/* int64_t型の変数を、bit列はそのままにdoubleに変換する */
+double itod(int64_t i);
+
+/* double型の変数を、bit列はそのままにint64_tに変換する */
+int64_t dtoi(double d);

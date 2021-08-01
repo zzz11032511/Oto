@@ -11,5 +11,6 @@ struct vStack {
 };
 
 var_t push(struct vStack *stack, var_t var);
+var_t constPush(struct vStack *stack, int64_t type, int64_t value);
 var_t pop(struct vStack *stack);
 var_t peek(struct vStack *stack);

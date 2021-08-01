@@ -73,6 +73,12 @@ void exec(var_t **ic, var_t *var, tokenBuf_t *tcBuf) {
                 icp += 5;
                 continue;
 
+            // PushC  type, value
+            case OpPushC:
+                constPush(&stack, (int64_t)icp[1], (int64_t)icp[2]);
+                icp += 5;
+                continue;
+
             case OpAdd:
             case OpSub:
             case OpMul:

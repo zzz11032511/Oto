@@ -21,6 +21,7 @@ static const str_t opName[] = {
     "CpyD",
     "CpyP",
     "Push",
+    "PushC",
     "Add",
     "Sub",
     "Mul",
