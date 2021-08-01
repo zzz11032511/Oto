@@ -96,27 +96,23 @@ var_t mod2(var_t v1, var_t v2) {
         callException(ZERO_DIVISION_ERROR);
     }
 
-    if (typeChecker(v1) == TyConstI && typeChecker(v2) == TyConstI) {
+    int32_t v1Type = typeChecker(v1);
+    int32_t v2Type = typeChecker(v2);
+
+    if (v1Type == TyConstI && v2Type == TyConstI) {
         t.value.iVal = v1.value.iVal % v2.value.iVal;
-        t.type = TyConstI;
 
     } else {
-        double v1Val = v1.value.fVal;
-        double v2Val = v2.value.fVal;
-
-        if (v2Val < 0) v2Val = -v2Val;
-
-        if (v1Val > 0) {
-            while (v1Val - v2Val >= 0) v1Val -= v2Val;
-        } else if (v1Val < 0) {
-            do {
-                v1Val += v2Val;
-            } while (v1Val < 0);
+        if (v1Type == TyConstI) {
+            t.value.iVal = v1.value.iVal % (int64_t)v2.value.fVal;
+        } else if (v2Type == TyConstI) {
+            t.value.iVal = (int64_t)v1.value.fVal % v2.value.iVal;
+        } else {
+            t.value.iVal = (int64_t)v1.value.fVal % (int64_t)v2.value.fVal;
         }
-        t.value.fVal = v1Val;
-        t.type = TyConstF;
     }
 
+    t.type = TyConstI;
     return t;
 }
 

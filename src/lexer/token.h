@@ -61,6 +61,7 @@ enum TOKENCODE {
     TcIf,        // if IF
     TcElsif,     // elsif ELSIF
     TcElse,      // else ELSE
+    TcThen,      // then THEN
     TcLoop,      // loop LOOP
 
     TcAnd,       // and AND

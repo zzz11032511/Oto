@@ -105,11 +105,12 @@ static struct rsvWord_t rsvWord[] = {
     {"channel", TcChannel }, {"sound",   TcSound   },
     {"filter",  TcFilter  }, {"if",      TcIf      },
     {"elsif",   TcElsif   }, {"else",    TcElse    },
-    {"loop",    TcLoop    }, {"and",     TcAnd     },
-    {"or",      TcOr      }, {"not",     TcNot     },
-    {"play",    TcPlay    }, {"bpm",     TcBpm     },
-    {"note",    TcNote    }, {"mute",    TcMute    },
-    {"print",   TcPrint   }, {"exit",    TcExit    },
+    {"then",    TcThen    }, {"loop",    TcLoop    }, 
+    {"and",     TcAnd     }, {"or",      TcOr      },
+    {"not",     TcNot     }, {"play",    TcPlay    }, 
+    {"bpm",     TcBpm     }, {"note",    TcNote    },
+    {"mute",    TcMute    }, {"print",   TcPrint   },
+    {"exit",    TcExit    },
 };
 
 /* 予約語かどうか調べる */
@@ -126,7 +127,7 @@ int32_t isRsvWord(tokenBuf_t *tcBuf, int32_t tc) {
 }
 
 /* 最初にlexerしておく文字列 */
-static const str_t symbols = "\n , : [ ] ( ) <- -> = + - * / % == != < >= <= > begin end in out import define channel sound filter if elsif else loop and or not play bpm note mute print exit\0";
+static const str_t symbols = "\n , : [ ] ( ) <- -> = + - * / % == != < >= <= > begin end in out import define channel sound filter if elsif else then loop and or not play bpm note mute print exit\0";
 
 /* 演算子記号などを最初にlexerしておく関数 */
 int32_t tcInit(tokenBuf_t *tcBuf, var_t *var) {

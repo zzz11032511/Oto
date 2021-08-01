@@ -46,10 +46,10 @@ int32_t searchBlockEnd(tokenBuf_t *tcBuf, int32_t pc) {
 
     while (1) {
         int32_t tc = tcBuf->tc[pc++];
-        if (tc == TcBegin || tc == TcSqBrOpn) {
+        if (tc == TcBegin || tc == TcSqBrOpn || tc == TcThen) {
             nest++;
             continue;
-        } else if (tc == TcEnd || tc == TcSqBrCls) {
+        } else if (tc == TcEnd || tc == TcSqBrCls || tc == TcElsif || tc == TcElse) {
             nest--;
             if (nest != 0) continue;
             else break;
