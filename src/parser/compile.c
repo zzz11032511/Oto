@@ -129,6 +129,9 @@ void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_
         } else if (ptnCmp(tcBuf, &pc, TcLoop, TcSqBrOpn, TcStop)) {
             loopControl(tcBuf, icp, &pc, var, ic);
 
+        } else if (ptnCmp(tcBuf, &pc, TcIf, TcSqBrOpn, TcStop)) {
+            ifControl(tcBuf, icp, &pc, var, ic);
+
         } else if (ptnCmp(tcBuf, &pc, TcExit)) {
             // exit
             putIc(ic, icp, OpExit, 0, 0, 0, 0);

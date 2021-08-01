@@ -97,3 +97,47 @@ void loopControl(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t
 
     return; 
 }
+
+void ifControl(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t **ic) {
+    int32_t ppc = *pc + 1;
+
+    int32_t start = ppc;
+    int32_t end = searchBlockEnd(tcBuf, start);
+    start++;
+
+    expr(tcBuf, icp, &start, var, ic, end - 1);
+
+    ppc = end + 1;
+
+    int32_t jmpIcp1 = *icp;
+    putIc(ic, icp, OpJz, 0, 0, 0, 0);
+
+    ppc = blockCompile(tcBuf, icp, &ppc, var, ic);
+
+    if (tcBuf->tc[ppc] == TcElsif) {
+        int32_t jmpIcp2 = *icp;
+        putIc(ic, icp, OpJmp, 0, 0, 0, 0);
+        putIc(ic, &jmpIcp1, OpJz, (var_t *)((int64_t)*icp), 0, 0, 0);
+        ifControl(tcBuf, icp, &ppc, var, ic);
+        putIc(ic, &jmpIcp2, OpJmp, (var_t *)((int64_t)*icp), 0, 0, 0);
+
+    } else if (tcBuf->tc[ppc] == TcElse) {
+        int32_t jmpIcp3 = *icp;
+        putIc(ic, icp, OpJmp, 0, 0, 0, 0);
+        putIc(ic, &jmpIcp1, OpJz, (var_t *)((int64_t)*icp), 0, 0, 0);
+
+        ppc++; // else { の分2個進める
+
+        ppc = blockCompile(tcBuf, icp, &ppc, var, ic);
+
+        putIc(ic, &jmpIcp3, OpJmp, (var_t *)((int64_t)*icp), 0, 0, 0);
+
+    } else {
+        putIc(ic, &jmpIcp1, OpJz, (var_t *)((int64_t)*icp), 0, 0, 0);
+
+    }
+
+    *pc = ppc;
+
+    return; 
+}

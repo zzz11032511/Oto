@@ -62,6 +62,9 @@ enum TOKENCODE {
     TcElsif,     // elsif ELSIF
     TcElse,      // else ELSE
     TcLoop,      // loop LOOP
+
+    TcAnd,       // and AND
+    TcOr,        // or OR
     
     TcNot,       // not NOT
 

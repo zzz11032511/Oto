@@ -171,7 +171,21 @@ int32_t compare(var_t v1, var_t v2, int32_t opcode) {
     }
 
     switch (opcode) {
+        case OpEq:
+            return v1Val == v2Val;
+        case OpNEq:
+            return v1Val != v2Val;
+        case OpLtCmp:
+            return v1Val < v2Val;
+        case OpLtEqCmp:
+            return v1Val <= v2Val;
+        case OpRiCmp:
+            return v1Val > v2Val;
+        case OpRiEqCmp:
+            return v1Val >= v2Val;
         default:
-            return 0;
+            callException(ERROR);
     }
+
+    return 0;
 }
