@@ -84,7 +84,7 @@ void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_
     int32_t pc = start;
 
     while (pc < end) {
-        printf("pc : %d\n", pc);
+        // printf("pc : %d\n", pc);
         if (tcBuf->tc[pc] == TcLF) {
             pc++;
 

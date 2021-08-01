@@ -2,6 +2,10 @@
 
 #include <stdint.h>
 
+#ifdef TIME
+#include <time.h>
+#endif
+
 /* 文字列 */
 typedef char *str_t;
 
@@ -11,6 +15,11 @@ typedef int boolean;
 #define false    0
 
 #define GET_ARRAY_LENGTH(a) (sizeof(a)/sizeof(a[0]))
+
+
+#ifdef TIME
+#define CALC_TIME(s, e) ((double)(e - s) / CLOCKS_PER_SEC)
+#endif
 
 /**
  * pathに指定されたソースファイルをsrcに読み込む

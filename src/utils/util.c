@@ -72,12 +72,14 @@ union di_u {
     double d;
 };
 
+/* int64_t型の変数を、bit列はそのままにdoubleに変換する */
 double itod(int64_t i){
     union di_u u;
     u.i = i;
     return u.d;
 }
 
+/* double型の変数を、bit列はそのままにint64_tに変換する */
 int64_t dtoi(double d){
     union di_u u;
     u.d = d;
