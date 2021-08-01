@@ -126,10 +126,10 @@ void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_
             // print <identifier>
             putIc(ic, icp, OpPrint, &var[tVpc[0]], 0, 0, 0);
 
-        } else if (ptnCmp(tcBuf, &pc, TcLoop, TcSqBrOpn, TcStop)) {
+        } else if (ptnCmp(tcBuf, &pc, TcLoop, TcStop)) {
             loopControl(tcBuf, icp, &pc, var, ic);
 
-        } else if (ptnCmp(tcBuf, &pc, TcIf, TcSqBrOpn, TcStop)) {
+        } else if (ptnCmp(tcBuf, &pc, TcIf, TcStop)) {
             ifControl(tcBuf, icp, &pc, var, ic);
 
         } else if (ptnCmp(tcBuf, &pc, TcExit)) {

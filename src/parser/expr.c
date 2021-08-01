@@ -14,7 +14,7 @@
 #include "../lexer/token.h"
 #include "../variable/variable.h"
 
-#define IS_OPERATION(tc) ((TcPlus <= tc && tc <= TcGt) || (TcAnd <= tc && tc <= TcNot))
+#define IS_OPERATION(tc) ((TcPlus <= tc && tc <= TcGt) || (TcAnd <= tc && tc <= TcOr))
 
 /* 演算子のトークンコードを対応する内部コードに変換する */
 int32_t tc2op(int32_t tc) {
