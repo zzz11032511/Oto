@@ -96,7 +96,7 @@ int32_t searchBlockEnd(tokenBuf_t *tcBuf, int32_t pc) {
 
     while (1) {
         int32_t tc = tcBuf->tc[pc++];
-        if (tc == TcBegin || tc == TcSqBrOpn) {
+        if (tc == TcBegin || tc == TcSqBrOpn || tc == TcIf) {
             nest++;
             continue;
         } else if (tc == TcEnd || tc == TcSqBrCls) {
@@ -210,6 +210,6 @@ void ifControl(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t *
     }
 
     *pc = ppc;
-
+    printf("ifppc : %d\n", ppc);
     return; 
 }

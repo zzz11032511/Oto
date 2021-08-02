@@ -14,7 +14,7 @@ void printVal(var_t var) {
     switch (var.type) {
         case TyFloat:
         case TyConstF:
-            printf("%.3lf\n", var.value.fVal);
+            printf("%.0lf\n", var.value.fVal);
             break;
         case TyConstI:
             printf("%ld\n", var.value.iVal);
