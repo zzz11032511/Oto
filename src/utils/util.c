@@ -85,3 +85,19 @@ int64_t dtoi(double d){
     u.d = d;
     return u.i;
 }
+
+
+int32_t toLower(char c) {
+    if ('A' <= c && c <= 'Z') return (c + 0x20);
+    return c;
+}
+
+int32_t strncmp_ignorecase(const str_t s1, const str_t s2, int32_t n) {
+    int32_t i = 0;
+    while (toLower(s1[i]) == toLower(s2[i])) {
+        if (s1[i] == '\0' || i >= n) return 0;
+        i++;
+    }
+
+    return toLower(s1[i]) - toLower(s2[i]);
+}

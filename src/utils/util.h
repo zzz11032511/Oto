@@ -35,3 +35,6 @@ double itod(int64_t i);
 
 /* double型の変数を、bit列はそのままにint64_tに変換する */
 int64_t dtoi(double d);
+
+/* 大文字小文字の区別をせずに文字列を比較する */
+int32_t strncmp_ignorecase(const str_t s1, const str_t s2, int32_t n);

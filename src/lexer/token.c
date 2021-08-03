@@ -10,6 +10,43 @@
 #include "../utils/util.h"
 #include "../variable/variable.h"
 
+/* 予約語一覧 */
+struct rsvWord_t {
+    str_t name;
+    str_t upperName;
+    int tc;
+};
+
+static struct rsvWord_t rsvWord[] = {
+    {"begin",   "BEGIN",   TcBegin   }, {"end",     "END",     TcEnd     },
+    {"in",      "IN",      TcIn      }, {"out",     "OUT",     TcOut     },
+    {"import",  "IMPORT",  TcImport  }, {"define",  "DEFINE",  TcDefine  },
+    {"channel", "CHANNEL", TcChannel }, {"sound",   "SOUND",   TcSound   },
+    {"filter",  "FILTER",  TcFilter  }, {"if",      "IF",      TcIf      },
+    {"elsif",   "ELSIF",   TcElsif   }, {"else",    "ELSE",    TcElse    },
+    {"then",    "THEN",    TcThen    }, {"loop",    "LOOP",    TcLoop    }, 
+    {"and",     "AND",     TcAnd     }, {"or",      "OR",      TcOr      },
+    {"not",     "NOT",     TcNot     }, {"play",    "PLAY",    TcPlay    }, 
+    {"bpm",     "BPM",     TcBpm     }, {"note",    "NOTE",    TcNote    },
+    {"mute",    "MUTE",    TcMute    }, {"print",   "PRINT",   TcPrint   },
+    {"exit",    "EXIT",    TcExit    },
+};
+
+/* 予約語かどうか調べる */
+int32_t isRsvWord(tokenBuf_t *tcBuf, int32_t tc) {
+    int32_t isRW = 0;
+    int32_t rsvWordNum = GET_ARRAY_LENGTH(rsvWord);
+    for (int32_t i = 0; i < rsvWordNum; i++) {
+        int32_t rsvWordLen = strlen(rsvWord[i].name);
+        isRW = strncmp(rsvWord[i].name, tcBuf->tokens[tc]->ts, rsvWordLen);
+        if (isRW == 0) return rsvWord[i].tc;
+
+        isRW = strncmp(rsvWord[i].upperName, tcBuf->tokens[tc]->ts, rsvWordLen);
+        if (isRW == 0) return rsvWord[i].tc;
+    }
+    return 0;
+}
+
 /* トークン保存領域を新しく作る */
 tokenBuf_t *newTokenBuf() {
     tokenBuf_t *buf = (tokenBuf_t *)malloc(sizeof(tokenBuf_t));
@@ -64,7 +101,10 @@ int32_t getTc(str_t s, int32_t len, tokenBuf_t *tcBuf, var_t *var, int32_t type)
     int32_t i;
     for (i = 0; i < tcBuf->tcs; i++) {  // 登録済みの中から探す
         if (len == tcBuf->tokens[i]->tl &&
-            strncmp((char *)s, (char *)(tcBuf->tokens[i]->ts), len) == 0) {
+            strncmp(s, tcBuf->tokens[i]->ts, len) == 0) {
+            break;
+        } else if (len == tcBuf->tokens[i]->tl && 
+            strncmp_ignorecase(s, tcBuf->tokens[i]->ts, len) == 0) {
             break;
         }
     }
@@ -90,40 +130,6 @@ int32_t getTc(str_t s, int32_t len, tokenBuf_t *tcBuf, var_t *var, int32_t type)
     }
 
     return i;
-}
-
-/* 予約語一覧 */
-struct rsvWord_t {
-    str_t name;
-    int tc;
-};
-
-static struct rsvWord_t rsvWord[] = {
-    {"begin",   TcBegin   }, {"end",     TcEnd     },
-    {"in",      TcIn      }, {"out",     TcOut     },
-    {"import",  TcImport  }, {"define",  TcDefine  },
-    {"channel", TcChannel }, {"sound",   TcSound   },
-    {"filter",  TcFilter  }, {"if",      TcIf      },
-    {"elsif",   TcElsif   }, {"else",    TcElse    },
-    {"then",    TcThen    }, {"loop",    TcLoop    }, 
-    {"and",     TcAnd     }, {"or",      TcOr      },
-    {"not",     TcNot     }, {"play",    TcPlay    }, 
-    {"bpm",     TcBpm     }, {"note",    TcNote    },
-    {"mute",    TcMute    }, {"print",   TcPrint   },
-    {"exit",    TcExit    },
-};
-
-/* 予約語かどうか調べる */
-int32_t isRsvWord(tokenBuf_t *tcBuf, int32_t tc) {
-    int32_t rsvWordNum = GET_ARRAY_LENGTH(rsvWord);
-    for (int32_t i = 0; i < rsvWordNum; i++) {
-        int32_t rsvWordLen = strlen(rsvWord[i].name);
-        int32_t isRW = strncmp(rsvWord[i].name, tcBuf->tokens[tc]->ts, rsvWordLen);
-        if (isRW == 0) {
-            return 1;
-        }
-    }
-    return 0;
 }
 
 /* 最初にlexerしておく文字列 */

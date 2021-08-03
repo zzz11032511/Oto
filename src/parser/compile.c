@@ -85,13 +85,18 @@ void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_
 
     while (pc < end) {
         // printf("pc : %d\n", pc);
-        if (tcBuf->tc[pc] == TcLF) {
+        if (ptnCmp(tcBuf, &pc, TcImport, TcSqBrOpn, TcIdentifier, TcSqBrCls, TcLF)) {
+
+        } else if (tcBuf->tc[pc] == TcLF) {
             pc++;
 
         } else if (ptnCmp(tcBuf, &pc, TcDefine, TcIdentifier, TcColon, TcIdentifier, TcLF)) {
             if (var[tVpc[0]].type != TyVoid) {
                 callError(ASSIGN_TO_LITERAL_ERROR);
+            } else if (isRsvWord(tcBuf, tVpc[0])) {
+                callError(NAME_ERROR);
             }
+            
             var[tVpc[0]].type = TyConstF;
             int32_t v1Type = var[tVpc[1]].type;
             if (v1Type == TyConstF) {
