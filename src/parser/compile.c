@@ -93,7 +93,7 @@ void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_
         } else if (ptnCmp(tcBuf, &pc, TcDefine, TcIdentifier, TcColon, TcIdentifier, TcLF)) {
             if (var[tVpc[0]].type != TyVoid) {
                 callError(ASSIGN_TO_LITERAL_ERROR);
-            } else if (isRsvWord(tcBuf, tVpc[0])) {
+            } else if (isRsvWordTc(tcBuf, tVpc[0])) {
                 callError(NAME_ERROR);
             }
             
@@ -111,7 +111,7 @@ void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_
             // <identifier> = <identifier>;
             if (var[tVpc[0]].type == TyConstI || var[tVpc[0]].type == TyConstF) {
                 callError(ASSIGN_TO_LITERAL_ERROR);
-            } else if (isRsvWord(tcBuf, tVpc[0])) {
+            } else if (isRsvWordTc(tcBuf, tVpc[0])) {
                 callError(NAME_ERROR);
             }
             putIc(ic, icp, OpCpyD, &var[tVpc[0]], &var[tVpc[1]], 0, 0);
@@ -120,7 +120,7 @@ void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_
             // <identifier> = <expr>;
             if (var[tVpc[0]].type == TyConstI || var[tVpc[0]].type == TyConstF) {
                 callError(ASSIGN_TO_LITERAL_ERROR);
-            } else if (isRsvWord(tcBuf, tVpc[0])) {
+            } else if (isRsvWordTc(tcBuf, tVpc[0])) {
                 callError(NAME_ERROR);
             }
             pc += 2;  // 式の先頭までpcを進める

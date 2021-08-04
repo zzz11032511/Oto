@@ -113,7 +113,7 @@ void freeTokenBuf(tokenBuf_t *tcBuf);
 int32_t getTc(str_t s, int32_t len, tokenBuf_t *tcBuf, var_t *var, int32_t type);
 
 /* 予約語かどうか調べる */
-int32_t isRsvWord(tokenBuf_t *tcBuf, int32_t tc);
+int32_t isRsvWordTc(tokenBuf_t *tcBuf, int32_t tc);
 
 /* 演算子記号などを最初にlexerしておく関数 */
 int32_t tcInit(tokenBuf_t *tcBuf, var_t *var);

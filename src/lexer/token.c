@@ -33,7 +33,7 @@ static struct rsvWord_t rsvWord[] = {
 };
 
 /* 予約語かどうか調べる */
-int32_t isRsvWord(tokenBuf_t *tcBuf, int32_t tc) {
+int32_t isRsvWordTc(tokenBuf_t *tcBuf, int32_t tc) {
     int32_t isRW = 0;
     int32_t rsvWordNum = GET_ARRAY_LENGTH(rsvWord);
     for (int32_t i = 0; i < rsvWordNum; i++) {
@@ -42,6 +42,24 @@ int32_t isRsvWord(tokenBuf_t *tcBuf, int32_t tc) {
         if (isRW == 0) return rsvWord[i].tc;
 
         isRW = strncmp(rsvWord[i].upperName, tcBuf->tokens[tc]->ts, rsvWordLen);
+        if (isRW == 0) return rsvWord[i].tc;
+    }
+    return 0;
+}
+
+int32_t isRsvWord(str_t ts, int32_t len) {
+    int32_t isRW = 0;
+    int32_t rsvWordNum = GET_ARRAY_LENGTH(rsvWord);
+    for (int32_t i = 0; i < rsvWordNum; i++) {
+        int32_t rsvWordLen = strlen(rsvWord[i].name);
+        if (len != rsvWordLen) {
+            continue;
+        }
+
+        isRW = strncmp(rsvWord[i].name, ts, rsvWordLen);
+        if (isRW == 0) return rsvWord[i].tc;
+
+        isRW = strncmp(rsvWord[i].upperName, ts, rsvWordLen);
         if (isRW == 0) return rsvWord[i].tc;
     }
     return 0;
@@ -96,15 +114,19 @@ int32_t putTc(int32_t tc, int32_t len, str_t s, tokenBuf_t *tcBuf) {
     return 0;
 }
 
+int32_t initDone = 0;
+
 /* トークンコードを得るための関数 */
 int32_t getTc(str_t s, int32_t len, tokenBuf_t *tcBuf, var_t *var, int32_t type) {
+    if (initDone) {
+        int32_t tc = isRsvWord(s, len);
+        if (tc != 0) return tc;
+    }
+
     int32_t i;
     for (i = 0; i < tcBuf->tcs; i++) {  // 登録済みの中から探す
         if (len == tcBuf->tokens[i]->tl &&
             strncmp(s, tcBuf->tokens[i]->ts, len) == 0) {
-            break;
-        } else if (len == tcBuf->tokens[i]->tl && 
-            strncmp_ignorecase(s, tcBuf->tokens[i]->ts, len) == 0) {
             break;
         }
     }
@@ -137,5 +159,7 @@ static const str_t symbols = "\n , : [ ] ( ) <- -> = + - * / % == != < >= <= > b
 
 /* 演算子記号などを最初にlexerしておく関数 */
 int32_t tcInit(tokenBuf_t *tcBuf, var_t *var) {
-    return lexer(symbols, tcBuf, var);
+    lexer(symbols, tcBuf, var);
+    initDone = 1;
+    return 0;
 }
