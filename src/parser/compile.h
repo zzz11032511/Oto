@@ -14,10 +14,10 @@
  *      op      : 処理を表す内部コード
  *      v1 ~ v4 : 渡す値(ポインタ)
  */
-void putIc(var_t **ic, int32_t *icp, int32_t op, var_t *v1, var_t *v2, var_t *v3, var_t *v4);
+void put_ic(var_t **ic, uint32_t *icp, uint32_t op, var_t *v1, var_t *v2, var_t *v3, var_t *v4);
 
 /* token列を内部コードに変換する */
-void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_t start, int32_t end);
+void compile_sub(tokenbuf_t *tcbuf, var_t *var_list, var_t **ic, uint32_t *icp, uint32_t start, uint32_t end);
 
 /* 文字列sを内部コード列にコンパイルする関数 */
-int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic);
+void compile(str_t s, tokenbuf_t *tcbuf, var_t *var_list, var_t **ic);

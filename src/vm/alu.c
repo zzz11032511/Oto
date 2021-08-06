@@ -2,12 +2,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "ic.h"
-#include "../errorHandle.h"
+#include "opcode.h"
+#include "../error/error.h"
 #include "../utils/util.h"
 #include "../variable/variable.h"
 
-int32_t typeChecker(var_t v) {
+int32_t type_checker(var_t v) {
     if (v.type == TyConstI) return TyConstI;
     if (v.type == TyConstF || v.type == TyFloat) return TyConstF;
     return TyVoid;
@@ -17,12 +17,12 @@ var_t add2(var_t v1, var_t v2) {
     var_t t;
     t.type = TyConstF;
 
-    if (typeChecker(v1) == TyConstI && typeChecker(v2) == TyConstI) {
+    if (type_checker(v1) == TyConstI && type_checker(v2) == TyConstI) {
         t.value.iVal = v1.value.iVal + v2.value.iVal;
         t.type       = TyConstI;
-    } else if (typeChecker(v1) == TyConstF && typeChecker(v2) == TyConstI) {     
+    } else if (type_checker(v1) == TyConstF && type_checker(v2) == TyConstI) {     
         t.value.fVal = v1.value.fVal + (double)v2.value.iVal;
-    } else if (typeChecker(v1) == TyConstI && typeChecker(v2) == TyConstF) {     
+    } else if (type_checker(v1) == TyConstI && type_checker(v2) == TyConstF) {     
         t.value.fVal = (double)v1.value.iVal + v2.value.fVal;
     } else {
         t.value.fVal = v1.value.fVal + v2.value.fVal;
@@ -35,12 +35,12 @@ var_t sub2(var_t v1, var_t v2) {
     var_t t;
     t.type = TyConstF;
 
-    if (typeChecker(v1) == TyConstI && typeChecker(v2) == TyConstI) {
+    if (type_checker(v1) == TyConstI && type_checker(v2) == TyConstI) {
         t.value.iVal = v1.value.iVal - v2.value.iVal;
         t.type       = TyConstI;
-    } else if (typeChecker(v1) == TyConstF && typeChecker(v2) == TyConstI) {     
+    } else if (type_checker(v1) == TyConstF && type_checker(v2) == TyConstI) {     
         t.value.fVal = v1.value.fVal - (double)v2.value.iVal;
-    } else if (typeChecker(v1) == TyConstI && typeChecker(v2) == TyConstF) {     
+    } else if (type_checker(v1) == TyConstI && type_checker(v2) == TyConstF) {     
         t.value.fVal = (double)v1.value.iVal - v2.value.fVal;
     } else {
         t.value.fVal = v1.value.fVal - v2.value.fVal;
@@ -53,12 +53,12 @@ var_t mul2(var_t v1, var_t v2) {
     var_t t;
     t.type = TyConstF;
 
-    if (typeChecker(v1) == TyConstI && typeChecker(v2) == TyConstI) {
+    if (type_checker(v1) == TyConstI && type_checker(v2) == TyConstI) {
         t.value.iVal = v1.value.iVal * v2.value.iVal;
         t.type       = TyConstI;
-    } else if (typeChecker(v1) == TyConstF && typeChecker(v2) == TyConstI) {     
+    } else if (type_checker(v1) == TyConstF && type_checker(v2) == TyConstI) {     
         t.value.fVal = v1.value.fVal * (double)v2.value.iVal;
-    } else if (typeChecker(v1) == TyConstI && typeChecker(v2) == TyConstF) {     
+    } else if (type_checker(v1) == TyConstI && type_checker(v2) == TyConstF) {     
         t.value.fVal = (double)v1.value.iVal * v2.value.fVal;
     } else {
         t.value.fVal = v1.value.fVal * v2.value.fVal;
@@ -72,15 +72,15 @@ var_t div2(var_t v1, var_t v2) {
     t.type       = TyConstF;
 
     if (v2.value.iVal == 0) {
-        callException(ZERO_DIVISION_ERROR);
+        call_exception(ZERO_DIVISION_ERROR);
     }
 
-    if (typeChecker(v1) == TyConstI && typeChecker(v2) == TyConstI) {
+    if (type_checker(v1) == TyConstI && type_checker(v2) == TyConstI) {
         t.value.iVal = v1.value.iVal / v2.value.iVal;
         t.type       = TyConstI;
-    } else if (typeChecker(v1) == TyConstF && typeChecker(v2) == TyConstI) {     
+    } else if (type_checker(v1) == TyConstF && type_checker(v2) == TyConstI) {     
         t.value.fVal = v1.value.fVal / (double)v2.value.iVal;
-    } else if (typeChecker(v1) == TyConstI && typeChecker(v2) == TyConstF) {     
+    } else if (type_checker(v1) == TyConstI && type_checker(v2) == TyConstF) {     
         t.value.fVal = (double)v1.value.iVal / v2.value.fVal;
     } else {
         t.value.fVal = v1.value.fVal / v2.value.fVal;
@@ -93,11 +93,11 @@ var_t mod2(var_t v1, var_t v2) {
     var_t t;
 
     if (v2.value.iVal == 0) {
-        callException(ZERO_DIVISION_ERROR);
+        call_exception(ZERO_DIVISION_ERROR);
     }
 
-    int32_t v1Type = typeChecker(v1);
-    int32_t v2Type = typeChecker(v2);
+    int32_t v1Type = type_checker(v1);
+    int32_t v2Type = type_checker(v2);
 
     if (v1Type == TyConstI && v2Type == TyConstI) {
         t.value.iVal = v1.value.iVal % v2.value.iVal;
@@ -116,7 +116,7 @@ var_t mod2(var_t v1, var_t v2) {
     return t;
 }
 
-var_t calculation(var_t v1, var_t v2, int32_t opcode) {
+var_t calculation(var_t v1, var_t v2, uint32_t opcode) {
     var_t t;
 
     switch (opcode) {
@@ -144,13 +144,13 @@ var_t calculation(var_t v1, var_t v2, int32_t opcode) {
         t.value.iVal = v1.value.iVal | v2.value.iVal;
         break;
     default:
-        callException(ERROR);
+        call_exception(ERROR);
     }
 
     return t;
 }
 
-int32_t compare(var_t v1, var_t v2, int32_t opcode) {
+int32_t compare(var_t v1, var_t v2, uint32_t opcode) {
     int64_t v1Val;
     int64_t v2Val;
 
@@ -180,7 +180,7 @@ int32_t compare(var_t v1, var_t v2, int32_t opcode) {
         case OpRiEqCmp:
             return v1Val >= v2Val;
         default:
-            callException(ERROR);
+            call_exception(ERROR);
     }
 
     return 0;

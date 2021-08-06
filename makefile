@@ -1,7 +1,9 @@
-SRCSLIST := main.c run.c debug.c errorHandle.c \
+SRCSLIST := main.c run.c \
+			debug/debug.c \
+			error/error.c \
 		    lexer/lexer.c lexer/token.c \
-			utils/util.c utils/iStack.c \
-			variable/vStack.c \
+			utils/util.c utils/int_stack.c \
+			variable/var_stack.c \
 			parser/compile.c parser/control.c parser/expr.c \
 			vm/exec.c  vm/alu.c
 

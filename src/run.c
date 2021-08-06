@@ -1,44 +1,44 @@
-#include <stdint.h>
 #include <stdio.h>
-#include <stdlib.h>
+#include <stdint.h>
 #include <time.h>
 
-#include "errorHandle.h"
+#include "oto.h"
+#include "error/error.h"
 #include "parser/compile.h"
 #include "vm/exec.h"
 #include "lexer/token.h"
 #include "utils/util.h"
 
-#define IC_LIST_SIZE 20000    // 内部コード列の長さ
+int32_t run(const str_t path) {
+    str_t src = NULL;
 
-int32_t run(str_t src) {
-    tokenBuf_t *tcBuf = newTokenBuf();  // トークン情報
-    var_t var[MAX_TC];
+    if (src_load(path, &src)) {
+        return 1;
+    }
+
+    tokenbuf_t *tcbuf = new_tokenbuf(); // トークン情報
+    var_t var_list[MAX_TC];
     var_t *ic[IC_LIST_SIZE];
 
-    setTcBuf(tcBuf);
-    setVar(var);
-    setIc(ic);
+    set_error_all(path, src, tcbuf, var_list, ic);
 
 #ifdef TIME
-    time_t startTime, endTime;
-    startTime = clock();
+    time_t start_time, end_time;
+    start_time = clock();
 #endif
-
-    compile(src, tcBuf, var, ic);
-
+    compile(src, tcbuf, var_list, ic);
 #ifdef TIME
-    endTime = clock();
-    printf("compile time : %f[s]\n", CALC_TIME(startTime, endTime));
+    end_time = clock();
+    printf("compile time : %f[s]\n", CALC_TIME(start_time, end_time));
 #endif
 
 #ifdef TIME
-    startTime = clock();
+    start_time = clock();
 #endif
-    exec(ic, var, tcBuf);
+    exec(ic, var_list, tcbuf);
 #ifdef TIME
-    endTime = clock();
-    printf("exec time : %f[s]\n", CALC_TIME(startTime, endTime));
+    end_time = clock();
+    printf("exec time : %f[s]\n", CALC_TIME(start_time, end_time));
 #endif
 
     return 0;

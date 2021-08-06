@@ -1,6 +1,6 @@
 #pragma once
 
-enum {
+enum OP_CODE {
     OpNop = 0,    // 何もしない
     OpCpyD,       // 変数への単純代入
     OpCpyP,       // スタックからポップしたものを代入する

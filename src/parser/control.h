@@ -6,8 +6,8 @@
 #include "../variable/variable.h"
 
 /* "begin", '['の位置を渡すと、それに対応した"end", ']'の位置を返す */
-int32_t searchBlockEnd(tokenBuf_t *tcBuf, int32_t pc);
+uint32_t search_block_end(tokenbuf_t *tcbuf, uint32_t pc);
 
-void loopControl(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t **ic);
+void loop_control(tokenbuf_t *tcbuf, uint32_t *pc, var_t *var_list, var_t **ic, uint32_t *icp);
 
-void ifControl(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t **ic);
+void if_control(tokenbuf_t *tcbuf, uint32_t *pc, var_t *var_list, var_t **ic, uint32_t *icp);

@@ -6,13 +6,35 @@
 #include <string.h>
 
 #include "token.h"
-#include "../errorHandle.h"
+#include "tokencode.h"
+#include "../error/error.h"
 #include "../utils/util.h"
 #include "../variable/variable.h"
 
-/* 変数名として使用可能かどうかを判定する */
-int32_t isValNameAvailable(unsigned char c) {
-    // TODO?: ♯や♭を変数名に使えるようにする
+bool_t is_number(unsigned char c) {
+    if ('0' <= c && c <= '9') return 1;
+    return 0;
+}
+
+uint32_t get_const_len(str_t s) {
+    uint32_t len = 0;
+    bool_t is_float = false;
+
+    while (1) {
+        if (is_number(s[len])) {
+            len++;
+        } else if (s[len] == '.' && !is_float) {
+            is_float = true;
+            len++;
+        } else {
+            break;
+        }
+    }
+
+    return len;
+}
+
+bool_t is_varname_available(unsigned char c) {
     if ('0' <= c && c <= '9') return 1;
     if ('a' <= c && c <= 'z') return 1;
     if ('A' <= c && c <= 'Z') return 1;
@@ -20,15 +42,16 @@ int32_t isValNameAvailable(unsigned char c) {
     return 0;
 }
 
-/* 定数かどうかを判定する */
-int32_t isConst(unsigned char c) {
-    if ('0' <= c && c <= '9') return 1;
-    return 0;
+uint32_t get_varname_len(str_t s) {
+    int32_t len = 0;
+    while (is_varname_available(s[len])) {
+        len++;
+    }
+    return len;
 }
 
-const str_t symbol = "=+-*/!%&~|<>?:.#";
-/* 文字が演算子であるかどうかを判定する */
-int32_t isCharOperator(unsigned char c) {
+static const str_t symbol = "=+-*/!%&~|<>";
+bool_t is_symbol(unsigned char c) {
     if (strchr(symbol, c) != 0) return 1;
     return 0;
 }
@@ -39,72 +62,70 @@ static const str_t operators[] = {
 };
 
 /* s[i] ~ s[i + len]の文字列が演算子なのかを判定する */
-int32_t isTrueOperator(str_t s, int32_t i, int32_t len) {
-    int opNum = GET_ARRAY_LENGTH(operators);
-    for (int i = 0; i < opNum; i++) {
-        if (strncmp(operators[i], s, len) == 0) {
-            return 1;
-        }
+bool_t is_true_operator(str_t s, int32_t i, int32_t len) {
+    int op_num = GET_ARRAY_LENGTH(operators);
+    for (int i = 0; i < op_num; i++) {
+        if (strncmp(operators[i], s, len) == 0) return 1;
     }
     return 0;
 }
 
-/* プログラムをトークンコード列に変換する */
-int32_t lexer(str_t s, tokenBuf_t *tcBuf, var_t *var) {
-    int32_t i     = 0;  // 現在参照している文字の位置
-    int32_t tcCnt = 0;  // これまでに変換したトークンの数
+uint32_t get_operator_len(str_t s) {
+    uint32_t len = 0;
+    while (is_symbol(s[len]) && s[len] != '\0') {
+        len++;
+    }
+
+    if (!is_true_operator(s, 0, len)) {
+        call_error(SYNTAX_ERROR);
+    }
+
+    return len;
+}
+
+uint32_t lexer(str_t s, tokenbuf_t *tcbuf, var_t *var_list) {
+    int32_t i   = 0;  // 現在参照している文字の位置
+    int32_t cnt = 0;  // これまでに変換したトークンの数
 
     while (1) {
-        if (s[i] == 0 || s[i] == '\0') {
-            tcBuf->tc[tcCnt] = TcLF;
-            return tcCnt;
+        if (s[i] == '\0') {
+            tcbuf->tc_list[cnt] = TcLF;
+            return cnt;
         }
 
-        if (s[i] == ' ' || s[i] == '\t' || s[i] == '\r') {  // 読み飛ばしていい文字
+        if (s[i] == ' ' || s[i] == '\t' || s[i] == '\r') {
+            // 読み飛ばしていい文字
             i++;
             continue;
 
         } else if (s[i] == '#') {
-            while (!(s[i] == '\n')) i++;
+            while (!(s[i] == '\n')) {
+                i++;
+            }
             continue;
         }
 
-        int32_t len = 0;  // 変数などの長さを記録するための変数
-        int32_t type = TyVoid;  // そのトークンが何の種類なのかを記録するための変数
+        int32_t len = 0;  // トークン文字列の長さ
+        int32_t type = TyVoid;
         if (strchr("(){}[]:,\n", s[i]) != 0) {
             len = 1;
 
-        } else if (isConst(s[i])) {  // 定数
-            type = TyConstI;
-            while (1) {
-                if (isConst(s[i + len])) {
-                    len++;
-                } else if (s[i + len] == '.' && type == TyConstI) {
-                    type = TyConstF;
-                    len++;
-                } else {
-                    break;
-                }
-            }
+        } else if (is_number(s[i])) {  // 定数
+            type = TyConstF;
+            len = get_const_len(&s[i]);
 
-        } else if (isValNameAvailable(s[i])) {  // 変数
-            while (isValNameAvailable(s[i + len])) len++;
+        } else if (is_varname_available(s[i])) {  // 変数
+            len = get_varname_len(&s[i]);
 
-        } else if (isCharOperator(s[i]) != 0) {  // 演算子
-            while (isCharOperator(s[i + len]) != 0 && s[i + len] != 0) {
-                len++;
-            }
-
-            if (!isTrueOperator(&s[i], i, len)) {
-                callError(SYNTAX_ERROR);
-            }
+        } else if (is_symbol(s[i]) ) {  // 演算子
+            len = get_operator_len(&s[i]);
 
         } else {
-            callError(SYNTAX_ERROR);
+            call_error(SYNTAX_ERROR);
         }
 
-        tcBuf->tc[tcCnt] = getTc(&s[i], len, tcBuf, var, type);
+        tcbuf->tc_list[cnt] = get_tc(tcbuf, var_list, &s[i], len, type);
         i += len;
-        tcCnt++;
+        cnt++;
     }
 }

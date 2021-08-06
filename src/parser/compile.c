@@ -1,169 +1,162 @@
-#include "compile.h"
-
-#include <stdarg.h>
-#include <stdint.h>
 #include <stdio.h>
+#include <stdint.h>
+#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "control.h"
 #include "expr.h"
-#include "../errorHandle.h"
-#include "../debug.h"
+#include "../error/error.h"
+#include "../debug/debug.h"
 #include "../utils/util.h"
-#include "../vm/ic.h"
+#include "../vm/opcode.h"
 #include "../lexer/lexer.h"
 #include "../lexer/token.h"
+#include "../lexer/tokencode.h"
 #include "../variable/variable.h"
 
-int32_t tVpc[5];  // putIc()で指定するTcを入れる場所(Temp Var Pcのつもり)
-int32_t vp = 0;  // tVpcへのポインタ
+/* トークンの識別子 */ 
+#define TcExpr         -1    // 式
+#define TcIdentifier   -2    // 識別子(変数やラベル)
+#define TcOperator     -3    // 演算子
+#define TcStop         -99   // 都合により構文評価を止めたいとき
 
-/* 引数に渡されたトークンのパターンと実際のコードが一致しているかを調べる関数 */
-int32_t ptnCmp(tokenBuf_t *tcBuf, int32_t *pc, int32_t pattern, ...) {
+uint32_t tmpvars[5];  // put_ic()で指定するTcを入れる
+int32_t  vp = 0;   // tmpvarsへのポインタ
+
+/* 引数に渡されたトークンのパターンと実際のコードが一致しているかを調べる */
+bool_t ptn_cmp(tokenbuf_t *tcbuf, uint32_t *pc, int32_t pattern, ...) {
     va_list ap;
     va_start(ap, pattern);
 
-    int32_t ppc   = *pc;      // 最初のpcを保存しておく
-    int32_t ptnTc = pattern;  // パターンから読み込んだトークン
+    uint32_t ppc   = *pc;      // 最初のpcを保存しておく
+    int32_t ptn_tc = pattern;
 
     while (1) {
-        int32_t tc = tcBuf->tc[*pc];
+        int32_t tc = tcbuf->tc_list[*pc];
 
-        if (ptnTc == TcLF && tc == TcLF) {
-            // セミコロンなら終わり
+        if (ptn_tc == TcLF && tc == TcLF) {
             (*pc)++;
             break;
         } 
-        if (ptnTc == TcStop) {
+        if (ptn_tc == TcStop) {
             (*pc) = ppc;       
             vp    = 0;
             va_end(ap);
-            return 1;              
+            return true;              
         }
 
-        if (tc == ptnTc) {
+        if (tc == ptn_tc) {
             // 既にあるトークンと一致した
 
-        } else if (ptnTc == TcIdentifier && tc >= TcBegin) {
+        } else if (ptn_tc == TcIdentifier && tc >= TcBegin) {
             // 演算子でないか(予約語も含む)
-            tVpc[vp++] = tc;
+            tmpvars[vp++] = tc;
 
-        } else if (ptnTc == TcExpr) {
+        } else if (ptn_tc == TcExpr) {
             (*pc) = ppc;
             vp    = 0;
             va_end(ap);
-            return 1;                
+            return true;                
 
         } else {
             (*pc) = ppc;
             vp = 0;
             va_end(ap);
-            return 0;
+            return false;
         }
-        ptnTc = va_arg(ap, int32_t);
+        ptn_tc = va_arg(ap, int32_t);
         (*pc)++;
     }
 
     vp = 0;
     va_end(ap);
 
-    return 1;
+    return true;
 }
 
-void putIc(var_t **ic, int32_t *icp, int32_t op, var_t *v1, var_t *v2, var_t *v3, var_t *v4) {
-    ic[(*icp)++] = (var_t *)((int64_t)op);
+void put_ic(var_t **ic, uint32_t *icp, uint32_t op, var_t *v1, var_t *v2, var_t *v3, var_t *v4) {
+    ic[(*icp)++] = (var_t *)((uint64_t)op);
     ic[(*icp)++] = v1;
     ic[(*icp)++] = v2;
     ic[(*icp)++] = v3;
     ic[(*icp)++] = v4;
 }
 
-void compile_sub(tokenBuf_t *tcBuf, var_t *var, var_t **ic, int32_t *icp, int32_t start, int32_t end) {
+void compile_sub(tokenbuf_t *tcbuf, var_t *var_list, var_t **ic, uint32_t *icp, uint32_t start, uint32_t end) {
     // プログラムカウンタ
-    int32_t pc = start;
+    uint32_t pc = start;
 
     while (pc < end) {
-        // printf("pc : %d\n", pc);
-        if (ptnCmp(tcBuf, &pc, TcImport, TcSqBrOpn, TcIdentifier, TcSqBrCls, TcLF)) {
+        if (ptn_cmp(tcbuf, &pc, TcImport, TcSqBrOpn, TcIdentifier, TcSqBrCls, TcLF)) {
 
-        } else if (tcBuf->tc[pc] == TcLF) {
+        } else if (tcbuf->tc_list[pc] == TcLF) {
             pc++;
 
-        } else if (ptnCmp(tcBuf, &pc, TcDefine, TcIdentifier, TcColon, TcIdentifier, TcLF)) {
-            if (var[tVpc[0]].type != TyVoid) {
-                callError(ASSIGN_TO_LITERAL_ERROR);
-            } else if (isRsvWordTc(tcBuf, tVpc[0])) {
-                callError(NAME_ERROR);
+        } else if (ptn_cmp(tcbuf, &pc, TcDefine, TcIdentifier, TcColon, TcIdentifier, TcLF)) {
+            uint32_t type = var_list[tmpvars[1]].type;
+            if (is_rsvword_tc(tcbuf, tmpvars[0])) {
+                call_error(NAME_ERROR);
+            } else if (type != TyConstF) {
+                call_error(ASSIGN_TO_LITERAL_ERROR);
             }
             
-            var[tVpc[0]].type = TyConstF;
-            int32_t v1Type = var[tVpc[1]].type;
-            if (v1Type == TyConstF) {
-                var[tVpc[0]].value.fVal = var[tVpc[1]].value.fVal;
-            } else if (v1Type == TyConstI) {
-                var[tVpc[0]].value.fVal = (double)var[tVpc[1]].value.iVal;
-            } else {
-                callError(ASSIGN_TO_LITERAL_ERROR);
-            }
+            var_list[tmpvars[0]].type = TyConstF;
+            var_list[tmpvars[0]].value.fVal = var_list[tmpvars[1]].value.fVal;
         
-        } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcIdentifier, TcLF)) {
+        } else if (ptn_cmp(tcbuf, &pc, TcIdentifier, TcEqu, TcIdentifier, TcLF)) {
             // <identifier> = <identifier>;
-            if (var[tVpc[0]].type == TyConstI || var[tVpc[0]].type == TyConstF) {
-                callError(ASSIGN_TO_LITERAL_ERROR);
-            } else if (isRsvWordTc(tcBuf, tVpc[0])) {
-                callError(NAME_ERROR);
+            if (var_list[tmpvars[0]].type == TyConstF) {
+                call_error(ASSIGN_TO_LITERAL_ERROR);
+            } else if (is_rsvword_tc(tcbuf, tmpvars[0]) && is_rsvword_tc(tcbuf, tmpvars[1])) {
+                call_error(NAME_ERROR);
             }
-            putIc(ic, icp, OpCpyD, &var[tVpc[0]], &var[tVpc[1]], 0, 0);
+            put_ic(ic, icp, OpCpyD, &var_list[tmpvars[0]], &var_list[tmpvars[1]], 0, 0);
 
-        } else if (ptnCmp(tcBuf, &pc, TcIdentifier, TcEqu, TcExpr)) {
+        } else if (ptn_cmp(tcbuf, &pc, TcIdentifier, TcEqu, TcExpr)) {
             // <identifier> = <expr>;
-            if (var[tVpc[0]].type == TyConstI || var[tVpc[0]].type == TyConstF) {
-                callError(ASSIGN_TO_LITERAL_ERROR);
-            } else if (isRsvWordTc(tcBuf, tVpc[0])) {
-                callError(NAME_ERROR);
+            if (var_list[tmpvars[0]].type == TyConstF) {
+                call_error(ASSIGN_TO_LITERAL_ERROR);
+            } else if (is_rsvword_tc(tcbuf, tmpvars[0])) {
+                call_error(NAME_ERROR);
             }
             pc += 2;  // 式の先頭までpcを進める
-            expr(tcBuf, icp, &pc, var, ic, 0);
-            putIc(ic, icp, OpCpyP, &var[tVpc[0]], 0, 0, 0);
+            expr(tcbuf, &pc, 0, var_list, ic, icp);
+            put_ic(ic, icp, OpCpyP, &var_list[tmpvars[0]], 0, 0, 0);
 
-        } else if (ptnCmp(tcBuf, &pc, TcPrint, TcIdentifier, TcLF)) {
+        } else if (ptn_cmp(tcbuf, &pc, TcPrint, TcIdentifier, TcLF)) {
             // print <identifier>
-            putIc(ic, icp, OpPrint, &var[tVpc[0]], 0, 0, 0);
+            put_ic(ic, icp, OpPrint, &var_list[tmpvars[0]], 0, 0, 0);
 
-        } else if (ptnCmp(tcBuf, &pc, TcLoop, TcStop)) {
-            loopControl(tcBuf, icp, &pc, var, ic);
+        } else if (ptn_cmp(tcbuf, &pc, TcLoop, TcStop)) {
+            loop_control(tcbuf, &pc, var_list, ic, icp);
 
-        } else if (ptnCmp(tcBuf, &pc, TcIf, TcStop)) {
-            ifControl(tcBuf, icp, &pc, var, ic);
+        } else if (ptn_cmp(tcbuf, &pc, TcIf, TcStop)) {
+            if_control(tcbuf, &pc, var_list, ic, icp);
 
-        } else if (ptnCmp(tcBuf, &pc, TcExit)) {
+        } else if (ptn_cmp(tcbuf, &pc, TcExit)) {
             // exit
-            putIc(ic, icp, OpExit, 0, 0, 0, 0);
+            put_ic(ic, icp, OpExit, 0, 0, 0, 0);
 
         } else {
-            callError(INVALID_SYNTAX_ERROR);
+            call_error(INVALID_SYNTAX_ERROR);
         }
     }
     return;
 }
 
-int32_t compile(str_t s, tokenBuf_t *tcBuf, var_t *var, var_t **ic) {
-    tcInit(tcBuf, var);
+void compile(str_t s, tokenbuf_t *tcbuf, var_t *var_list, var_t **ic) {
+    tc_init(tcbuf, var_list);
 
-    int32_t end = lexer(s, tcBuf, var);
+    uint32_t end = lexer(s, tcbuf, var_list);
 
 #ifdef DEBUG
-    printf("Tokenize result\n");
-    printTokenList(tcBuf);
-    printf("Converted source code\n");
-    printTokenCode(tcBuf, end);
+    print_tokenlist(tcbuf);
+    print_converted_source(tcbuf, end);
 #endif
 
-    int32_t icp = 0;  // icをどこまで書き込んだか
-    compile_sub(tcBuf, var, ic, &icp, 0, end);
+    uint32_t icp = 0;  // icをどこまで書き込んだか
+    compile_sub(tcbuf, var_list, ic, &icp, 0, end);
 
-    putIc(ic, &icp, OpExit, 0, 0, 0, 0);
-
-    return 0;
+    put_ic(ic, &icp, OpExit, 0, 0, 0, 0);
 }

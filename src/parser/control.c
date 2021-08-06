@@ -6,45 +6,47 @@
 
 #include "compile.h"
 #include "expr.h"
-#include "../errorHandle.h"
-#include "../utils/iStack.h"
+#include "../error/error.h"
 #include "../utils/util.h"
-#include "../vm/ic.h"
+#include "../vm/opcode.h"
 #include "../lexer/lexer.h"
 #include "../lexer/token.h"
+#include "../lexer/tokencode.h"
 #include "../variable/variable.h"
 
-int32_t getArgs(tokenBuf_t *tcBuf, int32_t start, int32_t end, int32_t *argv, int32_t argLen) {
-    int32_t ppc = start + 1;
-    int32_t argCnt = 0;
+uint32_t get_argtcs(tokenbuf_t *tcbuf, uint32_t start, uint32_t end, uint32_t *argv, uint32_t arg_len) {
+    uint32_t ppc = start + 1;
+    uint32_t arg_cnt = 0;
 
     while (ppc < end) {
-        int32_t tc = tcBuf->tc[ppc];
+        uint32_t tc = tcbuf->tc_list[ppc];
         
-        int32_t cnt = 0;
-        while((ppc + cnt) < end && tcBuf->tc[ppc + cnt] != TcComma) cnt++;
+        uint32_t cnt = 0;
+        while((ppc + cnt) < end && tcbuf->tc_list[ppc + cnt] != TcComma) {
+            cnt++;
+        }
 
-        if (cnt >= 2)
-            argv[argCnt++] = TcExpr;
-        else
-            argv[argCnt++] = tc;
-
+        if (cnt >= 2) {
+            argv[arg_cnt++] = -1;
+        } else {
+            argv[arg_cnt++] = tc;
+        }
         ppc += cnt;
     }
 
-    if (argLen < argCnt) {
-        callError(SYNTAX_ERROR);
+    if (arg_len < arg_cnt) {
+        call_error(SYNTAX_ERROR);
     }
 
-    return argCnt;
+    return arg_cnt;
 }
 
 /* "then"の位置を渡すと、それに対応した"elsif", "else", "end"の位置を返す */
-int32_t searchIFBlockEnd(tokenBuf_t *tcBuf, int32_t pc) {
-    int32_t nest = 1;
+uint32_t search_ifblock_end(tokenbuf_t *tcbuf, uint32_t pc) {
+    uint32_t nest = 1;
 
     while (1) {
-        int32_t tc = tcBuf->tc[pc++];
+        uint32_t tc = tcbuf->tc_list[pc++];
         if (tc == TcIf || tc == TcBegin) {
             nest++;
             continue;
@@ -57,18 +59,18 @@ int32_t searchIFBlockEnd(tokenBuf_t *tcBuf, int32_t pc) {
             if (nest != 0) continue;
             else break;
         } else if (tc == TcExit) {
-            callError(INVALID_SYNTAX_ERROR);
+            call_error(INVALID_SYNTAX_ERROR);
         }
     }
 
     return pc - 1;
 }
 
-int32_t searchElseBlockEnd(tokenBuf_t *tcBuf, int32_t pc) {
-    int32_t nest = 1;
+uint32_t search_elseblock_end(tokenbuf_t *tcbuf, uint32_t pc) {
+    uint32_t nest = 1;
 
     while (1) {
-        int32_t tc = tcBuf->tc[pc++];
+        uint32_t tc = tcbuf->tc_list[pc++];
         if (tc == TcIf || tc == TcBegin) {
             nest++;
             continue;
@@ -77,7 +79,7 @@ int32_t searchElseBlockEnd(tokenBuf_t *tcBuf, int32_t pc) {
             if (nest != 0) continue;
             else break;
         } else if (tc == TcExit) {
-            callError(INVALID_SYNTAX_ERROR);
+            call_error(INVALID_SYNTAX_ERROR);
         }
     }
 
@@ -85,17 +87,17 @@ int32_t searchElseBlockEnd(tokenBuf_t *tcBuf, int32_t pc) {
 }
 
 /* "begin", '['の位置を渡すと、それに対応した"end", ']'の位置を返す */
-int32_t searchBlockEnd(tokenBuf_t *tcBuf, int32_t pc) {
-    int32_t nest = 0;
+uint32_t search_block_end(tokenbuf_t *tcbuf, uint32_t pc) {
+    uint32_t nest = 0;
 
-    if (tcBuf->tc[pc] == TcThen) {
-        return searchIFBlockEnd(tcBuf, pc);
-    } else if (tcBuf->tc[pc] == TcElse) {
-        return searchElseBlockEnd(tcBuf, pc);
+    if (tcbuf->tc_list[pc] == TcThen) {
+        return search_ifblock_end(tcbuf, pc);
+    } else if (tcbuf->tc_list[pc] == TcElse) {
+        return search_elseblock_end(tcbuf, pc);
     }
 
     while (1) {
-        int32_t tc = tcBuf->tc[pc++];
+        uint32_t tc = tcbuf->tc_list[pc++];
         if (tc == TcBegin || tc == TcSqBrOpn || tc == TcIf) {
             nest++;
             continue;
@@ -104,7 +106,7 @@ int32_t searchBlockEnd(tokenBuf_t *tcBuf, int32_t pc) {
             if (nest != 0) continue;
             else break;
         } else if (tc == TcExit) {
-            callError(INVALID_SYNTAX_ERROR);
+            call_error(INVALID_SYNTAX_ERROR);
         }
     }
 
@@ -112,104 +114,103 @@ int32_t searchBlockEnd(tokenBuf_t *tcBuf, int32_t pc) {
 }
 
 /* "begin-end"で囲まれたブロック内のコードをコンパイルし、ブロックを抜けた場所のpcを返す */
-int32_t blockCompile(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t **ic) {
-    int32_t start = *pc + 1;
-    int32_t end   = searchBlockEnd(tcBuf, *pc) - 1;
+int32_t block_compile(tokenbuf_t *tcbuf,  uint32_t *pc, var_t *var_list, var_t **ic, uint32_t *icp) {
+    uint32_t start = *pc + 1;
+    uint32_t end   = search_block_end(tcbuf, *pc) - 1;
 
 #ifdef DEBUG
     printf("block : start [%d], end [%d]\n", start, end);
 #endif
 
-    compile_sub(tcBuf, var, ic, icp, start, end);
+    compile_sub(tcbuf, var_list, ic, icp, start, end);
     return end + 2;    // ブロックの外に持っていくため2足す
 }
 
-void loopControl(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t **ic) {
-    int32_t ppc = *pc + 1;
+void loop_control(tokenbuf_t *tcbuf, uint32_t *pc, var_t *var_list, var_t **ic, uint32_t *icp) {
+    uint32_t ppc = *pc + 1;
 
-    int32_t argv[] = {0, 0, 0};
-    int32_t start = ppc;
-    int32_t end = searchBlockEnd(tcBuf, start);
+    uint32_t argv[] = {0, 0, 0};
+    uint32_t start = ppc;
+    uint32_t end = search_block_end(tcbuf, start);
 
-    int32_t argLen = getArgs(tcBuf, start, end, argv, GET_ARRAY_LENGTH(argv));
+    get_argtcs(tcbuf, start, end, argv, GET_ARRAY_LENGTH(argv));
     ppc = end + 1;
 
-    int32_t jmpIcp1 = *icp;
-    putIc(ic, icp, OpLoop, 0, 0, 0, 0);
+    uint32_t jmp_icp = *icp;
+    put_ic(ic, icp, OpLoop, 0, 0, 0, 0);
 
-    ppc = blockCompile(tcBuf, icp, &ppc, var, ic);
+    ppc = block_compile(tcbuf, &ppc, var_list, ic, icp);
 
-    putIc(ic, icp, OpJmp, (var_t *)((int64_t)jmpIcp1), 0, 0, 0);
-
-    putIc(ic, &jmpIcp1, OpLoop, (var_t *)((int64_t)*icp), &var[argv[0]], 0, 0);
+    put_ic(ic, icp, OpJmp, (var_t *)((uint64_t)jmp_icp), 0, 0, 0);
+    put_ic(ic, &jmp_icp, OpLoop, (var_t *)((uint64_t)*icp), &var_list[argv[0]], 0, 0);
 
     *pc = ppc;
 
     return; 
 }
 
-void ifControl(tokenBuf_t *tcBuf, int32_t *icp, int32_t *pc, var_t *var, var_t **ic) {
-    int32_t ppc = *pc + 1;
+void if_control(tokenbuf_t *tcbuf, uint32_t *pc, var_t *var_list, var_t **ic, uint32_t *icp) {
+    uint32_t ppc = *pc + 1;
 
-    int32_t notFlag = 0;
-    if (tcBuf->tc[ppc] == TcNot) {
-        notFlag = 1;
+    uint32_t not_flag = 0;
+    if (tcbuf->tc_list[ppc] == TcNot) {
+        not_flag = 1;
         ppc++;
     }
 
     // 条件式部分
-    int32_t start = ppc;
-    int32_t end = searchBlockEnd(tcBuf, start);
+    uint32_t start = ppc;
+    uint32_t end = search_block_end(tcbuf, start);
     start++;
 
-    expr(tcBuf, icp, &start, var, ic, end - 1);
+    expr(tcbuf, &start, end - 1, var_list, ic, icp);
     ppc = end + 1;
 
     // 処理部分
-    int32_t jmpIcp1 = *icp;
-    putIc(ic, icp, OpJz, 0, 0, 0, 0);
+    uint32_t jmp_icp1 = *icp;
+    put_ic(ic, icp, OpJz, 0, 0, 0, 0);
 
-    ppc = blockCompile(tcBuf, icp, &ppc, var, ic);
+    ppc = block_compile(tcbuf, &ppc, var_list, ic, icp);
 
-    if (tcBuf->tc[ppc - 1] == TcElsif) {
+    if (tcbuf->tc_list[ppc - 1] == TcElsif) {
         ppc--;
-        int32_t jmpIcp2 = *icp;
-        putIc(ic, icp, OpJmp, 0, 0, 0, 0);
+        uint32_t jmp_icp2 = *icp;
+        put_ic(ic, icp, OpJmp, 0, 0, 0, 0);
 
-        if (notFlag) {
-            putIc(ic, &jmpIcp1, OpJnz, (var_t *)((int64_t)*icp), 0, 0, 0);
+        if (not_flag) {
+            put_ic(ic, &jmp_icp1, OpJnz, (var_t *)((uint64_t)*icp), 0, 0, 0);
         } else {
-            putIc(ic, &jmpIcp1, OpJz, (var_t *)((int64_t)*icp), 0, 0, 0);
+            put_ic(ic, &jmp_icp1, OpJz, (var_t *)((uint64_t)*icp), 0, 0, 0);
         }
 
-        ifControl(tcBuf, icp, &ppc, var, ic);
-        putIc(ic, &jmpIcp2, OpJmp, (var_t *)((int64_t)*icp), 0, 0, 0);
+        if_control(tcbuf, &ppc, var_list, ic, icp);
+        put_ic(ic, &jmp_icp2, OpJmp, (var_t *)((uint64_t)*icp), 0, 0, 0);
 
-    } else if (tcBuf->tc[ppc - 1] == TcElse) {
+    } else if (tcbuf->tc_list[ppc - 1] == TcElse) {
         ppc--;
-        int32_t jmpIcp3 = *icp;
-        putIc(ic, icp, OpJmp, 0, 0, 0, 0);
+        uint32_t jmp_icp3 = *icp;
+        put_ic(ic, icp, OpJmp, 0, 0, 0, 0);
 
-        if (notFlag) {
-            putIc(ic, &jmpIcp1, OpJnz, (var_t *)((int64_t)*icp), 0, 0, 0);
+        if (not_flag) {
+            put_ic(ic, &jmp_icp1, OpJnz, (var_t *)((uint64_t)*icp), 0, 0, 0);
         } else {
-            putIc(ic, &jmpIcp1, OpJz, (var_t *)((int64_t)*icp), 0, 0, 0);
+            put_ic(ic, &jmp_icp1, OpJz, (var_t *)((uint64_t)*icp), 0, 0, 0);
         }
 
-        ppc = blockCompile(tcBuf, icp, &ppc, var, ic);
+        ppc = block_compile(tcbuf, &ppc, var_list, ic, icp);
 
-        putIc(ic, &jmpIcp3, OpJmp, (var_t *)((int64_t)*icp), 0, 0, 0);
+        put_ic(ic, &jmp_icp3, OpJmp, (var_t *)((uint64_t)*icp), 0, 0, 0);
 
     } else {
-        if (notFlag) {
-            putIc(ic, &jmpIcp1, OpJnz, (var_t *)((int64_t)*icp), 0, 0, 0);
+        if (not_flag) {
+            put_ic(ic, &jmp_icp1, OpJnz, (var_t *)((uint64_t)*icp), 0, 0, 0);
         } else {
-            putIc(ic, &jmpIcp1, OpJz, (var_t *)((int64_t)*icp), 0, 0, 0);
+            put_ic(ic, &jmp_icp1, OpJz, (var_t *)((uint64_t)*icp), 0, 0, 0);
         }
 
     }
 
     *pc = ppc;
-    printf("ifppc : %d\n", ppc);
+
     return; 
 }

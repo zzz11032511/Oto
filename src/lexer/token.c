@@ -6,87 +6,94 @@
 #include <string.h>
 
 #include "lexer.h"
-#include "../errorHandle.h"
+#include "tokencode.h"
+#include "../error/error.h"
 #include "../utils/util.h"
 #include "../variable/variable.h"
 
 /* 予約語一覧 */
-struct rsvWord_t {
+struct rsvword_t {
     str_t name;
-    str_t upperName;
+    str_t upper_name;
     int tc;
 };
 
-static struct rsvWord_t rsvWord[] = {
-    {"begin",   "BEGIN",   TcBegin   }, {"end",     "END",     TcEnd     },
-    {"in",      "IN",      TcIn      }, {"out",     "OUT",     TcOut     },
-    {"import",  "IMPORT",  TcImport  }, {"define",  "DEFINE",  TcDefine  },
-    {"channel", "CHANNEL", TcChannel }, {"sound",   "SOUND",   TcSound   },
-    {"filter",  "FILTER",  TcFilter  }, {"if",      "IF",      TcIf      },
-    {"elsif",   "ELSIF",   TcElsif   }, {"else",    "ELSE",    TcElse    },
-    {"then",    "THEN",    TcThen    }, {"loop",    "LOOP",    TcLoop    }, 
-    {"and",     "AND",     TcAnd     }, {"or",      "OR",      TcOr      },
-    {"not",     "NOT",     TcNot     }, {"play",    "PLAY",    TcPlay    }, 
-    {"bpm",     "BPM",     TcBpm     }, {"note",    "NOTE",    TcNote    },
-    {"mute",    "MUTE",    TcMute    }, {"print",   "PRINT",   TcPrint   },
+static const struct rsvword_t rsvwords[] = {
+    {"begin",   "BEGIN",   TcBegin   },
+    {"end",     "END",     TcEnd     },
+    {"in",      "IN",      TcIn      },
+    {"out",     "OUT",     TcOut     },
+    {"import",  "IMPORT",  TcImport  },
+    {"define",  "DEFINE",  TcDefine  },
+    {"channel", "CHANNEL", TcChannel },
+    {"sound",   "SOUND",   TcSound   },
+    {"filter",  "FILTER",  TcFilter  },
+    {"if",      "IF",      TcIf      },
+    {"elsif",   "ELSIF",   TcElsif   },
+    {"else",    "ELSE",    TcElse    },
+    {"then",    "THEN",    TcThen    },
+    {"loop",    "LOOP",    TcLoop    }, 
+    {"and",     "AND",     TcAnd     },
+    {"or",      "OR",      TcOr      },
+    {"not",     "NOT",     TcNot     },
+    {"play",    "PLAY",    TcPlay    }, 
+    {"bpm",     "BPM",     TcBpm     },
+    {"note",    "NOTE",    TcNote    },
+    {"mute",    "MUTE",    TcMute    },
+    {"print",   "PRINT",   TcPrint   },
     {"exit",    "EXIT",    TcExit    },
 };
 
-/* 予約語かどうか調べる */
-int32_t isRsvWordTc(tokenBuf_t *tcBuf, int32_t tc) {
-    int32_t isRW = 0;
-    int32_t rsvWordNum = GET_ARRAY_LENGTH(rsvWord);
-    for (int32_t i = 0; i < rsvWordNum; i++) {
-        int32_t rsvWordLen = strlen(rsvWord[i].name);
-        isRW = strncmp(rsvWord[i].name, tcBuf->tokens[tc]->ts, rsvWordLen);
-        if (isRW == 0) return rsvWord[i].tc;
+/** 
+ * 指定した文字列が予約語であればトークンコードを返す 
+ * そうでなければ0を返す
+ */
+uint32_t get_rsvword_tc(str_t ts, uint32_t len) {
+    bool_t is_rw = 0;    // "rw" is reserve word
+    uint32_t rw_list_num = GET_ARRAY_LENGTH(rsvwords);
 
-        isRW = strncmp(rsvWord[i].upperName, tcBuf->tokens[tc]->ts, rsvWordLen);
-        if (isRW == 0) return rsvWord[i].tc;
+    for (int32_t i = 0; i < rw_list_num; i++) {
+        uint32_t rw_len = strlen(rsvwords[i].name);
+        if (len != rw_len) continue;
+
+        is_rw = strncmp(rsvwords[i].name, ts, rw_len);
+        if (is_rw == 0) return rsvwords[i].tc;
+
+        is_rw = strncmp(rsvwords[i].upper_name, ts, rw_len);
+        if (is_rw == 0) return rsvwords[i].tc;
     }
     return 0;
 }
 
-int32_t isRsvWord(str_t ts, int32_t len) {
-    int32_t isRW = 0;
-    int32_t rsvWordNum = GET_ARRAY_LENGTH(rsvWord);
-    for (int32_t i = 0; i < rsvWordNum; i++) {
-        int32_t rsvWordLen = strlen(rsvWord[i].name);
-        if (len != rsvWordLen) {
-            continue;
-        }
-
-        isRW = strncmp(rsvWord[i].name, ts, rsvWordLen);
-        if (isRW == 0) return rsvWord[i].tc;
-
-        isRW = strncmp(rsvWord[i].upperName, ts, rsvWordLen);
-        if (isRW == 0) return rsvWord[i].tc;
-    }
-    return 0;
+bool_t is_rsvword_tc(tokenbuf_t *tcbuf, uint32_t tc) {
+    bool_t is_rw = get_rsvword_tc(tcbuf->conv_tokens[tc]->ts,
+                                  tcbuf->conv_tokens[tc]->tl);
+    if (is_rw) return true;
+    return false;
 }
 
-/* トークン保存領域を新しく作る */
-tokenBuf_t *newTokenBuf() {
-    tokenBuf_t *buf = (tokenBuf_t *)malloc(sizeof(tokenBuf_t));
+tokenbuf_t *new_tokenbuf() {
+    tokenbuf_t *buf = (tokenbuf_t *)malloc(sizeof(tokenbuf_t));
     if (buf == NULL) {
-        callError(FAILURE_MAKE_TOKENBUFFER_ERROR);
+        call_error(FAILURE_MAKE_TOKENBUFFER_ERROR);
     }
     return buf;
 }
 
-/* トークンのメモリ領域を解放する(トークンコード列もついでに解放してくれる) */
-void freeTokenBuf(tokenBuf_t *tcBuf) {
-    for (int32_t i = tcBuf->tcs; i > 0; i--) {
-        free(tcBuf->tokens[i]);
+void free_tokenbuf(tokenbuf_t *tcbuf) {
+    for (int32_t i = tcbuf->tcs; i > 0; i--) {
+        free(tcbuf->conv_tokens[i]);
+        tcbuf->conv_tokens[i] = NULL;
     }
+    free(tcbuf);
+    tcbuf = NULL;
 }
 
 /* トークンを新しく作る */
-struct token *newToken(int32_t tc, int32_t len, str_t s) {
+struct token *new_token(uint32_t tc, uint32_t len, str_t s) {
     struct token *t = (struct token *)malloc(sizeof(struct token));
     if (t == NULL) {
-        fprintf(stderr, "malloc error\n");
-        exit(FAILURE_MAKE_TOKEN_ERROR);
+        call_error(FAILURE_MAKE_TOKEN_ERROR);
     }
     t->tc = tc;
     t->tl = len;
@@ -98,56 +105,52 @@ struct token *newToken(int32_t tc, int32_t len, str_t s) {
  * トークンの内容(文字列)を記憶するための領域
  * 文字列の実体はこのバッファに保存されている
  */
-static char tcsBuf[(MAX_TC + 1) * 6];
+static char tcsbuf[(MAX_TC + 1) * 10];
 
-/* 新しいトークンを作り, tcBuf->tokensに追加する関数 */
-int32_t putTc(int32_t tc, int32_t len, str_t s, tokenBuf_t *tcBuf) {
-    if (tcBuf->tcs >= MAX_TC) {
-        callError(TOO_MANY_TOKEN_ERROR);
+/* 新しいトークンを作り, conv_tokensに追加する関数 */
+void put_tc(tokenbuf_t *tcbuf, uint32_t tc, str_t s, uint32_t len) {
+    if (tcbuf->tcs >= MAX_TC) {
+        call_error(TOO_MANY_TOKEN_ERROR);
     }
 
-    strncpy(&tcsBuf[tcBuf->tcb], (char *)s, len);  // tcsBufにsをコピー
-    tcsBuf[tcBuf->tcb + len] = 0;  // tcsBufの終わりに終端コードを付ける
-    tcBuf->tokens[tc]        = newToken(tc, len, s);
-    tcBuf->tcb += len + 1;
-    tcBuf->tcs++;
-    return 0;
+    strncpy(&tcsbuf[tcbuf->tcb], (char *)s, len);  // tcsBufにsをコピー
+    tcsbuf[tcbuf->tcb + len] = 0;  // tcsBufの終わりに終端コードを付ける
+    tcbuf->conv_tokens[tc] = new_token(tc, len, s);
+    tcbuf->tcb += len + 1;
+    tcbuf->tcs++;
 }
 
-int32_t initDone = 0;
+static int32_t init_done = 0;
 
 /* トークンコードを得るための関数 */
-int32_t getTc(str_t s, int32_t len, tokenBuf_t *tcBuf, var_t *var, int32_t type) {
-    if (initDone) {
-        int32_t tc = isRsvWord(s, len);
+uint32_t get_tc(tokenbuf_t *tcbuf, var_t *var_list, str_t s, uint32_t len, uint32_t type) {
+    if (init_done) {
+        uint32_t tc = get_rsvword_tc(s, len);
         if (tc != 0) return tc;
     }
 
-    int32_t i;
-    for (i = 0; i < tcBuf->tcs; i++) {  // 登録済みの中から探す
-        if (len == tcBuf->tokens[i]->tl &&
-            strncmp(s, tcBuf->tokens[i]->ts, len) == 0) {
+    uint32_t i;
+    for (i = 0; i < tcbuf->tcs; i++) {  // 登録済みの中から探す
+        if (len == tcbuf->conv_tokens[i]->tl &&
+            strncmp(s, tcbuf->conv_tokens[i]->ts, len) == 0) {
             break;
         }
     }
 
-    if (i == tcBuf->tcs) {  // 新規作成時の処理
-        putTc(i, len, s, tcBuf);
+    if (i == tcbuf->tcs) {  // 新規作成時の処理
+        put_tc(tcbuf, i, s, len);
 
         // 定数だった場合に型を設定し、初期値を設定する
-        var[i].type = type;
-        var[i].tc = i;
+        var_list[i].type = type;
+        var_list[i].tc = i;
 
         switch (type) {
-            case TyConstF:
-                var[i].value.fVal = strtod((char *)(tcBuf->tokens[i]->ts), 0);
-                break;
-            case TyConstI:
-                var[i].value.iVal = strtol((char *)(tcBuf->tokens[i]->ts), 0, 0);
-                break;
-            default:
-                var[i].value.iVal = 0;
-                break;
+        case TyConstF:
+            var_list[i].value.fVal = strtod((char *)(tcbuf->conv_tokens[i]->ts), 0);
+            break;
+        default:
+            var_list[i].value.iVal = 0;
+            break;
         }
     }
 
@@ -157,9 +160,8 @@ int32_t getTc(str_t s, int32_t len, tokenBuf_t *tcBuf, var_t *var, int32_t type)
 /* 最初にlexerしておく文字列 */
 static const str_t symbols = "\n , : [ ] ( ) <- -> = + - * / % == != < >= <= > begin end in out import define channel sound filter if elsif else then loop and or not play bpm note mute print exit\0";
 
-/* 演算子記号などを最初にlexerしておく関数 */
-int32_t tcInit(tokenBuf_t *tcBuf, var_t *var) {
-    lexer(symbols, tcBuf, var);
-    initDone = 1;
-    return 0;
+/* 演算子と予約語を最初にlexerしておく関数 */
+void tc_init(tokenbuf_t *tcbuf, var_t *var_list) {
+    lexer(symbols, tcbuf, var_list);
+    init_done = 1;
 }
