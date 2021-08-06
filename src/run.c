@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <stdint.h>
+#include <stdlib.h>
 #include <time.h>
 
 #include "oto.h"
@@ -9,11 +9,16 @@
 #include "lexer/token.h"
 #include "utils/util.h"
 
-int32_t run(const str_t path) {
+static bool_t timecount_flag = false;
+void set_timecount_flag(bool_t f) {
+    timecount_flag = f;
+}
+
+void run(const str_t path) {
     str_t src = NULL;
 
     if (src_load(path, &src)) {
-        return 1;
+        oto_quit(EXIT_FAILURE);
     }
 
     tokenbuf_t *tcbuf = new_tokenbuf(); // トークン情報
@@ -22,24 +27,22 @@ int32_t run(const str_t path) {
 
     set_error_all(path, src, tcbuf, var_list, ic);
 
-#ifdef TIME
-    time_t start_time, end_time;
-    start_time = clock();
-#endif
+    if (timecount_flag) {
+        time_t start_time, end_time;
+
+        start_time = clock();
+        compile(src, tcbuf, var_list, ic);
+        end_time = clock();
+
+        printf("compile time : %f[s]\n\n", CALC_TIME(start_time, end_time));
+
+        start_time = clock();
+        exec(ic, var_list, tcbuf);
+        end_time = clock();
+
+        printf("\nexec time : %f[s]\n", CALC_TIME(start_time, end_time));
+    }
+
     compile(src, tcbuf, var_list, ic);
-#ifdef TIME
-    end_time = clock();
-    printf("compile time : %f[s]\n", CALC_TIME(start_time, end_time));
-#endif
-
-#ifdef TIME
-    start_time = clock();
-#endif
     exec(ic, var_list, tcbuf);
-#ifdef TIME
-    end_time = clock();
-    printf("exec time : %f[s]\n", CALC_TIME(start_time, end_time));
-#endif
-
-    return 0;
 }

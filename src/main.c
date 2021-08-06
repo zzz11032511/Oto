@@ -1,4 +1,3 @@
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,16 +13,27 @@ void usage(str_t name) {
 }
 
 int main(int argc, const char **argv) {
-    if (argc <= 1) {
+    int i = 1;
+
+    if (argc == 1) {
+        usage((str_t)argv[0]);
+        exit(1);
+    }
+
+    /* 実行時間表示 */
+    if (argc > 1 && strcmp(argv[1], "-T") == 0) {
+        set_timecount_flag(true);
+        i++;
+    }
+
+    if (argc != i + 1) {
         usage((str_t)argv[0]);
         exit(1);
     }
 
     init_error();
 
-    if (run((str_t)argv[1])) {
-        oto_quit(EXIT_FAILURE);
-    }
+    run((str_t)argv[i]);
 
     oto_quit(EXIT_SUCCESS);
 

@@ -1,6 +1,7 @@
 #pragma once
 
-#include <stdint.h>
 #include "utils/util.h"
 
-int32_t run(const str_t path);
+void set_timecount_flag(bool_t f);
+
+void run(const str_t path);
