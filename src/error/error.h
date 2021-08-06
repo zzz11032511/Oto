@@ -23,6 +23,7 @@ enum ERROR_CODE {
     SYNTAX_ERROR,                   // 謎の構文エラー
     INVALID_SYNTAX_ERROR,           // 単純な構文エラー
     ASSIGN_TO_LITERAL_ERROR,        // 定数に代入しようとしたエラー
+    DEFINE_ERROR,                   // define文で定数以外を指定したエラー
     NAME_ERROR,                     // 予約語を変数名にしたエラー
 };
 

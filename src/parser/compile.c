@@ -94,19 +94,17 @@ void compile_sub(tokenbuf_t *tcbuf, var_t *var_list, var_t **ic, uint32_t *icp, 
             pc++;
 
         } else if (ptn_cmp(tcbuf, &pc, TcDefine, TcIdentifier, TcColon, TcIdentifier, TcLF)) {
-            uint32_t type = var_list[tmpvars[1]].type;
-            if (is_rsvword_tc(tcbuf, tmpvars[0])) {
+            if (var_list[tmpvars[1]].type != TyConst) {
+                // 何か違うエラー
+            } else if (is_rsvword_tc(tcbuf, tmpvars[0])) {
                 call_error(NAME_ERROR);
-            } else if (type != TyConstF) {
-                call_error(ASSIGN_TO_LITERAL_ERROR);
-            }
-            
-            var_list[tmpvars[0]].type = TyConstF;
+            } 
+            var_list[tmpvars[0]].type = TyConst;
             var_list[tmpvars[0]].value.fVal = var_list[tmpvars[1]].value.fVal;
         
         } else if (ptn_cmp(tcbuf, &pc, TcIdentifier, TcEqu, TcIdentifier, TcLF)) {
             // <identifier> = <identifier>;
-            if (var_list[tmpvars[0]].type == TyConstF) {
+            if (var_list[tmpvars[0]].type == TyConst) {
                 call_error(ASSIGN_TO_LITERAL_ERROR);
             } else if (is_rsvword_tc(tcbuf, tmpvars[0]) && is_rsvword_tc(tcbuf, tmpvars[1])) {
                 call_error(NAME_ERROR);
@@ -115,7 +113,7 @@ void compile_sub(tokenbuf_t *tcbuf, var_t *var_list, var_t **ic, uint32_t *icp, 
 
         } else if (ptn_cmp(tcbuf, &pc, TcIdentifier, TcEqu, TcExpr)) {
             // <identifier> = <expr>;
-            if (var_list[tmpvars[0]].type == TyConstF) {
+            if (var_list[tmpvars[0]].type == TyConst) {
                 call_error(ASSIGN_TO_LITERAL_ERROR);
             } else if (is_rsvword_tc(tcbuf, tmpvars[0])) {
                 call_error(NAME_ERROR);

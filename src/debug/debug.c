@@ -25,8 +25,6 @@ static const struct opcode_t opcodes[] = {
     {"Mod",     OpMod     },
     {"And",     OpAnd     },
     {"Or",      OpOr      },
-    {"Add1",    OpAdd1    },
-    {"Sub1",    OpSub1    },
     {"Eq",      OpEq      },
     {"NEq",     OpNEq     },
     {"LtCmp",   OpLtCmp   },

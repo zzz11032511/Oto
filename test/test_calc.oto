@@ -1,0 +1,45 @@
+DEFINE a : 6
+DEFINE b : 2.5
+
+c = a + b
+PRINT c
+
+c = a - b
+PRINT c
+
+c = a * b
+PRINT c
+
+c = a / b
+PRINT c
+
+c = a % b
+PRINT c
+
+# Execute code
+#     0 :      Push    a
+#     5 :      Push    b
+#    10 :       Add
+#    15 :      CpyP    c
+#    20 :     Print    c
+#    25 :      Push    a
+#    30 :      Push    b
+#    35 :       Sub
+#    40 :      CpyP    c
+#    45 :     Print    c
+#    50 :      Push    a
+#    55 :      Push    b
+#    60 :       Mul
+#    65 :      CpyP    c
+#    70 :     Print    c
+#    75 :      Push    a
+#    80 :      Push    b
+#    85 :       Div
+#    90 :      CpyP    c
+#    95 :     Print    c
+#   100 :      Push    a
+#   105 :      Push    b
+#   110 :       Mod
+#   115 :      CpyP    c
+#   120 :     Print    c
+#   125 :      Exit

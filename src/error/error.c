@@ -66,20 +66,14 @@ void oto_quit(int32_t exit_status) {
 void call_exception(int32_t exception_code) {
     fprintf(stderr, "Exception : ");
     switch (exception_code) {
-    case ERROR:
-        fprintf(stderr, "Error\n");
-        break;
     case TYPE_ERROR:
         fprintf(stderr, "TypeError\n");
         break;
     case ZERO_DIVISION_ERROR:
         fprintf(stderr, "ZeroDivisionError\n");
         break;
-    case STACK_OVERFLOW_ERROR:
-        fprintf(stderr, "StackOverflowError\n");
-        break;
     default:
-        fprintf(stderr, "Exception : (Exceptioncode : %d)\n", exception_code);
+        fprintf(stderr, "(Exceptioncode : %d)\n", exception_code);
         break; 
     }
 
@@ -88,18 +82,22 @@ void call_exception(int32_t exception_code) {
 
 /* コンパイルエラー */
 void call_error(int32_t error_code) {
+    fprintf(stderr, "SyntaxError : ");
     switch (error_code) {
     case INVALID_SYNTAX_ERROR:
-        fprintf(stderr, "SyntaxError : invalid syntax\n");
+        fprintf(stderr, "invalid syntax\n");
         break;        
     case ASSIGN_TO_LITERAL_ERROR:
-        fprintf(stderr, "SyntaxError : can't assign to literal\n");
+        fprintf(stderr, "can't assign to literal\n");
+        break;
+    case DEFINE_ERROR:
+        fprintf(stderr, "can't specify variables in the define statemant\n");
         break;
     case NAME_ERROR:
-        fprintf(stderr, "SyntaxError : can't use reserved words as variable names\n");
+        fprintf(stderr, "can't use reserved words as variable names\n");
         break;
     default:
-        fprintf(stderr, "SystemError : (Errorcode : %d)\n", error_code);
+        fprintf(stderr, "(Errorcode : %d)\n", error_code);
         break;        
     }
 

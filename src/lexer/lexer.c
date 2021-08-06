@@ -111,7 +111,7 @@ uint32_t lexer(str_t s, tokenbuf_t *tcbuf, var_t *var_list) {
             len = 1;
 
         } else if (is_number(s[i])) {  // 定数
-            type = TyConstF;
+            type = TyConst;
             len = get_const_len(&s[i]);
 
         } else if (is_varname_available(s[i])) {  // 変数

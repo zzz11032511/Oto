@@ -13,8 +13,6 @@ enum OP_CODE {
     OpMod,        // 余り
     OpAnd,        // 論理積
     OpOr,         // 論理和
-    OpAdd1,       // 1加算
-    OpSub1,       // 1減算
 
     OpEq,         // == 
     OpNEq,        // !=

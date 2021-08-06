@@ -145,7 +145,7 @@ uint32_t get_tc(tokenbuf_t *tcbuf, var_t *var_list, str_t s, uint32_t len, uint3
         var_list[i].tc = i;
 
         switch (type) {
-        case TyConstF:
+        case TyConst:
             var_list[i].value.fVal = strtod((char *)(tcbuf->conv_tokens[i]->ts), 0);
             break;
         default:

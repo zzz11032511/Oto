@@ -1,18 +1,63 @@
 a = 1
 
-define FizzBuzz: 33335555
-define Fizz: 3333
-define Buzz: 5555
+DEFINE FizzBuzz: 33335555
+DEFINE Fizz: 3333
+DEFINE Buzz: 5555
 
-loop [30] begin
-    if [a % 3 == 0 and a % 5 == 0] then
-        print FizzBuzz
-    elsif [a % 3 == 0] then
-        print Fizz
-    elsif [a % 5 == 0] then
-        print Buzz
-    else
-        print a
-    end
+LOOP [30] BEGIN
+    IF [a % 3 == 0 AND a % 5 == 0] THEN
+        PRINT FizzBuzz
+        
+    ELSIF [a % 3 == 0] THEN
+        PRINT Fizz
+
+    ELSIF [a % 5 == 0] THEN
+        PRINT Buzz
+
+    ELSE
+        PRINT a
+
+    END
     a = a + 1
-end
+END
+
+# Execute code
+#     0 :      CpyD    a    1
+#     5 :      Loop    190    30
+#    10 :      Push    a
+#    15 :      Push    3
+#    20 :       Mod
+#    25 :      Push    0
+#    30 :        Eq
+#    35 :      Push    a
+#    40 :      Push    5
+#    45 :       Mod
+#    50 :      Push    0
+#    55 :        Eq
+#    60 :       And
+#    65 :        Jz    80
+#    70 :     Print    FizzBuzz
+#    75 :       Jmp    165
+#    80 :      Push    a
+#    85 :      Push    3
+#    90 :       Mod
+#    95 :      Push    0
+#   100 :        Eq
+#   105 :        Jz    120
+#   110 :     Print    Fizz
+#   115 :       Jmp    165
+#   120 :      Push    a
+#   125 :      Push    5
+#   130 :       Mod
+#   135 :      Push    0
+#   140 :        Eq
+#   145 :        Jz    160
+#   150 :     Print    Buzz
+#   155 :       Jmp    165
+#   160 :     Print    a
+#   165 :      Push    a
+#   170 :      Push    1
+#   175 :       Add
+#   180 :      CpyP    a
+#   185 :       Jmp    5
+#   190 :      Exit
