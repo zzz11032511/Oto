@@ -22,7 +22,6 @@ DEBUGOBJS := $(addprefix $(OUTDIR)/,$(patsubst %.c,%_debug.o,$(SRCS)))
 
 CC = gcc
 CFLAGS = -Wall -O2
-TIMEDEFINE  = -D TIME
 DEBUGDEFINE = -D DEBUG
 
 # ----------------------------------------------
@@ -40,7 +39,7 @@ $(TARGET): $(OBJS)
 
 $(OUTDIR)/%.o: %.c
 	@if [ ! -e `dirname $@` ]; then mkdir -p `dirname $@`; fi
-	$(CC) $(CFLAGS) $(TIMEDEFINE) -o $@ -c $<
+	$(CC) $(CFLAGS) -o $@ -c $<
 
 # ----------------------------------------------
 
@@ -62,6 +61,9 @@ run: $(TARGET)
 debug: $(DEBUGTARGET)
 	$(DEBUGTARGET) $(TESTSRCPATH)
 
+time: $(TARGET)
+	$(TARGET) -T $(TESTSRCPATH)
+	
 # ----------------------------------------------
 
 # linux

@@ -41,6 +41,7 @@ void run(const str_t path) {
         end_time = clock();
 
         printf("\nexec time : %f[s]\n", CALC_TIME(start_time, end_time));
+        return;
     }
 
     compile(src, tcbuf, var_list, ic);

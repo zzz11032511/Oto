@@ -1,0 +1,16 @@
+i = 0
+loop [100000000] begin
+    i = i + 1
+end
+print i
+
+# Execute code
+#     0 :      CpyD    i    0
+#     5 :      Loop    35    1000000000
+#    10 :      Push    i
+#    15 :      Push    1
+#    20 :       Add
+#    25 :      CpyP    i
+#    30 :       Jmp    5
+#    35 :     Print    i
+#    40 :      Exit
