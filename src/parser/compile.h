@@ -20,4 +20,4 @@ void put_ic(var_t **ic, uint32_t *icp, uint32_t op, var_t *v1, var_t *v2, var_t 
 void compile_sub(tokenbuf_t *tcbuf, var_t *var_list, var_t **ic, uint32_t *icp, uint32_t start, uint32_t end);
 
 /* 文字列sを内部コード列にコンパイルする関数 */
-void compile(str_t s, tokenbuf_t *tcbuf, var_t *var_list, var_t **ic);
+void compile(str_t s, uint32_t fsize, tokenbuf_t *tcbuf, var_t *var_list, var_t **ic);

@@ -162,6 +162,7 @@ static const str_t symbols = "\n , : [ ] ( ) <- -> = + - * / % == != < >= <= > b
 
 /* 演算子と予約語を最初にlexerしておく関数 */
 void tc_init(tokenbuf_t *tcbuf, var_t *var_list) {
-    lexer(symbols, tcbuf, var_list);
+    uint32_t size = count_string_size(symbols, '\0');
+    lexer(symbols, size, tcbuf, var_list);
     init_done = 1;
 }

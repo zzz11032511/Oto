@@ -16,8 +16,9 @@ void set_timecount_flag(bool_t f) {
 
 void run(const str_t path) {
     str_t src = NULL;
+    uint32_t size = 0;
 
-    if (src_load(path, &src)) {
+    if ((size = src_load(path, &src)) == -1) {
         oto_quit(EXIT_FAILURE);
     }
 
@@ -31,7 +32,7 @@ void run(const str_t path) {
         time_t start_time, end_time;
 
         start_time = clock();
-        compile(src, tcbuf, var_list, ic);
+        compile(src, size, tcbuf, var_list, ic);
         end_time = clock();
 
         printf("compile time : %f[s]\n\n", CALC_TIME(start_time, end_time));
@@ -44,6 +45,6 @@ void run(const str_t path) {
         return;
     }
 
-    compile(src, tcbuf, var_list, ic);
+    compile(src, size, tcbuf, var_list, ic);
     exec(ic, var_list, tcbuf);
 }

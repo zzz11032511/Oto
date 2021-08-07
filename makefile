@@ -22,7 +22,6 @@ DEBUGOBJS := $(addprefix $(OUTDIR)/,$(patsubst %.c,%_debug.o,$(SRCS)))
 
 CC = gcc
 CFLAGS = -Wall -O2
-DEBUGDEFINE = -D DEBUG
 
 # ----------------------------------------------
 
@@ -49,7 +48,7 @@ $(DEBUGTARGET): $(DEBUGOBJS)
 
 $(OUTDIR)/%_debug.o: %.c
 	@if [ ! -e `dirname $@` ]; then mkdir -p `dirname $@`; fi
-	$(CC) $(CFLAGS) $(DEBUGDEFINE) -o $@ -c $<
+	$(CC) $(CFLAGS) -D DEBUG -o $@ -c $<
 
 # ----------------------------------------------
 

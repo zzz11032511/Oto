@@ -12,8 +12,17 @@ print i
 #    20 :     Print    i
 #    25 :      Exit
 #
+# [WSL]
 # compile time : 0.000095[s]
-#
 # 1000000000.000
-# 
 # exec time : 13.522706[s]
+#
+# [Windows powershell]
+# compile time : 0.000000[s]
+# 1000000000.000
+# exec time : 21.509000[s]
+#
+# [Command prompt]
+# compile time : 0.000000[s]
+# 1000000000.000
+# exec time : 20.097000[s]

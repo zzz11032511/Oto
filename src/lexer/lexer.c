@@ -83,14 +83,13 @@ uint32_t get_operator_len(str_t s) {
     return len;
 }
 
-uint32_t lexer(str_t s, tokenbuf_t *tcbuf, var_t *var_list) {
-    int32_t i   = 0;  // 現在参照している文字の位置
-    int32_t cnt = 0;  // これまでに変換したトークンの数
+uint32_t lexer(str_t s, uint32_t fsize, tokenbuf_t *tcbuf, var_t *var_list) {
+    uint32_t i   = 0;  // 現在参照している文字の位置
+    uint32_t cnt = 0;  // これまでに変換したトークンの数
 
-    while (1) {
-        if (s[i] == '\0') {
-            tcbuf->tc_list[cnt] = TcLF;
-            return cnt;
+    while (i < fsize) {
+        if (s[i] == '\0' || s[i] == EOF) {
+            break;
         }
 
         if (s[i] == ' ' || s[i] == '\t' || s[i] == '\r') {
@@ -105,8 +104,8 @@ uint32_t lexer(str_t s, tokenbuf_t *tcbuf, var_t *var_list) {
             continue;
         }
 
-        int32_t len = 0;  // トークン文字列の長さ
-        int32_t type = TyVoid;
+        uint32_t len = 0;  // トークン文字列の長さ
+        uint32_t type = TyVoid;
         if (strchr("(){}[]:,\n", s[i]) != 0) {
             len = 1;
 
@@ -128,4 +127,7 @@ uint32_t lexer(str_t s, tokenbuf_t *tcbuf, var_t *var_list) {
         i += len;
         cnt++;
     }
+
+    tcbuf->tc_list[cnt] = TcLF;
+    return cnt;
 }

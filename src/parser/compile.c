@@ -88,7 +88,6 @@ void compile_sub(tokenbuf_t *tcbuf, var_t *var_list, var_t **ic, uint32_t *icp, 
     uint32_t pc = start;
 
     while (pc < end) {
-        printf("pc : %u\n", pc);
         if (ptn_cmp(tcbuf, &pc, TcImport, TcSqBrOpn, TcIdentifier, TcSqBrCls, TcLF)) {
             // import文は読み飛ばす
         } else if (tcbuf->tc_list[pc] == TcLF) {
@@ -189,10 +188,10 @@ void compile_sub(tokenbuf_t *tcbuf, var_t *var_list, var_t **ic, uint32_t *icp, 
     return;
 }
 
-void compile(str_t s, tokenbuf_t *tcbuf, var_t *var_list, var_t **ic) {
+void compile(str_t s, uint32_t fsize, tokenbuf_t *tcbuf, var_t *var_list, var_t **ic) {
     tc_init(tcbuf, var_list);
 
-    uint32_t end = lexer(s, tcbuf, var_list);
+    uint32_t end = lexer(s, fsize, tcbuf, var_list);
 
 #ifdef DEBUG
     print_tokenlist(tcbuf);
