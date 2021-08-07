@@ -62,7 +62,6 @@ void oto_quit(int32_t exit_status) {
     exit(exit_status);
 }
 
-/* 実行時例外 */
 void call_exception(int32_t exception_code) {
     fprintf(stderr, "Exception : ");
     switch (exception_code) {
@@ -80,7 +79,6 @@ void call_exception(int32_t exception_code) {
     oto_quit(EXIT_FAILURE);
 }
 
-/* コンパイルエラー */
 void call_error(int32_t error_code) {
     fprintf(stderr, "SyntaxError : ");
     switch (error_code) {

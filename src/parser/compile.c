@@ -21,8 +21,16 @@
 #define TcOperator     -3    // 演算子
 #define TcStop         -99   // 都合により構文評価を止めたいとき
 
-uint32_t tmpvars[5];  // put_ic()で指定するTcを入れる
+#define TMPVARS_LENGTH 5
+uint32_t tmpvars[TMPVARS_LENGTH];  // put_ic()で指定するTcを入れる
 int32_t  vp = 0;   // tmpvarsへのポインタ
+
+void reset_tmpvars() {
+    for (int32_t i = 0; i < TMPVARS_LENGTH; i++) {
+        tmpvars[i] = 0;
+    }
+    vp = 0;
+}
 
 /* 引数に渡されたトークンのパターンと実際のコードが一致しているかを調べる */
 bool_t ptn_cmp(tokenbuf_t *tcbuf, uint32_t *pc, int32_t pattern, ...) {
@@ -32,6 +40,7 @@ bool_t ptn_cmp(tokenbuf_t *tcbuf, uint32_t *pc, int32_t pattern, ...) {
     uint32_t ppc   = *pc;      // 最初のpcを保存しておく
     int32_t ptn_tc = pattern;
 
+    reset_tmpvars();
     while (1) {
         int32_t tc = tcbuf->tc_list[*pc];
 
@@ -41,7 +50,6 @@ bool_t ptn_cmp(tokenbuf_t *tcbuf, uint32_t *pc, int32_t pattern, ...) {
         } 
         if (ptn_tc == TcStop) {
             (*pc) = ppc;       
-            vp    = 0;
             va_end(ap);
             return true;              
         }
@@ -55,13 +63,11 @@ bool_t ptn_cmp(tokenbuf_t *tcbuf, uint32_t *pc, int32_t pattern, ...) {
 
         } else if (ptn_tc == TcExpr) {
             (*pc) = ppc;
-            vp    = 0;
             va_end(ap);
             return true;                
 
         } else {
             (*pc) = ppc;
-            vp = 0;
             va_end(ap);
             return false;
         }
@@ -69,7 +75,6 @@ bool_t ptn_cmp(tokenbuf_t *tcbuf, uint32_t *pc, int32_t pattern, ...) {
         (*pc)++;
     }
 
-    vp = 0;
     va_end(ap);
 
     return true;
@@ -81,6 +86,15 @@ void put_ic(var_t **ic, uint32_t *icp, uint32_t op, var_t *v1, var_t *v2, var_t 
     ic[(*icp)++] = v2;
     ic[(*icp)++] = v3;
     ic[(*icp)++] = v4;
+}
+
+void check_assignment_error(tokenbuf_t *tcbuf, var_t *var_list) {
+    if (var_list[tmpvars[0]].type == TyConst) {
+        call_error(ASSIGN_TO_LITERAL_ERROR);
+    } else if (is_rsvword_tc(tcbuf, tmpvars[0]) || is_rsvword_tc(tcbuf, tmpvars[1]) 
+               || is_rsvword_tc(tcbuf, tmpvars[2])) {
+        call_error(NAME_ERROR);
+    }
 }
 
 void compile_sub(tokenbuf_t *tcbuf, var_t *var_list, var_t **ic, uint32_t *icp, uint32_t start, uint32_t end) {
@@ -103,72 +117,41 @@ void compile_sub(tokenbuf_t *tcbuf, var_t *var_list, var_t **ic, uint32_t *icp, 
             var_list[tmpvars[0]].value.fVal = var_list[tmpvars[1]].value.fVal;
         
         } else if (ptn_cmp(tcbuf, &pc, TcIdentifier, TcEqu, TcIdentifier, TcLF)) {
-            // <identifier> = <identifier>;
-            if (var_list[tmpvars[0]].type == TyConst) {
-                call_error(ASSIGN_TO_LITERAL_ERROR);
-            } else if (is_rsvword_tc(tcbuf, tmpvars[0]) && is_rsvword_tc(tcbuf, tmpvars[1])) {
-                call_error(NAME_ERROR);
-            }
+            check_assignment_error(tcbuf, var_list);
             put_ic(ic, icp, OpCpyD, &var_list[tmpvars[0]], &var_list[tmpvars[1]], 0, 0);
 
         } else if (ptn_cmp(tcbuf, &pc, TcIdentifier, TcEqu, TcIdentifier, TcPlus, TcIdentifier, TcLF)) {
-            if (var_list[tmpvars[0]].type == TyConst) {
-                call_error(ASSIGN_TO_LITERAL_ERROR);
-            } else if (is_rsvword_tc(tcbuf, tmpvars[0])) {
-                call_error(NAME_ERROR);
-            }
+            check_assignment_error(tcbuf, var_list);
             put_ic(ic, icp, OpAdd2, 
                    &var_list[tmpvars[0]], &var_list[tmpvars[1]], &var_list[tmpvars[2]], 0);
         
         } else if (ptn_cmp(tcbuf, &pc, TcIdentifier, TcEqu, TcIdentifier, TcMinus, TcIdentifier, TcLF)) {
-            if (var_list[tmpvars[0]].type == TyConst) {
-                call_error(ASSIGN_TO_LITERAL_ERROR);
-            } else if (is_rsvword_tc(tcbuf, tmpvars[0])) {
-                call_error(NAME_ERROR);
-            }
+            check_assignment_error(tcbuf, var_list);
             put_ic(ic, icp, OpSub2, 
                    &var_list[tmpvars[0]], &var_list[tmpvars[1]], &var_list[tmpvars[2]], 0);
 
         } else if (ptn_cmp(tcbuf, &pc, TcIdentifier, TcEqu, TcIdentifier, TcAster, TcIdentifier, TcLF)) {
-            if (var_list[tmpvars[0]].type == TyConst) {
-                call_error(ASSIGN_TO_LITERAL_ERROR);
-            } else if (is_rsvword_tc(tcbuf, tmpvars[0])) {
-                call_error(NAME_ERROR);
-            }
+            check_assignment_error(tcbuf, var_list);
             put_ic(ic, icp, OpMul2, 
                    &var_list[tmpvars[0]], &var_list[tmpvars[1]], &var_list[tmpvars[2]], 0);
 
         } else if (ptn_cmp(tcbuf, &pc, TcIdentifier, TcEqu, TcIdentifier, TcSlash, TcIdentifier, TcLF)) {
-            if (var_list[tmpvars[0]].type == TyConst) {
-                call_error(ASSIGN_TO_LITERAL_ERROR);
-            } else if (is_rsvword_tc(tcbuf, tmpvars[0])) {
-                call_error(NAME_ERROR);
-            }
+            check_assignment_error(tcbuf, var_list);
             put_ic(ic, icp, OpDiv2, 
                    &var_list[tmpvars[0]], &var_list[tmpvars[1]], &var_list[tmpvars[2]], 0);
 
         } else if (ptn_cmp(tcbuf, &pc, TcIdentifier, TcEqu, TcIdentifier, TcPerce, TcIdentifier, TcLF)) {
-            if (var_list[tmpvars[0]].type == TyConst) {
-                call_error(ASSIGN_TO_LITERAL_ERROR);
-            } else if (is_rsvword_tc(tcbuf, tmpvars[0])) {
-                call_error(NAME_ERROR);
-            }
+            check_assignment_error(tcbuf, var_list);
             put_ic(ic, icp, OpMod2, 
                    &var_list[tmpvars[0]], &var_list[tmpvars[1]], &var_list[tmpvars[2]], 0);
 
         } else if (ptn_cmp(tcbuf, &pc, TcIdentifier, TcEqu, TcExpr)) {
-            // <identifier> = <expr>;
-            if (var_list[tmpvars[0]].type == TyConst) {
-                call_error(ASSIGN_TO_LITERAL_ERROR);
-            } else if (is_rsvword_tc(tcbuf, tmpvars[0])) {
-                call_error(NAME_ERROR);
-            }
+            check_assignment_error(tcbuf, var_list);
             pc += 2;  // 式の先頭までpcを進める
             expr(tcbuf, &pc, 0, var_list, ic, icp);
             put_ic(ic, icp, OpCpyP, &var_list[tmpvars[0]], 0, 0, 0);
 
         } else if (ptn_cmp(tcbuf, &pc, TcPrint, TcIdentifier, TcLF)) {
-            // print <identifier>
             put_ic(ic, icp, OpPrint, &var_list[tmpvars[0]], 0, 0, 0);
 
         } else if (ptn_cmp(tcbuf, &pc, TcLoop, TcStop)) {
@@ -178,7 +161,6 @@ void compile_sub(tokenbuf_t *tcbuf, var_t *var_list, var_t **ic, uint32_t *icp, 
             if_control(tcbuf, &pc, var_list, ic, icp);
 
         } else if (ptn_cmp(tcbuf, &pc, TcExit)) {
-            // exit
             put_ic(ic, icp, OpExit, 0, 0, 0, 0);
 
         } else {

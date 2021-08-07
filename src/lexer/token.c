@@ -107,7 +107,6 @@ struct token *new_token(uint32_t tc, uint32_t len, str_t s) {
  */
 static char tcsbuf[(MAX_TC + 1) * 10];
 
-/* 新しいトークンを作り, conv_tokensに追加する関数 */
 void put_tc(tokenbuf_t *tcbuf, uint32_t tc, str_t s, uint32_t len) {
     if (tcbuf->tcs >= MAX_TC) {
         call_error(TOO_MANY_TOKEN_ERROR);
@@ -120,9 +119,9 @@ void put_tc(tokenbuf_t *tcbuf, uint32_t tc, str_t s, uint32_t len) {
     tcbuf->tcs++;
 }
 
+
 static int32_t init_done = 0;
 
-/* トークンコードを得るための関数 */
 uint32_t get_tc(tokenbuf_t *tcbuf, var_t *var_list, str_t s, uint32_t len, uint32_t type) {
     if (init_done) {
         uint32_t tc = get_rsvword_tc(s, len);
@@ -160,7 +159,6 @@ uint32_t get_tc(tokenbuf_t *tcbuf, var_t *var_list, str_t s, uint32_t len, uint3
 /* 最初にlexerしておく文字列 */
 static const str_t symbols = "\n , : [ ] ( ) <- -> = + - * / % == != < >= <= > begin end in out import define channel sound filter if elsif else then loop and or not play bpm note mute print exit\0";
 
-/* 演算子と予約語を最初にlexerしておく関数 */
 void tc_init(tokenbuf_t *tcbuf, var_t *var_list) {
     uint32_t size = count_string_size(symbols, '\0');
     lexer(symbols, size, tcbuf, var_list);

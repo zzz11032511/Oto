@@ -6,7 +6,6 @@
 #include "error/error.h"
 #include "utils/util.h"
 
-/* 使い方表示用の関数 */
 void usage(str_t name) {
     fprintf(stderr, "Example : %s XXX.oto\n", name);
     return;

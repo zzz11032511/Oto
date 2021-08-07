@@ -36,4 +36,5 @@ void call_exception(int32_t exception_code);
 /* 構文エラー呼び出し */
 void call_error(int32_t error_code);
 
+/* 終了時はこの関数を呼ぶ */
 void oto_quit(int32_t exit_status);
