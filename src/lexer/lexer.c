@@ -101,6 +101,7 @@ uint32_t lexer(str_t s, uint32_t fsize, tokenbuf_t *tcbuf, var_t *var_list) {
             while (!(s[i] == '\n')) {
                 i++;
             }
+            i++;
             continue;
         }
 
