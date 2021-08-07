@@ -79,6 +79,16 @@ void exec(var_t **ic, var_t *var, tokenbuf_t *tcbuf) {
             vpush(&stack, t3);
             NEXT_OPERATION(icp);
 
+        case OpAdd2:
+        case OpSub2:
+        case OpMul2:
+        case OpDiv2:
+        case OpMod2:
+            icp[1]->type = TyFloat;
+            icp[1]->value.fVal = 
+                calculation(*icp[2], *icp[3], (uint64_t)icp[0]).value.fVal;
+            NEXT_OPERATION(icp);
+
         case OpEq:
         case OpNEq:
         case OpLtCmp:

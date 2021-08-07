@@ -88,15 +88,16 @@ void compile_sub(tokenbuf_t *tcbuf, var_t *var_list, var_t **ic, uint32_t *icp, 
     uint32_t pc = start;
 
     while (pc < end) {
+        printf("pc : %u\n", pc);
         if (ptn_cmp(tcbuf, &pc, TcImport, TcSqBrOpn, TcIdentifier, TcSqBrCls, TcLF)) {
-
+            // import文は読み飛ばす
         } else if (tcbuf->tc_list[pc] == TcLF) {
             pc++;
 
         } else if (ptn_cmp(tcbuf, &pc, TcDefine, TcIdentifier, TcColon, TcIdentifier, TcLF)) {
             if (var_list[tmpvars[1]].type != TyConst) {
-                // 何か違うエラー
-            } else if (is_rsvword_tc(tcbuf, tmpvars[0])) {
+                call_error(DEFINE_ERROR);
+            } else if (is_rsvword_tc(tcbuf, tmpvars[0]) || var_list[tmpvars[0]].type == TyConst) {
                 call_error(NAME_ERROR);
             } 
             var_list[tmpvars[0]].type = TyConst;
@@ -110,6 +111,51 @@ void compile_sub(tokenbuf_t *tcbuf, var_t *var_list, var_t **ic, uint32_t *icp, 
                 call_error(NAME_ERROR);
             }
             put_ic(ic, icp, OpCpyD, &var_list[tmpvars[0]], &var_list[tmpvars[1]], 0, 0);
+
+        } else if (ptn_cmp(tcbuf, &pc, TcIdentifier, TcEqu, TcIdentifier, TcPlus, TcIdentifier, TcLF)) {
+            if (var_list[tmpvars[0]].type == TyConst) {
+                call_error(ASSIGN_TO_LITERAL_ERROR);
+            } else if (is_rsvword_tc(tcbuf, tmpvars[0])) {
+                call_error(NAME_ERROR);
+            }
+            put_ic(ic, icp, OpAdd2, 
+                   &var_list[tmpvars[0]], &var_list[tmpvars[1]], &var_list[tmpvars[2]], 0);
+        
+        } else if (ptn_cmp(tcbuf, &pc, TcIdentifier, TcEqu, TcIdentifier, TcMinus, TcIdentifier, TcLF)) {
+            if (var_list[tmpvars[0]].type == TyConst) {
+                call_error(ASSIGN_TO_LITERAL_ERROR);
+            } else if (is_rsvword_tc(tcbuf, tmpvars[0])) {
+                call_error(NAME_ERROR);
+            }
+            put_ic(ic, icp, OpSub2, 
+                   &var_list[tmpvars[0]], &var_list[tmpvars[1]], &var_list[tmpvars[2]], 0);
+
+        } else if (ptn_cmp(tcbuf, &pc, TcIdentifier, TcEqu, TcIdentifier, TcAster, TcIdentifier, TcLF)) {
+            if (var_list[tmpvars[0]].type == TyConst) {
+                call_error(ASSIGN_TO_LITERAL_ERROR);
+            } else if (is_rsvword_tc(tcbuf, tmpvars[0])) {
+                call_error(NAME_ERROR);
+            }
+            put_ic(ic, icp, OpMul2, 
+                   &var_list[tmpvars[0]], &var_list[tmpvars[1]], &var_list[tmpvars[2]], 0);
+
+        } else if (ptn_cmp(tcbuf, &pc, TcIdentifier, TcEqu, TcIdentifier, TcSlash, TcIdentifier, TcLF)) {
+            if (var_list[tmpvars[0]].type == TyConst) {
+                call_error(ASSIGN_TO_LITERAL_ERROR);
+            } else if (is_rsvword_tc(tcbuf, tmpvars[0])) {
+                call_error(NAME_ERROR);
+            }
+            put_ic(ic, icp, OpDiv2, 
+                   &var_list[tmpvars[0]], &var_list[tmpvars[1]], &var_list[tmpvars[2]], 0);
+
+        } else if (ptn_cmp(tcbuf, &pc, TcIdentifier, TcEqu, TcIdentifier, TcPerce, TcIdentifier, TcLF)) {
+            if (var_list[tmpvars[0]].type == TyConst) {
+                call_error(ASSIGN_TO_LITERAL_ERROR);
+            } else if (is_rsvword_tc(tcbuf, tmpvars[0])) {
+                call_error(NAME_ERROR);
+            }
+            put_ic(ic, icp, OpMod2, 
+                   &var_list[tmpvars[0]], &var_list[tmpvars[1]], &var_list[tmpvars[2]], 0);
 
         } else if (ptn_cmp(tcbuf, &pc, TcIdentifier, TcEqu, TcExpr)) {
             // <identifier> = <expr>;

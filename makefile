@@ -79,6 +79,8 @@ clean:
 # 	mkdir "./$(WIN_BUILD_DIR)/utils"
 # 	mkdir "./$(WIN_BUILD_DIR)/variable"
 # 	mkdir "./$(WIN_BUILD_DIR)/vm"
+# 	mkdir "./$(WIN_BUILD_DIR)/debug"
+# 	mkdir "./$(WIN_BUILD_DIR)/error"
 
 # clean:
 # 	del /s /q %cd%\build\*

@@ -14,6 +14,12 @@ enum OP_CODE {
     OpAnd,        // 論理積
     OpOr,         // 論理和
 
+    OpAdd2,       // 二項加算
+    OpSub2,       // 二項減算
+    OpMul2,       // 二項掛算
+    OpDiv2,       // 二項割算
+    OpMod2,       // 二項余り
+
     OpEq,         // == 
     OpNEq,        // !=
     OpLtCmp,      // <

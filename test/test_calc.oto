@@ -17,29 +17,20 @@ c = a % b
 PRINT c
 
 # Execute code
-#     0 :      Push    a
-#     5 :      Push    b
-#    10 :       Add
-#    15 :      CpyP    c
-#    20 :     Print    c
-#    25 :      Push    a
-#    30 :      Push    b
-#    35 :       Sub
-#    40 :      CpyP    c
+#     0 :      Add2    c    a    b
+#     5 :     Print    c
+#    10 :      Sub2    c    a    b
+#    15 :     Print    c
+#    20 :      Mul2    c    a    b
+#    25 :     Print    c
+#    30 :      Div2    c    a    b
+#    35 :     Print    c
+#    40 :      Mod2    c    a    b
 #    45 :     Print    c
-#    50 :      Push    a
-#    55 :      Push    b
-#    60 :       Mul
-#    65 :      CpyP    c
-#    70 :     Print    c
-#    75 :      Push    a
-#    80 :      Push    b
-#    85 :       Div
-#    90 :      CpyP    c
-#    95 :     Print    c
-#   100 :      Push    a
-#   105 :      Push    b
-#   110 :       Mod
-#   115 :      CpyP    c
-#   120 :     Print    c
-#   125 :      Exit
+#    50 :      Exit
+# 
+# 8.500
+# 3.500
+# 15.000
+# 2.400
+# 0.000

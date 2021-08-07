@@ -23,7 +23,7 @@ END
 
 # Execute code
 #     0 :      CpyD    a    1
-#     5 :      Loop    190    30
+#     5 :      Loop    175    30
 #    10 :      Push    a
 #    15 :      Push    3
 #    20 :       Mod
@@ -54,10 +54,7 @@ END
 #   145 :        Jz    160
 #   150 :     Print    Buzz
 #   155 :       Jmp    165
-#   160 :     Print    a
-#   165 :      Push    a
-#   170 :      Push    1
-#   175 :       Add
-#   180 :      CpyP    a
-#   185 :       Jmp    5
-#   190 :      Exit
+#   160 :     Print    a    
+#   165 :      Add2    a    a    1
+#   170 :       Jmp    5
+#   175 :      Exit

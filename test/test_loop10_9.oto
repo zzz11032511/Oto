@@ -1,16 +1,19 @@
 i = 0
-loop [100000000] begin
+loop [1000000000] begin
     i = i + 1
 end
 print i
 
 # Execute code
 #     0 :      CpyD    i    0
-#     5 :      Loop    35    1000000000
-#    10 :      Push    i
-#    15 :      Push    1
-#    20 :       Add
-#    25 :      CpyP    i
-#    30 :       Jmp    5
-#    35 :     Print    i
-#    40 :      Exit
+#     5 :      Loop    20    1000000000
+#    10 :      Add2    i    i    1
+#    15 :       Jmp    5
+#    20 :     Print    i
+#    25 :      Exit
+#
+# compile time : 0.000095[s]
+#
+# 1000000000.000
+# 
+# exec time : 13.522706[s]

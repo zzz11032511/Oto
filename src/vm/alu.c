@@ -12,18 +12,23 @@ var_t calculation(var_t v1, var_t v2, uint32_t opcode) {
 
     switch (opcode) {
     case OpAdd:
+    case OpAdd2:
         t.value.fVal = v1.value.fVal + v2.value.fVal;
         break;
     case OpSub:
+    case OpSub2:
         t.value.fVal = v1.value.fVal - v2.value.fVal;
         break;
     case OpMul:
+    case OpMul2:
         t.value.fVal = v1.value.fVal * v2.value.fVal;
         break;
     case OpDiv:
+    case OpDiv2:
         t.value.fVal = v1.value.fVal / v2.value.fVal;
         break;
     case OpMod:
+    case OpMod2:
         t.value.fVal = (double)((int64_t)v1.value.fVal % (int64_t)v2.value.fVal);
         break;
     case OpAnd:
