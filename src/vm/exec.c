@@ -1,6 +1,7 @@
-#include <stdint.h>
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
+#include <windows.h>
 
 #include "alu.h"
 #include "opcode.h"
@@ -19,7 +20,7 @@ void print_var(var_t var) {
             printf("%.3lf\n", var.value.fVal);
             break;
         default:
-            call_exception(TYPE_ERROR);
+            call_exception(TYPE_EXCEPTION);
     }
     return;
 }
@@ -138,11 +139,15 @@ void exec(var_t **ic, var_t *var, tokenbuf_t *tcbuf) {
             print_var(*icp[1]);
             NEXT_OPERATION(icp);
 
+        case OpBeep:
+            Beep((uint64_t)icp[1]->value.fVal, (uint64_t)(icp[2]->value.fVal * 1000));
+            NEXT_OPERATION(icp);
+
         case OpExit:
             return;
 
         default:
-            call_exception(ERROR);
+            call_exception(EXCEPTION);
         }
     }
 }

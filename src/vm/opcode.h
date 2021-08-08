@@ -33,6 +33,7 @@ enum OP_CODE {
     OpJnz,        // スタックの上が0でないならジャンプ
 
     OpPrint,      // 変数の出力
+    OpBeep,       // ビープ音の出力
     
     OpExit         // 終了
 };

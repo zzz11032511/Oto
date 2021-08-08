@@ -58,5 +58,6 @@ enum TOKENCODE {
     TcMute,      // mute MUTE
     
     TcPrint,     // print PRINT
+    TcBeep,      // beep BEEP
     TcExit       // exit EXIT
 };

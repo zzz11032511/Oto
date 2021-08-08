@@ -154,6 +154,9 @@ void compile_sub(tokenbuf_t *tcbuf, var_t *var_list, var_t **ic, uint32_t *icp, 
         } else if (ptn_cmp(tcbuf, &pc, TcPrint, TcIdentifier, TcLF)) {
             put_ic(ic, icp, OpPrint, &var_list[tmpvars[0]], 0, 0, 0);
 
+        } else if (ptn_cmp(tcbuf, &pc, TcBeep, TcIdentifier, TcIdentifier, TcLF)) {
+            put_ic(ic, icp, OpBeep, &var_list[tmpvars[0]], &var_list[tmpvars[1]], 0, 0);
+
         } else if (ptn_cmp(tcbuf, &pc, TcLoop, TcStop)) {
             loop_control(tcbuf, &pc, var_list, ic, icp);
 

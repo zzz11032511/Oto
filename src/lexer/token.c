@@ -41,6 +41,7 @@ static const struct rsvword_t rsvwords[] = {
     {"note",    "NOTE",    TcNote    },
     {"mute",    "MUTE",    TcMute    },
     {"print",   "PRINT",   TcPrint   },
+    {"beep",    "BEEP",    TcBeep    },
     {"exit",    "EXIT",    TcExit    },
 };
 
@@ -157,7 +158,7 @@ uint32_t get_tc(tokenbuf_t *tcbuf, var_t *var_list, str_t s, uint32_t len, uint3
 }
 
 /* 最初にlexerしておく文字列 */
-static const str_t symbols = "\n , : [ ] ( ) <- -> = + - * / % == != < >= <= > begin end in out import define channel sound filter if elsif else then loop and or not play bpm note mute print exit\0";
+static const str_t symbols = "\n , : [ ] ( ) <- -> = + - * / % == != < >= <= > begin end in out import define channel sound filter if elsif else then loop and or not play bpm note mute print beep exit\0";
 
 void tc_init(tokenbuf_t *tcbuf, var_t *var_list) {
     uint32_t size = count_string_size(symbols, '\0');

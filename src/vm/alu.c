@@ -29,6 +29,9 @@ var_t calculation(var_t v1, var_t v2, uint32_t opcode) {
         break;
     case OpMod:
     case OpMod2:
+        if ((int64_t)v2.value.fVal == 0) {
+            call_exception(ZERO_DIVISION_EXCEPTION);
+        }
         t.value.fVal = (double)((int64_t)v1.value.fVal % (int64_t)v2.value.fVal);
         break;
     case OpAnd:
@@ -40,7 +43,7 @@ var_t calculation(var_t v1, var_t v2, uint32_t opcode) {
         t.value.iVal = v1.value.iVal | v2.value.iVal;
         break;
     default:
-        call_exception(ERROR);
+        call_exception(EXCEPTION);
     }
 
     return t;
@@ -67,7 +70,7 @@ int32_t compare(var_t v1, var_t v2, uint32_t opcode) {
     case OpRiEqCmp:
         return v1Val >= v2Val;
     default:
-        call_exception(ERROR);
+        call_exception(EXCEPTION);
     }
 
     return 0;

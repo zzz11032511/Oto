@@ -7,10 +7,10 @@
 
 /* exception */
 enum EXCEPTION_CODE {
-    ERROR = 0,              // 謎のエラー        
-    TYPE_ERROR,             // 型の不一致
-    ZERO_DIVISION_ERROR,    // 0除算
-    STACK_OVERFLOW_ERROR    // 内部スタックのオーバーフロー
+    EXCEPTION = 0,
+    TYPE_EXCEPTION,         // 型の不一致
+    ZERO_DIVISION_EXCEPTION,    // 0除算
+    STACK_OVERFLOW_EXCEPTION,   // 内部スタックのオーバーフロー
 };
 
 /* error */

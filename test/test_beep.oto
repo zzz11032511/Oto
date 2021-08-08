@@ -1,0 +1,79 @@
+DEFINE C4 : 262
+DEFINE C5 : 524
+DEFINE D5 : 588
+DEFINE E5 : 660
+DEFINE F5 : 698
+DEFINE G5 : 784
+DEFINE A5 : 880
+DEFINE B5 : 988
+DEFINE C6 : 1048
+DEFINE D6 : 1174
+
+i = 1
+LOOP [10] BEGIN
+    BEEP C5 1
+    BEEP D5 1
+    BEEP E5 1
+    BEEP F5 1
+    BEEP G5 1
+    BEEP A5 1
+    BEEP B5 1
+    BEEP C6 1
+
+    BEEP C4 1
+
+    BEEP C6 1
+    BEEP B5 1
+    BEEP A5 1
+    BEEP G5 1
+    BEEP F5 1
+    BEEP E5 1
+    BEEP D5 1
+    BEEP C5 1
+
+    IF [i == 1] THEN
+        BEEP C6 0.200
+        BEEP G5 0.200
+        BEEP D6 0.600
+    ELSE
+        BEEP C4 1
+    END
+
+    PRINT i
+
+    i = i + 1
+END
+
+# Execute code
+#     0 :      CpyD    i    1
+#     5 :      Loop    155    10
+#    10 :      Beep    C5    1
+#    15 :      Beep    D5    1
+#    20 :      Beep    E5    1
+#    25 :      Beep    F5    1
+#    30 :      Beep    G5    1
+#    35 :      Beep    A5    1
+#    40 :      Beep    B5    1
+#    45 :      Beep    C6    1
+#    50 :      Beep    C4    1
+#    55 :      Beep    C6    1
+#    60 :      Beep    B5    1
+#    65 :      Beep    A5    1
+#    70 :      Beep    G5    1
+#    75 :      Beep    F5    1    
+#    80 :      Beep    E5    1
+#    85 :      Beep    D5    1
+#    90 :      Beep    C5    1
+#    95 :      Push    i
+#   100 :      Push    1
+#   105 :        Eq
+#   110 :        Jz    135
+#   115 :      Beep    C6    0.200
+#   120 :      Beep    G5    0.200
+#   125 :      Beep    D6    0.600
+#   130 :       Jmp    140
+#   135 :      Beep    C4    1
+#   140 :     Print    i
+#   145 :      Add2    i    i    1
+#   150 :       Jmp    5
+#   155 :      Exit
