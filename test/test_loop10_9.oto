@@ -26,3 +26,10 @@ print i
 # compile time : 0.000000[s]
 # 1000000000.000
 # exec time : 20.097000[s]
+#
+# [gcc -O1]
+# time : 0.4607[s]
+#
+# [gcc -O2]
+# time : 0.000000[s]
+#
