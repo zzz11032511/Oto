@@ -48,7 +48,7 @@ void play(double *sound, int32_t sound_length) {
         if (out0 < NUMBER_OF_BUFFER) {
             // バッファへの1frame分の書き込み
             for (int32_t n = 0; n < BUFFER_SIZE; n++) {
-                out_buffer[out0][n] = (int16_t)(32760.0 * sound[offset + n]);
+                out_buffer[out0][n] = (int16_t)(7000.0 * sound[offset + n]);
             }
             offset += BUFFER_SIZE;
             frame++;
@@ -72,7 +72,7 @@ void play(double *sound, int32_t sound_length) {
         } else if ((out_header[out1].dwFlags & WHDR_DONE) != 0) {
             // 出力バッファのおわりまで音データが再生された
             for (int32_t n = 0; n < BUFFER_SIZE; n++) {
-                out_buffer[out1][n] = (int16_t)(32760.0 * sound[offset + n]);
+                out_buffer[out1][n] = (int16_t)(7000.0 * sound[offset + n]);
             }
             offset += BUFFER_SIZE;
             frame++;
@@ -121,36 +121,43 @@ int main(void) {
     double sound[sound_length];
 
     for (int32_t i = 0; i < sound_length; i++) {
+        // sound[i] = sine_wave(i, 500, 0);
         sound[i] = sine_wave(i, 269.292, 0);
     }
     play(sound, sound_length);
 
-    // for (int32_t i = 0; i < sound_length; i++) {
-    //     sound[i] = sawtooth_wave(i, 302.270, 44);
-    // }
-    // play(sound, sound_length);
-
-    // for (int32_t i = 0; i < sound_length; i++) {
-    //     sound[i] = square_wave(i, 339.286, 44);
-    // }
-    // play(sound, sound_length);
-
-    // for (int32_t i = 0; i < sound_length; i++) {
-    //     sound[i] = triangle_wave(i, 359.461, 44);
-    // }
-    // play(sound, sound_length);
+    for (int32_t i = 0; i < sound_length; i++) {
+        // sound[i] = sawtooth_wave(i, 500, 10);
+        sound[i] = sawtooth_wave(i, 302.270, 44);
+    }
+    play(sound, sound_length);
 
     for (int32_t i = 0; i < sound_length; i++) {
+        // sound[i] = square_wave(i, 500, 10);
+        sound[i] = square_wave(i, 339.286, 44);
+    }
+    play(sound, sound_length);
+
+    for (int32_t i = 0; i < sound_length; i++) {
+        // sound[i] = triangle_wave(i, 500, 10);
+        sound[i] = triangle_wave(i, 359.461, 44);
+    }
+    play(sound, sound_length);
+
+    for (int32_t i = 0; i < sound_length; i++) {
+        // sound[i] = psg_sawtooth_wave(i, 500);
         sound[i] = psg_sawtooth_wave(i, 403.482);
     }
     play(sound, sound_length);
 
     for (int32_t i = 0; i < sound_length; i++) {
+        // sound[i] = psg_square_wave(i, 500);
         sound[i] = psg_square_wave(i, 452.893);
     }
     play(sound, sound_length);
 
     for (int32_t i = 0; i < sound_length; i++) {
+        // sound[i] = psg_triangle_wave(i, 500);
         sound[i] = psg_triangle_wave(i, 508.355);
     }
     play(sound, sound_length);
@@ -161,7 +168,7 @@ int main(void) {
     play(sound, sound_length);
 
     for (int32_t i = 0; i < sound_length; i++) {
-        sound[i] = white_noise(i, 10000);
+        sound[i] = white_noise(i, 1);
     }
     play(sound, sound_length);
 

@@ -14,7 +14,7 @@ double sine_wave(int32_t n, double freq, double phase) {
 double sawtooth_wave(int32_t n, double freq, uint32_t arity) {
     double s = 0;
     for (uint32_t i = 1; i <= arity; i++) {
-        s += 1.0 / i * sine_wave(n, i * freq, 0);
+        s += 1.0 / (double)i * sine_wave(n, i * freq, 0);
     }
     return s;
 }
@@ -45,17 +45,17 @@ double white_noise(int32_t n, uint32_t arity) {
 }
 
 double psg_sawtooth_wave(int32_t n, double freq) {
-    double t0 = (double)SAMPLING_FREQ / freq;
-    int32_t m = n % (int32_t)t0;
+    int32_t t0 = SAMPLING_FREQ / freq;
+    int32_t m = n % t0;
 
     return 1.0 - 2.0 * m / t0;
 }
 
 double psg_square_wave(int32_t n, double freq) {
-    double t0 = (double)SAMPLING_FREQ / freq;
-    int32_t m = n % (int32_t)t0;
+    int32_t t0 = SAMPLING_FREQ / freq;
+    int32_t m = n % t0;
 
-    if (m < t0 / 2.0) {
+    if (m < t0 / 2) {
         return 1.0;
     } else {
         return -1.0;
@@ -63,10 +63,10 @@ double psg_square_wave(int32_t n, double freq) {
 }
 
 double psg_triangle_wave(int32_t n, double freq) {
-    double t0 = (double)SAMPLING_FREQ / freq;
-    int32_t m = n % (int32_t)t0;
+    int32_t t0 = SAMPLING_FREQ / freq;
+    int32_t m = n % t0;
 
-    if (m < t0 / 2.0) {
+    if (m < t0 / 2) {
         return -1.0 + 4.0 * m / t0;
     } else {
         return  3.0 - 4.0 * m / t0;
