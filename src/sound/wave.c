@@ -7,7 +7,7 @@
 
 #define PI 3.14159265358979323846
 
-static int32_t SAMPLING_FREQ = 40000;
+static int32_t SAMPLING_FREQ = 20000;
 
 double sine_wave_func(int32_t n, double freq, double phase) {
     return sin((2.0 * PI * freq * n / (double)SAMPLING_FREQ) + phase);
@@ -86,7 +86,6 @@ void sine_wave(SOUND s, double freq, uint64_t length) {
         length = s->length - s->ptr;
         if (length == 0) return;
     }
-    printf("s->ptr : %ld\n", s->ptr);
 
     uint64_t i = 0;
     for (i = 0; i < length; i++) {

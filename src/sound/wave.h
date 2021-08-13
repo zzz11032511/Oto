@@ -4,7 +4,7 @@
 
 #include "sound.h"
 
-/* 基本波 */
+/* 基本波波形 */
 enum FUNDAMENTAL_WAVE {
     SINE_WAVE,
     SAWTOOTH_WAVE,

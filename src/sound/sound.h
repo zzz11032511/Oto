@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 
+/* 音データを保存する構造体 */
 typedef struct sound_t {
     uint64_t length;
     double *data;

@@ -7,18 +7,17 @@
 #include "sound.h"
 #include "wave.h"
 
-typedef struct play_data {
-    uint32_t note;
-    uint32_t length;
-    uint8_t  velocity;
-    // 使用されるサウンド
-    // チャンネル・トラック
-} PLAY_DATA;
-
 #define NUMBER_OF_BUFFER 8
 #define BUFFER_SIZE 200
 
-void play(SOUND s) {
+#define MONO   1
+#define STEREO 2
+
+#define OUTPUT_VOLUME     5000.0
+#define QUANTIZE_BIT_RATE 16
+#define SOUND_DATA_BYTE   2
+
+void play_sound(SOUND s, int32_t sampling_freq) {
     int16_t out_buffer[NUMBER_OF_BUFFER][BUFFER_SIZE];
 
     WAVEHDR out_header[NUMBER_OF_BUFFER];
@@ -29,11 +28,11 @@ void play(SOUND s) {
     HWAVEOUT out_handle = NULL;
     WAVEFORMATEX wave_format_ex = {
         WAVE_FORMAT_PCM,
-        1,          // モノラル
-        40000,      // サンプリング周波数
-        40000 * 2,  // サンプリング周波数 * 音データの最小単位
-        2,          // 音データの最小単位
-        16,         // 量子化ビット
+        MONO,
+        sampling_freq,
+        sampling_freq * SOUND_DATA_BYTE,
+        SOUND_DATA_BYTE,
+        QUANTIZE_BIT_RATE,
         0
     };
     waveOutOpen(&out_handle, 0, &wave_format_ex, 0, 0, CALLBACK_NULL);
@@ -43,15 +42,13 @@ void play(SOUND s) {
     int32_t out1 = 0;
     int32_t offset = 0;
 
-    double volume = 5000.0;
-
     int32_t num_of_frame = s->length / BUFFER_SIZE;
     int32_t frame = 0;
     while (frame < num_of_frame) {
         if (out0 < NUMBER_OF_BUFFER) {
             // バッファへの1frame分の書き込み
             for (int32_t n = 0; n < BUFFER_SIZE; n++) {
-                out_buffer[out0][n] = (int16_t)(volume * s->data[offset + n]);
+                out_buffer[out0][n] = (int16_t)(OUTPUT_VOLUME * s->data[offset + n]);
             }
             offset += BUFFER_SIZE;
             frame++;
@@ -75,7 +72,7 @@ void play(SOUND s) {
         } else if ((out_header[out1].dwFlags & WHDR_DONE) != 0) {
             // 出力バッファのおわりまで音データが再生された
             for (int32_t n = 0; n < BUFFER_SIZE; n++) {
-                out_buffer[out1][n] = (int16_t)(volume * s->data[offset + n]);
+                out_buffer[out1][n] = (int16_t)(OUTPUT_VOLUME * s->data[offset + n]);
             }
             offset += BUFFER_SIZE;
             frame++;
@@ -115,24 +112,25 @@ void play(SOUND s) {
     }
 
     waveOutClose(out_handle);
-
     return;
 }
 
 
 int main(void) {
-    SOUND s = init_sound(40000 * 8);
+    int32_t fs = 20000;
 
-    psg_triangle_wave(s,     269.292, 40000);
-    psg_triangle_wave(s,     302.270, 40000);
-    psg_triangle_wave(s,     339.286, 40000);
-    psg_triangle_wave(s,     359.461, 40000);
-    psg_triangle_wave(s,     403.482, 40000);
-    psg_triangle_wave(s,     452.893, 40000);
-    psg_triangle_wave(s,     508.355, 40000);
-    psg_triangle_wave(s, 269.292 * 2, 40000);
+    SOUND s = init_sound(fs * 8);
 
-    play(s);
+    sine_wave        (s,     269.292, fs);
+    sawtooth_wave    (s,     302.270, fs);
+    square_wave      (s,     339.286, fs);
+    triangle_wave    (s,     359.461, fs);
+    psg_sawtooth_wave(s,     403.482, fs);
+    psg_square_wave  (s,     452.893, fs);
+    psg_triangle_wave(s,     508.355, fs);
+    sine_wave        (s, 269.292 * 2, fs);
+
+    play_sound(s, fs);
     
     return 0;
 }
