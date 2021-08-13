@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-#include "sound.h"
+#include "../sound_data.h"
 
 /* 基本波波形 */
 enum FUNDAMENTAL_WAVE {
@@ -15,6 +15,9 @@ enum FUNDAMENTAL_WAVE {
     PSG_TRIANGLE_WAVE,
     WHITE_NOISE,
 };
+
+/* 基本波形の標本化周波数の設定. デフォルトは20kHz */
+void set_wave_sampling_freq(int32_t fs);
 
 void sine_wave(SOUND s, double freq, uint64_t length);
 void sawtooth_wave(SOUND s, double freq, uint64_t length);

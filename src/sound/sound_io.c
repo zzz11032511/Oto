@@ -4,8 +4,8 @@
 #include <mmsystem.h>
 #include <math.h>
 
-#include "sound.h"
-#include "wave.h"
+#include "sound_data.h"
+#include "oscillator/wave.h"
 
 #define NUMBER_OF_BUFFER 8
 #define BUFFER_SIZE 200
@@ -113,24 +113,4 @@ void play_sound(SOUND s, int32_t sampling_freq) {
 
     waveOutClose(out_handle);
     return;
-}
-
-
-int main(void) {
-    int32_t fs = 20000;
-
-    SOUND s = init_sound(fs * 8);
-
-    sine_wave        (s,     269.292, fs);
-    sawtooth_wave    (s,     302.270, fs);
-    square_wave      (s,     339.286, fs);
-    triangle_wave    (s,     359.461, fs);
-    psg_sawtooth_wave(s,     403.482, fs);
-    psg_square_wave  (s,     452.893, fs);
-    psg_triangle_wave(s,     508.355, fs);
-    sine_wave        (s, 269.292 * 2, fs);
-
-    play_sound(s, fs);
-    
-    return 0;
 }
