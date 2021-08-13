@@ -2,13 +2,27 @@
 
 #include <stdint.h>
 
-double sine_wave(int32_t n, double freq, double phase); // OK
-double sawtooth_wave(int32_t n, double freq, uint32_t arity); // NG
-double square_wave(int32_t n, double freq, uint32_t arity); // NG
-double triangle_wave(int32_t n, double freq, uint32_t arity); // NG
+#include "sound.h"
 
-double white_noise(int32_t n, uint32_t arity); // OK
+/* 基本波 */
+enum FUNDAMENTAL_WAVE {
+    SINE_WAVE,
+    SAWTOOTH_WAVE,
+    SQUARE_WAVE,
+    TRIANGLE_WAVE,
+    PSG_SAW_WAVE,
+    PSG_SQUARE_WAVE,
+    PSG_TRIANGLE_WAVE,
+    WHITE_NOISE,
+};
 
-double psg_sawtooth_wave(int32_t n, double freq); // OK
-double psg_square_wave(int32_t n, double freq); // OK
-double psg_triangle_wave(int32_t n, double freq); // OK
+void sine_wave(SOUND s, double freq, uint64_t length);
+void sawtooth_wave(SOUND s, double freq, uint64_t length);
+void square_wave(SOUND s, double freq, uint64_t length);
+void triangle_wave(SOUND s, double freq, uint64_t length);
+
+void psg_sawtooth_wave(SOUND s, double freq, uint64_t length);
+void psg_square_wave(SOUND s, double freq, uint64_t length);
+void psg_triangle_wave(SOUND s, double freq, uint64_t length);
+
+void white_noise(SOUND s, double freq, uint64_t length);
