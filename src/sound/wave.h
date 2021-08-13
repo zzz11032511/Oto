@@ -25,4 +25,4 @@ void psg_sawtooth_wave(SOUND s, double freq, uint64_t length);
 void psg_square_wave(SOUND s, double freq, uint64_t length);
 void psg_triangle_wave(SOUND s, double freq, uint64_t length);
 
-void white_noise(SOUND s, double freq, uint64_t length);
+void white_noise(SOUND s, uint64_t length);

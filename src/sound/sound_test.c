@@ -30,8 +30,8 @@ void play(SOUND s) {
     WAVEFORMATEX wave_format_ex = {
         WAVE_FORMAT_PCM,
         1,          // モノラル
-        20000,      // サンプリング周波数
-        20000 * 2,  // サンプリング周波数 * 音データの最小単位
+        40000,      // サンプリング周波数
+        40000 * 2,  // サンプリング周波数 * 音データの最小単位
         2,          // 音データの最小単位
         16,         // 量子化ビット
         0
@@ -43,13 +43,15 @@ void play(SOUND s) {
     int32_t out1 = 0;
     int32_t offset = 0;
 
+    double volume = 5000.0;
+
     int32_t num_of_frame = s->length / BUFFER_SIZE;
     int32_t frame = 0;
     while (frame < num_of_frame) {
         if (out0 < NUMBER_OF_BUFFER) {
             // バッファへの1frame分の書き込み
             for (int32_t n = 0; n < BUFFER_SIZE; n++) {
-                out_buffer[out0][n] = (int16_t)(7000.0 * s->data[offset + n]);
+                out_buffer[out0][n] = (int16_t)(volume * s->data[offset + n]);
             }
             offset += BUFFER_SIZE;
             frame++;
@@ -73,7 +75,7 @@ void play(SOUND s) {
         } else if ((out_header[out1].dwFlags & WHDR_DONE) != 0) {
             // 出力バッファのおわりまで音データが再生された
             for (int32_t n = 0; n < BUFFER_SIZE; n++) {
-                out_buffer[out1][n] = (int16_t)(7000.0 * s->data[offset + n]);
+                out_buffer[out1][n] = (int16_t)(volume * s->data[offset + n]);
             }
             offset += BUFFER_SIZE;
             frame++;
@@ -119,16 +121,16 @@ void play(SOUND s) {
 
 
 int main(void) {
-    SOUND s = init_sound(20000 * 8);
+    SOUND s = init_sound(40000 * 8);
 
-    sine_wave(s,     269.292, 20000);
-    sine_wave(s,     302.270, 20000);
-    sine_wave(s,     339.286, 20000);
-    sine_wave(s,     359.461, 20000);
-    sine_wave(s,     403.482, 20000);
-    sine_wave(s,     452.893, 20000);
-    sine_wave(s,     508.355, 20000);
-    sine_wave(s, 269.292 * 2, 20000);
+    psg_triangle_wave(s,     269.292, 40000);
+    psg_triangle_wave(s,     302.270, 40000);
+    psg_triangle_wave(s,     339.286, 40000);
+    psg_triangle_wave(s,     359.461, 40000);
+    psg_triangle_wave(s,     403.482, 40000);
+    psg_triangle_wave(s,     452.893, 40000);
+    psg_triangle_wave(s,     508.355, 40000);
+    psg_triangle_wave(s, 269.292 * 2, 40000);
 
     play(s);
     
