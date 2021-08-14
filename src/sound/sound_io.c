@@ -5,17 +5,17 @@
 #include <math.h>
 
 #include "sound_data.h"
-#include "oscillator/wave.h"
+#include "oscillator/oscillator.h"
 
 #define NUMBER_OF_BUFFER 8
-#define BUFFER_SIZE 200
+#define BUFFER_SIZE      200
 
 #define MONO   1
 #define STEREO 2
 
-#define OUTPUT_VOLUME     5000.0
-#define QUANTIZE_BIT_RATE 16
-#define SOUND_DATA_BYTE   2
+#define OUTPUT_VOLUME         5000.0
+#define QUANTIZATION_BIT_RATE 16
+#define SOUND_DATA_BYTE       2
 
 void play_sound(SOUND s, int32_t sampling_freq) {
     int16_t out_buffer[NUMBER_OF_BUFFER][BUFFER_SIZE];
@@ -32,7 +32,7 @@ void play_sound(SOUND s, int32_t sampling_freq) {
         sampling_freq,
         sampling_freq * SOUND_DATA_BYTE,
         SOUND_DATA_BYTE,
-        QUANTIZE_BIT_RATE,
+        QUANTIZATION_BIT_RATE,
         0
     };
     waveOutOpen(&out_handle, 0, &wave_format_ex, 0, 0, CALLBACK_NULL);
@@ -93,13 +93,11 @@ void play_sound(SOUND s, int32_t sampling_freq) {
             out1++;
             if (out1 == NUMBER_OF_BUFFER) out1 = 0;
         }
-
-        // Sleep(1);
     }
 
     for (out0 = 0; out0 < NUMBER_OF_BUFFER; out0++) {
         while ((out_header[out0].dwFlags & WHDR_DONE) == 0) {
-            Sleep(1);
+            // Sleep(1);
         }
     }
 
@@ -113,4 +111,15 @@ void play_sound(SOUND s, int32_t sampling_freq) {
 
     waveOutClose(out_handle);
     return;
+}
+
+void play(double freq, double second, uint8_t velocity, 
+          int32_t wave, int32_t channel, int32_t sampling_freq) {
+    uint64_t length = (uint64_t)(second * sampling_freq);
+    SOUND s = new_sound(length);
+
+    write_wave(s, wave, freq, length, sampling_freq, 1, 1);
+    play_sound(s, sampling_freq);
+
+    free_sound(s);
 }
