@@ -13,11 +13,11 @@
 #define MONO   1
 #define STEREO 2
 
-#define OUTPUT_VOLUME         5000.0
+#define MAX_VOLUME            5000.0
 #define QUANTIZATION_BIT_RATE 16
 #define SOUND_DATA_BYTE       2
 
-void play_sound(SOUND s, int32_t sampling_freq) {
+void play_sound(SOUND s, int32_t sampling_freq, uint8_t velocity) {
     int16_t out_buffer[NUMBER_OF_BUFFER][BUFFER_SIZE];
 
     WAVEHDR out_header[NUMBER_OF_BUFFER];
@@ -42,13 +42,14 @@ void play_sound(SOUND s, int32_t sampling_freq) {
     int32_t out1 = 0;
     int32_t offset = 0;
 
+    double  out_volume = ((double)velocity / 255) * MAX_VOLUME;
     int32_t num_of_frame = s->length / BUFFER_SIZE;
     int32_t frame = 0;
     while (frame < num_of_frame) {
         if (out0 < NUMBER_OF_BUFFER) {
             // バッファへの1frame分の書き込み
             for (int32_t n = 0; n < BUFFER_SIZE; n++) {
-                out_buffer[out0][n] = (int16_t)(OUTPUT_VOLUME * s->data[offset + n]);
+                out_buffer[out0][n] = (int16_t)(out_volume * s->data[offset + n]);
             }
             offset += BUFFER_SIZE;
             frame++;
@@ -72,7 +73,7 @@ void play_sound(SOUND s, int32_t sampling_freq) {
         } else if ((out_header[out1].dwFlags & WHDR_DONE) != 0) {
             // 出力バッファのおわりまで音データが再生された
             for (int32_t n = 0; n < BUFFER_SIZE; n++) {
-                out_buffer[out1][n] = (int16_t)(OUTPUT_VOLUME * s->data[offset + n]);
+                out_buffer[out1][n] = (int16_t)(out_volume * s->data[offset + n]);
             }
             offset += BUFFER_SIZE;
             frame++;
@@ -97,7 +98,7 @@ void play_sound(SOUND s, int32_t sampling_freq) {
 
     for (out0 = 0; out0 < NUMBER_OF_BUFFER; out0++) {
         while ((out_header[out0].dwFlags & WHDR_DONE) == 0) {
-            // Sleep(1);
+            Sleep(1);
         }
     }
 
@@ -110,7 +111,6 @@ void play_sound(SOUND s, int32_t sampling_freq) {
     }
 
     waveOutClose(out_handle);
-    return;
 }
 
 void play(double freq, double second, uint8_t velocity, 
@@ -118,8 +118,22 @@ void play(double freq, double second, uint8_t velocity,
     uint64_t length = (uint64_t)(second * sampling_freq);
     SOUND s = new_sound(length);
 
-    write_wave(s, wave, freq, length, sampling_freq, 1, 1);
-    play_sound(s, sampling_freq);
+    write_wave(wave, s, freq, length, sampling_freq, 1, 1);
+    play_sound(s, sampling_freq, velocity);
 
     free_sound(s);
+}
+
+int main(void) {
+    // gcc sound_io.c sound_data.c oscillator/wave.c oscillator/oscillator.c -O2 -lwinmm
+
+    play(269.292, 0.75,  40, PSG_TRIANGLE_WAVE, 1, 20000);
+    play(302.270, 0.75,  80, PSG_TRIANGLE_WAVE, 1, 20000);
+    play(339.286, 0.75, 120, PSG_TRIANGLE_WAVE, 1, 20000);
+    play(359.461, 0.75, 160, PSG_TRIANGLE_WAVE, 1, 20000);
+    play(403.482, 0.75, 200, PSG_TRIANGLE_WAVE, 1, 20000);
+    play(452.893, 0.75, 220, PSG_TRIANGLE_WAVE, 1, 20000);
+    play(508.355, 0.75, 255, PSG_TRIANGLE_WAVE, 1, 20000);
+
+    return 0;
 }
