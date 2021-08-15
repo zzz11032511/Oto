@@ -19,6 +19,7 @@
 #define TcExpr         -1    // 式
 #define TcLabel        -2    // 識別子(変数やラベル)
 #define TcOperator     -3    // 演算子
+#define TcString       -4    // 文字列
 #define TcStop         -99   // 都合により構文評価を止めたいとき
 
 #define TMPVARS_LENGTH 5
@@ -58,7 +59,9 @@ bool_t ptn_cmp(tokenbuf_t *tcbuf, uint32_t *pc, int32_t pattern, ...) {
             // 既にあるトークンと一致した
 
         } else if (ptn_tc == TcLabel && tc >= TcBegin) {
-            // 演算子でないか(予約語も含む)
+            if (TcBegin <= tc && tc <= TcExit) {
+                
+            }
             tmpvars[vp++] = tc;
 
         } else if (ptn_tc == TcExpr) {
@@ -110,9 +113,8 @@ void compile_sub(tokenbuf_t *tcbuf, var_t *var_list, var_t **ic, uint32_t *icp, 
         } else if (ptn_cmp(tcbuf, &pc, TcDefine, TcLabel, TcColon, TcLabel, TcLF)) {
             if (var_list[tmpvars[1]].type != TyConst) {
                 call_error(DEFINE_ERROR);
-            } else if (is_rsvword_tc(tcbuf, tmpvars[0]) || var_list[tmpvars[0]].type == TyConst) {
-                call_error(NAME_ERROR);
-            } 
+            }
+            check_assignment_error(tcbuf, var_list);
             var_list[tmpvars[0]].type = TyConst;
             var_list[tmpvars[0]].value.fVal = var_list[tmpvars[1]].value.fVal;
         
@@ -169,8 +171,10 @@ void compile_sub(tokenbuf_t *tcbuf, var_t *var_list, var_t **ic, uint32_t *icp, 
         } else if (ptn_cmp(tcbuf, &pc, TcIf, TcStop)) {
             if_control(tcbuf, &pc, var_list, ic, icp);
 
-        } else if (ptn_cmp(tcbuf, &pc, TcExit)) {
+        } else if (ptn_cmp(tcbuf, &pc, TcExit, TcLF)) {
             put_ic(ic, icp, OpExit, 0, 0, 0, 0);
+
+        } else if (ptn_cmp(tcbuf, &pc, TcLabel, TcLF)) {
 
         } else {
             call_error(INVALID_SYNTAX_ERROR);

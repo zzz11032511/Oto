@@ -65,7 +65,7 @@ debug: $(DEBUGTARGET)
 
 time: $(TARGET)
 	$(TARGET) -T $(TESTSRCPATH)
-	
+
 # ----------------------------------------------
 
 # linux

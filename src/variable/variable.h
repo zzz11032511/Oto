@@ -6,6 +6,7 @@ enum TYPE {
     TyVoid = 0,
     TyConst,
     TyFloat,
+    TyString,
     TyChannel,
     TySound,
     TyFilter,
