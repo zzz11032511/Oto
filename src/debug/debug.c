@@ -42,6 +42,7 @@ static const struct opcode_t opcodes[] = {
     {"Jnz",     OpJnz     },
     {"Print",   OpPrint   },
     {"Beep",    OpBeep    },
+    {"Play",    OpPlay    },
     {"Exit",    OpExit    },
 };
 
@@ -69,11 +70,11 @@ void print_opcodes(tokenbuf_t *tcbuf, var_t **ic) {
     while (1) {
         uint64_t op = (uint64_t)p[0];
 
-        printf("%5ld : %9s    ", ic_num, opcodes[op].name);
+        printf("%5I64u : %9s    ", ic_num, opcodes[op].name);
 
         for (int32_t i = 1; i <= 4; i++) {
             if ((OpLoop <= op && op <= OpJnz) && i == 1) {
-                printf("%lu", (int64_t)p[i]);
+                printf("%I64u", (uint64_t)p[i]);
             } else if (p[i] == 0) {
                 break;
             } else {

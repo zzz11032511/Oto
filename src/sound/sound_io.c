@@ -6,6 +6,7 @@
 
 #include "sound_data.h"
 #include "oscillator/oscillator.h"
+#include "../error/error.h"
 
 #define NUMBER_OF_BUFFER 8
 #define BUFFER_SIZE      200
@@ -13,7 +14,7 @@
 #define MONO   1
 #define STEREO 2
 
-#define MAX_VOLUME            5000.0
+#define MAX_VOLUME            6000.0
 #define QUANTIZATION_BIT_RATE 16
 #define SOUND_DATA_BYTE       2
 
@@ -55,7 +56,7 @@ void play_sound(SOUND s, int32_t sampling_freq, uint8_t velocity) {
             frame++;
 
             // バッファの設定
-            out_header[out0].lpData = (int8_t *)out_buffer[out0];  // 音データの場所
+            out_header[out0].lpData = (char *)out_buffer[out0];  // 音データの場所
             out_header[out0].dwBufferLength = BUFFER_SIZE * 2;  // buffer_size * 2[byte](int16)
             out_header[out0].dwFlags = 0;
 
@@ -81,7 +82,7 @@ void play_sound(SOUND s, int32_t sampling_freq, uint8_t velocity) {
             waveOutPrepareHeader(out_handle, &out_header[out1], sizeof(WAVEHDR));
 
             // バッファの設定
-            out_header[out1].lpData = (int8_t *)out_buffer[out1];  // 音データの場所
+            out_header[out1].lpData = (char *)out_buffer[out1];  // 音データの場所
             out_header[out1].dwBufferLength = BUFFER_SIZE * 2;  // buffer_size * 2[byte](int16)
             out_header[out1].dwFlags = 0;
 
@@ -116,24 +117,19 @@ void play_sound(SOUND s, int32_t sampling_freq, uint8_t velocity) {
 void play(double freq, double second, uint8_t velocity, 
           int32_t wave, int32_t channel, int32_t sampling_freq) {
     uint64_t length = (uint64_t)(second * sampling_freq);
+    if (length < 1600) {
+        // lengthが1600未満の時に何故かエラーが発生する
+        call_exception(SOUND_PLAYER_EXCEPTION);
+    }
     SOUND s = new_sound(length);
 
     write_wave(wave, s, freq, length, sampling_freq, 1, 1);
+    
+    printf("[Play] ");
+    printf("frequency : %.3f, length : %.2f, velocity : %d, wave : %d\n", 
+           freq, second, velocity, wave);
+
     play_sound(s, sampling_freq, velocity);
 
     free_sound(s);
-}
-
-int main(void) {
-    // gcc sound_io.c sound_data.c oscillator/wave.c oscillator/oscillator.c -O2 -lwinmm
-
-    play(269.292, 0.75,  40, PSG_TRIANGLE_WAVE, 1, 20000);
-    play(302.270, 0.75,  80, PSG_TRIANGLE_WAVE, 1, 20000);
-    play(339.286, 0.75, 120, PSG_TRIANGLE_WAVE, 1, 20000);
-    play(359.461, 0.75, 160, PSG_TRIANGLE_WAVE, 1, 20000);
-    play(403.482, 0.75, 200, PSG_TRIANGLE_WAVE, 1, 20000);
-    play(452.893, 0.75, 220, PSG_TRIANGLE_WAVE, 1, 20000);
-    play(508.355, 0.75, 255, PSG_TRIANGLE_WAVE, 1, 20000);
-
-    return 0;
 }

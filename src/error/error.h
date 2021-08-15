@@ -8,9 +8,10 @@
 /* exception */
 enum EXCEPTION_CODE {
     EXCEPTION = 0,
-    TYPE_EXCEPTION,         // 型の不一致
+    TYPE_EXCEPTION,             // 型の不一致
     ZERO_DIVISION_EXCEPTION,    // 0除算
     STACK_OVERFLOW_EXCEPTION,   // 内部スタックのオーバーフロー
+    SOUND_PLAYER_EXCEPTION,     // 音声出力関連
 };
 
 /* error */

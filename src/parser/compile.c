@@ -17,7 +17,7 @@
 
 /* トークンの識別子 */ 
 #define TcExpr         -1    // 式
-#define TcIdentifier   -2    // 識別子(変数やラベル)
+#define TcLabel        -2    // 識別子(変数やラベル)
 #define TcOperator     -3    // 演算子
 #define TcStop         -99   // 都合により構文評価を止めたいとき
 
@@ -57,7 +57,7 @@ bool_t ptn_cmp(tokenbuf_t *tcbuf, uint32_t *pc, int32_t pattern, ...) {
         if (tc == ptn_tc) {
             // 既にあるトークンと一致した
 
-        } else if (ptn_tc == TcIdentifier && tc >= TcBegin) {
+        } else if (ptn_tc == TcLabel && tc >= TcBegin) {
             // 演算子でないか(予約語も含む)
             tmpvars[vp++] = tc;
 
@@ -102,12 +102,12 @@ void compile_sub(tokenbuf_t *tcbuf, var_t *var_list, var_t **ic, uint32_t *icp, 
     uint32_t pc = start;
 
     while (pc < end) {
-        if (ptn_cmp(tcbuf, &pc, TcImport, TcSqBrOpn, TcIdentifier, TcSqBrCls, TcLF)) {
+        if (ptn_cmp(tcbuf, &pc, TcImport, TcSqBrOpn, TcLabel, TcSqBrCls, TcLF)) {
             // import文は読み飛ばす
         } else if (tcbuf->tc_list[pc] == TcLF) {
             pc++;
 
-        } else if (ptn_cmp(tcbuf, &pc, TcDefine, TcIdentifier, TcColon, TcIdentifier, TcLF)) {
+        } else if (ptn_cmp(tcbuf, &pc, TcDefine, TcLabel, TcColon, TcLabel, TcLF)) {
             if (var_list[tmpvars[1]].type != TyConst) {
                 call_error(DEFINE_ERROR);
             } else if (is_rsvword_tc(tcbuf, tmpvars[0]) || var_list[tmpvars[0]].type == TyConst) {
@@ -116,46 +116,52 @@ void compile_sub(tokenbuf_t *tcbuf, var_t *var_list, var_t **ic, uint32_t *icp, 
             var_list[tmpvars[0]].type = TyConst;
             var_list[tmpvars[0]].value.fVal = var_list[tmpvars[1]].value.fVal;
         
-        } else if (ptn_cmp(tcbuf, &pc, TcIdentifier, TcEqu, TcIdentifier, TcLF)) {
+        } else if (ptn_cmp(tcbuf, &pc, TcLabel, TcEqu, TcLabel, TcLF)) {
             check_assignment_error(tcbuf, var_list);
             put_ic(ic, icp, OpCpyD, &var_list[tmpvars[0]], &var_list[tmpvars[1]], 0, 0);
 
-        } else if (ptn_cmp(tcbuf, &pc, TcIdentifier, TcEqu, TcIdentifier, TcPlus, TcIdentifier, TcLF)) {
+        } else if (ptn_cmp(tcbuf, &pc, TcLabel, TcEqu, TcLabel, TcPlus, TcLabel, TcLF)) {
             check_assignment_error(tcbuf, var_list);
             put_ic(ic, icp, OpAdd2, 
                    &var_list[tmpvars[0]], &var_list[tmpvars[1]], &var_list[tmpvars[2]], 0);
         
-        } else if (ptn_cmp(tcbuf, &pc, TcIdentifier, TcEqu, TcIdentifier, TcMinus, TcIdentifier, TcLF)) {
+        } else if (ptn_cmp(tcbuf, &pc, TcLabel, TcEqu, TcLabel, TcMinus, TcLabel, TcLF)) {
             check_assignment_error(tcbuf, var_list);
             put_ic(ic, icp, OpSub2, 
                    &var_list[tmpvars[0]], &var_list[tmpvars[1]], &var_list[tmpvars[2]], 0);
 
-        } else if (ptn_cmp(tcbuf, &pc, TcIdentifier, TcEqu, TcIdentifier, TcAster, TcIdentifier, TcLF)) {
+        } else if (ptn_cmp(tcbuf, &pc, TcLabel, TcEqu, TcLabel, TcAster, TcLabel, TcLF)) {
             check_assignment_error(tcbuf, var_list);
             put_ic(ic, icp, OpMul2, 
                    &var_list[tmpvars[0]], &var_list[tmpvars[1]], &var_list[tmpvars[2]], 0);
 
-        } else if (ptn_cmp(tcbuf, &pc, TcIdentifier, TcEqu, TcIdentifier, TcSlash, TcIdentifier, TcLF)) {
+        } else if (ptn_cmp(tcbuf, &pc, TcLabel, TcEqu, TcLabel, TcSlash, TcLabel, TcLF)) {
             check_assignment_error(tcbuf, var_list);
             put_ic(ic, icp, OpDiv2, 
                    &var_list[tmpvars[0]], &var_list[tmpvars[1]], &var_list[tmpvars[2]], 0);
 
-        } else if (ptn_cmp(tcbuf, &pc, TcIdentifier, TcEqu, TcIdentifier, TcPerce, TcIdentifier, TcLF)) {
+        } else if (ptn_cmp(tcbuf, &pc, TcLabel, TcEqu, TcLabel, TcPerce, TcLabel, TcLF)) {
             check_assignment_error(tcbuf, var_list);
             put_ic(ic, icp, OpMod2, 
                    &var_list[tmpvars[0]], &var_list[tmpvars[1]], &var_list[tmpvars[2]], 0);
 
-        } else if (ptn_cmp(tcbuf, &pc, TcIdentifier, TcEqu, TcExpr)) {
+        } else if (ptn_cmp(tcbuf, &pc, TcLabel, TcEqu, TcExpr)) {
             check_assignment_error(tcbuf, var_list);
             pc += 2;  // 式の先頭までpcを進める
             expr(tcbuf, &pc, 0, var_list, ic, icp);
             put_ic(ic, icp, OpCpyP, &var_list[tmpvars[0]], 0, 0, 0);
 
-        } else if (ptn_cmp(tcbuf, &pc, TcPrint, TcIdentifier, TcLF)) {
+        } else if (ptn_cmp(tcbuf, &pc, TcPrint, TcLabel, TcLF)) {
             put_ic(ic, icp, OpPrint, &var_list[tmpvars[0]], 0, 0, 0);
 
-        } else if (ptn_cmp(tcbuf, &pc, TcBeep, TcIdentifier, TcIdentifier, TcLF)) {
+        } else if (ptn_cmp(tcbuf, &pc, TcBeep, TcLabel, TcLabel, TcLF)) {
             put_ic(ic, icp, OpBeep, &var_list[tmpvars[0]], &var_list[tmpvars[1]], 0, 0);
+
+        } else if (ptn_cmp(tcbuf, &pc, TcPlay, TcLabel, TcLabel, TcLabel, TcLabel, TcLF)) {
+            put_ic(ic, icp, OpPlay, &var_list[tmpvars[0]], &var_list[tmpvars[1]], &var_list[tmpvars[2]], &var_list[tmpvars[3]]);
+
+        } else if (ptn_cmp(tcbuf, &pc, TcPlay, TcLabel, TcLabel, TcLabel, TcLF)) {
+            put_ic(ic, icp, OpPlay, &var_list[tmpvars[0]], &var_list[tmpvars[1]], &var_list[tmpvars[2]], 0);
 
         } else if (ptn_cmp(tcbuf, &pc, TcLoop, TcStop)) {
             loop_control(tcbuf, &pc, var_list, ic, icp);

@@ -6,7 +6,7 @@
 
 var_t vpush(struct var_stack *stack, var_t var) {
     if (stack->sp >= VSTACK_SIZE) {
-        call_exception(STACK_OVERFLOW_ERROR);
+        call_exception(STACK_OVERFLOW_EXCEPTION);
     } 
     stack->q[stack->sp++] = var;
     return var;
@@ -14,7 +14,7 @@ var_t vpush(struct var_stack *stack, var_t var) {
 
 var_t const_vpush(struct var_stack *stack, uint64_t type, int64_t value) {
     if (stack->sp >= VSTACK_SIZE) {
-        call_exception(STACK_OVERFLOW_ERROR);
+        call_exception(STACK_OVERFLOW_EXCEPTION);
     } 
 
     var_t var;
@@ -28,7 +28,7 @@ var_t const_vpush(struct var_stack *stack, uint64_t type, int64_t value) {
 
 var_t vpop(struct var_stack *stack) {
     if (stack->sp <= 0) {
-        call_exception(STACK_OVERFLOW_ERROR);
+        call_exception(STACK_OVERFLOW_EXCEPTION);
     }
     stack->sp--;
     return stack->q[stack->sp];

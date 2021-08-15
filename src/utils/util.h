@@ -28,3 +28,5 @@ double itod(int64_t i);
 
 /* double型の変数を、bit列はそのままにint64_tに変換する */
 int64_t dtoi(double d);
+
+int32_t count_bits(int64_t bits);

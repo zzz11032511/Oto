@@ -5,7 +5,9 @@ SRCSLIST := main.c run.c \
 			utils/util.c utils/int_stack.c \
 			variable/var_stack.c \
 			parser/compile.c parser/control.c parser/expr.c \
-			vm/exec.c  vm/alu.c
+			vm/exec.c  vm/alu.c \
+			sound/sound_io.c sound/sound_data.c \
+			sound/oscillator/oscillator.c sound/oscillator/wave.c \
 
 PROGRAM       := oto
 DEBUGPROGRAM  := debug
@@ -20,8 +22,9 @@ OBJS      := $(addprefix $(OUTDIR)/,$(patsubst %.c,%.o,$(SRCS)))
 DEBUGOBJS := $(addprefix $(OUTDIR)/,$(patsubst %.c,%_debug.o,$(SRCS)))
 # $(warning $(OBJS))
 
-CC = gcc
+CC     = gcc
 CFLAGS = -Wall -O2
+LIB    = -lwinmm
 
 # ----------------------------------------------
 
@@ -34,7 +37,7 @@ all: $(TARGET)
 
 # 本番用
 $(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) -o $@ $^ $(LIB)
 
 $(OUTDIR)/%.o: %.c
 # @if [ ! -e `dirname $@` ]; then mkdir -p `dirname $@`; fi
@@ -44,7 +47,7 @@ $(OUTDIR)/%.o: %.c
 
 # デバッグ用
 $(DEBUGTARGET): $(DEBUGOBJS)
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) -o $@ $^ $(LIB)
 
 $(OUTDIR)/%_debug.o: %.c
 # @if [ ! -e `dirname $@` ]; then mkdir -p `dirname $@`; fi
@@ -80,6 +83,8 @@ builddir:
 	mkdir "./$(WIN_BUILD_DIR)/vm"
 	mkdir "./$(WIN_BUILD_DIR)/debug"
 	mkdir "./$(WIN_BUILD_DIR)/error"
+	mkdir "./$(WIN_BUILD_DIR)/sound"
+	mkdir "./$(WIN_BUILD_DIR)/sound/oscillator"
 
 clean:
 	del /s /q %cd%\build\*

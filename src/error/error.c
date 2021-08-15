@@ -65,10 +65,10 @@ void oto_quit(int32_t exit_status) {
 void call_exception(int32_t exception_code) {
     fprintf(stderr, "Exception : ");
     switch (exception_code) {
-    case TYPE_ERROR:
+    case TYPE_EXCEPTION:
         fprintf(stderr, "TypeError\n");
         break;
-    case ZERO_DIVISION_ERROR:
+    case ZERO_DIVISION_EXCEPTION:
         fprintf(stderr, "ZeroDivisionError\n");
         break;
     default:

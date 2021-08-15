@@ -10,6 +10,7 @@
 #include "../utils/util.h"
 #include "../variable/var_stack.h"
 #include "../variable/variable.h"
+#include "../sound/sound_io.h"
 
 #define NEXT_OPERATION(icp) icp += 5; continue;
 
@@ -41,6 +42,9 @@ void exec(var_t **ic, var_t *var, tokenbuf_t *tcbuf) {
     // ループ用の制御変数
     uint64_t loop_var = 0;
     uint64_t loop_cnt = 0;
+
+    // サンプリング周波数
+    uint64_t sampling_freq = 20000;
 
 #ifdef DEBUG
     print_opcodes(tcbuf, icp);
@@ -141,6 +145,28 @@ void exec(var_t **ic, var_t *var, tokenbuf_t *tcbuf) {
 
         case OpBeep:
             Beep((uint64_t)icp[1]->value.fVal, (uint64_t)(icp[2]->value.fVal * 1000));
+            NEXT_OPERATION(icp);
+
+        case OpPlay:
+            if ((uint64_t)icp[4] == 0) {
+                play(
+                    icp[1]->value.fVal,
+                    icp[2]->value.fVal,
+                    (uint8_t)icp[3]->value.fVal,
+                    0,
+                    0,
+                    sampling_freq
+                );
+            } else {
+                play(
+                    icp[1]->value.fVal,
+                    icp[2]->value.fVal,
+                    (uint8_t)icp[3]->value.fVal,
+                    (int32_t)icp[4]->value.fVal,
+                    0,
+                    sampling_freq
+                );
+            }
             NEXT_OPERATION(icp);
 
         case OpExit:

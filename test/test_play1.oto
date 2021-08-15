@@ -1,0 +1,79 @@
+DEFINE C4 : 262
+DEFINE C5 : 524
+DEFINE D5 : 588
+DEFINE E5 : 660
+DEFINE F5 : 698
+DEFINE G5 : 784
+DEFINE A5 : 880
+DEFINE B5 : 988
+DEFINE C6 : 1048
+DEFINE D6 : 1174
+
+i = 1
+LOOP [10] BEGIN
+    PLAY C5 1 115 5
+    PLAY D5 1 135 5
+    PLAY E5 1 155 5
+    PLAY F5 1 175 5
+    PLAY G5 1 195 5
+    PLAY A5 1 215 5
+    PLAY B5 1 235 5
+    PLAY C6 1 255 5
+
+    PLAY C4 1 255 5
+
+    PLAY C6 1 255 5
+    PLAY B5 1 235 5
+    PLAY A5 1 215 5
+    PLAY G5 1 195 5
+    PLAY F5 1 175 5
+    PLAY E5 1 155 5
+    PLAY D5 1 135 5
+    PLAY C5 1 115 5
+
+    IF [i == 1] THEN
+        PLAY C6 0.200 255 6
+        PLAY G5 0.200 255 6
+        PLAY D6 0.600 255 6
+    ELSE
+        PLAY C4 1 255 5
+    END
+
+    PRINT i
+
+    i = i + 1
+END
+
+# Execute code
+#     0 :      CpyD    i    1    
+#     5 :      Loop    155    10
+#    10 :      Play    C5    1    115    5
+#    15 :      Play    D5    1    135    5
+#    20 :      Play    E5    1    155    5
+#    25 :      Play    F5    1    175    5
+#    30 :      Play    G5    1    195    5    
+#    35 :      Play    A5    1    215    5
+#    40 :      Play    B5    1    235    5
+#    45 :      Play    C6    1    255    5
+#    50 :      Play    C4    1    255    5
+#    55 :      Play    C6    1    255    5
+#    60 :      Play    B5    1    255    5    
+#    65 :      Play    A5    1    255    5
+#    70 :      Play    G5    1    255    5
+#    75 :      Play    F5    1    255    5
+#    80 :      Play    E5    1    255    5
+#    85 :      Play    D5    1    255    5
+#    90 :      Play    C5    1    255    5
+#    95 :      Push    i
+#   100 :      Push    1
+#   105 :        Eq
+#   110 :        Jz    135
+#   115 :      Play    C6    0.200    255    6
+#   120 :      Play    G5    0.200    255    6
+#   125 :      Play    D6    0.600    255    6
+#   130 :       Jmp    140
+#   135 :      Play    C4    1    255    5
+#   140 :     Print    i
+#   145 :      Add2    i    i    1
+#   150 :       Jmp    5
+#   155 :      Exit

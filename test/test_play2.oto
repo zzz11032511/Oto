@@ -1,0 +1,90 @@
+C = 130.813
+D = 146.832
+E = 164.814
+F = 174.614
+G = 195.998
+A = 220.000
+B = 246.942
+
+wave   = 4
+length = 0.25
+
+LOOP [4] BEGIN
+    PLAY C length 255 wave
+    C = C * 2
+    PLAY D length 255 wave
+    D = D * 2
+    PLAY E length 255 wave
+    E = E * 2
+    PLAY F length 255 wave
+    F = F * 2
+    PLAY G length 255 wave
+    G = G * 2
+    PLAY A length 255 wave
+    A = A * 2
+    PLAY B length 255 wave
+    B = B * 2
+    PLAY C length 255 wave
+END
+
+# Execute code
+#     0 :      CpyD    C    130.813
+#     5 :      CpyD    D    146.832    
+#    10 :      CpyD    E    164.814
+#    15 :      CpyD    F    174.614
+#    20 :      CpyD    G    195.998
+#    25 :      CpyD    A    220.000
+#    30 :      CpyD    B    246.942
+#    35 :      CpyD    wave    4
+#    40 :      CpyD    length    0.25    
+#    45 :      Loop    130    4
+#    50 :      Play    C    length    255    wave
+#    55 :      Mul2    C    C    2
+#    60 :      Play    D    length    255    wave
+#    65 :      Mul2    D    D    2
+#    70 :      Play    E    length    255    wave
+#    75 :      Mul2    E    E    2    
+#    80 :      Play    F    length    255    wave
+#    85 :      Mul2    F    F    2
+#    90 :      Play    G    length    255    wave
+#    95 :      Mul2    G    G    2
+#   100 :      Play    A    length    255    wave
+#   105 :      Mul2    A    A    2
+#   110 :      Play    B    length    255    wave    
+#   115 :      Mul2    B    B    2
+#   120 :      Play    C    length    255    wave
+#   125 :       Jmp    45
+#   130 :      Exit
+# 
+# [Play] frequency : 130.813, length : 0.25, velocity : 255, wave : 4
+# [Play] frequency : 146.832, length : 0.25, velocity : 255, wave : 4
+# [Play] frequency : 164.814, length : 0.25, velocity : 255, wave : 4
+# [Play] frequency : 174.614, length : 0.25, velocity : 255, wave : 4
+# [Play] frequency : 195.998, length : 0.25, velocity : 255, wave : 4
+# [Play] frequency : 220.000, length : 0.25, velocity : 255, wave : 4
+# [Play] frequency : 246.942, length : 0.25, velocity : 255, wave : 4
+# [Play] frequency : 261.626, length : 0.25, velocity : 255, wave : 4
+# [Play] frequency : 261.626, length : 0.25, velocity : 255, wave : 4
+# [Play] frequency : 293.664, length : 0.25, velocity : 255, wave : 4
+# [Play] frequency : 329.628, length : 0.25, velocity : 255, wave : 4
+# [Play] frequency : 349.228, length : 0.25, velocity : 255, wave : 4
+# [Play] frequency : 391.996, length : 0.25, velocity : 255, wave : 4
+# [Play] frequency : 440.000, length : 0.25, velocity : 255, wave : 4
+# [Play] frequency : 493.884, length : 0.25, velocity : 255, wave : 4
+# [Play] frequency : 523.252, length : 0.25, velocity : 255, wave : 4
+# [Play] frequency : 523.252, length : 0.25, velocity : 255, wave : 4
+# [Play] frequency : 587.328, length : 0.25, velocity : 255, wave : 4
+# [Play] frequency : 659.256, length : 0.25, velocity : 255, wave : 4
+# [Play] frequency : 698.456, length : 0.25, velocity : 255, wave : 4
+# [Play] frequency : 783.992, length : 0.25, velocity : 255, wave : 4
+# [Play] frequency : 880.000, length : 0.25, velocity : 255, wave : 4
+# [Play] frequency : 987.768, length : 0.25, velocity : 255, wave : 4
+# [Play] frequency : 1046.504, length : 0.25, velocity : 255, wave : 4
+# [Play] frequency : 1046.504, length : 0.25, velocity : 255, wave : 4
+# [Play] frequency : 1174.656, length : 0.25, velocity : 255, wave : 4
+# [Play] frequency : 1318.512, length : 0.25, velocity : 255, wave : 4
+# [Play] frequency : 1396.912, length : 0.25, velocity : 255, wave : 4
+# [Play] frequency : 1567.984, length : 0.25, velocity : 255, wave : 4
+# [Play] frequency : 1760.000, length : 0.25, velocity : 255, wave : 4
+# [Play] frequency : 1975.536, length : 0.25, velocity : 255, wave : 4
+# [Play] frequency : 2093.008, length : 0.25, velocity : 255, wave : 4

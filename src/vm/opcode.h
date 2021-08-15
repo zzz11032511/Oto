@@ -34,6 +34,7 @@ enum OP_CODE {
 
     OpPrint,      // 変数の出力
     OpBeep,       // ビープ音の出力
+    OpPlay,       // 音の出力
     
-    OpExit         // 終了
+    OpExit        // 終了
 };

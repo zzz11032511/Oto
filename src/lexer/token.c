@@ -12,13 +12,13 @@
 #include "../variable/variable.h"
 
 /* 予約語一覧 */
-struct rsvword_t {
+struct rsvword {
     str_t name;
     str_t upper_name;
     int tc;
 };
 
-static const struct rsvword_t rsvwords[] = {
+static const struct rsvword rsvwords[] = {
     {"begin",   "BEGIN",   TcBegin   },
     {"end",     "END",     TcEnd     },
     {"in",      "IN",      TcIn      },
