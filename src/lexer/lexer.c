@@ -13,19 +13,6 @@
 
 #define IS_IGNORE_CHAR(c) c == ' ' || c == '\t' || c == '\r'
 
-bool_t is_string(unsigned char c) {
-    if (c == '\"') return 1;
-    return 0;
-}
-
-uint32_t get_string_len(str_t s) {
-    uint32_t len = 1;
-
-    while (s[len++] != '\"') {}
-
-    return len;
-}
-
 bool_t is_number(unsigned char c) {
     if ('0' <= c && c <= '9') return 1;
     return 0;
@@ -103,10 +90,6 @@ uint32_t lexer(str_t s, uint32_t fsize, tokenbuf_t *tcbuf, var_t *var_list) {
     uint32_t cnt = 0;  // これまでに変換したトークンの数
 
     while (i < fsize) {
-        if (s[i] == '\0' || s[i] == EOF) {
-            break;
-        }
-
         if (IS_IGNORE_CHAR(s[i])) {
             // 読み飛ばしていい文字
             i++;
@@ -124,10 +107,6 @@ uint32_t lexer(str_t s, uint32_t fsize, tokenbuf_t *tcbuf, var_t *var_list) {
         uint32_t type = TyVoid;
         if (strchr("(){}[]:,\n", s[i]) != 0) {
             len = 1;
-
-        } else if (is_string(s[i])) {  // 文字列
-            type = TyString;
-            len  = get_string_len(&s[i]);
 
         } else if (is_number(s[i])) {  // 定数
             type = TyConst;

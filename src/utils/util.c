@@ -20,7 +20,7 @@ uint32_t count_file_size(FILE *fp) {
     uint32_t cnt = 0;
 
     while (1) {
-        int8_t ch = fgetc(fp);
+        int32_t ch = fgetc(fp);
         if (ch == EOF) break;
         cnt++;
     }
@@ -51,11 +51,6 @@ uint32_t src_load(const str_t path, str_t *src) {
 
     uint32_t size = count_file_size(fp);
 
-#ifdef DEBUG
-    printf("Source file info\n");
-    printf("name : %s, size : %d bytes\n\n", path, size);
-#endif
-
     *src = (str_t)malloc(sizeof(char) * (size + 1));
     if (src == NULL) {
         fprintf(stderr, "malloc error\n");
@@ -66,6 +61,11 @@ uint32_t src_load(const str_t path, str_t *src) {
 
     fclose(fp);
     src[end] = 0;  // 終端マークを置いておく
+
+#ifdef DEBUG
+    printf("Source file info\n");
+    printf("name : %s, size : %d bytes\n\n", path, size);
+#endif
 
     return size;
 }

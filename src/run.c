@@ -22,6 +22,8 @@ void run(const str_t path) {
         oto_quit(EXIT_FAILURE);
     }
 
+    printf("%s\n", src);
+
     tokenbuf_t *tcbuf = new_tokenbuf(); // トークン情報
     var_t var_list[MAX_TC];
     var_t *ic[IC_LIST_SIZE];
