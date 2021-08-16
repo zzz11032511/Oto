@@ -14,7 +14,7 @@
 #define MONO   1
 #define STEREO 2
 
-#define MAX_VOLUME            6000.0
+#define MAX_VOLUME            10000.0
 #define QUANTIZATION_BIT_RATE 16
 #define SOUND_DATA_BYTE       2
 

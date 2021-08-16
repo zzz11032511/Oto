@@ -45,7 +45,7 @@ void write_wave(int32_t wave,
         psg_triangle_wave(t, freq, length);
         break;
     case WHITE_NOISE:
-        white_noise(t, freq);
+        white_noise(t, length);
         break;
     }
 

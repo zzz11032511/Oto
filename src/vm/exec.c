@@ -44,7 +44,7 @@ void exec(var_t **ic, var_t *var, tokenbuf_t *tcbuf) {
     uint64_t loop_cnt = 0;
 
     // サンプリング周波数
-    uint64_t sampling_freq = 20000;
+    uint64_t sampling_freq = 22000;
 
 #ifdef DEBUG
     print_opcodes(tcbuf, icp);
