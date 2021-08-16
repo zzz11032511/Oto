@@ -185,7 +185,7 @@ void compile_sub(tokenbuf_t *tcbuf, var_t *var_list, var_t **ic, uint32_t *icp, 
 }
 
 void compile(str_t s, uint32_t fsize, tokenbuf_t *tcbuf, var_t *var_list, var_t **ic) {
-    tc_init(tcbuf, var_list);
+    init_token(tcbuf, var_list);
 
     uint32_t end = lexer(s, fsize, tcbuf, var_list);
 

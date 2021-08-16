@@ -157,11 +157,44 @@ uint32_t get_tc(tokenbuf_t *tcbuf, var_t *var_list, str_t s, uint32_t len, uint3
     return i;
 }
 
+/* あらかじめ定義しておく定数 */
+struct init_define_values {
+    str_t s;
+    double val;
+};
+
+static const struct init_define_values defs[] = {
+    {"SINE",         0},
+    {"SAWTOOTH",     1},
+    {"SQUARE",       2},
+    {"TRIANGLE",     3},
+    {"PSG_SAWTOOTH", 4},
+    {"PSG_SQUARE",   5},
+    {"PSG_TRIANGLE", 6},
+    {"WHITE_NOISE",  7}
+};
+
+void init_define(tokenbuf_t *tcbuf, var_t *var_list) {
+    int32_t num_of_defs = GET_ARRAY_LENGTH(defs);
+    for (int32_t i = 0; i < num_of_defs; i++) {
+        uint32_t tc = get_tc(
+            tcbuf,
+            var_list,
+            defs[i].s,
+            count_string_size(defs[i].s, '\0'),
+            TyVoid
+        );
+        var_list[tc].type       = TyConst;
+        var_list[tc].value.fVal = defs[i].val;
+    }
+}
+
 /* 最初にlexerしておく文字列 */
 static const str_t symbols = "\n , : [ ] ( ) <- -> = + - * / % == != < >= <= > begin end in out import define channel sound filter if elsif else then loop and or not play bpm note mute print beep exit\0";
 
-void tc_init(tokenbuf_t *tcbuf, var_t *var_list) {
+void init_token(tokenbuf_t *tcbuf, var_t *var_list) {
     uint32_t size = count_string_size(symbols, '\0');
     lexer(symbols, size, tcbuf, var_list);
+    init_define(tcbuf, var_list);
     init_done = 1;
 }

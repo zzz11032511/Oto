@@ -36,4 +36,4 @@ bool_t is_rsvword_tc(tokenbuf_t *tcbuf, uint32_t tc);
 uint32_t get_tc(tokenbuf_t *tcbuf, var_t *var_list, str_t s, uint32_t len, uint32_t type);
 
 /* 演算子と予約語を最初にlexerしておく関数 */
-void tc_init(tokenbuf_t *tcbuf, var_t *var_list);
+void init_token(tokenbuf_t *tcbuf, var_t *var_list);
