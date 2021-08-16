@@ -5,38 +5,41 @@ DEFINE E5 : 660
 DEFINE F5 : 698
 DEFINE G5 : 784
 DEFINE A5 : 880
-DEFINE B5 : 988
-DEFINE C6 : 1048
+DEFINE B5 : 987
+DEFINE C6 : 1046
 DEFINE D6 : 1174
+
+s1 = SOUND [5]
+s2 = SOUND [6]
 
 i = 1
 LOOP [10] BEGIN
-    PLAY C5 1 115 5
-    PLAY D5 1 135 5
-    PLAY E5 1 155 5
-    PLAY F5 1 175 5
-    PLAY G5 1 195 5
-    PLAY A5 1 215 5
-    PLAY B5 1 235 5
-    PLAY C6 1 255 5
+    PLAY C5 1 115 s1
+    PLAY D5 1 135 s1
+    PLAY E5 1 155 s1
+    PLAY F5 1 175 s1
+    PLAY G5 1 195 s1
+    PLAY A5 1 215 s1
+    PLAY B5 1 235 s1
+    PLAY C6 1 255 s1
 
-    PLAY C4 1 255 5
+    PLAY C4 1 255 s1
 
-    PLAY C6 1 255 5
-    PLAY B5 1 235 5
-    PLAY A5 1 215 5
-    PLAY G5 1 195 5
-    PLAY F5 1 175 5
-    PLAY E5 1 155 5
-    PLAY D5 1 135 5
-    PLAY C5 1 115 5
+    PLAY C6 1 255 s1
+    PLAY B5 1 235 s1
+    PLAY A5 1 215 s1
+    PLAY G5 1 195 s1
+    PLAY F5 1 175 s1
+    PLAY E5 1 155 s1
+    PLAY D5 1 135 s1
+    PLAY C5 1 115 s1
 
     IF [i == 1] THEN
-        PLAY C6 0.200 255 6
-        PLAY G5 0.200 255 6
-        PLAY D6 0.600 255 6
+        PLAY C6 0.200 255 s2
+        PLAY G5 0.200 255 s2
+        PLAY D6 0.600 255 s2
     ELSE
-        PLAY C4 1 255 5
+        PLAY C4 1 255 s1
     END
 
     PRINT i
@@ -45,35 +48,37 @@ LOOP [10] BEGIN
 END
 
 # Execute code
-#     0 :      CpyD    i    1    
-#     5 :      Loop    155    10
-#    10 :      Play    C5    1    115    5
-#    15 :      Play    D5    1    135    5
-#    20 :      Play    E5    1    155    5
-#    25 :      Play    F5    1    175    5
-#    30 :      Play    G5    1    195    5    
-#    35 :      Play    A5    1    215    5
-#    40 :      Play    B5    1    235    5
-#    45 :      Play    C6    1    255    5
-#    50 :      Play    C4    1    255    5
-#    55 :      Play    C6    1    255    5
-#    60 :      Play    B5    1    255    5    
-#    65 :      Play    A5    1    255    5
-#    70 :      Play    G5    1    255    5
-#    75 :      Play    F5    1    255    5
-#    80 :      Play    E5    1    255    5
-#    85 :      Play    D5    1    255    5
-#    90 :      Play    C5    1    255    5
-#    95 :      Push    i
-#   100 :      Push    1
-#   105 :        Eq
-#   110 :        Jz    135
-#   115 :      Play    C6    0.200    255    6
-#   120 :      Play    G5    0.200    255    6
-#   125 :      Play    D6    0.600    255    6
-#   130 :       Jmp    140
-#   135 :      Play    C4    1    255    5
-#   140 :     Print    i
-#   145 :      Add2    i    i    1
-#   150 :       Jmp    5
-#   155 :      Exit
+#     0 :      DefS    s1    5
+#     5 :      DefS    s2    6
+#    10 :      CpyD    i    1
+#    15 :      Loop    165    10
+#    20 :      Play    C5    1    115    s1
+#    25 :      Play    D5    1    135    s1
+#    30 :      Play    E5    1    155    s1
+#    35 :      Play    F5    1    175    s1
+#    40 :      Play    G5    1    195    s1    
+#    45 :      Play    A5    1    215    s1
+#    50 :      Play    B5    1    235    s1
+#    55 :      Play    C6    1    255    s1
+#    60 :      Play    C4    1    255    s1
+#    65 :      Play    C6    1    255    s1
+#    70 :      Play    B5    1    235    s1
+#    75 :      Play    A5    1    215    s1    
+#    80 :      Play    G5    1    195    s1
+#    85 :      Play    F5    1    175    s1
+#    90 :      Play    E5    1    155    s1
+#    95 :      Play    D5    1    135    s1
+#   100 :      Play    C5    1    115    s1
+#   105 :      Push    i
+#   110 :      Push    1
+#   115 :        Eq
+#   120 :        Jz    145    
+#   125 :      Play    C6    0.200    255    s2
+#   130 :      Play    G5    0.200    255    s2
+#   135 :      Play    D6    0.600    255    s2
+#   140 :       Jmp    150
+#   145 :      Play    C4    1    255    s1
+#   150 :     Print    i
+#   155 :      Add2    i    i    1
+#   160 :       Jmp    15
+#   165 :      Exit
