@@ -7,6 +7,7 @@
 #include "parser/compile.h"
 #include "vm/exec.h"
 #include "lexer/token.h"
+#include "variable/variable.h"
 #include "utils/util.h"
 
 static bool_t timecount_flag = false;
@@ -22,10 +23,11 @@ void run(const str_t path) {
         oto_quit(EXIT_FAILURE);
     }
 
-    printf("%s\n", src);
-
     tokenbuf_t *tcbuf = new_tokenbuf(); // トークン情報
+    
     var_t var_list[MAX_TC];
+    init_var_list(var_list, MAX_TC);
+
     var_t *ic[IC_LIST_SIZE];
 
     set_error_all(path, src, tcbuf, var_list, ic);

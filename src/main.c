@@ -16,7 +16,7 @@ int main(int argc, const char **argv) {
 
     if (argc == 1) {
         usage((str_t)argv[0]);
-        exit(1);
+        exit(0);
     }
 
     /* 実行時間表示 */

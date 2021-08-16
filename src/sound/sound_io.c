@@ -4,6 +4,7 @@
 #include <mmsystem.h>
 #include <math.h>
 
+#include "sound.h"
 #include "track/track.h"
 #include "oscillator/oscillator.h"
 #include "../error/error.h"
@@ -115,7 +116,7 @@ void play_track(TRACK t, int32_t sampling_freq, uint8_t velocity) {
 }
 
 void play(double freq, double second, uint8_t velocity, 
-          int32_t wave, int32_t channel, int32_t sampling_freq) {
+          SOUND s, int32_t channel, int32_t sampling_freq) {
     uint64_t length = (uint64_t)(second * sampling_freq);
     if (length < 1600) {
         // lengthが1600未満の時に何故かエラーが発生する
@@ -124,13 +125,12 @@ void play(double freq, double second, uint8_t velocity,
     TRACK t = new_track(length);
 
     if (velocity != 0) {
-        write_wave(wave, t, freq, length, sampling_freq, 1, 1);
+        write_wave(s->wave, t, freq, length, sampling_freq, 1, 1);
     }
-
     
     printf("[Play] ");
     printf("frequency : %8.3f, length : %2.2f, velocity : %3d, wave : %3d\n", 
-           freq, second, velocity, wave);
+           freq, second, velocity, s->wave);
 
     play_track(t, sampling_freq, velocity);
 

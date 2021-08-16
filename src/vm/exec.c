@@ -10,6 +10,7 @@
 #include "../utils/util.h"
 #include "../variable/var_stack.h"
 #include "../variable/variable.h"
+#include "../sound/sound.h"
 #include "../sound/sound_io.h"
 
 #define NEXT_OPERATION(icp) icp += 5; continue;
@@ -143,30 +144,27 @@ void exec(var_t **ic, var_t *var, tokenbuf_t *tcbuf) {
             print_var(*icp[1]);
             NEXT_OPERATION(icp);
 
+        case OpDefS:
+            icp[1]->value.pVal = new_sound((int32_t)icp[2]->value.fVal);
+            icp[1]->type = TySound;
+            NEXT_OPERATION(icp);
+
         case OpBeep:
             Beep((uint64_t)icp[1]->value.fVal, (uint64_t)(icp[2]->value.fVal * 1000));
             NEXT_OPERATION(icp);
 
         case OpPlay:
-            if ((uint64_t)icp[4] == 0) {
-                play(
-                    icp[1]->value.fVal,
-                    icp[2]->value.fVal,
-                    (uint8_t)icp[3]->value.fVal,
-                    0,
-                    0,
-                    sampling_freq
-                );
-            } else {
-                play(
-                    icp[1]->value.fVal,
-                    icp[2]->value.fVal,
-                    (uint8_t)icp[3]->value.fVal,
-                    (int32_t)icp[4]->value.fVal,
-                    0,
-                    sampling_freq
-                );
+            if (icp[4]->type != TySound) {
+                call_exception(TYPE_EXCEPTION);
             }
+            play(
+                icp[1]->value.fVal,
+                icp[2]->value.fVal,
+                (uint8_t)icp[3]->value.fVal,
+                icp[4]->value.pVal,
+                0,
+                sampling_freq
+            );
             NEXT_OPERATION(icp);
 
         case OpExit:

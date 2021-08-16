@@ -3,10 +3,10 @@ SRCSLIST := main.c run.c \
 			error/error.c \
 		    lexer/lexer.c lexer/token.c \
 			utils/util.c utils/int_stack.c \
-			variable/var_stack.c \
+			variable/var_stack.c variable/variable.c \
 			parser/compile.c parser/control.c parser/expr.c \
 			vm/exec.c  vm/alu.c \
-			sound/sound_io.c \
+			sound/sound_io.c sound/sound.c \
 			sound/track/track.c \
 			sound/oscillator/oscillator.c sound/oscillator/wave.c \
 

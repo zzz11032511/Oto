@@ -115,6 +115,10 @@ void compile_sub(tokenbuf_t *tcbuf, var_t *var_list, var_t **ic, uint32_t *icp, 
             var_list[tmpvars[0]].type = TyConst;
             var_list[tmpvars[0]].value.fVal = var_list[tmpvars[1]].value.fVal;
         
+        } else if (ptn_cmp(tcbuf, &pc, TcLabel, TcEqu, TcSound, TcSqBrOpn, TcLabel, TcSqBrCls, TcLF)) {
+            check_assignment_error(tcbuf, var_list);
+            put_ic(ic, icp, OpDefS, &var_list[tmpvars[0]], &var_list[tmpvars[1]], 0, 0);
+
         } else if (ptn_cmp(tcbuf, &pc, TcLabel, TcEqu, TcLabel, TcLF)) {
             check_assignment_error(tcbuf, var_list);
             put_ic(ic, icp, OpCpyD, &var_list[tmpvars[0]], &var_list[tmpvars[1]], 0, 0);

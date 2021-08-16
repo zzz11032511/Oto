@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#include "../oto.h"
 #include "../debug/debug.h"
 #include "../utils/util.h"
 #include "../lexer/token.h"
@@ -55,6 +56,7 @@ void set_error_all(str_t filename, str_t src, tokenbuf_t *tcbuf, var_t *var_list
 void oto_quit(int32_t exit_status) {
     free(e_src);
     free_tokenbuf(e_tcbuf);
+    free_heap_var(e_var_list, MAX_TC);
 
     e_src = NULL;
     e_tcbuf = NULL;
