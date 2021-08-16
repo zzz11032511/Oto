@@ -1,11 +1,11 @@
-#include "sound_data.h"
+#include "track.h"
 
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
 
-SOUND new_sound(uint64_t length) {
-    SOUND s = (SOUND)calloc(1, sizeof(SOUND_OBJECT));
+TRACK new_track(uint64_t length) {
+    TRACK s = (TRACK)calloc(1, sizeof(struct track_t));
 
     s->length = length;
     s->ptr    = 0;
@@ -14,16 +14,16 @@ SOUND new_sound(uint64_t length) {
     return s;
 }
 
-void free_sound(SOUND s) {
+void free_track(TRACK s) {
     free(s->data);
     s->data = NULL;
     free(s);
 }
 
-void rewind_sound(SOUND s) {
+void rewind_track(TRACK s) {
     s->ptr = 0;
 }
 
-void seek_sound(SOUND s, uint64_t offset) {
+void seek_track(TRACK s, uint64_t offset) {
     s->ptr += offset;
 }

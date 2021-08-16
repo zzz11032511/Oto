@@ -6,7 +6,8 @@ SRCSLIST := main.c run.c \
 			variable/var_stack.c \
 			parser/compile.c parser/control.c parser/expr.c \
 			vm/exec.c  vm/alu.c \
-			sound/sound_io.c sound/sound_data.c \
+			sound/sound_io.c \
+			sound/track/track.c \
 			sound/oscillator/oscillator.c sound/oscillator/wave.c \
 
 PROGRAM       := oto
@@ -84,6 +85,7 @@ builddir:
 	mkdir "./$(WIN_BUILD_DIR)/debug"
 	mkdir "./$(WIN_BUILD_DIR)/error"
 	mkdir "./$(WIN_BUILD_DIR)/sound"
+	mkdir "./$(WIN_BUILD_DIR)/sound/track"
 	mkdir "./$(WIN_BUILD_DIR)/sound/oscillator"
 
 clean:

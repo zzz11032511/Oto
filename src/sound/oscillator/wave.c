@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <math.h>
 
-#include "../sound_data.h"
+#include "../track/track.h"
 
 #define PI 3.14159265358979323846
 
@@ -81,50 +81,50 @@ double white_noise_func(int32_t n, uint32_t arity) {
 /* 正弦波を足し合わせる回数 */
 static int32_t ARITY = 50;
 
-void sine_wave(SOUND s, double freq, uint64_t length) {
+void sine_wave(TRACK t, double freq, uint64_t length) {
     for (uint64_t i = 0; i < length; i++) {
-        s->data[s->ptr + i] += sine_wave_func(i, freq, 0);
+        t->data[t->ptr + i] += sine_wave_func(i, freq, 0);
     }
 }
 
-void sawtooth_wave(SOUND s, double freq, uint64_t length) {
+void sawtooth_wave(TRACK t, double freq, uint64_t length) {
     for (uint64_t i = 0; i < length; i++) {
-        s->data[s->ptr + i] += sawtooth_wave_func(i, freq, ARITY);
+        t->data[t->ptr + i] += sawtooth_wave_func(i, freq, ARITY);
     }
 }
 
-void square_wave(SOUND s, double freq, uint64_t length) {
+void square_wave(TRACK t, double freq, uint64_t length) {
     for (uint64_t i = 0; i < length; i++) {
-        s->data[s->ptr + i] += square_wave_func(i, freq, ARITY);
+        t->data[t->ptr + i] += square_wave_func(i, freq, ARITY);
     }
 }
 
-void triangle_wave(SOUND s, double freq, uint64_t length) {
+void triangle_wave(TRACK t, double freq, uint64_t length) {
     for (uint64_t i = 0; i < length; i++) {
-        s->data[s->ptr + i] += triangle_wave_func(i, freq, ARITY);
+        t->data[t->ptr + i] += triangle_wave_func(i, freq, ARITY);
     }
 }
 
-void psg_sawtooth_wave(SOUND s, double freq, uint64_t length) {
+void psg_sawtooth_wave(TRACK t, double freq, uint64_t length) {
     for (uint64_t i = 0; i < length; i++) {
-        s->data[s->ptr + i] += psg_sawtooth_wave_func(i, freq);
+        t->data[t->ptr + i] += psg_sawtooth_wave_func(i, freq);
     }
 }
 
-void psg_square_wave(SOUND s, double freq, uint64_t length) {
+void psg_square_wave(TRACK t, double freq, uint64_t length) {
     for (uint64_t i = 0; i < length; i++) {
-        s->data[s->ptr + i] += psg_square_wave_func(i, freq);
+        t->data[t->ptr + i] += psg_square_wave_func(i, freq);
     }
 }
 
-void psg_triangle_wave(SOUND s, double freq, uint64_t length) {
+void psg_triangle_wave(TRACK t, double freq, uint64_t length) {
     for (uint64_t i = 0; i < length; i++) {
-        s->data[s->ptr + i] += psg_triangle_wave_func(i, freq);
+        t->data[t->ptr + i] += psg_triangle_wave_func(i, freq);
     }
 }
 
-void white_noise(SOUND s, uint64_t length) {
+void white_noise(TRACK t, uint64_t length) {
     for (uint64_t i = 0; i < length; i++) {
-        s->data[s->ptr + i] += white_noise_func(i, ARITY);
+        t->data[t->ptr + i] += white_noise_func(i, ARITY);
     }
 }

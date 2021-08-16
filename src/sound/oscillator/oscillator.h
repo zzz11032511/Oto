@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdint.h>
-#include "../sound_data.h"
+#include "../track/track.h"
 #include "../../utils/util.h"
 
 /* 基本波波形 */
@@ -17,6 +17,6 @@ enum FUNDAMENTAL_WAVE {
 };
 
 void write_wave(int32_t wave, 
-                SOUND s, double freq, uint64_t length,
+                TRACK t, double freq, uint64_t length,
                 int32_t sampling_freq, bool_t fade_flag, bool_t seek_cursol_flag);
                 

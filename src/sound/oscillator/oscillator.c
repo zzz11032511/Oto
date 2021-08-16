@@ -5,57 +5,57 @@
 
 #include "wave.h"
 #include "../sound_io.h"
-#include "../sound_data.h"
+#include "../track/track.h"
 #include "../../utils/util.h"
 
 /* フェードを掛ける幅 */
 static double FADE_RANGE = 0.05;
 
 void write_wave(int32_t wave, 
-                 SOUND s, double freq, uint64_t length,
-                 int32_t sampling_freq, bool_t fade_flag, bool_t seek_cursol_flag) {
+                TRACK t, double freq, uint64_t length,
+                int32_t sampling_freq, bool_t fade_flag, bool_t seek_cursol_flag) {
     set_wave_sampling_freq(sampling_freq);
     
-    if ((s->ptr + length) > s->length) {
+    if ((t->ptr + length) > t->length) {
         // 音データの長さを超えてしまう場合
-        length = s->length - s->ptr;
+        length = t->length - t->ptr;
         if (length == 0) return;
     }
 
     switch (wave) {
     case SINE_WAVE:
-        sine_wave(s, freq, length);
+        sine_wave(t, freq, length);
         break;
     case SAWTOOTH_WAVE:
-        sawtooth_wave(s, freq, length);
+        sawtooth_wave(t, freq, length);
         break;
     case SQUARE_WAVE:
-        square_wave(s, freq, length);
+        square_wave(t, freq, length);
         break;
     case TRIANGLE_WAVE:
-        triangle_wave(s, freq, length);
+        triangle_wave(t, freq, length);
         break;
     case PSG_SAW_WAVE:
-        psg_sawtooth_wave(s, freq, length);
+        psg_sawtooth_wave(t, freq, length);
         break;
     case PSG_SQUARE_WAVE:
-        psg_square_wave(s, freq, length);
+        psg_square_wave(t, freq, length);
         break;
     case PSG_TRIANGLE_WAVE:
-        psg_triangle_wave(s, freq, length);
+        psg_triangle_wave(t, freq, length);
         break;
     case WHITE_NOISE:
-        white_noise(s, freq);
+        white_noise(t, freq);
         break;
     }
 
     /* フェード処理 */
     if (fade_flag) {
         for (uint64_t n = 0; n < (sampling_freq * FADE_RANGE); n++) {
-            s->data[s->ptr + n] *= (double)n / (sampling_freq * FADE_RANGE);
-            s->data[s->ptr + length - n - 1] *= (double)n / (sampling_freq * FADE_RANGE);
+            t->data[t->ptr + n] *= (double)n / (sampling_freq * FADE_RANGE);
+            t->data[t->ptr + length - n - 1] *= (double)n / (sampling_freq * FADE_RANGE);
         }        
     }
 
-    if (seek_cursol_flag) s->ptr += length;
+    if (seek_cursol_flag) t->ptr += length;
 }
