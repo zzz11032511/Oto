@@ -123,10 +123,13 @@ void play(double freq, double second, uint8_t velocity,
     }
     SOUND s = new_sound(length);
 
-    write_wave(wave, s, freq, length, sampling_freq, 1, 1);
+    if (velocity != 0) {
+        write_wave(wave, s, freq, length, sampling_freq, 1, 1);
+    }
+
     
     printf("[Play] ");
-    printf("frequency : %.3f, length : %.2f, velocity : %d, wave : %d\n", 
+    printf("frequency : %8.3f, length : %2.2f, velocity : %3d, wave : %3d\n", 
            freq, second, velocity, wave);
 
     play_sound(s, sampling_freq, velocity);

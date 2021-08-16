@@ -59,9 +59,6 @@ bool_t ptn_cmp(tokenbuf_t *tcbuf, uint32_t *pc, int32_t pattern, ...) {
             // 既にあるトークンと一致した
 
         } else if (ptn_tc == TcLabel && tc >= TcBegin) {
-            if (TcBegin <= tc && tc <= TcExit) {
-                
-            }
             tmpvars[vp++] = tc;
 
         } else if (ptn_tc == TcExpr) {

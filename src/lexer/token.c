@@ -106,7 +106,7 @@ struct token *new_token(uint32_t tc, uint32_t len, str_t s) {
  * トークンの内容(文字列)を記憶するための領域
  * 文字列の実体はこのバッファに保存されている
  */
-static char tcsbuf[(MAX_TC + 1) * 10];
+static char tcsbuf[(MAX_TC + 1) * 15];
 
 void put_tc(tokenbuf_t *tcbuf, uint32_t tc, str_t s, uint32_t len) {
     if (tcbuf->tcs >= MAX_TC) {

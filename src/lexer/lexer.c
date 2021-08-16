@@ -11,6 +11,8 @@
 #include "../utils/util.h"
 #include "../variable/variable.h"
 
+#define IS_IGNORE_CHAR(c) c == ' ' || c == '\t' || c == '\r'
+
 bool_t is_string(unsigned char c) {
     if (c == '\"') return 1;
     return 0;
@@ -105,7 +107,7 @@ uint32_t lexer(str_t s, uint32_t fsize, tokenbuf_t *tcbuf, var_t *var_list) {
             break;
         }
 
-        if (s[i] == ' ' || s[i] == '\t' || s[i] == '\r') {
+        if (IS_IGNORE_CHAR(s[i])) {
             // 読み飛ばしていい文字
             i++;
             continue;
