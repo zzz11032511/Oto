@@ -170,10 +170,9 @@ void exec(var_t **ic, var_t *var, tokenbuf_t *tcbuf) {
 
         case OpFilter:
             // 新しいsoundの定義
+            // TODO: freeできてないのでどうにかする
             if (icp[1]->type == TySound) {
                 icp[4]->value.pVal = new_sound(((SOUND)icp[1]->value.pVal)->wave);
-            } else if (icp[1]->type == TyFloat || icp[1]->type == TyConst) {
-                icp[4]->value.pVal = new_sound((int32_t)icp[1]->value.fVal);
             } else {
                 call_exception(TYPE_EXCEPTION);
             }
@@ -183,6 +182,11 @@ void exec(var_t **ic, var_t *var, tokenbuf_t *tcbuf) {
             ((SOUND)icp[4]->value.pVal)->next_ftr = new_filter((int32_t)icp[2]->value.fVal);
             // パラメータの設定
             ((SOUND)icp[4]->value.pVal)->next_ftr->param = icp[3]->value.fVal;
+            
+            if (((SOUND)icp[1]->value.pVal)->next_ftr != NULL) {
+                ((SOUND)icp[4]->value.pVal)->next_ftr->next_ftr = ((SOUND)icp[1]->value.pVal)->next_ftr;
+            }
+            
             NEXT_OPERATION(icp);
 
         case OpExit:

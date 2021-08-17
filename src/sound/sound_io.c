@@ -132,6 +132,7 @@ void play(double freq, double second, uint8_t velocity,
 
         FILTER ftr = s->next_ftr;
         while (ftr != NULL) {
+            // フィルターを処理していく
             switch (ftr->filter_num) {
             case FADE_IN:
                 fade_in(t, length, ftr->param, sampling_freq);
