@@ -2,9 +2,12 @@
 
 #include <stdint.h>
 
-struct sound_t {
+#include "filter/filter.h"
+
+struct sound {
     int32_t wave;
+    struct filter *next_ftr;
 };
-typedef struct sound_t *SOUND;
+typedef struct sound *SOUND;
 
 SOUND new_sound(int32_t wave);

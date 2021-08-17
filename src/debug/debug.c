@@ -44,6 +44,7 @@ static const struct opcode_t opcodes[] = {
     {"DefS",    OpDefS    },
     {"Beep",    OpBeep    },
     {"Play",    OpPlay    },
+    {"Filter",  OpFilter  },
     {"Exit",    OpExit    },
 };
 

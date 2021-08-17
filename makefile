@@ -9,6 +9,7 @@ SRCSLIST := main.c run.c \
 			sound/sound_io.c sound/sound.c \
 			sound/track/track.c \
 			sound/oscillator/oscillator.c sound/oscillator/wave.c \
+			sound/filter/filter.c sound/filter/fade.c
 
 PROGRAM       := oto
 DEBUGPROGRAM  := debug
@@ -87,6 +88,7 @@ builddir:
 	mkdir "./$(WIN_BUILD_DIR)/sound"
 	mkdir "./$(WIN_BUILD_DIR)/sound/track"
 	mkdir "./$(WIN_BUILD_DIR)/sound/oscillator"
+	mkdir "./$(WIN_BUILD_DIR)/sound/filter"
 
 clean:
 	del /s /q %cd%\build\*

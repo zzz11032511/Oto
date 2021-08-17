@@ -172,6 +172,9 @@ void compile_sub(tokenbuf_t *tcbuf, var_t *var_list, var_t **ic, uint32_t *icp, 
         } else if (ptn_cmp(tcbuf, &pc, TcIf, TcStop)) {
             if_control(tcbuf, &pc, var_list, ic, icp);
 
+        } else if (ptn_cmp(tcbuf, &pc, TcLabel, TcRArrow, TcLabel, TcSqBrOpn, TcLabel, TcSqBrCls, TcRArrow, TcLabel, TcLF)) {
+            put_ic(ic, icp, OpFilter, &var_list[tmpvars[0]], &var_list[tmpvars[1]], &var_list[tmpvars[2]], &var_list[tmpvars[3]]);
+
         } else if (ptn_cmp(tcbuf, &pc, TcExit, TcLF)) {
             put_ic(ic, icp, OpExit, 0, 0, 0, 0);
 

@@ -6,6 +6,8 @@
 
 #include "sound.h"
 #include "track/track.h"
+#include "filter/filter.h"
+#include "filter/fade.h"
 #include "oscillator/oscillator.h"
 #include "../error/error.h"
 
@@ -126,6 +128,21 @@ void play(double freq, double second, uint8_t velocity,
 
     if (velocity != 0) {
         write_wave(s->wave, t, freq, length, sampling_freq, 1, 1);
+
+        FILTER ftr = s->next_ftr;
+        while (ftr != NULL) {
+            switch (ftr->filter_num) {
+            case FADE_IN:
+                fade_in(t, length, ftr->param, sampling_freq);
+                break;
+            case FADE_OUT:
+                fade_out(t, length, ftr->param, sampling_freq);
+                break;
+            default:
+                call_exception(SOUND_PLAYER_EXCEPTION);
+            }
+            ftr = ftr->next_ftr;
+        }
     }
     
     printf("[Play] ");

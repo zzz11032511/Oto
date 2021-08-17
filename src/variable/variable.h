@@ -7,7 +7,8 @@ enum TYPE {
     TyVoid = 0,
     TyConst,
     TyFloat,
-    TySound
+    TySound,
+    TyFilter
 };
 
 typedef struct var {

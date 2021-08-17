@@ -12,6 +12,7 @@
 #include "../variable/variable.h"
 #include "../sound/sound.h"
 #include "../sound/sound_io.h"
+#include "../sound/filter/filter.h"
 
 #define NEXT_OPERATION(icp) icp += 5; continue;
 
@@ -165,6 +166,23 @@ void exec(var_t **ic, var_t *var, tokenbuf_t *tcbuf) {
                 0,
                 sampling_freq
             );
+            NEXT_OPERATION(icp);
+
+        case OpFilter:
+            // 新しいsoundの定義
+            if (icp[1]->type == TySound) {
+                icp[4]->value.pVal = new_sound(((SOUND)icp[1]->value.pVal)->wave);
+            } else if (icp[1]->type == TyFloat || icp[1]->type == TyConst) {
+                icp[4]->value.pVal = new_sound((int32_t)icp[1]->value.fVal);
+            } else {
+                call_exception(TYPE_EXCEPTION);
+            }
+            icp[4]->type = TySound;
+            
+            // フィルタの接続
+            ((SOUND)icp[4]->value.pVal)->next_ftr = new_filter((int32_t)icp[2]->value.fVal);
+            // パラメータの設定
+            ((SOUND)icp[4]->value.pVal)->next_ftr->param = icp[3]->value.fVal;
             NEXT_OPERATION(icp);
 
         case OpExit:

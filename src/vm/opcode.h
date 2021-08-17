@@ -37,6 +37,7 @@ enum OP_CODE {
     OpDefS,       // Soundの定義
     OpBeep,       // ビープ音の出力
     OpPlay,       // 音の出力
+    OpFilter,     // FilterをSoundにつなぐ
     
     OpExit        // 終了
 };

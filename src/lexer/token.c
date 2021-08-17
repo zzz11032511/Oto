@@ -10,6 +10,7 @@
 #include "../error/error.h"
 #include "../utils/util.h"
 #include "../variable/variable.h"
+#include "../sound/filter/filter.h"
 
 /* 予約語一覧 */
 struct rsvword {
@@ -157,13 +158,13 @@ uint32_t get_tc(tokenbuf_t *tcbuf, var_t *var_list, str_t s, uint32_t len, uint3
     return i;
 }
 
-/* あらかじめ定義しておく定数 */
-struct init_define_values {
+/* 最初に定義しておく定数 */
+struct init_define_consts {
     str_t s;
     double val;
 };
 
-static const struct init_define_values defs[] = {
+static const struct init_define_consts def_consts[] = {
     {"SINE",         0},
     {"SAWTOOTH",     1},
     {"SQUARE",       2},
@@ -171,21 +172,52 @@ static const struct init_define_values defs[] = {
     {"PSG_SAWTOOTH", 4},
     {"PSG_SQUARE",   5},
     {"PSG_TRIANGLE", 6},
-    {"WHITE_NOISE",  7}
+    {"WHITE_NOISE",  7},
+    {"FADE_IN",  0},
+    {"FADE_OUT", 1},
 };
 
-void init_define(tokenbuf_t *tcbuf, var_t *var_list) {
-    int32_t num_of_defs = GET_ARRAY_LENGTH(defs);
+void init_define_consts(tokenbuf_t *tcbuf, var_t *var_list) {
+    int32_t num_of_defs = GET_ARRAY_LENGTH(def_consts);
     for (int32_t i = 0; i < num_of_defs; i++) {
         uint32_t tc = get_tc(
             tcbuf,
             var_list,
-            defs[i].s,
-            count_string_size(defs[i].s, '\0'),
+            def_consts[i].s,
+            count_string_size(def_consts[i].s, '\0'),
             TyVoid
         );
         var_list[tc].type       = TyConst;
-        var_list[tc].value.fVal = defs[i].val;
+        var_list[tc].value.fVal = def_consts[i].val;
+    }
+}
+
+/**
+ *  最初に定義しておくフィルタ
+ *  フィルタの詳しい実装は後で考える
+ */
+struct init_define_filters {
+    str_t s;
+    int32_t filter_num;
+};
+
+static const struct init_define_filters def_filters[] = {
+    {"FADE_IN",  0},
+    {"FADE_OUT", 1},
+};
+
+void init_define_filters(tokenbuf_t *tcbuf, var_t *var_list) {
+    int32_t num_of_defs = GET_ARRAY_LENGTH(def_filters);
+    for (int32_t i = 0; i < num_of_defs; i++) {
+        uint32_t tc = get_tc(
+            tcbuf,
+            var_list,
+            def_filters[i].s,
+            count_string_size(def_filters[i].s, '\0'),
+            TyVoid
+        );
+        var_list[tc].type       = TyFilter;
+        var_list[tc].value.pVal = NULL;
     }
 }
 
@@ -195,6 +227,7 @@ static const str_t symbols = "\n , : [ ] ( ) <- -> = + - * / % == != < >= <= > b
 void init_token(tokenbuf_t *tcbuf, var_t *var_list) {
     uint32_t size = count_string_size(symbols, '\0');
     lexer(symbols, size, tcbuf, var_list);
-    init_define(tcbuf, var_list);
+    init_define_consts(tcbuf, var_list);
+    // init_define_filters(tcbuf, var_list);
     init_done = 1;
 }
