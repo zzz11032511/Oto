@@ -6,7 +6,7 @@ SRCSLIST := main.c run.c \
 			variable/var_stack.c variable/variable.c \
 			parser/compile.c parser/control.c parser/expr.c \
 			vm/exec.c  vm/alu.c \
-			sound/sound_io.c sound/sound.c \
+			sound/sound_io.c sound/sound.c sound/wave_out.c \
 			sound/track/track.c \
 			sound/oscillator/oscillator.c sound/oscillator/wave.c \
 			sound/filter/filter.c sound/filter/fade.c

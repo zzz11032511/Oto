@@ -5,6 +5,7 @@
 #include <math.h>
 
 #include "sound.h"
+#include "wave_out.h"
 #include "track/track.h"
 #include "filter/filter.h"
 #include "filter/fade.h"
@@ -150,6 +151,15 @@ void play(double freq, double second, uint8_t velocity,
            freq, second, velocity, s->wave);
 
     play_track(t, sampling_freq, velocity);
+
+    // テスト用
+    MONO_PCM a = {
+        sampling_freq,
+        QUANTIZATION_BIT_RATE,
+        length,
+        t->data
+    };
+    mono_wave_write(&a, "aaa.wav");
 
     free_track(t);
 }
