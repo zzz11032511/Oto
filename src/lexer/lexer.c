@@ -95,11 +95,11 @@ uint32_t lexer(str_t s, uint32_t fsize, tokenbuf_t *tcbuf, var_t *var_list) {
             i++;
             continue;
 
-        } else if (s[i] == '#') {
-            while (!(s[i] == '\n')) {
+        } else if (s[i] == '/' && s[i + 1] == '*') {
+            while (!(s[i] == '*' && s[i + 1] == '/')) {
                 i++;
             }
-            i++;
+            i = i + 2;
             continue;
         }
 
