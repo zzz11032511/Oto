@@ -8,7 +8,6 @@
 #include "wave_out.h"
 #include "track/track.h"
 #include "filter/filter.h"
-#include "filter/fade.h"
 #include "oscillator/oscillator.h"
 #include "../error/error.h"
 
@@ -139,6 +138,9 @@ void play(double freq, double second, uint8_t velocity,
                 break;
             case FADE_OUT:
                 fade_out(t, length, ftr->param, sampling_freq);
+                break;
+            case TREMOLO:
+                tremolo(t, length, ftr->param, sampling_freq);
                 break;
             default:
                 call_exception(SOUND_PLAYER_EXCEPTION);

@@ -10,7 +10,6 @@
 #include "../error/error.h"
 #include "../utils/util.h"
 #include "../variable/variable.h"
-#include "../sound/filter/filter.h"
 
 /* 予約語一覧 */
 struct rsvword {
@@ -175,6 +174,7 @@ static const struct init_define_consts def_consts[] = {
     {"WHITE_NOISE",  7},
     {"FADE_IN",  0},
     {"FADE_OUT", 1},
+    {"TREMOLO",  2},
 };
 
 void init_define_consts(tokenbuf_t *tcbuf, var_t *var_list) {
@@ -204,6 +204,7 @@ struct init_define_filters {
 static const struct init_define_filters def_filters[] = {
     {"FADE_IN",  0},
     {"FADE_OUT", 1},
+    {"TREMOLO",  2},
 };
 
 void init_define_filters(tokenbuf_t *tcbuf, var_t *var_list) {

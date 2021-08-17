@@ -9,7 +9,7 @@ SRCSLIST := main.c run.c \
 			sound/sound_io.c sound/sound.c sound/wave_out.c \
 			sound/track/track.c \
 			sound/oscillator/oscillator.c sound/oscillator/wave.c \
-			sound/filter/filter.c sound/filter/fade.c
+			sound/filter/filter.c sound/filter/fade.c sound/filter/tremolo.c
 
 PROGRAM       := oto
 DEBUGPROGRAM  := debug
