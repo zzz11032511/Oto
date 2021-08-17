@@ -41,6 +41,7 @@ bool_t is_varname_available(unsigned char c) {
     if ('a' <= c && c <= 'z') return 1;
     if ('A' <= c && c <= 'Z') return 1;
     if (c == '_') return 1;
+    if (c == '#') return 1;
     return 0;
 }
 
