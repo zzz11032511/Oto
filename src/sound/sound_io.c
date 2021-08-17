@@ -153,6 +153,7 @@ void play(double freq, double second, uint8_t velocity,
     play_track(t, sampling_freq, velocity);
 
     // テスト用
+#ifdef DEBUG
     MONO_PCM a = {
         sampling_freq,
         QUANTIZATION_BIT_RATE,
@@ -160,6 +161,7 @@ void play(double freq, double second, uint8_t velocity,
         t->data
     };
     mono_wave_write(&a, "aaa.wav");
+#endif
 
     free_track(t);
 }

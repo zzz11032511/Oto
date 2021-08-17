@@ -48,7 +48,11 @@ static const struct opcode_t opcodes[] = {
     {"Exit",    OpExit    },
 };
 
-void print_var_name(tokenbuf_t *tcbuf, uint32_t tc) {
+void print_var_name(tokenbuf_t *tcbuf, uint32_t tc, int32_t field_width) {
+    int32_t blank = (int32_t)(field_width - tcbuf->conv_tokens[tc]->tl);
+    for (int32_t i = 0; i < blank; i++) {
+        printf(" ");
+    }
     for (int32_t i = 0; i < tcbuf->conv_tokens[tc]->tl; i++) {
         printf("%c", tcbuf->conv_tokens[tc]->ts[i]);
     }
@@ -59,7 +63,7 @@ void print_token_name(tokenbuf_t *tcbuf, uint32_t tc, uint32_t idx) {
         printf("tc[%d] : \\n", idx);
     } else {
         printf("tc[%d] : ", idx);
-        print_var_name(tcbuf, tc);
+        print_var_name(tcbuf, tc, 0);
     }
     printf("\n");
 }
@@ -76,11 +80,11 @@ void print_opcodes(tokenbuf_t *tcbuf, var_t **ic) {
 
         for (int32_t i = 1; i <= 4; i++) {
             if ((OpLoop <= op && op <= OpJnz) && i == 1) {
-                printf("%I64u", (uint64_t)p[i]);
+                printf("%14I64u", (uint64_t)p[i]);
             } else if (p[i] == 0) {
                 break;
             } else {
-                print_var_name(tcbuf, p[i]->tc);
+                print_var_name(tcbuf, p[i]->tc, 14);
             }
             printf("    ");
         }
@@ -119,7 +123,7 @@ void print_rpn_tc(tokenbuf_t *tcbuf, uint32_t *rpn_tc_list, uint32_t len) {
     printf("rpn : ");
     for (int32_t i = 0; i < len; i++) {
         uint32_t tc = rpn_tc_list[i];
-        print_var_name(tcbuf, tc);      
+        print_var_name(tcbuf, tc, 0);      
     }
     printf("\n");
 }
