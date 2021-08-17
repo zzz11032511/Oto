@@ -139,6 +139,9 @@ void play(double freq, double second, uint8_t velocity,
             case FADE_OUT:
                 fade_out(t, length, ftr->param, sampling_freq);
                 break;
+            case AMP:
+                amp(t, length, ftr->param, sampling_freq);
+                break;
             case TREMOLO:
                 tremolo(t, length, ftr->param, sampling_freq);
                 break;

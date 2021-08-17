@@ -9,6 +9,7 @@
 enum FILTER_NUMBER {
     FADE_IN,
     FADE_OUT,
+    AMP,
     TREMOLO
 };
 
@@ -27,3 +28,6 @@ void fade_out(TRACK t, uint64_t length, double time, int32_t sampling_freq);
 
 /* tremolo.c */
 void tremolo(TRACK t, uint64_t length, double speed, int32_t sampling_freq);
+
+/* amp.c */
+void amp(TRACK t, uint64_t length, double times, int32_t sampling_freq);
