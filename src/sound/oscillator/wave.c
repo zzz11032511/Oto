@@ -27,7 +27,7 @@ double sawtooth_wave_func(int32_t n, double freq, uint32_t arity) {
 double square_wave_func(int32_t n, double freq, uint32_t arity) {
     double s = 0;
     for (uint32_t i = 1; i <= arity; i = i + 2) {
-        s += 1.0 / i * sine_wave_func(n, i * freq, 0);
+        s += 1.0 / (double)i * sine_wave_func(n, i * freq, 0);
     }
     return s;
 }

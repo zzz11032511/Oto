@@ -127,7 +127,7 @@ void play(double freq, double second, uint8_t velocity,
     TRACK t = new_track(length);
 
     if (velocity != 0) {
-        write_wave(s->wave, t, freq, length, sampling_freq, 1, 1);
+        write_wave(s->wave, t, freq, length, sampling_freq, 0, 1);
 
         FILTER ftr = s->next_ftr;
         while (ftr != NULL) {

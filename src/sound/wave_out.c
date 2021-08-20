@@ -59,18 +59,9 @@ void mono_wave_write(MONO_PCM *pcm, str_t filename)
     fwrite(&fmt_bits_per_sample, 2, 1, fp);
     fwrite(data_chunk_ID, 1, 4, fp);
     fwrite(&data_chunk_size, 4, 1, fp);
-    
-    double s = 0;
+
     for(int32_t i = 0; i < pcm->length; i++){
-        s = (pcm->s[i] + 1.0) / 2.0 * 65536.0;
-        
-        if (s > 65535.0) {
-            s = 65535.0;
-        } else if (s < 0.0) {
-            s = 0.0;
-        }
-        
-        int16_t data = (short)(s + 0.5) - 32768;
+        int16_t data = pcm->s[i] * 30000;
         fwrite(&data, 2, 1, fp);
     }
     
