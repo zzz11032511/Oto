@@ -143,17 +143,20 @@ void exec(var_t **ic, var_t *var, tokenbuf_t *tcbuf) {
             }
             NEXT_OPERATION(icp);
 
-        case OpPrint:
-            print_var(*icp[1]);
-            NEXT_OPERATION(icp);
-
         case OpDefS:
             icp[1]->value.pVal = new_sound((int32_t)icp[2]->value.fVal);
             icp[1]->type = TySound;
             NEXT_OPERATION(icp);
 
         case OpBeep:
-            Beep((uint64_t)icp[1]->value.fVal, (uint64_t)(icp[2]->value.fVal * 1000));
+            t1 = vpop(&stack);
+            t2 = vpop(&stack);
+            Beep((uint64_t)t2.value.fVal, (uint64_t)(t1.value.fVal * 1000));
+            NEXT_OPERATION(icp);
+
+        case OpPrint:
+            t1 = vpop(&stack);
+            print_var(t1);
             NEXT_OPERATION(icp);
 
         case OpPlay:
@@ -173,21 +176,21 @@ void exec(var_t **ic, var_t *var, tokenbuf_t *tcbuf) {
         case OpFilter:
             // 新しいsoundの定義
             // TODO: freeできてないのでどうにかする
-            if (icp[1]->type == TySound) {
-                icp[4]->value.pVal = new_sound(((SOUND)icp[1]->value.pVal)->wave);
-            } else {
-                call_exception(TYPE_EXCEPTION);
-            }
-            icp[4]->type = TySound;
+            // if (icp[1]->type == TySound) {
+            //     icp[4]->value.pVal = new_sound(((SOUND)icp[1]->value.pVal)->wave);
+            // } else {
+            //     call_exception(TYPE_EXCEPTION);
+            // }
+            // icp[4]->type = TySound;
             
-            // フィルタの接続
-            ((SOUND)icp[4]->value.pVal)->next_ftr = new_filter((int32_t)icp[2]->value.fVal);
-            // パラメータの設定
-            ((SOUND)icp[4]->value.pVal)->next_ftr->param = icp[3]->value.fVal;
+            // // フィルタの接続
+            // ((SOUND)icp[4]->value.pVal)->next_ftr = new_filter((int32_t)icp[2]->value.fVal);
+            // // パラメータの設定
+            // ((SOUND)icp[4]->value.pVal)->next_ftr->param = icp[3]->value.fVal;
             
-            if (((SOUND)icp[1]->value.pVal)->next_ftr != NULL) {
-                ((SOUND)icp[4]->value.pVal)->next_ftr->next_ftr = ((SOUND)icp[1]->value.pVal)->next_ftr;
-            }
+            // if (((SOUND)icp[1]->value.pVal)->next_ftr != NULL) {
+            //     ((SOUND)icp[4]->value.pVal)->next_ftr->next_ftr = ((SOUND)icp[1]->value.pVal)->next_ftr;
+            // }
             
             NEXT_OPERATION(icp);
 

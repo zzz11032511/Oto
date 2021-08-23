@@ -6,13 +6,12 @@
 #include "../variable/variable.h"
 
 /* トークン比較関連のマクロ */
-#define IS_RSVWORD(tc)        (TcBegin <= tc) && (tc <= TcEnd)
-#define IS_VALID_NAME(tc)     tc > TcExit
-#define IS_SYMBOL(tc)         (TcLF <= tc) && (tc < TcBegin)
-#define IS_NOT_SYMBOL(tc)     tc >= TcBegin
-#define IS_ARITH_OPERATOR(tc) (TcPlus <= tc) && (tc < TcGt)
-#define IS_OPERATION(tc)      ((TcPlus <= tc && tc <= TcGt) || (TcAnd <= tc && tc <= TcOr))
-
+#define IS_RSVWORD(tc)        ((TcBegin <= tc) && (tc <= TcEnd))
+#define IS_VALID_NAME(tc)     (tc > TcExit)
+#define IS_SYMBOL(tc)         ((TcLF <= tc) && (tc < TcBegin))
+#define IS_NOT_SYMBOL(tc)     (tc >= TcBegin)
+#define IS_STATEMENT(tc)      ((TcPlay <= tc) && (tc <= TcBeep))
+#define IS_ARITH_OPERATOR(tc) ((TcPlus <= tc && tc <= TcGt) || (TcAnd <= tc && tc <= TcOr))
 
 /* compile.c */
 /* ic[]に書き込むための関数 */

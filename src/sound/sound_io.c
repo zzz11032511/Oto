@@ -126,31 +126,31 @@ void play(double freq, double second, uint8_t velocity,
     }
     TRACK t = new_track(length);
 
-    if (velocity != 0) {
-        write_wave(s->wave, t, freq, length, sampling_freq, 0, 1);
+    // if (velocity != 0) {
+    //     write_wave(s->wave, t, freq, length, sampling_freq, 0, 1);
 
-        FILTER ftr = s->next_ftr;
-        while (ftr != NULL) {
-            // フィルターを処理していく
-            switch (ftr->filter_num) {
-            case FADE_IN:
-                fade_in(t, length, ftr->param, sampling_freq);
-                break;
-            case FADE_OUT:
-                fade_out(t, length, ftr->param, sampling_freq);
-                break;
-            case AMP:
-                amp(t, length, ftr->param, sampling_freq);
-                break;
-            case TREMOLO:
-                tremolo(t, length, ftr->param, sampling_freq);
-                break;
-            default:
-                call_exception(SOUND_PLAYER_EXCEPTION);
-            }
-            ftr = ftr->next_ftr;
-        }
-    }
+    //     FILTER ftr = s->next_ftr;
+    //     while (ftr != NULL) {
+    //         // フィルターを処理していく
+    //         switch (ftr->filter_num) {
+    //         case FADE_IN:
+    //             fade_in(t, length, ftr->param, sampling_freq);
+    //             break;
+    //         case FADE_OUT:
+    //             fade_out(t, length, ftr->param, sampling_freq);
+    //             break;
+    //         case AMP:
+    //             amp(t, length, ftr->param, sampling_freq);
+    //             break;
+    //         case TREMOLO:
+    //             tremolo(t, length, ftr->param, sampling_freq);
+    //             break;
+    //         default:
+    //             call_exception(SOUND_PLAYER_EXCEPTION);
+    //         }
+    //         ftr = ftr->next_ftr;
+    //     }
+    // }
     
     printf("[Play] ");
     printf("frequency : %8.3f, length : %2.2f, velocity : %3d, wave : %3d\n", 

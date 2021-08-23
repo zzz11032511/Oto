@@ -119,7 +119,7 @@ int32_t rpn(tokenbuf_t *tcbuf, uint32_t start, uint32_t end, uint32_t *rpn_tc, u
 
             pc += end1 - start1;  // ()の中の分だけ進める
 
-        } else if (IS_OPERATION(tc)) {
+        } else if (IS_ARITH_OPERATOR(tc)) {
             if (is_before_op) {
                 call_error(INVALID_SYNTAX_ERROR);
             } else {
@@ -176,7 +176,7 @@ void expr(tokenbuf_t *tcbuf, uint32_t *pc, uint32_t end, var_t *var_list, var_t 
     for (uint32_t i = 0; i < rpn_tc_len; i++) {
         uint32_t tc = rpn_tc[i];
 
-        if (IS_OPERATION(tc)) {
+        if (IS_ARITH_OPERATOR(tc)) {
             // tcが演算子のときはputIc()する
             uint32_t op = tc2op(tc);
 

@@ -38,18 +38,16 @@ bool_t ptn_cmp(tokenbuf_t *tcbuf, uint32_t pc, uint32_t pattern, ...) {
     uint32_t ptn_tc = pattern;
 
     reset_tmpvars();
-    while (ptn_tc != NULL) {
+    while (ptn_tc != PtnStop) {
         uint32_t tc = tcbuf->tc_list[pc];
 
-        if (ptn_tc == PtnStop) {
-            break;
-        }
-
         if (tc == ptn_tc) {
-            // 何もしない
+            // パターンが一致した場合
+        } else if (ptn_tc == PtnImpr && IS_STATEMENT(tc)) {
+            // 命令だった場合
         } else if (ptn_tc == PtnLabel && IS_NOT_SYMBOL(tc)) {
             tmpvars[vp++] = tc;
-        } else if (ptn_tc == PtnExpr) {
+        }else if (ptn_tc == PtnExpr) {
             break;
         } else {
             va_end(ap);
@@ -84,12 +82,12 @@ void compile_sub(tokenbuf_t *tcbuf, var_t *var_list, var_t **ic, uint32_t *icp, 
     uint32_t pc = start;
 
     while (pc < end) {
-        if (ptn_cmp(tcbuf, pc, TcImport, TcSqBrOpn, PtnLabel, TcSqBrCls, TcLF)) {
+        if (ptn_cmp(tcbuf, pc, TcImport, TcSqBrOpn, PtnLabel, TcSqBrCls, TcLF, PtnStop)) {
             // import文は読み飛ばす
         } else if (tcbuf->tc_list[pc] == TcLF) {
             pc++;
 
-        } else if (ptn_cmp(tcbuf, pc, TcDefine, PtnLabel, TcColon, PtnLabel, TcLF)) {
+        } else if (ptn_cmp(tcbuf, pc, TcDefine, PtnLabel, TcColon, PtnLabel, TcLF, PtnStop)) {
             /* define <label> : <const> */
             if (var_list[tmpvars[2]].type != TyConst) {
                 call_error(DEFINE_ERROR);
@@ -99,70 +97,71 @@ void compile_sub(tokenbuf_t *tcbuf, var_t *var_list, var_t **ic, uint32_t *icp, 
             var_list[tmpvars[1]].value.fVal = var_list[tmpvars[2]].value.fVal;
             pc += 5;
 
-        } else if (ptn_cmp(tcbuf, &pc, PtnLabel, TcEqu, PtnLabel, TcLF)) {
+        } else if (ptn_cmp(tcbuf, pc, PtnLabel, TcEqu, PtnLabel, TcLF, PtnStop)) {
             /* <var> = <var> */
             check_assignment_error(tcbuf, var_list);
             put_ic(ic, icp, OpCpyD, &var_list[tmpvars[1]], &var_list[tmpvars[2]], 0, 0);
             pc += 4;
 
-        } else if (ptn_cmp(tcbuf, &pc, PtnLabel, TcEqu, PtnLabel, TcPlus, PtnLabel, TcLF)) {
+        } else if (ptn_cmp(tcbuf, pc, PtnLabel, TcEqu, PtnLabel, TcPlus, PtnLabel, TcLF, PtnStop)) {
             /* <var> = <var> % <var> */
             check_assignment_error(tcbuf, var_list);
             put_ic(ic, icp, OpAdd2, 
                    &var_list[tmpvars[1]], &var_list[tmpvars[2]], &var_list[tmpvars[3]], 0);
             pc += 6;
         
-        } else if (ptn_cmp(tcbuf, &pc, PtnLabel, TcEqu, PtnLabel, TcMinus, PtnLabel, TcLF)) {
+        } else if (ptn_cmp(tcbuf, pc, PtnLabel, TcEqu, PtnLabel, TcMinus, PtnLabel, TcLF, PtnStop)) {
             /* <var> = <var> % <var> */
             check_assignment_error(tcbuf, var_list);
             put_ic(ic, icp, OpSub2, 
                    &var_list[tmpvars[1]], &var_list[tmpvars[2]], &var_list[tmpvars[3]], 0);
             pc += 6;
 
-        } else if (ptn_cmp(tcbuf, &pc, PtnLabel, TcEqu, PtnLabel, TcAster, PtnLabel, TcLF)) {
+        } else if (ptn_cmp(tcbuf, pc, PtnLabel, TcEqu, PtnLabel, TcAster, PtnLabel, TcLF, PtnStop)) {
             /* <var> = <var> % <var> */
             check_assignment_error(tcbuf, var_list);
             put_ic(ic, icp, OpMul2, 
                    &var_list[tmpvars[1]], &var_list[tmpvars[2]], &var_list[tmpvars[3]], 0);
             pc += 6;
 
-        } else if (ptn_cmp(tcbuf, &pc, PtnLabel, TcEqu, PtnLabel, TcSlash, PtnLabel, TcLF)) {
+        } else if (ptn_cmp(tcbuf, pc, PtnLabel, TcEqu, PtnLabel, TcSlash, PtnLabel, TcLF, PtnStop)) {
             /* <var> = <var> % <var> */
             check_assignment_error(tcbuf, var_list);
             put_ic(ic, icp, OpDiv2, 
                    &var_list[tmpvars[1]], &var_list[tmpvars[2]], &var_list[tmpvars[3]], 0);
             pc += 6;
 
-        } else if (ptn_cmp(tcbuf, &pc, PtnLabel, TcEqu, PtnLabel, TcPerce, PtnLabel, TcLF)) {
+        } else if (ptn_cmp(tcbuf, pc, PtnLabel, TcEqu, PtnLabel, TcPerce, PtnLabel, TcLF, PtnStop)) {
             /* <var> = <var> % <var> */
             check_assignment_error(tcbuf, var_list);
             put_ic(ic, icp, OpMod2, 
                    &var_list[tmpvars[1]], &var_list[tmpvars[2]], &var_list[tmpvars[3]], 0);
             pc += 6;
 
-        } else if (ptn_cmp(tcbuf, &pc, PtnLabel, TcEqu, PtnExpr)) {
+        } else if (ptn_cmp(tcbuf, pc, PtnLabel, TcEqu, PtnExpr)) {
             /* <var> = <expr> */
             check_assignment_error(tcbuf, var_list);
             pc += 2;  /* 式の先頭までpcを進める */
             expr(tcbuf, &pc, 0, var_list, ic, icp);
             put_ic(ic, icp, OpCpyP, &var_list[tmpvars[1]], 0, 0, 0);
 
-        } else if (ptn_cmp(tcbuf, &pc, PtnImpr, PtnStop)) {
+        } else if (ptn_cmp(tcbuf, pc, PtnImpr, PtnStop)) {
             /* <imperative> <arg1>, <arg2>, ... */
+            compile_statement(tcbuf, &pc, var_list, ic, icp);
 
-        } else if (ptn_cmp(tcbuf, &pc, TcLoop, PtnStop)) {
+        } else if (ptn_cmp(tcbuf, pc, TcLoop, PtnStop)) {
             /* loop */
             loop_control(tcbuf, &pc, var_list, ic, icp);
 
-        } else if (ptn_cmp(tcbuf, &pc, TcIf, PtnStop)) {
+        } else if (ptn_cmp(tcbuf, pc, TcIf, PtnStop)) {
             /* if */
             if_control(tcbuf, &pc, var_list, ic, icp);
 
-        } else if (ptn_cmp(tcbuf, &pc, TcExit, TcLF)) {
+        } else if (ptn_cmp(tcbuf, pc, TcExit, TcLF, PtnStop)) {
             put_ic(ic, icp, OpExit, 0, 0, 0, 0);
             pc += 2;
 
-        } else if (ptn_cmp(tcbuf, &pc, PtnLabel, TcLF)) {
+        } else if (ptn_cmp(tcbuf, pc, PtnLabel, TcLF, PtnStop)) {
             pc += 2;
 
         } else {
@@ -198,7 +197,6 @@ void compile_args(tokenbuf_t *tcbuf, uint32_t *pc, var_t *var_list, var_t **ic, 
 
         (*pc)++;
         tc = tcbuf->tc_list[*pc];
-
         if (tc == TcComma) {
             (*pc)++;
             tc = tcbuf->tc_list[*pc];
@@ -211,6 +209,7 @@ void compile_args(tokenbuf_t *tcbuf, uint32_t *pc, var_t *var_list, var_t **ic, 
 
         params++;
     }
+
 }
 
 void compile_statement(tokenbuf_t *tcbuf, uint32_t *pc, var_t *var_list, var_t **ic, uint32_t *icp) {
@@ -221,14 +220,17 @@ void compile_statement(tokenbuf_t *tcbuf, uint32_t *pc, var_t *var_list, var_t *
         ppc++;
         compile_args(tcbuf, &ppc, var_list, ic, icp, 2);
         put_ic(ic, icp, OpBeep, 0, 0, 0, 0);
+        break;
     case TcPrint:
         ppc++;
         compile_args(tcbuf, &ppc, var_list, ic, icp, 1);
         put_ic(ic, icp, OpPrint, 0, 0, 0, 0);
+        break;
     case TcPlay:
         ppc++;
         compile_args(tcbuf, &ppc, var_list, ic, icp, 4);
         put_ic(ic, icp, OpPlay, 0, 0, 0, 0);
+        break;
     }
 
     *pc = ppc;
