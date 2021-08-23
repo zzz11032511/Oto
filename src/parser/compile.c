@@ -4,8 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "control.h"
-#include "expr.h"
+#include "parser.h"
 #include "../error/error.h"
 #include "../debug/debug.h"
 #include "../utils/util.h"
@@ -16,67 +15,51 @@
 #include "../variable/variable.h"
 
 /* トークンの識別子 */ 
-#define TcExpr         -1    // 式
-#define TcLabel        -2    // 識別子(変数やラベル)
-#define TcOperator     -3    // 演算子
-#define TcString       -4    // 文字列
-#define TcStop         -99   // 都合により構文評価を止めたいとき
+#define PtnLabel        -1    // 変数かラベル
+#define PtnExpr         -2    // 式
+#define PtnImpr         -3    // 命令
+#define PtnStop         -99   // 都合により構文評価を止めたいとき
 
-#define TMPVARS_LENGTH 5
+#define TMPVARS_LENGTH 6
 uint32_t tmpvars[TMPVARS_LENGTH];  // put_ic()で指定するTcを入れる
-int32_t  vp = 0;   // tmpvarsへのポインタ
+uint32_t vp = 1;   // tmpvarsへのポインタ(1が先頭)
 
 void reset_tmpvars() {
     for (int32_t i = 0; i < TMPVARS_LENGTH; i++) {
         tmpvars[i] = 0;
     }
-    vp = 0;
+    vp = 1;
 }
 
-/* 引数に渡されたトークンのパターンと実際のコードが一致しているかを調べる */
-bool_t ptn_cmp(tokenbuf_t *tcbuf, uint32_t *pc, int32_t pattern, ...) {
+bool_t ptn_cmp(tokenbuf_t *tcbuf, uint32_t pc, uint32_t pattern, ...) {
     va_list ap;
     va_start(ap, pattern);
 
-    uint32_t ppc   = *pc;      // 最初のpcを保存しておく
-    int32_t ptn_tc = pattern;
+    uint32_t ptn_tc = pattern;
 
     reset_tmpvars();
-    while (1) {
-        int32_t tc = tcbuf->tc_list[*pc];
+    while (ptn_tc != NULL) {
+        uint32_t tc = tcbuf->tc_list[pc];
 
-        if (ptn_tc == TcLF && tc == TcLF) {
-            (*pc)++;
+        if (ptn_tc == PtnStop) {
             break;
-        } 
-        if (ptn_tc == TcStop) {
-            (*pc) = ppc;       
-            va_end(ap);
-            return true;              
         }
 
         if (tc == ptn_tc) {
-            // 既にあるトークンと一致した
-
-        } else if (ptn_tc == TcLabel && tc >= TcBegin) {
+            // 何もしない
+        } else if (ptn_tc == PtnLabel && IS_NOT_SYMBOL(tc)) {
             tmpvars[vp++] = tc;
-
-        } else if (ptn_tc == TcExpr) {
-            (*pc) = ppc;
-            va_end(ap);
-            return true;                
-
+        } else if (ptn_tc == PtnExpr) {
+            break;
         } else {
-            (*pc) = ppc;
             va_end(ap);
             return false;
         }
-        ptn_tc = va_arg(ap, int32_t);
-        (*pc)++;
+        ptn_tc = va_arg(ap, uint32_t);
+        pc++;
     }
 
     va_end(ap);
-
     return true;
 }
 
@@ -89,105 +72,169 @@ void put_ic(var_t **ic, uint32_t *icp, uint32_t op, var_t *v1, var_t *v2, var_t 
 }
 
 void check_assignment_error(tokenbuf_t *tcbuf, var_t *var_list) {
-    if (var_list[tmpvars[0]].type == TyConst) {
+    if (var_list[tmpvars[1]].type == TyConst) {
         call_error(ASSIGN_TO_LITERAL_ERROR);
-    } else if (is_rsvword_tc(tcbuf, tmpvars[0]) || is_rsvword_tc(tcbuf, tmpvars[1]) 
-               || is_rsvword_tc(tcbuf, tmpvars[2])) {
+    } else if (IS_RSVWORD(tmpvars[1]) || IS_RSVWORD(tmpvars[2]) 
+               || IS_RSVWORD(tmpvars[3]) || IS_RSVWORD(tmpvars[4])) {
         call_error(NAME_ERROR);
     }
 }
 
 void compile_sub(tokenbuf_t *tcbuf, var_t *var_list, var_t **ic, uint32_t *icp, uint32_t start, uint32_t end) {
-    // プログラムカウンタ
     uint32_t pc = start;
 
     while (pc < end) {
-        if (ptn_cmp(tcbuf, &pc, TcImport, TcSqBrOpn, TcLabel, TcSqBrCls, TcLF)) {
+        if (ptn_cmp(tcbuf, pc, TcImport, TcSqBrOpn, PtnLabel, TcSqBrCls, TcLF)) {
             // import文は読み飛ばす
         } else if (tcbuf->tc_list[pc] == TcLF) {
             pc++;
 
-        } else if (ptn_cmp(tcbuf, &pc, TcDefine, TcLabel, TcColon, TcLabel, TcLF)) {
-            if (var_list[tmpvars[1]].type != TyConst) {
+        } else if (ptn_cmp(tcbuf, pc, TcDefine, PtnLabel, TcColon, PtnLabel, TcLF)) {
+            /* define <label> : <const> */
+            if (var_list[tmpvars[2]].type != TyConst) {
                 call_error(DEFINE_ERROR);
             }
             check_assignment_error(tcbuf, var_list);
-            var_list[tmpvars[0]].type = TyConst;
-            var_list[tmpvars[0]].value.fVal = var_list[tmpvars[1]].value.fVal;
-        
-        } else if (ptn_cmp(tcbuf, &pc, TcLabel, TcEqu, TcSound, TcSqBrOpn, TcLabel, TcSqBrCls, TcLF)) {
-            check_assignment_error(tcbuf, var_list);
-            put_ic(ic, icp, OpDefS, &var_list[tmpvars[0]], &var_list[tmpvars[1]], 0, 0);
+            var_list[tmpvars[1]].type = TyConst;
+            var_list[tmpvars[1]].value.fVal = var_list[tmpvars[2]].value.fVal;
+            pc += 5;
 
-        } else if (ptn_cmp(tcbuf, &pc, TcLabel, TcEqu, TcLabel, TcLF)) {
+        } else if (ptn_cmp(tcbuf, &pc, PtnLabel, TcEqu, PtnLabel, TcLF)) {
+            /* <var> = <var> */
             check_assignment_error(tcbuf, var_list);
-            put_ic(ic, icp, OpCpyD, &var_list[tmpvars[0]], &var_list[tmpvars[1]], 0, 0);
+            put_ic(ic, icp, OpCpyD, &var_list[tmpvars[1]], &var_list[tmpvars[2]], 0, 0);
+            pc += 4;
 
-        } else if (ptn_cmp(tcbuf, &pc, TcLabel, TcEqu, TcLabel, TcPlus, TcLabel, TcLF)) {
+        } else if (ptn_cmp(tcbuf, &pc, PtnLabel, TcEqu, PtnLabel, TcPlus, PtnLabel, TcLF)) {
+            /* <var> = <var> % <var> */
             check_assignment_error(tcbuf, var_list);
             put_ic(ic, icp, OpAdd2, 
-                   &var_list[tmpvars[0]], &var_list[tmpvars[1]], &var_list[tmpvars[2]], 0);
+                   &var_list[tmpvars[1]], &var_list[tmpvars[2]], &var_list[tmpvars[3]], 0);
+            pc += 6;
         
-        } else if (ptn_cmp(tcbuf, &pc, TcLabel, TcEqu, TcLabel, TcMinus, TcLabel, TcLF)) {
+        } else if (ptn_cmp(tcbuf, &pc, PtnLabel, TcEqu, PtnLabel, TcMinus, PtnLabel, TcLF)) {
+            /* <var> = <var> % <var> */
             check_assignment_error(tcbuf, var_list);
             put_ic(ic, icp, OpSub2, 
-                   &var_list[tmpvars[0]], &var_list[tmpvars[1]], &var_list[tmpvars[2]], 0);
+                   &var_list[tmpvars[1]], &var_list[tmpvars[2]], &var_list[tmpvars[3]], 0);
+            pc += 6;
 
-        } else if (ptn_cmp(tcbuf, &pc, TcLabel, TcEqu, TcLabel, TcAster, TcLabel, TcLF)) {
+        } else if (ptn_cmp(tcbuf, &pc, PtnLabel, TcEqu, PtnLabel, TcAster, PtnLabel, TcLF)) {
+            /* <var> = <var> % <var> */
             check_assignment_error(tcbuf, var_list);
             put_ic(ic, icp, OpMul2, 
-                   &var_list[tmpvars[0]], &var_list[tmpvars[1]], &var_list[tmpvars[2]], 0);
+                   &var_list[tmpvars[1]], &var_list[tmpvars[2]], &var_list[tmpvars[3]], 0);
+            pc += 6;
 
-        } else if (ptn_cmp(tcbuf, &pc, TcLabel, TcEqu, TcLabel, TcSlash, TcLabel, TcLF)) {
+        } else if (ptn_cmp(tcbuf, &pc, PtnLabel, TcEqu, PtnLabel, TcSlash, PtnLabel, TcLF)) {
+            /* <var> = <var> % <var> */
             check_assignment_error(tcbuf, var_list);
             put_ic(ic, icp, OpDiv2, 
-                   &var_list[tmpvars[0]], &var_list[tmpvars[1]], &var_list[tmpvars[2]], 0);
+                   &var_list[tmpvars[1]], &var_list[tmpvars[2]], &var_list[tmpvars[3]], 0);
+            pc += 6;
 
-        } else if (ptn_cmp(tcbuf, &pc, TcLabel, TcEqu, TcLabel, TcPerce, TcLabel, TcLF)) {
+        } else if (ptn_cmp(tcbuf, &pc, PtnLabel, TcEqu, PtnLabel, TcPerce, PtnLabel, TcLF)) {
+            /* <var> = <var> % <var> */
             check_assignment_error(tcbuf, var_list);
             put_ic(ic, icp, OpMod2, 
-                   &var_list[tmpvars[0]], &var_list[tmpvars[1]], &var_list[tmpvars[2]], 0);
+                   &var_list[tmpvars[1]], &var_list[tmpvars[2]], &var_list[tmpvars[3]], 0);
+            pc += 6;
 
-        } else if (ptn_cmp(tcbuf, &pc, TcLabel, TcEqu, TcExpr)) {
+        } else if (ptn_cmp(tcbuf, &pc, PtnLabel, TcEqu, PtnExpr)) {
+            /* <var> = <expr> */
             check_assignment_error(tcbuf, var_list);
-            pc += 2;  // 式の先頭までpcを進める
+            pc += 2;  /* 式の先頭までpcを進める */
             expr(tcbuf, &pc, 0, var_list, ic, icp);
-            put_ic(ic, icp, OpCpyP, &var_list[tmpvars[0]], 0, 0, 0);
+            put_ic(ic, icp, OpCpyP, &var_list[tmpvars[1]], 0, 0, 0);
 
-        } else if (ptn_cmp(tcbuf, &pc, TcPrint, TcLabel, TcLF)) {
-            put_ic(ic, icp, OpPrint, &var_list[tmpvars[0]], 0, 0, 0);
+        } else if (ptn_cmp(tcbuf, &pc, PtnImpr, PtnStop)) {
+            /* <imperative> <arg1>, <arg2>, ... */
 
-        } else if (ptn_cmp(tcbuf, &pc, TcBeep, TcLabel, TcLabel, TcLF)) {
-            put_ic(ic, icp, OpBeep, &var_list[tmpvars[0]], &var_list[tmpvars[1]], 0, 0);
-
-        } else if (ptn_cmp(tcbuf, &pc, TcPlay, TcLabel, TcLabel, TcLabel, TcLabel, TcLF)) {
-            put_ic(ic, icp, OpPlay, &var_list[tmpvars[0]], &var_list[tmpvars[1]], &var_list[tmpvars[2]], &var_list[tmpvars[3]]);
-
-        } else if (ptn_cmp(tcbuf, &pc, TcPlay, TcLabel, TcLabel, TcLabel, TcLF)) {
-            put_ic(ic, icp, OpPlay, &var_list[tmpvars[0]], &var_list[tmpvars[1]], &var_list[tmpvars[2]], 0);
-
-        } else if (ptn_cmp(tcbuf, &pc, TcLoop, TcStop)) {
+        } else if (ptn_cmp(tcbuf, &pc, TcLoop, PtnStop)) {
+            /* loop */
             loop_control(tcbuf, &pc, var_list, ic, icp);
 
-        } else if (ptn_cmp(tcbuf, &pc, TcIf, TcStop)) {
+        } else if (ptn_cmp(tcbuf, &pc, TcIf, PtnStop)) {
+            /* if */
             if_control(tcbuf, &pc, var_list, ic, icp);
-
-        } else if (ptn_cmp(tcbuf, &pc, TcLabel, TcRArrow, TcLabel, TcSqBrOpn, TcLabel, TcSqBrCls, TcRArrow, TcLabel, TcLF)) {
-            put_ic(ic, icp, OpFilter, &var_list[tmpvars[0]], &var_list[tmpvars[1]], &var_list[tmpvars[2]], &var_list[tmpvars[3]]);
 
         } else if (ptn_cmp(tcbuf, &pc, TcExit, TcLF)) {
             put_ic(ic, icp, OpExit, 0, 0, 0, 0);
+            pc += 2;
 
-        } else if (ptn_cmp(tcbuf, &pc, TcLabel, TcLF)) {
+        } else if (ptn_cmp(tcbuf, &pc, PtnLabel, TcLF)) {
+            pc += 2;
 
         } else {
             call_error(INVALID_SYNTAX_ERROR);
         }
     }
-    return;
 }
 
-void compile(str_t s, uint32_t fsize, tokenbuf_t *tcbuf, var_t *var_list, var_t **ic) {
+void compile_args(tokenbuf_t *tcbuf, uint32_t *pc, var_t *var_list, var_t **ic, uint32_t *icp, uint32_t num_of_params) {
+    if (num_of_params == 0) {
+        return;
+    }
+
+    uint32_t params = 1;
+
+    uint32_t tc = tcbuf->tc_list[*pc];
+    while (1) {
+        if (params > num_of_params) {
+            call_error(SYNTAX_ERROR);
+        }
+
+        if (IS_VALID_NAME(tc)) {
+            put_ic(ic, icp, OpPush, &var_list[tc], 0, 0, 0);
+        } else if (tc == TcComma) {
+            // 引数が省略されているとき
+            put_ic(ic, icp, OpPushC, 0, (var_t *)TyInitVal, 0, 0);
+            (*pc)++;
+            tc = tcbuf->tc_list[*pc];
+            continue;
+        } else {
+            call_error(SYNTAX_ERROR);
+        }
+
+        (*pc)++;
+        tc = tcbuf->tc_list[*pc];
+
+        if (tc == TcComma) {
+            (*pc)++;
+            tc = tcbuf->tc_list[*pc];
+        } else if (tc == TcLF) {
+            (*pc)++;
+            break;
+        } else {
+            call_error(SYNTAX_ERROR);
+        }
+
+        params++;
+    }
+}
+
+void compile_statement(tokenbuf_t *tcbuf, uint32_t *pc, var_t *var_list, var_t **ic, uint32_t *icp) {
+    uint32_t ppc = *pc;
+
+    switch (tcbuf->tc_list[ppc]) {
+    case TcBeep:
+        ppc++;
+        compile_args(tcbuf, &ppc, var_list, ic, icp, 2);
+        put_ic(ic, icp, OpBeep, 0, 0, 0, 0);
+    case TcPrint:
+        ppc++;
+        compile_args(tcbuf, &ppc, var_list, ic, icp, 1);
+        put_ic(ic, icp, OpPrint, 0, 0, 0, 0);
+    case TcPlay:
+        ppc++;
+        compile_args(tcbuf, &ppc, var_list, ic, icp, 4);
+        put_ic(ic, icp, OpPlay, 0, 0, 0, 0);
+    }
+
+    *pc = ppc;
+}
+
+void compile(str_t s, int32_t fsize, tokenbuf_t *tcbuf, var_t *var_list, var_t **ic) {
     init_token(tcbuf, var_list);
 
     uint32_t end = lexer(s, fsize, tcbuf, var_list);

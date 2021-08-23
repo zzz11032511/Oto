@@ -5,7 +5,7 @@
 #include <string.h>
 
 #include "compile.h"
-#include "expr.h"
+#include "parser.h"
 #include "../error/error.h"
 #include "../utils/util.h"
 #include "../vm/opcode.h"
@@ -13,33 +13,6 @@
 #include "../lexer/token.h"
 #include "../lexer/tokencode.h"
 #include "../variable/variable.h"
-
-uint32_t get_argtcs(tokenbuf_t *tcbuf, uint32_t start, uint32_t end, uint32_t *argv, uint32_t arg_len) {
-    uint32_t ppc = start + 1;
-    uint32_t arg_cnt = 0;
-
-    while (ppc < end) {
-        uint32_t tc = tcbuf->tc_list[ppc];
-        
-        uint32_t cnt = 0;
-        while((ppc + cnt) < end && tcbuf->tc_list[ppc + cnt] != TcComma) {
-            cnt++;
-        }
-
-        if (cnt >= 2) {
-            argv[arg_cnt++] = -1;
-        } else {
-            argv[arg_cnt++] = tc;
-        }
-        ppc += cnt;
-    }
-
-    if (arg_len < arg_cnt) {
-        call_error(SYNTAX_ERROR);
-    }
-
-    return arg_cnt;
-}
 
 /* "then"の位置を渡すと、それに対応した"elsif", "else", "end"の位置を返す */
 uint32_t search_ifblock_end(tokenbuf_t *tcbuf, uint32_t pc) {
@@ -133,7 +106,6 @@ void loop_control(tokenbuf_t *tcbuf, uint32_t *pc, var_t *var_list, var_t **ic, 
     uint32_t start = ppc;
     uint32_t end = search_block_end(tcbuf, start);
 
-    get_argtcs(tcbuf, start, end, argv, GET_ARRAY_LENGTH(argv));
     ppc = end + 1;
 
     uint32_t jmp_icp = *icp;

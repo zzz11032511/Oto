@@ -8,7 +8,8 @@ enum TYPE {
     TyConst,
     TyFloat,
     TySound,
-    TyFilter
+    TyFilter,
+    TyInitVal  // 命令の引数が初期値であるのを表す
 };
 
 typedef struct var {

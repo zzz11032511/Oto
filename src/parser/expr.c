@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "compile.h"
+#include "parser.h"
 #include "../lexer/tokencode.h"
 #include "../debug/debug.h"
 #include "../error/error.h"
@@ -15,7 +15,6 @@
 #include "../lexer/token.h"
 #include "../variable/variable.h"
 
-#define IS_OPERATION(tc) ((TcPlus <= tc && tc <= TcGt) || (TcAnd <= tc && tc <= TcOr))
 
 /* 演算子のトークンコードを対応する内部コードに変換する */
 uint32_t tc2op(uint32_t tc) {
@@ -63,14 +62,7 @@ int32_t tc2priority(uint32_t tc) {
     }    
 }
 
-/**
- *  演算子の優先度を比較する関数
- *
- *  examples:
- *      tc1 > tc2 ~ return 1;
- *      tc1 = tc2 ~ return 0;
- *      tc1 < tc2 ~ return -1;
- */
+/* tc1's priority - tc2's priority */
 int32_t priority_cmp(uint32_t tc1, uint32_t tc2) {
     int32_t p1 = tc2priority(tc1);
     int32_t p2 = tc2priority(tc2);
@@ -94,7 +86,7 @@ int32_t rpn(tokenbuf_t *tcbuf, uint32_t start, uint32_t end, uint32_t *rpn_tc, u
     for (uint32_t pc = start; pc < end; pc++) {
         uint32_t tc = tcbuf->tc_list[pc];  // 現在指しているトークンを取ってくる
 
-        if (tc > TcExit) {
+        if (IS_VALID_NAME(tc)) {
             // ただの変数,定数ならそのまま書き込む
             rpn_tc[rpn_tcp++] = tc;
             is_before_op = false;
@@ -192,7 +184,7 @@ void expr(tokenbuf_t *tcbuf, uint32_t *pc, uint32_t end, var_t *var_list, var_t 
 
             put_ic(ic, icp, op, 0, 0, 0, 0);
 
-        } else if (tc > TcExit) {
+        } else if (IS_VALID_NAME(tc)) {
             put_ic(ic, icp, OpPush, &var_list[tc], 0, 0, 0);
             ipush(&stack, tc);
         }

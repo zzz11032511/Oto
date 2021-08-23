@@ -40,6 +40,8 @@ void exec(var_t **ic, var_t *var, tokenbuf_t *tcbuf) {
     var_t t1;
     var_t t2;
     var_t t3;
+    var_t t4;
+    var_t t5;
 
     // ループ用の制御変数
     uint64_t loop_var = 0;

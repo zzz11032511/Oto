@@ -10,6 +10,7 @@
 #include "../error/error.h"
 #include "../utils/util.h"
 #include "../variable/variable.h"
+#include "../sound/filter/filter.h"
 
 /* 予約語一覧 */
 struct rsvword {
@@ -172,10 +173,6 @@ static const struct init_define_consts def_consts[] = {
     {"PSG_SQUARE",   5},
     {"PSG_TRIANGLE", 6},
     {"WHITE_NOISE",  7},
-    {"FADE_IN",  0},
-    {"FADE_OUT", 1},
-    {"AMP",      2},
-    {"TREMOLO",  3},
 };
 
 void init_define_consts(tokenbuf_t *tcbuf, var_t *var_list) {
@@ -195,18 +192,18 @@ void init_define_consts(tokenbuf_t *tcbuf, var_t *var_list) {
 
 /**
  *  最初に定義しておくフィルタ
- *  フィルタの詳しい実装は後で考える
  */
 struct init_define_filters {
     str_t s;
     int32_t filter_num;
+    int32_t param;
 };
 
 static const struct init_define_filters def_filters[] = {
-    {"FADE_IN",  0},
-    {"FADE_OUT", 1},
-    {"AMP",      2},
-    {"TREMOLO",  3},
+    {"FADE_IN",  0, 1},
+    {"FADE_OUT", 1, 1},
+    {"AMP",      2, 1},
+    {"TREMOLO",  3, 2},
 };
 
 void init_define_filters(tokenbuf_t *tcbuf, var_t *var_list) {
@@ -220,7 +217,7 @@ void init_define_filters(tokenbuf_t *tcbuf, var_t *var_list) {
             TyVoid
         );
         var_list[tc].type       = TyFilter;
-        var_list[tc].value.pVal = NULL;
+        var_list[tc].value.pVal = new_filter(def_filters[i].filter_num, def_filters[i].param);
     }
 }
 
@@ -231,6 +228,6 @@ void init_token(tokenbuf_t *tcbuf, var_t *var_list) {
     uint32_t size = count_string_size(symbols, '\0');
     lexer(symbols, size, tcbuf, var_list);
     init_define_consts(tcbuf, var_list);
-    // init_define_filters(tcbuf, var_list);
+    init_define_filters(tcbuf, var_list);
     init_done = 1;
 }
