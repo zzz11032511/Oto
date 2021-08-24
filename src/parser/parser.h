@@ -18,8 +18,6 @@
 void put_ic(var_t **ic, uint32_t *icp, uint32_t op, var_t *v1, var_t *v2, var_t *v3, var_t *v4);
 /* token列を内部コードに変換する */
 void compile_sub(tokenbuf_t *tcbuf, var_t *var_list, var_t **ic, uint32_t *icp, uint32_t start, uint32_t end);
-/* 命令の引数部分をコンパイルする */
-void compile_args(tokenbuf_t *tcbuf, uint32_t *pc, var_t *var_list, var_t **ic, uint32_t *icp, uint32_t num_of_params);
 /* 命令をコンパイルする */
 void compile_statement(tokenbuf_t *tcbuf, uint32_t *pc, var_t *var_list, var_t **ic, uint32_t *icp);
 
