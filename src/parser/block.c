@@ -62,6 +62,7 @@ void compile_args(tokenbuf_t *tcbuf, uint32_t pc, uint32_t end, var_t* var_list,
             if (len == 1) {
                 put_ic(ic, icp, OpPush, &var_list[tc], 0, 0, 0); 
             } else {
+                // 引数に式か関数が指定されている
                 uint32_t ppc = pc;
                 expr(tcbuf, &ppc, (pc + len - 1), var_list, ic, icp);
             }
@@ -70,8 +71,11 @@ void compile_args(tokenbuf_t *tcbuf, uint32_t pc, uint32_t end, var_t* var_list,
         } else if (tc == TcComma) {
             // 引数が省略されているとき
             put_ic(ic, icp, OpPushC, 0, (var_t *)TyInitVal, 0, 0);
+
+        } else if (params == num_of_params) {
+            // 最後の引数が省略されているとき
+            put_ic(ic, icp, OpPushC, 0, (var_t *)TyInitVal, 0, 0);
             pc++;
-            continue;
         } else {
             call_error(SYNTAX_ERROR);
         }
