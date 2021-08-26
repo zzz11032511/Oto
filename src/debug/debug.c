@@ -42,6 +42,7 @@ static const struct opcode_t opcodes[] = {
     {"Jnz",     OpJnz     },
     {"Print",   OpPrint   },
     {"DefS",    OpDefS    },
+    {"CpyS",    OpCpyS    },
     {"Beep",    OpBeep    },
     {"Play",    OpPlay    },
     {"Filter",  OpFilter  },

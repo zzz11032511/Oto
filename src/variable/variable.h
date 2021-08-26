@@ -1,7 +1,6 @@
 #pragma once
 
 #include <stdint.h>
-#include "../sound/sound.h"
 
 enum TYPE {
     TyVoid = 0,

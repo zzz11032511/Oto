@@ -17,7 +17,7 @@ void init_var_list(var_t *var_list, uint32_t size) {
 void free_heap_var(var_t *var_list, uint32_t size) {
     uint32_t i = 0;
     while (i < size) {
-        if (var_list[i].type == TySound || var_list[i].type == TyFilter) {
+        if (var_list[i].type == TySound) {
             free(var_list[i].value.pVal);
             var_list[i].value.pVal = NULL;
         }

@@ -20,6 +20,8 @@ void put_ic(var_t **ic, uint32_t *icp, uint32_t op, var_t *v1, var_t *v2, var_t 
 void compile_sub(tokenbuf_t *tcbuf, var_t *var_list, var_t **ic, uint32_t *icp, uint32_t start, uint32_t end);
 /* 命令をコンパイルする */
 void compile_statement(tokenbuf_t *tcbuf, uint32_t *pc, var_t *var_list, var_t **ic, uint32_t *icp);
+/* フィルター接続をコンパイルする */
+void compile_filter(tokenbuf_t *tcbuf, uint32_t *pc, var_t *var_list, var_t **ic, uint32_t *icp);
 
 /* control.c */
 /* "begin", '['の位置を渡すと、それに対応した"end", ']'の位置を返す */

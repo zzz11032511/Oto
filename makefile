@@ -5,7 +5,8 @@ SRCSLIST := main.c run.c \
 			utils/util.c utils/int_stack.c \
 			variable/var_stack.c variable/variable.c \
 			parser/compile.c parser/control.c parser/expr.c parser/block.c \
-			vm/exec.c  vm/alu.c \
+			vm/exec.c \
+			vm/operation/op_filter.c vm/operation/alu.c \
 			sound/sound_io.c sound/sound.c sound/wave_out.c \
 			sound/track/track.c \
 			sound/oscillator/oscillator.c sound/oscillator/wave.c \
@@ -84,6 +85,7 @@ builddir:
 	mkdir "./$(WIN_BUILD_DIR)/utils"
 	mkdir "./$(WIN_BUILD_DIR)/variable"
 	mkdir "./$(WIN_BUILD_DIR)/vm"
+	mkdir "./$(WIN_BUILD_DIR)/vm/operation"
 	mkdir "./$(WIN_BUILD_DIR)/debug"
 	mkdir "./$(WIN_BUILD_DIR)/error"
 	mkdir "./$(WIN_BUILD_DIR)/sound"

@@ -2,10 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "opcode.h"
-#include "../error/error.h"
-#include "../utils/util.h"
-#include "../variable/variable.h"
+#include "../opcode.h"
+#include "../../error/error.h"
+#include "../../utils/util.h"
+#include "../../variable/variable.h"
 
 var_t calculation(var_t v1, var_t v2, uint32_t opcode) {
     var_t t;

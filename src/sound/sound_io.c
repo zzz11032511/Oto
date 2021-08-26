@@ -117,6 +117,70 @@ void play_track(TRACK t, int32_t sampling_freq, uint8_t velocity) {
     waveOutClose(out_handle);
 }
 
+void filtering(TRACK t, SOUND s, uint64_t length, int32_t sampling_freq) {
+    int32_t i = 0;
+    int32_t end = s->filter_ptr;
+    while (i < end) {
+        if (s->filters[i].type != TyFilter) {
+            call_exception(SOUND_PLAYER_EXCEPTION);
+        }
+        printf("%f\n", s->filters[i].value.fVal);
+        int32_t filter_num = (int32_t)s->filters[i].value.fVal;
+        printf("filter_num : %d\n", filter_num);
+        switch (filter_num) {
+        case FADE_IN:
+            fade_in(
+                t, length,
+                s->filters[i + 1].value.fVal,
+                sampling_freq
+            );
+            i += 1 + 1;
+            break;
+        case FADE_OUT:
+            fade_out(
+                t, length,
+                s->filters[i + 1].value.fVal,
+                sampling_freq
+            );
+            i += 1 + 1;
+            break;
+        case AMP:
+            amp(
+                t, length,
+                s->filters[i + 1].value.fVal,
+                sampling_freq
+            );
+            i += 1 + 1;
+            break;
+        case TREMOLO:
+            tremolo(
+                t, length,
+                s->filters[i + 1].value.fVal,
+                s->filters[i + 2].value.fVal,
+                sampling_freq
+            );
+            i += 2 + 1;
+            break;
+        case ADSR:
+            break;
+        case LOW_PASS:
+            break;
+        case HIGH_PASS:
+            break;
+        case VIBRATO:
+            break;
+        case WAH:
+            break;
+        case DELAY:
+            break;
+        case REVERB:
+            break;
+        default:
+            call_exception(SOUND_PLAYER_EXCEPTION);
+        }
+    }
+}
+
 void play(double freq, double second, uint8_t velocity, 
           SOUND s, int32_t channel, int32_t sampling_freq) {
     uint64_t length = (uint64_t)(second * sampling_freq);
@@ -126,31 +190,10 @@ void play(double freq, double second, uint8_t velocity,
     }
     TRACK t = new_track(length);
 
-    // if (velocity != 0) {
-    //     write_wave(s->wave, t, freq, length, sampling_freq, 0, 1);
-
-    //     FILTER ftr = s->next_ftr;
-    //     while (ftr != NULL) {
-    //         // フィルターを処理していく
-    //         switch (ftr->filter_num) {
-    //         case FADE_IN:
-    //             fade_in(t, length, ftr->param, sampling_freq);
-    //             break;
-    //         case FADE_OUT:
-    //             fade_out(t, length, ftr->param, sampling_freq);
-    //             break;
-    //         case AMP:
-    //             amp(t, length, ftr->param, sampling_freq);
-    //             break;
-    //         case TREMOLO:
-    //             tremolo(t, length, ftr->param, sampling_freq);
-    //             break;
-    //         default:
-    //             call_exception(SOUND_PLAYER_EXCEPTION);
-    //         }
-    //         ftr = ftr->next_ftr;
-    //     }
-    // }
+    if (velocity != 0) {
+        write_wave(s->wave, t, freq, length, sampling_freq, 0, 1);
+        filtering(t, s, length, sampling_freq);
+    }
     
     printf("[Play] ");
     printf("frequency : %8.3f, length : %2.2f, velocity : %3d, wave : %3d\n", 

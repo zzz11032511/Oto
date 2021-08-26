@@ -35,6 +35,7 @@ enum OP_CODE {
     OpPrint,      // 変数の出力
     
     OpDefS,       // Soundの定義
+    OpCpyS,       // Soundのコピー
     OpBeep,       // ビープ音の出力
     OpPlay,       // 音の出力
     OpFilter,     // FilterをSoundにつなぐ

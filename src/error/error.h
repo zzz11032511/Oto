@@ -6,16 +6,16 @@
 #include "../variable/variable.h"
 
 /* exception */
-enum EXCEPTION_CODE {
+enum {
     EXCEPTION = 0,
     TYPE_EXCEPTION,             // 型の不一致
     ZERO_DIVISION_EXCEPTION,    // 0除算
     STACK_OVERFLOW_EXCEPTION,   // 内部スタックのオーバーフロー
     SOUND_PLAYER_EXCEPTION,     // 音声出力関連
-};
+} EXCEPTION_CODE;
 
 /* error */
-enum ERROR_CODE {
+enum {
     SYSTEM_ERROR,                   // 内部エラー
     FAILURE_MAKE_TOKENBUFFER_ERROR, // 内部エラー(tcBuf作成失敗)
     FAILURE_MAKE_TOKEN_ERROR,       // 内部エラー(トークン作成失敗)
@@ -26,7 +26,7 @@ enum ERROR_CODE {
     ASSIGN_TO_LITERAL_ERROR,        // 定数に代入しようとしたエラー
     DEFINE_ERROR,                   // define文で定数以外を指定したエラー
     NAME_ERROR,                     // 予約語を変数名にしたエラー
-};
+} ERROR_CODE;
 
 void init_error();
 void set_error_all(str_t filename, str_t src, tokenbuf_t *tcbuf, var_t *var_list, var_t **ic);

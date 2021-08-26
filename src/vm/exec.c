@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <windows.h>
 
-#include "alu.h"
 #include "opcode.h"
+#include "operation/operation.h"
 #include "../error/error.h"
 #include "../debug/debug.h"
 #include "../utils/util.h"
@@ -41,7 +41,6 @@ void exec(var_t **ic, var_t *var, tokenbuf_t *tcbuf) {
     var_t t2;
     var_t t3;
     var_t t4;
-    var_t t5;
 
     // ループ用の制御変数
     uint64_t loop_var = 0;
@@ -144,8 +143,23 @@ void exec(var_t **ic, var_t *var, tokenbuf_t *tcbuf) {
             NEXT_OPERATION(icp);
 
         case OpDefS:
-            icp[1]->value.pVal = new_sound((int32_t)icp[2]->value.fVal);
             icp[1]->type = TySound;
+            icp[1]->value.pVal = new_sound((int32_t)icp[2]->value.fVal);
+            NEXT_OPERATION(icp);
+
+        case OpCpyS:
+            if (icp[1]->type != TySound) {
+                icp[1]->type = TySound;
+                icp[1]->value.pVal = new_sound((int32_t)icp[2]->value.fVal);
+            }
+
+            ((SOUND)icp[1]->value.pVal)->wave = ((SOUND)icp[1]->value.pVal)->wave;
+            memcpy(
+                ((SOUND)icp[1]->value.pVal)->filters,
+                ((SOUND)icp[2]->value.pVal)->filters,
+                sizeof(var_t) * MAX_CONNECT
+            );
+            ((SOUND)icp[1]->value.pVal)->filter_ptr = ((SOUND)icp[2]->value.pVal)->filter_ptr;
             NEXT_OPERATION(icp);
 
         case OpBeep:
@@ -160,38 +174,26 @@ void exec(var_t **ic, var_t *var, tokenbuf_t *tcbuf) {
             NEXT_OPERATION(icp);
 
         case OpPlay:
-            if (icp[4]->type != TySound) {
+            t1 = vpop(&stack);
+            t2 = vpop(&stack);
+            t3 = vpop(&stack);
+            t4 = vpop(&stack);
+            if (t1.type != TySound) {
+                printf("%d\n", t1.type);
                 call_exception(TYPE_EXCEPTION);
             }
             play(
-                icp[1]->value.fVal,
-                icp[2]->value.fVal,
-                (uint8_t)icp[3]->value.fVal,
-                icp[4]->value.pVal,
+                t4.value.fVal,
+                t3.value.fVal,
+                (uint8_t)t2.value.fVal,
+                t1.value.pVal,
                 0,
                 sampling_freq
             );
             NEXT_OPERATION(icp);
 
         case OpFilter:
-            // 新しいsoundの定義
-            // TODO: freeできてないのでどうにかする
-            // if (icp[1]->type == TySound) {
-            //     icp[4]->value.pVal = new_sound(((SOUND)icp[1]->value.pVal)->wave);
-            // } else {
-            //     call_exception(TYPE_EXCEPTION);
-            // }
-            // icp[4]->type = TySound;
-            
-            // // フィルタの接続
-            // ((SOUND)icp[4]->value.pVal)->next_ftr = new_filter((int32_t)icp[2]->value.fVal);
-            // // パラメータの設定
-            // ((SOUND)icp[4]->value.pVal)->next_ftr->param = icp[3]->value.fVal;
-            
-            // if (((SOUND)icp[1]->value.pVal)->next_ftr != NULL) {
-            //     ((SOUND)icp[4]->value.pVal)->next_ftr->next_ftr = ((SOUND)icp[1]->value.pVal)->next_ftr;
-            // }
-            
+            op_filter(&stack, icp[1], icp[2]);
             NEXT_OPERATION(icp);
 
         case OpExit:

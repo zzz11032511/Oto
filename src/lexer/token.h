@@ -37,3 +37,6 @@ uint32_t get_tc(tokenbuf_t *tcbuf, var_t *var_list, str_t s, uint32_t len, uint3
 
 /* 演算子と予約語を最初にlexerしておく関数 */
 void init_token(tokenbuf_t *tcbuf, var_t *var_list);
+
+/* 変数を定義する命令 */
+void define_var(tokenbuf_t *tcbuf, var_t *var_list, str_t name, int32_t type, double value);

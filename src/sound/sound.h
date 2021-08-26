@@ -3,10 +3,14 @@
 #include <stdint.h>
 
 #include "filter/filter.h"
+#include "../variable/var_stack.h"
+
+#define MAX_CONNECT 250
 
 struct sound {
     int32_t wave;
-    struct filter *next_ftr;
+    var_t filters[MAX_CONNECT];
+    int32_t filter_ptr;
 };
 typedef struct sound *SOUND;
 

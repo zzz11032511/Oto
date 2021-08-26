@@ -158,6 +158,13 @@ uint32_t get_tc(tokenbuf_t *tcbuf, var_t *var_list, str_t s, uint32_t len, uint3
     return i;
 }
 
+void define_var(tokenbuf_t *tcbuf, var_t *var_list, str_t name, int32_t type, double value) {
+    uint32_t tc = get_tc(tcbuf, var_list,
+                         name, count_string_size(name, '\0'), TyVoid);
+    var_list[tc].type       = type;
+    var_list[tc].value.fVal = value;
+}
+
 /* 最初に定義しておく定数 */
 struct init_define_consts {
     str_t s;
@@ -176,48 +183,10 @@ static const struct init_define_consts def_consts[] = {
 };
 
 void init_define_consts(tokenbuf_t *tcbuf, var_t *var_list) {
-    int32_t num_of_defs = GET_ARRAY_LENGTH(def_consts);
-    for (int32_t i = 0; i < num_of_defs; i++) {
-        uint32_t tc = get_tc(
-            tcbuf,
-            var_list,
-            def_consts[i].s,
-            count_string_size(def_consts[i].s, '\0'),
-            TyVoid
-        );
-        var_list[tc].type       = TyConst;
-        var_list[tc].value.fVal = def_consts[i].val;
-    }
-}
-
-/**
- *  最初に定義しておくフィルタ
- */
-struct init_define_filters {
-    str_t s;
-    int32_t filter_num;
-    int32_t param;
-};
-
-static const struct init_define_filters def_filters[] = {
-    {"FADE_IN",  0, 1},
-    {"FADE_OUT", 1, 1},
-    {"AMP",      2, 1},
-    {"TREMOLO",  3, 2},
-};
-
-void init_define_filters(tokenbuf_t *tcbuf, var_t *var_list) {
-    int32_t num_of_defs = GET_ARRAY_LENGTH(def_filters);
-    for (int32_t i = 0; i < num_of_defs; i++) {
-        uint32_t tc = get_tc(
-            tcbuf,
-            var_list,
-            def_filters[i].s,
-            count_string_size(def_filters[i].s, '\0'),
-            TyVoid
-        );
-        var_list[tc].type       = TyFilter;
-        var_list[tc].value.pVal = new_filter(def_filters[i].filter_num, def_filters[i].param);
+    int32_t num_of_consts = GET_ARRAY_LENGTH(def_consts);
+    for (int32_t i = 0; i < num_of_consts; i++) {
+        define_var(tcbuf, var_list, 
+                   def_consts[i].s, TyConst, def_consts[i].val);
     }
 }
 
@@ -228,6 +197,6 @@ void init_token(tokenbuf_t *tcbuf, var_t *var_list) {
     uint32_t size = count_string_size(symbols, '\0');
     lexer(symbols, size, tcbuf, var_list);
     init_define_consts(tcbuf, var_list);
-    init_define_filters(tcbuf, var_list);
+    init_filter(tcbuf, var_list);
     init_done = 1;
 }

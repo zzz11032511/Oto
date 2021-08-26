@@ -97,6 +97,16 @@ void compile_sub(tokenbuf_t *tcbuf, var_t *var_list, var_t **ic, uint32_t *icp, 
             var_list[tmpvars[1]].value.fVal = var_list[tmpvars[2]].value.fVal;
             pc += 5;
 
+        } else if (ptn_cmp(tcbuf, pc, PtnLabel, TcEqu, TcSound, TcSqBrOpn, PtnLabel, TcSqBrCls, TcLF, PtnStop)) {
+            /* <var> = SOUND [<wave_type>] */
+            check_assignment_error(tcbuf, var_list);
+            put_ic(ic, icp, OpDefS, &var_list[tmpvars[1]], &var_list[tmpvars[2]], 0, 0);
+            pc += 7;
+
+        } else if (ptn_cmp(tcbuf, pc, PtnLabel, TcRArrow, PtnLabel, PtnStop)) {
+            /* <var> -> <filter> -> ... */
+            compile_filter(tcbuf, &pc, var_list, ic, icp);
+            
         } else if (ptn_cmp(tcbuf, pc, PtnLabel, TcEqu, PtnLabel, TcLF, PtnStop)) {
             /* <var> = <var> */
             check_assignment_error(tcbuf, var_list);
@@ -104,28 +114,28 @@ void compile_sub(tokenbuf_t *tcbuf, var_t *var_list, var_t **ic, uint32_t *icp, 
             pc += 4;
 
         } else if (ptn_cmp(tcbuf, pc, PtnLabel, TcEqu, PtnLabel, TcPlus, PtnLabel, TcLF, PtnStop)) {
-            /* <var> = <var> % <var> */
+            /* <var> = <var> + <var> */
             check_assignment_error(tcbuf, var_list);
             put_ic(ic, icp, OpAdd2, 
                    &var_list[tmpvars[1]], &var_list[tmpvars[2]], &var_list[tmpvars[3]], 0);
             pc += 6;
         
         } else if (ptn_cmp(tcbuf, pc, PtnLabel, TcEqu, PtnLabel, TcMinus, PtnLabel, TcLF, PtnStop)) {
-            /* <var> = <var> % <var> */
+            /* <var> = <var> - <var> */
             check_assignment_error(tcbuf, var_list);
             put_ic(ic, icp, OpSub2, 
                    &var_list[tmpvars[1]], &var_list[tmpvars[2]], &var_list[tmpvars[3]], 0);
             pc += 6;
 
         } else if (ptn_cmp(tcbuf, pc, PtnLabel, TcEqu, PtnLabel, TcAster, PtnLabel, TcLF, PtnStop)) {
-            /* <var> = <var> % <var> */
+            /* <var> = <var> * <var> */
             check_assignment_error(tcbuf, var_list);
             put_ic(ic, icp, OpMul2, 
                    &var_list[tmpvars[1]], &var_list[tmpvars[2]], &var_list[tmpvars[3]], 0);
             pc += 6;
 
         } else if (ptn_cmp(tcbuf, pc, PtnLabel, TcEqu, PtnLabel, TcSlash, PtnLabel, TcLF, PtnStop)) {
-            /* <var> = <var> % <var> */
+            /* <var> = <var> / <var> */
             check_assignment_error(tcbuf, var_list);
             put_ic(ic, icp, OpDiv2, 
                    &var_list[tmpvars[1]], &var_list[tmpvars[2]], &var_list[tmpvars[3]], 0);
