@@ -1,21 +1,17 @@
 SRCSLIST := main.c run.c \
-			debug/debug.c \
 			error/error.c \
-		    lexer/lexer.c lexer/token.c \
-			utils/util.c utils/int_stack.c \
-			variable/var_stack.c variable/variable.c \
-			parser/compile.c parser/control.c parser/expr.c parser/block.c \
-			vm/exec.c \
-			vm/operation/op_filter.c vm/operation/alu.c \
-			sound/sound_io.c sound/sound.c sound/wave_out.c \
-			sound/track/track.c \
-			sound/oscillator/oscillator.c sound/oscillator/wave.c \
-			sound/filter/filter.c sound/filter/fade.c sound/filter/tremolo.c \
-			sound/filter/amp.c
+			debug/debug.c \
+			ic/ic.c \
+		    lexer/lexer.c lexer/preprocess.c \
+			token/token.c \
+			parser/parser.c parser/expr.c parser/block.c parser/flow.c \
+			util/util.c util/int_stack.c \
+			variable/variable.c variable/var_stack.c \
+			vm/exec.c vm/operation/print.c vm/operation/alu.c
 
 PROGRAM       := oto
 DEBUGPROGRAM  := debug
-SRCDIR        := src
+SRCDIR        := src2
 TESTDIR       := test
 OUTDIR        := build
 TARGET        := $(OUTDIR)/$(PROGRAM)
@@ -81,17 +77,15 @@ time: $(TARGET)
 WIN_BUILD_DIR := $(OUTDIR)/$(SRCDIR)
 builddir:
 	mkdir "./$(WIN_BUILD_DIR)/lexer"
+	mkdir "./$(WIN_BUILD_DIR)/token"
 	mkdir "./$(WIN_BUILD_DIR)/parser"
-	mkdir "./$(WIN_BUILD_DIR)/utils"
+	mkdir "./$(WIN_BUILD_DIR)/util"
 	mkdir "./$(WIN_BUILD_DIR)/variable"
+	mkdir "./$(WIN_BUILD_DIR)/error"
+	mkdir "./$(WIN_BUILD_DIR)/debug"
+	mkdir "./$(WIN_BUILD_DIR)/ic"
 	mkdir "./$(WIN_BUILD_DIR)/vm"
 	mkdir "./$(WIN_BUILD_DIR)/vm/operation"
-	mkdir "./$(WIN_BUILD_DIR)/debug"
-	mkdir "./$(WIN_BUILD_DIR)/error"
-	mkdir "./$(WIN_BUILD_DIR)/sound"
-	mkdir "./$(WIN_BUILD_DIR)/sound/track"
-	mkdir "./$(WIN_BUILD_DIR)/sound/oscillator"
-	mkdir "./$(WIN_BUILD_DIR)/sound/filter"
 
 clean:
 	del /s /q %cd%\build\*

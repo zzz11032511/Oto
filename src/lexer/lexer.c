@@ -116,7 +116,7 @@ uint32_t lexer(str_t s, uint32_t fsize, tokenbuf_t *tcbuf, var_t *var_list) {
         } else if (is_varname_available(s[i])) {  // 変数
             len = get_varname_len(&s[i]);
 
-        } else if (is_symbol(s[i]) ) {  // 演算子
+        } else if (is_symbol(s[i])) {  // 演算子
             len = get_operator_len(&s[i]);
 
         } else {
