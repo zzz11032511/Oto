@@ -5,6 +5,7 @@ SRCSLIST := main.c run.c \
 		    lexer/lexer.c lexer/preprocess.c \
 			token/token.c \
 			parser/parser.c parser/expr.c parser/block.c parser/flow.c \
+			parser/args.c parser/instruction.c \
 			util/util.c util/int_stack.c \
 			variable/variable.c variable/var_stack.c \
 			vm/exec.c vm/operation/print.c vm/operation/alu.c

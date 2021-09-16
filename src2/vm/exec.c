@@ -52,7 +52,11 @@ void exec() {
         case OpPush:
             vpush(&stack, *icp[1]);
             NEXT_OPERATION(icp);
-        
+
+        case OpPushC:
+            const_vpush(&stack, (uint64_t)icp[1], (uint64_t)icp[2]);
+            NEXT_OPERATION(icp);
+
         case OpAdd:
         case OpSub:
         case OpMul:
@@ -122,7 +126,7 @@ void exec() {
             NEXT_OPERATION(icp);
 
         case OpPrint:
-            print_var(*icp[1]);
+            print_var(&stack);
             NEXT_OPERATION(icp);
 
         case OpExit:

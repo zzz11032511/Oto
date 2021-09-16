@@ -75,12 +75,12 @@ static const struct opname opnames[] = {
     {"Jmp",     OpJmp     },
     {"Jz",      OpJz      },
     {"Jnz",     OpJnz     },
-    {"Print",   OpPrint   },
     {"DefS",    OpDefS    },
     {"CpyS",    OpCpyS    },
+    {"Filter",  OpFilter  },
+    {"Print",   OpPrint   },
     {"Beep",    OpBeep    },
     {"Play",    OpPlay    },
-    {"Filter",  OpFilter  },
     {"Exit",    OpExit    },
 };
 

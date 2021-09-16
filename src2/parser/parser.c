@@ -37,7 +37,7 @@ static bool ptn_cmp(uint32_t cur, int32_t pattern, ...) {
 
         if (tc == ptn_tc) {
             // パターン一致
-        } else if (ptn_tc == PtnImpr && IS_COMMAND(tc)) {
+        } else if (ptn_tc == PtnInst && IS_COMMAND(tc)) {
             // 命令
         } else if (ptn_tc == PtnLabel && IS_NOT_SYMBOL(tc)) {
             tmpvars[vp++] = tc;
@@ -123,13 +123,9 @@ void parser_sub(uint32_t *icp, uint32_t start, uint32_t end) {
         } else if (ptn_cmp(cur, TcIf, PtnStop)) {
             parser_if(&cur, icp);
 
-        } else if (ptn_cmp(cur, TcPrint, PtnLabel, TcLF, PtnStop)) {
-            // 変数1個だけの行はスルー
-            put_ic(icp, OpPrint, VAR_P(tmpvars[1]), 0, 0, 0);
-            cur += 3;
+        } else if (ptn_cmp(cur, PtnInst, PtnStop)) {
+            parser_instruction(&cur, icp);
 
-        } else if (ptn_cmp(cur, PtnImpr, PtnStop)) {
-            
         } else if (ptn_cmp(cur, TcExit, TcLF, PtnStop)) {
             put_ic(icp, OpExit, 0, 0, 0, 0);
             cur += 2;

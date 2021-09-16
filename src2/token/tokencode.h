@@ -48,12 +48,13 @@ typedef enum {
     TcNot,       // not NOT
 
     TcSound,     // sound SOUND
-    TcPlay,      // play PLAY
     TcBpm,       // bpm BPM
     TcNote,      // note NOTE
     TcMute,      // mute MUTE
+
     TcPrint,     // print PRINT
     TcBeep,      // beep BEEP
+    TcPlay,      // play PLAY
 
     TcExit       // exit EXIT
 } tokencode_t;

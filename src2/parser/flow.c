@@ -134,7 +134,7 @@ void parser_loop(uint32_t *cur, uint32_t *icp) {
     start = cur2;
     end = seek_block_end(start);
     
-    printf("start : %d, end : %d\n", start, end);
+    // printf("start : %d, end : %d\n", start, end);
 
     parser_sub(icp, start + 1, end - 1);
 

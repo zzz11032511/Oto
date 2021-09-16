@@ -32,14 +32,14 @@ typedef enum {
     OpJz,         // スタックの上が0ならジャンプ
     OpJnz,        // スタックの上が0でないならジャンプ
 
-    OpPrint,      // 変数の出力
-    
     // Soundはparseの段階で作ってもいいかも
     OpDefS,       // Soundの定義
     OpCpyS,       // Soundのコピー
+    OpFilter,     // FilterをSoundにつなぐ
+
+    OpPrint,      // 変数の出力
     OpBeep,       // ビープ音の出力
     OpPlay,       // 音の出力
-    OpFilter,     // FilterをSoundにつなぐ
     
     OpExit        // 終了    
 } opcode_t;

@@ -49,12 +49,12 @@ static const struct rsvword rsvwords[] = {
     {"or",      "OR",      TcOr      },
     {"not",     "NOT",     TcNot     },
     {"sound",   "SOUND",   TcSound   },
-    {"play",    "PLAY",    TcPlay    }, 
     {"bpm",     "BPM",     TcBpm     },
     {"note",    "NOTE",    TcNote    },
     {"mute",    "MUTE",    TcMute    },
     {"print",   "PRINT",   TcPrint   },
     {"beep",    "BEEP",    TcBeep    },
+    {"play",    "PLAY",    TcPlay    }, 
     {"exit",    "EXIT",    TcExit    },
 };
 
@@ -116,7 +116,7 @@ tokencode_t get_tc(uint32_t pc) {
 }
 
 size_t get_conv_source_size() {
-    return converted_src_size;
+    return converted_src_size + 1;
 }
 
 size_t get_conv_token_size() {
