@@ -84,6 +84,18 @@ static const struct opname opnames[] = {
     {"Exit",    OpExit    },
 };
 
+static const int8_t *typenames[] = {
+    "TyVoid",
+    "TyRsvWord",
+    "TySymbol",
+    "TyFloat",
+    "TyConst",
+    "TyInitVal",
+    "TySound",
+    "TyFilter",
+    "TyFunc",
+};
+
 extern var_t *ic[];
 
 void print_opcodes() {
@@ -97,17 +109,33 @@ void print_opcodes() {
         printf("%5I64u : %9s    ", ic_num, opnames[op].name);
 
         for (int32_t i = 1; i <= 4; i++) {
-            if ((OpLoop <= op && op <= OpJnz) && i == 1) {
+            if (op == OpPushC) {
+                if (i == 1) {
+                    type_t type = (uint64_t)p[i];
+                    printf("%13s", typenames[type]);
+                } else {
+                    printf("%14I64u", (uint64_t)p[i]);
+                }
+
+            } else if ((OpLoop <= op && op <= OpJnz) && i == 1) {
                 printf("%14I64u", (uint64_t)p[i]);
+
             } else if (p[i] == 0) {
                 break;
+
             } else {
-                print_token_str(p[i]->tc);
-                // 14文字分の幅を空ける(ネストが深い)
+                // 14文字分の幅を空ける
+                // ここらへんのコードはネストが深い
                 size_t len = get_token_strlen(p[i]->tc);
-                for (int32_t i = 1; i < (14 - len); i++) {
-                    printf(" ");
+
+                if (p[i]->tc == TcLF) {
+                    // 改行コードは2文字分あるので空白の数を1減らす
+                    for (int32_t i = 1; i < (13 - len); i++) printf(" ");
+                } else {
+                    for (int32_t i = 1; i < (14 - len); i++) printf(" ");
                 }
+                
+                print_token_str(p[i]->tc);
             }
             printf("    ");
         }
