@@ -88,6 +88,7 @@ builddir:
 	mkdir "./$(WIN_BUILD_DIR)/ic"
 	mkdir "./$(WIN_BUILD_DIR)/vm"
 	mkdir "./$(WIN_BUILD_DIR)/vm/operation"
+	mkdir "./$(WIN_BUILD_DIR)/sound"
 
 clean:
 	del /s /q %cd%\build\*

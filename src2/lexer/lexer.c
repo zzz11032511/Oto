@@ -123,5 +123,8 @@ uint32_t lexer(int8_t *s) {
         cnt++;
     }
 
+    // 末尾に改行を入れておく
+    set_tc(TcLF, cnt++);
+
     return cnt;
 }
