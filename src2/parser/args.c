@@ -11,7 +11,8 @@
 #include "../token/token.h"
 #include "../ic/ic.h"
 
-uint32_t seek_arg_end(uint32_t start) {
+/* 引数の終わり(","や"\n")を探してその場所を返す関数 */
+static uint32_t seek_arg_end(uint32_t start) {
     uint32_t cur = start;
 
     uint32_t nest = 0;
@@ -30,11 +31,9 @@ uint32_t seek_arg_end(uint32_t start) {
 
         }
         
-        if (cur == end_of_src) {
-            return cur;
-            
-        } else if (nest == 0 && (tc == TcComma || tc == TcLF)) {
-            return cur - 1;
+        if (nest == 0 && 
+            (cur >= end_of_src || (tc == TcComma || tc == TcLF))) {
+            return cur - 1;   
         }
     }
 }
@@ -44,7 +43,7 @@ void parser_args(uint32_t *icp, uint32_t start, uint32_t end, uint32_t max_of_pa
         return;
     }
 
-    uint32_t params = 1;
+    uint32_t params = 0;
     uint32_t cur = start;
     while (1) {
         tokencode_t tc = get_tc(cur);
@@ -54,7 +53,9 @@ void parser_args(uint32_t *icp, uint32_t start, uint32_t end, uint32_t max_of_pa
 
         uint32_t arg_end = seek_arg_end(cur);
         uint32_t arg_len = arg_end - cur;
+
         printf("end : %d, cur : %d, arg_end : %d, arg_len : %d\n", end, cur, arg_end, arg_len);
+
         if (arg_len == 1) {
             put_ic(icp, OpPush, VAR_P(tc), 0, 0, 0);
         
@@ -62,16 +63,26 @@ void parser_args(uint32_t *icp, uint32_t start, uint32_t end, uint32_t max_of_pa
             put_ic(icp, OpPushC, (var_t *)TyInitVal, 0, 0, 0);
 
         } else {
+            // 式か関数
             uint32_t cur2 = cur;
             expr(&cur2, arg_end, icp);
         }
 
         params++;
-        
         cur = arg_end + 1;
 
         if (cur >= end) {
             break;
         }
+    }
+
+    if (params > max_of_params) {
+        call_error(TOO_MANY_ARGUMENTS_ERROR);
+    }
+
+    // 引数が少ない分だけ初期値をPushする
+    while (params < max_of_params) {
+        put_ic(icp, OpPushC, (var_t *)TyInitVal, 0, 0, 0);
+        params++;
     }
 }

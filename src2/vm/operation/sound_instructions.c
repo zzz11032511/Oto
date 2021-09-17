@@ -11,12 +11,16 @@ void beep(struct var_stack *stack) {
     var_t t2 = vpop(stack);  // frequency
 
     if (t1.type == TyInitVal) {
-        t1.value.fVal = 500;
+        t1.value.fVal = 1;
     }
 
     if (t2.type == TyInitVal) {
-        t2.value.fVal = 1;
+        t2.value.fVal = 524;
     }
+
+    printf("[Beep] ");
+    printf("frequency : %8.3f[Hz], length : %2.2f[s]\n", 
+           t2.value.fVal, t1.value.fVal * 1000);
 
     Beep((uint64_t)t2.value.fVal, (uint64_t)(t1.value.fVal * 1000));
 }
