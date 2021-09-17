@@ -129,6 +129,10 @@ void exec() {
             print_var(&stack);
             NEXT_OPERATION(icp);
 
+        case OpBeep:
+            beep(&stack);
+            NEXT_OPERATION(icp);
+
         case OpExit:
             return;
 
