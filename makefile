@@ -9,7 +9,8 @@ SRCSLIST := main.c run.c \
 			util/util.c util/int_stack.c \
 			variable/variable.c variable/var_stack.c \
 			vm/exec.c vm/operation/print.c vm/operation/alu.c \
-			vm/operation/sound_instructions.c
+			vm/operation/sound_instructions.c \
+			sound/track.c sound/sound_io.c
 
 PROGRAM       := oto
 DEBUGPROGRAM  := debug

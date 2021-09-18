@@ -54,7 +54,7 @@ void parser_args(uint32_t *icp, uint32_t start, uint32_t end, uint32_t max_of_pa
         uint32_t arg_end = seek_arg_end(cur);
         uint32_t arg_len = arg_end - cur;
 
-        printf("end : %d, cur : %d, arg_end : %d, arg_len : %d\n", end, cur, arg_end, arg_len);
+        // printf("end : %d, cur : %d, arg_end : %d, arg_len : %d\n", end, cur, arg_end, arg_len);
 
         if (arg_len == 1) {
             put_ic(icp, OpPush, VAR_P(tc), 0, 0, 0);
