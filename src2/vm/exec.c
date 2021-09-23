@@ -20,21 +20,18 @@ void exec() {
     var_t **icp = ic;
     var_t **base = ic;
 
-    // 計算用のスタック
     struct var_stack stack;
     stack.sp = 0;
 
-    // 計算用の一時変数
     var_t t1;
     var_t t2;
     var_t t3;
 
-    // ループ用の制御変数
+    // ループの制御変数
     uint64_t loop_var = 0;
     uint64_t loop_cnt = 0;
 
-    // サンプリング周波数
-    // uint64_t sampling_freq = 40000;
+    uint64_t samples_per_sec = 40000;
 
     while (1) {
         switch ((uint64_t)icp[0]) {

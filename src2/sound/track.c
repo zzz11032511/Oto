@@ -4,12 +4,16 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-TRACK new_track(uint64_t length) {
+TRACK new_track(uint64_t length, uint64_t channel,
+                uint64_t samples_per_sec, uint64_t bits_per_sample) {
     TRACK s = (TRACK)calloc(1, sizeof(struct track_t));
 
-    s->length = length;
-    s->ptr    = 0;
-    s->data   = (double *)calloc(length, sizeof(double));
+    s->length  = length;
+    s->ptr     = 0;
+    s->data    = (double *)calloc(length, sizeof(double));
+    s->channel = channel;
+    s->samples_per_sec = samples_per_sec;
+    s->bits_per_sample = bits_per_sample;
     
     return s;
 }

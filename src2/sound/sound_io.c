@@ -9,29 +9,22 @@
 #define NUMBER_OF_BUFFER 8
 #define BUFFER_SIZE      200
 
-#define MONO   1
-#define STEREO 2
-
-#define MAX_VOLUME            8000.0
-#define QUANTIZATION_BIT_RATE 16
-#define SOUND_DATA_BYTE       2
+#define MAX_VOLUME 8000
 
 void play_track(TRACK t, int32_t sampling_freq, uint8_t velocity) {
     int16_t out_buffer[NUMBER_OF_BUFFER][BUFFER_SIZE];
 
-    WAVEHDR out_header[NUMBER_OF_BUFFER];
-    for (int32_t i = 0; i < NUMBER_OF_BUFFER; i++) {
-        memset(&out_header[i], 0, sizeof(WAVEHDR));
-    }
+    WAVEHDR out_header[NUMBER_OF_BUFFER] = {0};
 
+    uint32_t sound_data_byte = t->bits_per_sample / 8;
     HWAVEOUT out_handle = NULL;
     WAVEFORMATEX wave_format_ex = {
         WAVE_FORMAT_PCM,
-        MONO,
-        sampling_freq,
-        sampling_freq * SOUND_DATA_BYTE,
-        SOUND_DATA_BYTE,
-        QUANTIZATION_BIT_RATE,
+        t->channel,
+        t->samples_per_sec,
+        t->samples_per_sec * sound_data_byte,
+        sound_data_byte,
+        t->bits_per_sample,
         0
     };
     waveOutOpen(&out_handle, 0, &wave_format_ex, 0, 0, CALLBACK_NULL);
@@ -41,7 +34,8 @@ void play_track(TRACK t, int32_t sampling_freq, uint8_t velocity) {
     int32_t out1 = 0;
     int32_t offset = 0;
 
-    double  out_volume = ((double)velocity / 255) * MAX_VOLUME;
+    double out_volume = ((double)velocity / 100) * MAX_VOLUME;
+
     int32_t num_of_frame = t->length / BUFFER_SIZE;
     int32_t frame = 0;
     while (frame < num_of_frame) {
