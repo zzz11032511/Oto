@@ -28,5 +28,5 @@ void beep(struct var_stack *stack) {
 }
 
 void define_sound(var_t *v1, var_t *v2) {
-    v1->value.pVal = (void *)new_sound((int32_t)v2->value.fVal);
+    v1->value.pVal = (void *)new_sound((int32_t)v2->value.fVal, NULL, 0);
 }

@@ -3,6 +3,7 @@
 #include <stdint.h>
 
 #include "../variable/variable.h"
+#include "../sound/wave.h"
 
 #define MAX_CONNECT 250
 
@@ -13,7 +14,8 @@ struct sound {
 
     struct sound *prev;
     struct sound *next;
+    double fm;  // 変調周波数
 };
 typedef struct sound *SOUND;
 
-SOUND new_sound(int32_t wave);
+SOUND new_sound(wave_t wave, SOUND in_sound, double fm);
