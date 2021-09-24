@@ -30,3 +30,6 @@ void *get_pvalue(tokencode_t tc);
 void assign_int(tokencode_t tc, type_t type, int64_t value);
 void assign_float(tokencode_t tc, type_t type, double value);
 void assign_pointer(tokencode_t tc, type_t type, void *value);
+
+/* ヒープに置かれた変数(Sound, Filter)を解放する */
+void free_var();

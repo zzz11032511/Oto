@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <windows.h>
 
+#include "../../sound/sound.h"
+#include "../../variable/type.h"
 #include "../../variable/var_stack.h"
 #include "../../variable/variable.h"
 
@@ -23,4 +25,8 @@ void beep(struct var_stack *stack) {
            t2.value.fVal, t1.value.fVal * 1000);
 
     Beep((uint64_t)t2.value.fVal, (uint64_t)(t1.value.fVal * 1000));
+}
+
+void define_sound(var_t *v1, var_t *v2) {
+    v1->value.pVal = (void *)new_sound((int32_t)v2->value.fVal);
 }

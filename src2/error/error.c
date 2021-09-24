@@ -22,6 +22,7 @@ void set_src(int8_t *src) {
 
 void oto_quit(int32_t exit_status) {
     free(e_src);
+    free_var();
     e_src = NULL;
     exit(exit_status);
 }

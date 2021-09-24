@@ -45,3 +45,11 @@ void assign_pointer(tokencode_t tc, type_t type, void *value) {
     var_list[tc].type = type;
     var_list[tc].value.pVal = value;
 }
+
+void free_var() {
+    for (int32_t i = 0; i < MAX_TC; i++) {
+        if (var_list[i].type == TySound) {
+            free(var_list[i].value.pVal);
+        }
+    }
+}

@@ -10,8 +10,18 @@
 var_t calculation(var_t v1, var_t v2, opcode_t opcode);
 int32_t compare(var_t v1, var_t v2, opcode_t opcode);
 
+
 /* print.c */
+
+/**
+ * PRINT VAR
+ * 変数の内容を出力する
+ * 
+ * params:
+ *      VAR 出力する変数または値
+ */
 void print_var(struct var_stack *stack);
+
 
 /* sound_instructions.c */
 
@@ -24,3 +34,5 @@ void print_var(struct var_stack *stack);
  *      LENGTH 鳴らす音の長さ[sec](引数を省略した場合1s)
  */
 void beep(struct var_stack *stack);
+
+void define_sound(var_t *v1, var_t *v2);

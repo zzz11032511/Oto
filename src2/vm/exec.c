@@ -44,7 +44,7 @@ void exec() {
             t1 = vpop(&stack);
             icp[1]->type = TyFloat;
             icp[1]->value.fVal = t1.value.fVal;
-            NEXT_OPERATION(icp);            
+            NEXT_OPERATION(icp);           
         
         case OpPush:
             vpush(&stack, *icp[1]);
@@ -52,6 +52,10 @@ void exec() {
 
         case OpPushC:
             const_vpush(&stack, (uint64_t)icp[1], (uint64_t)icp[2]);
+            NEXT_OPERATION(icp);
+
+        case OpDefS:
+            define_sound(icp[1], icp[2]);
             NEXT_OPERATION(icp);
 
         case OpAdd:
