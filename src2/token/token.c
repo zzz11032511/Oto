@@ -11,6 +11,7 @@
 #include "../util/util.h"
 #include "../variable/variable.h"
 #include "../variable/type.h"
+#include "../sound/filter/filter.h"
 
 /* 最初にlexerしておく記号・予約語 */
 struct symbol {
@@ -181,5 +182,8 @@ void init_token() {
     for (uint32_t i = 0; i < GET_ARRAY_LENGTH(rsvwords); i++) {
         allocate_tc(rsvwords[i].lower, strlen(rsvwords[i].lower), TyRsvWord);
     }
+
+    init_filter();
+
     init_flag = true;
 }

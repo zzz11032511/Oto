@@ -10,7 +10,8 @@ SRCSLIST := main.c run.c \
 			variable/variable.c variable/var_stack.c \
 			vm/exec.c vm/operation/print.c vm/operation/alu.c \
 			vm/operation/sound_instructions.c \
-			sound/sound.c sound/track.c sound/sound_io.c sound/oscillator.c
+			sound/sound.c sound/track.c sound/sound_io.c sound/oscillator.c \
+			sound/filter/filter.c
 
 PROGRAM       := oto
 DEBUGPROGRAM  := debug
@@ -90,6 +91,7 @@ builddir:
 	mkdir "./$(WIN_BUILD_DIR)/vm"
 	mkdir "./$(WIN_BUILD_DIR)/vm/operation"
 	mkdir "./$(WIN_BUILD_DIR)/sound"
+	mkdir "./$(WIN_BUILD_DIR)/sound/filter"
 
 clean:
 	del /s /q %cd%\build\*
