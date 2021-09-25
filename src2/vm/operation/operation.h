@@ -48,3 +48,5 @@ void beep(struct var_stack *stack);
 void play(struct var_stack *stack, uint64_t samples_per_sec);
 
 void define_sound(var_t *v1, var_t *v2);
+void copy_sound(var_t *new_sound, var_t *sound);
+void connect_filter(struct var_stack *stack, var_t *sound, var_t *filter);

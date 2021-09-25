@@ -9,7 +9,7 @@
 
 struct sound {
     int32_t wave;
-    var_t *filters[MAX_CONNECT];
+    var_t filters[MAX_CONNECT];
     int32_t num_of_filter;
 
     struct sound *prev;

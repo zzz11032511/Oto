@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 #include <windows.h>
 
 #include "../../error/error.h"
@@ -9,12 +10,61 @@
 #include "../../variable/variable.h"
 #include "../../sound/sound.h"
 #include "../../sound/track.h"
+#include "../../sound/filter/filter.h"
 #include "../../sound/sound_io.h"
 #include "../../sound/oscillator.h"
 
-void define_sound(var_t *v1, var_t *v2) {
-    v1->type = TySound;
-    v1->value.pVal = (void *)new_sound((uint64_t)v2->value.fVal, NULL, 0);
+void define_sound(var_t *sound, var_t *wave) {
+    sound->type = TySound;
+    sound->value.pVal = (void *)new_sound((uint64_t)wave->value.fVal, NULL, 0);
+}
+
+void copy_sound(var_t *new, var_t *sound) {
+    wave_t wave = ((SOUND)sound->value.pVal)->wave;
+    if (new->type != TySound) {
+        new->type = TySound;
+        new->value.pVal = (void *)new_sound(wave, NULL, 0);
+    } else {
+        ((SOUND)new->value.pVal)->wave = wave;
+    }
+
+    memcpy(
+        ((SOUND)new->value.pVal)->filters, 
+        ((SOUND)sound->value.pVal)->filters,
+        sizeof(var_t) * MAX_CONNECT
+    );
+
+    ((SOUND)new->value.pVal)->num_of_filter = 
+        ((SOUND)sound->value.pVal)->num_of_filter;
+}
+
+void connect_filter(struct var_stack *stack, var_t *sound, var_t *filter) {
+    if (sound->type != TySound || filter->type != TyFilter) {
+        call_error(UNKNOWN_ERROR);
+    }
+
+    struct var_stack sub_stack;
+    sub_stack.sp = 0;
+
+    int32_t num_of_params = ((FILTER)filter->value.pVal)->param;
+    
+    // 現在つながっているフィルター
+    var_t *connected = ((SOUND)sound->value.pVal)->filters; 
+    // 現在つながっているフィルターの数
+    int32_t ptr = ((SOUND)sound->value.pVal)->num_of_filter;
+
+    connected[ptr++] = *filter;
+
+    // 引数の順番が逆なので最初に一時的なスタックに移してから接続する
+    for (int32_t i = 0; i < num_of_params; i++) {
+        vpush(&sub_stack, vpop(stack));
+    }
+
+    for (int32_t i = 0; i < num_of_params; i++) {
+        connected[ptr++] = vpop(&sub_stack);
+    }
+
+    ((SOUND)sound->value.pVal)->num_of_filter = ptr;
 }
 
 void beep(struct var_stack *stack) {

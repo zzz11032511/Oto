@@ -47,10 +47,7 @@ void parser_args(uint32_t *icp, uint32_t start, uint32_t end, uint32_t max_of_pa
     uint32_t cur = start;
     while (1) {
         tokencode_t tc = get_tc(cur);
-        if (params > max_of_params) {
-            call_error(SYNTAX_ERROR);
-        }
-
+        
         uint32_t arg_end = seek_arg_end(cur);
         uint32_t arg_len = arg_end - cur;
 

@@ -58,6 +58,10 @@ void exec() {
             define_sound(icp[1], icp[2]);
             NEXT_OPERATION(icp);
 
+        case OpCpyS:
+            copy_sound(icp[1], icp[2]);
+            NEXT_OPERATION(icp);
+
         case OpAdd:
         case OpSub:
         case OpMul:
@@ -138,6 +142,10 @@ void exec() {
             play(&stack, samples_per_sec);
             NEXT_OPERATION(icp);
 
+        case OpFilter:
+            connect_filter(&stack, icp[1], icp[2]);
+            NEXT_OPERATION(icp);
+            
         case OpExit:
             return;
 

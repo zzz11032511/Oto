@@ -87,6 +87,9 @@ void parser_sub(uint32_t *icp, uint32_t start, uint32_t end) {
             put_ic(icp, OpDefS, VAR_P(tmpvars[1]), VAR_P(tmpvars[2]), 0, 0);
             cur += 7;
 
+        } else if (ptn_cmp(cur, PtnLabel, TcRArrow, PtnStop)) {
+            parser_connect_filters(&cur, icp);
+
         } else if (ptn_cmp(cur, PtnLabel, TcEqu, PtnLabel, TcLF, PtnStop)) {
             ASSIGN_TO_LITERAL_ERROR_CHECK(tmpvars[1]);
             put_ic(icp, OpCpyD, VAR_P(tmpvars[1]), VAR_P(tmpvars[2]), 0, 0);

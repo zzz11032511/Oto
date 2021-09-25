@@ -23,6 +23,7 @@ void parser_if(uint32_t *cur, uint32_t *icp);
 void parser_loop(uint32_t *cur, uint32_t *icp);
 void parser_instruction(uint32_t *cur, uint32_t *icp);
 void parser_args(uint32_t *icp, uint32_t start, uint32_t end, uint32_t max_of_params);
+void parser_connect_filters(uint32_t *cur, uint32_t *icp);
 
 void expr(uint32_t *cur, uint32_t end, uint32_t *icp);
 
