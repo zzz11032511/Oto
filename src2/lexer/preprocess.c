@@ -36,6 +36,8 @@ void include_otofile(int8_t *arg_start, size_t fname_len) {
     fname[fname_len + 3] = 'o';
     fname[fname_len + 4] = '\0';
 
+    printf("%s\n", fname);
+
     int8_t *src = src_open(fname);
     if (src == NULL) {
         call_error(INCLUDE_FILE_NOT_FOUND_ERROR);

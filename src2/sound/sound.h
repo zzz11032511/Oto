@@ -2,8 +2,8 @@
 
 #include <stdint.h>
 
+#include "oscillator.h"
 #include "../variable/variable.h"
-#include "../sound/wave.h"
 
 #define MAX_CONNECT 250
 

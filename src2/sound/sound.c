@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 #include "sound.h"
-#include "wave.h"
+#include "oscillator.h"
 
 SOUND new_sound(wave_t wave, SOUND in_sound, double fm) {
     SOUND s = calloc(1, sizeof(struct sound));

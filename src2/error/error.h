@@ -14,6 +14,7 @@ typedef enum {
 
     STACK_OVERFLOW_ERROR,
     ZERO_DIVISION_ERROR,
+    SOUND_PLAYER_ERROR,
     UNKNOWN_ERROR
 } errorcode_t;
 

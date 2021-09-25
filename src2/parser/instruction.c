@@ -27,6 +27,9 @@ void parser_instruction(uint32_t *cur, uint32_t *icp) {
         break;
 
     case TcPlay:
+        parser_args(icp, args_start, args_end, 4);
+        put_ic(icp, OpPlay, 0, 0, 0, 0);
+        break;
     
     case TcBeep:
         parser_args(icp, args_start, args_end, 2);

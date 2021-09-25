@@ -11,7 +11,7 @@
 
 #define MAX_VOLUME 8000
 
-void play_track(TRACK t, int32_t sampling_freq, uint8_t velocity) {
+void play_track(TRACK t) {
     int16_t out_buffer[NUMBER_OF_BUFFER][BUFFER_SIZE];
 
     WAVEHDR out_header[NUMBER_OF_BUFFER] = {0};
@@ -34,7 +34,7 @@ void play_track(TRACK t, int32_t sampling_freq, uint8_t velocity) {
     int32_t out1 = 0;
     int32_t offset = 0;
 
-    double out_volume = ((double)velocity / 100) * MAX_VOLUME;
+    double out_volume = ((double)t->velocity / 100) * MAX_VOLUME;
 
     int32_t num_of_frame = t->length / BUFFER_SIZE;
     int32_t frame = 0;

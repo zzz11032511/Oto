@@ -11,13 +11,14 @@ struct track_t {
     double *data;
     uint64_t ptr;  // 音データをここまで書き込んだ
 
-    uint64_t channel;  // MONO or STEREO
+    uint64_t channel;          // MONO or STEREO
     uint64_t samples_per_sec;  // サンプリング周波数[Hz]
     uint64_t bits_per_sample;  // 量子化ビット数
+    uint64_t velocity;         // 音量
 };
 typedef struct track_t *TRACK;
 
-TRACK new_track(uint64_t length, uint64_t channel,
-                uint64_t samples_per_sec, uint64_t bits_per_sample);
+TRACK new_track(uint64_t length, uint64_t channel, uint64_t samples_per_sec,
+                uint64_t bits_per_sample, uint64_t velocity);
 
 void free_track(TRACK s);

@@ -134,6 +134,10 @@ void exec() {
             beep(&stack);
             NEXT_OPERATION(icp);
 
+        case OpPlay:
+            play(&stack, samples_per_sec);
+            NEXT_OPERATION(icp);
+
         case OpExit:
             return;
 
