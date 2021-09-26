@@ -1,14 +1,12 @@
 #pragma once
 
+#include <stdio.h>
 #include <stdint.h>
 
+#include "../track.h"
 #include "../sound.h"
-#include "../track/track.h"
-#include "../../utils/util.h"
-#include "../../lexer/token.h"
-#include "../../variable/variable.h"
 
-enum FILTER_NUMBER {
+typedef enum {
     NONE_FILTER = 0,
     FADE_IN,
     FADE_OUT,
@@ -21,24 +19,21 @@ enum FILTER_NUMBER {
     WAH,
     DELAY,
     REVERB,
-};
+} filter_num_t;
 
 struct filter {
-    int32_t filter_num;
-    int32_t type;
-    int32_t param;  // フィルタのパラメータの数
+    filter_num_t filter_num;
+    uint64_t param;
 };
+
 typedef struct filter *FILTER;
 
-FILTER new_filter(int32_t filter_num, int32_t param);
-void init_filter(tokenbuf_t *tcbuf, var_t *var_list);
+void init_filter();
 
-/* fade.c */
-void fade_in(TRACK t, uint64_t length, double time, int32_t sampling_freq);
-void fade_out(TRACK t, uint64_t length, double time, int32_t sampling_freq);
+void filtering(TRACK t, SOUND s);
 
-/* tremolo.c */
-void tremolo(TRACK t, uint64_t length, double speed, double range, int32_t sampling_freq);
+void fade_in(TRACK t, double time);
+void fade_out(TRACK t, double time);
 
-/* amp.c */
-void amp(TRACK t, uint64_t length, double times, int32_t sampling_freq);
+void amp(TRACK t, double gain);
+void tremolo(TRACK t, double speed, double range);

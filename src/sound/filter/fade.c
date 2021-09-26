@@ -1,25 +1,29 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include <stdint.h>
 
-#include "../sound_io.h"
-#include "../track/track.h"
-#include "../../utils/util.h"
+#include "filter.h"
+#include "../track.h"
+#include "../../util/util.h"
 
-void fade_in(TRACK t, uint64_t length, double time, int32_t sampling_freq) {
-    double fade_time = sampling_freq * time;
+void fade_in(TRACK t, double time) {
+    uint64_t len = t->length;
+    double fade_time = t->samples_per_sec * time;
     for (uint64_t n = 0; n < fade_time; n++) {
-        if (n >= length) {
+        if (n >= len) {
             return;
         }
         t->data[n] *= (double)n / fade_time;
     }
 }
 
-void fade_out(TRACK t, uint64_t length, double time, int32_t sampling_freq) {
-    double fade_time = sampling_freq * time;
+void fade_out(TRACK t, double time) {
+    uint64_t len = t->length;
+    double fade_time = t->samples_per_sec * time;
     for (uint64_t n = 0; n < fade_time; n++) {
-        if (n >= length) {
+        if (n >= len) {
             return;
         }
-        t->data[length - n - 1] *= (double)n / fade_time;
+        t->data[len - n - 1] *= (double)n / fade_time;
     }
 }

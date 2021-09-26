@@ -1,7 +1,7 @@
 #pragma once
 
-#include "utils/util.h"
+#include <stdint.h>
+#include <stdbool.h>
 
-void set_timecount_flag(bool_t f);
-
-void run(const str_t path);
+void set_timecount_flag(bool f);
+void run(const int8_t *filename);

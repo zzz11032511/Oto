@@ -4,39 +4,27 @@
 #include <mmsystem.h>
 #include <math.h>
 
-#include "sound.h"
-#include "wave_out.h"
-#include "track/track.h"
-#include "filter/filter.h"
-#include "oscillator/oscillator.h"
-#include "../error/error.h"
+#include "track.h"
 
 #define NUMBER_OF_BUFFER 8
 #define BUFFER_SIZE      200
 
-#define MONO   1
-#define STEREO 2
+#define MAX_VOLUME 8000
 
-#define MAX_VOLUME            8000.0
-#define QUANTIZATION_BIT_RATE 16
-#define SOUND_DATA_BYTE       2
-
-void play_track(TRACK t, int32_t sampling_freq, uint8_t velocity) {
+void play_track(TRACK t) {
     int16_t out_buffer[NUMBER_OF_BUFFER][BUFFER_SIZE];
 
-    WAVEHDR out_header[NUMBER_OF_BUFFER];
-    for (int32_t i = 0; i < NUMBER_OF_BUFFER; i++) {
-        memset(&out_header[i], 0, sizeof(WAVEHDR));
-    }
+    WAVEHDR out_header[NUMBER_OF_BUFFER] = {0};
 
+    uint32_t sound_data_byte = t->bits_per_sample / 8;
     HWAVEOUT out_handle = NULL;
     WAVEFORMATEX wave_format_ex = {
         WAVE_FORMAT_PCM,
-        MONO,
-        sampling_freq,
-        sampling_freq * SOUND_DATA_BYTE,
-        SOUND_DATA_BYTE,
-        QUANTIZATION_BIT_RATE,
+        t->channel,
+        t->samples_per_sec,
+        t->samples_per_sec * sound_data_byte,
+        sound_data_byte,
+        t->bits_per_sample,
         0
     };
     waveOutOpen(&out_handle, 0, &wave_format_ex, 0, 0, CALLBACK_NULL);
@@ -46,7 +34,8 @@ void play_track(TRACK t, int32_t sampling_freq, uint8_t velocity) {
     int32_t out1 = 0;
     int32_t offset = 0;
 
-    double  out_volume = ((double)velocity / 255) * MAX_VOLUME;
+    double out_volume = ((double)t->velocity / 100) * MAX_VOLUME;
+
     int32_t num_of_frame = t->length / BUFFER_SIZE;
     int32_t frame = 0;
     while (frame < num_of_frame) {
@@ -115,102 +104,4 @@ void play_track(TRACK t, int32_t sampling_freq, uint8_t velocity) {
     }
 
     waveOutClose(out_handle);
-}
-
-void filtering(TRACK t, SOUND s, uint64_t length, int32_t sampling_freq) {
-    int32_t i = 0;
-    int32_t end = s->filter_ptr;
-    while (i < end) {
-        if (s->filters[i].type != TyFilter) {
-            call_exception(SOUND_PLAYER_EXCEPTION);
-        }
-        printf("%f\n", s->filters[i].value.fVal);
-        int32_t filter_num = (int32_t)s->filters[i].value.fVal;
-        printf("filter_num : %d\n", filter_num);
-        switch (filter_num) {
-        case FADE_IN:
-            fade_in(
-                t, length,
-                s->filters[i + 1].value.fVal,
-                sampling_freq
-            );
-            i += 1 + 1;
-            break;
-        case FADE_OUT:
-            fade_out(
-                t, length,
-                s->filters[i + 1].value.fVal,
-                sampling_freq
-            );
-            i += 1 + 1;
-            break;
-        case AMP:
-            amp(
-                t, length,
-                s->filters[i + 1].value.fVal,
-                sampling_freq
-            );
-            i += 1 + 1;
-            break;
-        case TREMOLO:
-            tremolo(
-                t, length,
-                s->filters[i + 1].value.fVal,
-                s->filters[i + 2].value.fVal,
-                sampling_freq
-            );
-            i += 2 + 1;
-            break;
-        case ADSR:
-            break;
-        case LOW_PASS:
-            break;
-        case HIGH_PASS:
-            break;
-        case VIBRATO:
-            break;
-        case WAH:
-            break;
-        case DELAY:
-            break;
-        case REVERB:
-            break;
-        default:
-            call_exception(SOUND_PLAYER_EXCEPTION);
-        }
-    }
-}
-
-void play(double freq, double second, uint8_t velocity, 
-          SOUND s, int32_t channel, int32_t sampling_freq) {
-    uint64_t length = (uint64_t)(second * sampling_freq);
-    if (length < 1600) {
-        // lengthが1600未満の時に何故かエラーが発生する
-        call_exception(SOUND_PLAYER_EXCEPTION);
-    }
-    TRACK t = new_track(length);
-
-    if (velocity != 0) {
-        write_wave(s->wave, t, freq, length, sampling_freq, 0, 1);
-        filtering(t, s, length, sampling_freq);
-    }
-    
-    printf("[Play] ");
-    printf("frequency : %8.3f, length : %2.2f, velocity : %3d, wave : %3d\n", 
-           freq, second, velocity, s->wave);
-
-    play_track(t, sampling_freq, velocity);
-
-    // テスト用
-#ifdef DEBUG
-    MONO_PCM a = {
-        sampling_freq,
-        QUANTIZATION_BIT_RATE,
-        length,
-        t->data
-    };
-    mono_wave_write(&a, "aaa.wav");
-#endif
-
-    free_track(t);
 }

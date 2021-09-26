@@ -15,7 +15,7 @@ SRCSLIST := main.c run.c \
 
 PROGRAM       := oto
 DEBUGPROGRAM  := debug
-SRCDIR        := src2
+SRCDIR        := src
 TESTDIR       := test
 OUTDIR        := build
 TARGET        := $(OUTDIR)/$(PROGRAM)

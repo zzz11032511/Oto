@@ -1,13 +1,12 @@
-#include <stdint.h>
 #include <stdio.h>
-#include <stdlib.h>
+#include <stdint.h>
 
-#include "../opcode.h"
+#include "../../opcode.h"
 #include "../../error/error.h"
-#include "../../utils/util.h"
 #include "../../variable/variable.h"
+#include "../../variable/type.h"
 
-var_t calculation(var_t v1, var_t v2, uint32_t opcode) {
+var_t calculation(var_t v1, var_t v2, opcode_t opcode) {
     var_t t;
 
     switch (opcode) {
@@ -30,7 +29,7 @@ var_t calculation(var_t v1, var_t v2, uint32_t opcode) {
     case OpMod:
     case OpMod2:
         if ((int64_t)v2.value.fVal == 0) {
-            call_exception(ZERO_DIVISION_EXCEPTION);
+            call_error(ZERO_DIVISION_ERROR);
         }
         t.value.fVal = (double)((int64_t)v1.value.fVal % (int64_t)v2.value.fVal);
         break;
@@ -43,7 +42,7 @@ var_t calculation(var_t v1, var_t v2, uint32_t opcode) {
         t.value.iVal = v1.value.iVal | v2.value.iVal;
         break;
     default:
-        call_exception(EXCEPTION);
+        call_error(ZERO_DIVISION_ERROR);
     }
 
     return t;
@@ -70,7 +69,7 @@ int32_t compare(var_t v1, var_t v2, uint32_t opcode) {
     case OpRiEqCmp:
         return v1Val >= v2Val;
     default:
-        call_exception(EXCEPTION);
+        call_error(UNKNOWN_ERROR);
     }
 
     return 0;

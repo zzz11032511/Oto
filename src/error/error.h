@@ -1,41 +1,26 @@
 #pragma once
 
-#include <stdint.h>
-#include "../utils/util.h"
-#include "../lexer/token.h"
-#include "../variable/variable.h"
+typedef enum {
+    SYNTAX_ERROR = 0,
+    TOO_MANY_TOKEN_ERROR,
+    FILE_NOT_FOUND_ERROR,
+    INCLUDE_FILE_NOT_FOUND_ERROR,
+    
+    INVALID_SYNTAX_ERROR,
+    NAME_ERROR,
+    ASSIGN_TO_LITERAL_ERROR,
+    DEFINE_ERROR,
+    TOO_MANY_ARGUMENTS_ERROR,
 
-/* exception */
-enum {
-    EXCEPTION = 0,
-    TYPE_EXCEPTION,             // 型の不一致
-    ZERO_DIVISION_EXCEPTION,    // 0除算
-    STACK_OVERFLOW_EXCEPTION,   // 内部スタックのオーバーフロー
-    SOUND_PLAYER_EXCEPTION,     // 音声出力関連
-} EXCEPTION_CODE;
+    STACK_OVERFLOW_ERROR,
+    ZERO_DIVISION_ERROR,
+    SOUND_PLAYER_ERROR,
+    UNKNOWN_ERROR
+} errorcode_t;
 
-/* error */
-enum {
-    SYSTEM_ERROR,                   // 内部エラー
-    FAILURE_MAKE_TOKENBUFFER_ERROR, // 内部エラー(tcBuf作成失敗)
-    FAILURE_MAKE_TOKEN_ERROR,       // 内部エラー(トークン作成失敗)
-    TOO_MANY_TOKEN_ERROR,           // 内部エラー(トークン作りすぎエラー)
+void set_filename(const int8_t *filename);
+void set_src(int8_t *src);
 
-    SYNTAX_ERROR,                   // 謎の構文エラー
-    INVALID_SYNTAX_ERROR,           // 単純な構文エラー
-    ASSIGN_TO_LITERAL_ERROR,        // 定数に代入しようとしたエラー
-    DEFINE_ERROR,                   // define文で定数以外を指定したエラー
-    NAME_ERROR,                     // 予約語を変数名にしたエラー
-} ERROR_CODE;
-
-void init_error();
-void set_error_all(str_t filename, str_t src, tokenbuf_t *tcbuf, var_t *var_list, var_t **ic);
-
-/* 実行時例外呼び出し */
-void call_exception(int32_t exception_code);
-
-/* 構文エラー呼び出し */
-void call_error(int32_t error_code);
-
-/* 終了時はこの関数を呼ぶ */
 void oto_quit(int32_t exit_status);
+
+void call_error(errorcode_t error_code);

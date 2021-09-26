@@ -1,15 +1,17 @@
 #pragma once
 
-#include <stdint.h>
-#include "../utils/util.h"
-#include "../lexer/token.h"
-#include "../variable/variable.h"
+#include <stdio.h>
 
-void print_opcodes(tokenbuf_t *tcbuf, var_t **ic);
+#include "../token/token.h"
 
-void print_converted_source(tokenbuf_t *tcbuf, uint32_t len);
+/* ソースコードを変換したトークン列を出力する */
+void print_converted_source();
 
-void print_tokenlist(tokenbuf_t *tcbuf);
+/* 全トークンを出力する */
+void print_all_token();
+
+/* 内部コードを出力する */
+void print_opcodes();
 
 /* 数式を逆ポーランド記法にしたものを出力する */
-void print_rpn_tc(tokenbuf_t *tcbuf, uint32_t *rpn_tc_list, uint32_t len);
+void print_rpn_tc(tokencode_t *rpn_tc_list, size_t len);
