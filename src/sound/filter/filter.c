@@ -92,6 +92,13 @@ void filtering(TRACK t, SOUND s) {
             );
             break;
         case ADSR:
+            adsr(t,
+                s->filters[i + 1].value.fVal,
+                s->filters[i + 2].value.fVal,
+                s->filters[i + 3].value.fVal,
+                s->filters[i + 4].value.fVal
+            );
+            break;
         case LOW_PASS:
         case HIGH_PASS:
         case VIBRATO:

@@ -37,3 +37,4 @@ void fade_out(TRACK t, double time);
 
 void amp(TRACK t, double gain);
 void tremolo(TRACK t, double speed, double range);
+void adsr(TRACK t, double attack, double decay, double sustain, double release);
