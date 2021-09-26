@@ -54,9 +54,7 @@ void parser_connect_filters(uint32_t *cur, uint32_t *icp) {
             
         } else {
             call_error(SYNTAX_ERROR);
-        }
-
-    
+        }    
     }
 
     *cur = cur2;

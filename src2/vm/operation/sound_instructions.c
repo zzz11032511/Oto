@@ -4,6 +4,7 @@
 #include <string.h>
 #include <windows.h>
 
+#include "../../util/util.h"
 #include "../../error/error.h"
 #include "../../variable/type.h"
 #include "../../variable/var_stack.h"
@@ -81,7 +82,7 @@ void beep(struct var_stack *stack) {
 
     printf("[Beep] ");
     printf("frequency : %8.3f[Hz], length : %2.2f[s]\n", 
-           t2.value.fVal, t1.value.fVal * 1000);
+           t2.value.fVal, t1.value.fVal);
 
     Beep((uint64_t)t2.value.fVal, (uint64_t)(t1.value.fVal * 1000));
 }
@@ -125,6 +126,10 @@ void play(struct var_stack *stack, uint64_t samples_per_sec) {
     TRACK t = new_track(length, MONO, samples_per_sec, 16, velocity);
     if (velocity != 0) {
         write_wave(wave, t, freq, length, samples_per_sec, 0, 1);
+    }
+
+    if (t1.type == TySound) {
+        filtering(t, s);
     }
 
     printf("[Play] ");

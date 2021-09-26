@@ -1,5 +1,11 @@
 #pragma once
 
+#include <stdio.h>
+#include <stdint.h>
+
+#include "../track.h"
+#include "../sound.h"
+
 typedef enum {
     NONE_FILTER = 0,
     FADE_IN,
@@ -23,3 +29,11 @@ struct filter {
 typedef struct filter *FILTER;
 
 void init_filter();
+
+void filtering(TRACK t, SOUND s);
+
+void fade_in(TRACK t, double time);
+void fade_out(TRACK t, double time);
+
+void amp(TRACK t, double gain);
+void tremolo(TRACK t, double speed, double range);

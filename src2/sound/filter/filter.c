@@ -4,7 +4,10 @@
 #include <string.h>
 
 #include "filter.h"
+#include "../sound.h"
+#include "../track.h"
 #include "../../util/util.h"
+#include "../../error/error.h"
 #include "../../token/token.h"
 #include "../../variable/type.h"
 #include "../../variable/variable.h"
@@ -48,5 +51,57 @@ void init_filter() {
         FILTER f = new_filter(def_filters[i].filter_num, def_filters[i].param);
 
         assign_pointer(tc, TyFilter, (void *)f);
+    }
+}
+
+void filtering(TRACK t, SOUND s) {
+    int32_t i = 0;
+    int32_t end = s->num_of_filter;
+
+    while (i < end) {
+        if (s->filters[i].type != TyFilter) {
+            call_error(SOUND_PLAYER_ERROR);
+        }
+        FILTER f = (FILTER)s->filters[i].value.pVal;
+
+        filter_num_t filter_num = f->filter_num;
+        int32_t param = f->param;
+
+        DEBUG_IPRINT(filter_num);
+
+        switch (filter_num) {
+        case FADE_IN:
+            fade_in(t, 
+                s->filters[i + 1].value.fVal
+            );
+            break;
+        case FADE_OUT:
+            fade_out(t, 
+                s->filters[i + 1].value.fVal
+            );
+            break;
+        case AMP:
+            amp(t, 
+                s->filters[i + 1].value.fVal
+            );
+            break;
+        case TREMOLO:
+            tremolo(t, 
+                s->filters[i + 1].value.fVal,
+                s->filters[i + 2].value.fVal
+            );
+            break;
+        case ADSR:
+        case LOW_PASS:
+        case HIGH_PASS:
+        case VIBRATO:
+        case WAH:
+        case DELAY:
+        case REVERB:     
+        default:
+            call_error(SOUND_PLAYER_ERROR);
+        }
+        
+        i += param + 1;
     }
 }

@@ -11,7 +11,7 @@ SRCSLIST := main.c run.c \
 			vm/exec.c vm/operation/print.c vm/operation/alu.c \
 			vm/operation/sound_instructions.c \
 			sound/sound.c sound/track.c sound/sound_io.c sound/oscillator.c \
-			sound/filter/filter.c
+			sound/filter/filter.c sound/filter/amp.c sound/filter/fade.c
 
 PROGRAM       := oto
 DEBUGPROGRAM  := debug
