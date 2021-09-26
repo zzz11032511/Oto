@@ -98,6 +98,12 @@ uint32_t lexer(int8_t *s) {
             cnt = get_conv_source_size();
             continue;
 
+        } else if (s[i] == '\\') {
+            do {
+                i++;
+            } while (s[i] == ' ' || s[i] == '\n');
+            continue;
+
         } else if (strchr("(){}[]:,\n", s[i]) != 0) {
             len = 1;
 
