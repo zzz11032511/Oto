@@ -32,18 +32,22 @@ void parser_connect_filters(uint32_t *cur, uint32_t *icp) {
             cur2++;
             tokencode_t filter_tc = get_tc(cur2);
 
+            if (cur2 == (end - 1) && filter_tc == e_sound_tc) {
+                break;
+            }
+
             cur2++;
-            size_t len = seek_block_end(cur2) + 1 - cur2;
+            size_t len = seek_block_end(cur2) - cur2;
 
             if (len == 1) {
                 call_error(SYNTAX_ERROR);
             } else {
-                uint32_t start = cur2 += 2;
-                uint32_t end = cur2 += len;
-                seek_args_block_end(start, end);
+                uint32_t start = cur2 + 1;
+                uint32_t end = cur2 + len;
+                parser_args_sub(icp, start, end);
                 put_ic(icp, OpFilter, VAR_P(e_sound_tc), VAR_P(filter_tc), 0, 0);
             }
-            cur2 += len;
+            cur2 += len + 1;
 
         } else if (get_tc(cur2) == TcLF) {
             break;
@@ -51,6 +55,8 @@ void parser_connect_filters(uint32_t *cur, uint32_t *icp) {
         } else {
             call_error(SYNTAX_ERROR);
         }
+
+    
     }
 
     *cur = cur2;

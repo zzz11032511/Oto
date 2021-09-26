@@ -61,7 +61,7 @@ uint32_t seek_args_block_end(uint32_t start, tokencode_t end_tc) {
         }
 
         if (end == end_of_src) {
-            return end;
+            return end - 1;
             
         } else if (tc == end_tc && nest == 0) {
             break;

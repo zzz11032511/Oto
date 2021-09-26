@@ -21,6 +21,9 @@ static uint32_t seek_arg_end(uint32_t start) {
     while (1) {
         tokencode_t tc = get_tc(cur++);
         if (tc == TcSqBrCls || tc == TcEnd) {
+            if (nest == 0) {
+                return cur - 1;
+            }
             nest--;
             if (nest < 0) {
                 call_error(INVALID_SYNTAX_ERROR);
@@ -38,11 +41,7 @@ static uint32_t seek_arg_end(uint32_t start) {
     }
 }
 
-void parser_args(uint32_t *icp, uint32_t start, uint32_t end, uint32_t max_of_params) {
-    if (max_of_params == 0) {
-        return;
-    }
-
+uint32_t parser_args_sub(uint32_t *icp, uint32_t start, uint32_t end) {
     uint32_t params = 0;
     uint32_t cur = start;
     while (1) {
@@ -72,6 +71,16 @@ void parser_args(uint32_t *icp, uint32_t start, uint32_t end, uint32_t max_of_pa
             break;
         }
     }
+
+    return params;
+}
+
+void parser_args(uint32_t *icp, uint32_t start, uint32_t end, uint32_t max_of_params) {
+    if (max_of_params == 0) {
+        return;
+    }
+
+    uint32_t params = parser_args_sub(icp, start, end);
 
     if (params > max_of_params) {
         call_error(TOO_MANY_ARGUMENTS_ERROR);
