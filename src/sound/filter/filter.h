@@ -8,6 +8,7 @@
 
 typedef enum {
     NONE_FILTER = 0,
+    FADE,
     FADE_IN,
     FADE_OUT,
     AMP,
@@ -34,6 +35,7 @@ void filtering(TRACK t, SOUND s);
 
 void fade_in(TRACK t, double time);
 void fade_out(TRACK t, double time);
+void fade(TRACK t, double start, double end);
 
 void amp(TRACK t, double gain);
 void tremolo(TRACK t, double speed, double range);

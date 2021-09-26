@@ -29,6 +29,7 @@ struct init_define_filters {
 
 static const struct init_define_filters def_filters[] = {
     {"NONE_FILTER", NONE_FILTER, 0},
+    {"FADE",        FADE,        2},
     {"FADE_IN",     FADE_IN,     1},
     {"FADE_OUT",    FADE_OUT,    1},
     {"AMP",         AMP,         1},
@@ -70,6 +71,12 @@ void filtering(TRACK t, SOUND s) {
         DEBUG_IPRINT(filter_num);
 
         switch (filter_num) {
+        case FADE:
+            fade(t,
+                s->filters[i + 1].value.fVal,
+                s->filters[i + 2].value.fVal
+            );
+            break;
         case FADE_IN:
             fade_in(t, 
                 s->filters[i + 1].value.fVal

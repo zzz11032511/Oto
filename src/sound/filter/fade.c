@@ -27,3 +27,8 @@ void fade_out(TRACK t, double time) {
         t->data[len - n - 1] *= (double)n / fade_time;
     }
 }
+
+void fade(TRACK t, double start, double end) {
+    fade_in(t, start);
+    fade_out(t, end);
+}
