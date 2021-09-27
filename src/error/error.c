@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdarg.h>
 #include <stdbool.h>
 #include <string.h>
 
@@ -27,18 +28,66 @@ void oto_quit(int32_t exit_status) {
     exit(exit_status);
 }
 
-void call_error(errorcode_t error_code) {
+/* ソースコード上からエラーが発生した行を特定する */
+uint32_t find_error_line_str(uint32_t error_idx) {
+    int32_t num_of_lines = 1;
+
+    uint32_t i = 0;
+    while (i < error_idx) {
+        if (e_src[i] == '\n') num_of_lines++;
+        i++;
+    }
+
+    return num_of_lines;
+}
+
+/* ソースコードから指定した行の先頭を特定する */
+uint32_t find_line_head(uint32_t num_of_lines) {
+    int32_t head = 0;
+    int32_t line = 1;
+
+    uint32_t i = 0;
+    while (line != num_of_lines) {
+        if (e_src[i] == '\n') {
+            head = i + 1;
+            line++;
+        }
+        i++;
+    }
+
+    return head;
+}
+
+void print_syntax_error(uint32_t i) {
+    fprintf(stderr, "Syntax error\n");
+
+    uint32_t line = find_error_line_str(i);
+    uint32_t head = find_line_head(line);
+    printf("line %d : ", line);
+    line_print(&e_src[head]);
+}
+
+void call_error(errorcode_t error_code, ...) {
+    va_list ap;
+    va_start(ap, error_code);
+
     fprintf(stderr, "Error [%s]\n", e_filename);
     switch (error_code) {
+    case SYNTAX_ERROR:
+        print_syntax_error(va_arg(ap, uint32_t));
+        break;
     case FILE_NOT_FOUND_ERROR:
         fprintf(stderr, "File not found\n");
         break;
     case INCLUDE_FILE_NOT_FOUND_ERROR:
         fprintf(stderr, "Include file not found\n");
+        break;
     default:
         fprintf(stderr, "errorcode(%d)\n", error_code);
         break;
     }
+
+    va_end(ap);
 
     oto_quit(EXIT_FAILURE);
 }

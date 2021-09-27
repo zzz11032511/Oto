@@ -23,4 +23,4 @@ void set_src(int8_t *src);
 
 void oto_quit(int32_t exit_status);
 
-void call_error(errorcode_t error_code);
+void call_error(errorcode_t error_code, ...);

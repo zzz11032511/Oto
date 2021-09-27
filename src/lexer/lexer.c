@@ -117,11 +117,11 @@ uint32_t lexer(int8_t *s) {
         } else if (is_symbol(s[i])) {  // 演算子
             len = count_operator_len(&s[i]);
             if (len == -1) {
-                call_error(SYNTAX_ERROR);
+                call_error(SYNTAX_ERROR, i);
             }
 
         } else {
-            call_error(SYNTAX_ERROR);
+            call_error(SYNTAX_ERROR, i);
         }
 
         set_tc(allocate_tc(&s[i], len, type), cnt);

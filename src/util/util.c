@@ -31,6 +31,15 @@ size_t count_file_size(const char *filename) {
     return size;
 }
 
+void line_print(char *s) {
+    int32_t i = 0;
+    while (s[i] != '\n' && s[i] != EOF) {
+        printf("%c", s[i]);
+        i++;
+    }
+    printf("\n");
+}
+
 bool is_otofile(const char *filename) {
     const char *ext = strrchr(filename, '.');
 
