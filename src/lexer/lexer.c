@@ -99,12 +99,14 @@ uint32_t lexer(int8_t *s) {
             continue;
 
         } else if (s[i] == '\\') {
+            // 1行に書かなければいけない処理を複数行書けるようにする
             do {
                 i++;
             } while (s[i] == ' ' || s[i] == '\n');
             continue;
 
         } else if (s[i] == ';') {
+            // 改行と読み替える
             s[i] = '\n';
             len = 1;
 
@@ -121,7 +123,7 @@ uint32_t lexer(int8_t *s) {
         } else if (is_symbol(s[i])) {  // 演算子
             len = count_operator_len(&s[i]);
             if (len == -1) {
-                call_error(SYNTAX_ERROR, i);
+                call_error(UNAVAILABLE_OPERATORS_ERROR, i);
             }
 
         } else {

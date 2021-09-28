@@ -58,9 +58,7 @@ uint32_t find_line_head(uint32_t num_of_lines) {
     return head;
 }
 
-void print_syntax_error(uint32_t i) {
-    fprintf(stderr, "Syntax error\n");
-
+void print_error_line(uint32_t i) {
     uint32_t line = find_error_line_str(i);
     uint32_t head = find_line_head(line);
     printf("line %d : ", line);
@@ -74,7 +72,12 @@ void call_error(errorcode_t error_code, ...) {
     fprintf(stderr, "Error [%s]\n", e_filename);
     switch (error_code) {
     case SYNTAX_ERROR:
-        print_syntax_error(va_arg(ap, uint32_t));
+        printf("Syntax error\n");
+        print_error_line(va_arg(ap, uint32_t));
+        break;
+    case UNAVAILABLE_OPERATORS_ERROR:
+        printf("Operators cannot be used\n");
+        print_error_line(va_arg(ap, uint32_t));
         break;
     case FILE_NOT_FOUND_ERROR:
         fprintf(stderr, "File not found\n");
