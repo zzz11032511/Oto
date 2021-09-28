@@ -18,6 +18,7 @@ DEBUGPROGRAM  := debug
 SRCDIR        := src
 TESTDIR       := test
 OUTDIR        := build
+LIBDIR        := lib
 TARGET        := $(OUTDIR)/$(PROGRAM)
 DEBUGTARGET   := $(OUTDIR)/$(DEBUGPROGRAM)
 
@@ -26,10 +27,10 @@ OBJS      := $(addprefix $(OUTDIR)/,$(patsubst %.c,%.o,$(SRCS)))
 DEBUGOBJS := $(addprefix $(OUTDIR)/,$(patsubst %.c,%_debug.o,$(SRCS)))
 # $(warning $(OBJS))
 
-CC     = gcc
-CFLAGS = -Wall -O2
-LIB    = -lwinmm
-
+CC      = gcc
+CFLAGS  = -Wall -O2
+LIB     = -lwinmm -lacl -lgdi32
+INCLUDE = -I ./include
 # ----------------------------------------------
 
 .PHONY: 
@@ -41,7 +42,7 @@ all: $(TARGET)
 
 # 本番用
 $(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $^ $(LIB)
+	$(CC) $(CFLAGS) -o $@ $^ $(INCLUDE) -L./$(LIBDIR) $(LIB)
 
 $(OUTDIR)/%.o: %.c
 # @if [ ! -e `dirname $@` ]; then mkdir -p `dirname $@`; fi
