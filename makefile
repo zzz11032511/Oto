@@ -46,17 +46,17 @@ $(TARGET): $(OBJS)
 
 $(OUTDIR)/%.o: %.c
 # @if [ ! -e `dirname $@` ]; then mkdir -p `dirname $@`; fi
-	$(CC) $(CFLAGS) -o $@ -c $<
+	$(CC) $(CFLAGS) -o $@ -c $< $(INCLUDE) -L./$(LIBDIR) $(LIB)
 
 # ----------------------------------------------
 
 # デバッグ用
 $(DEBUGTARGET): $(DEBUGOBJS)
-	$(CC) $(CFLAGS) -o $@ $^ $(LIB)
+	$(CC) $(CFLAGS) -o $@ $^ $(INCLUDE) -L./$(LIBDIR) $(LIB)
 
 $(OUTDIR)/%_debug.o: %.c
 # @if [ ! -e `dirname $@` ]; then mkdir -p `dirname $@`; fi
-	$(CC) $(CFLAGS) -D DEBUG -o $@ -c $<
+	$(CC) $(CFLAGS) -D DEBUG -o $@ -c $< $(INCLUDE) -L./$(LIBDIR) $(LIB)
 
 # ----------------------------------------------
 

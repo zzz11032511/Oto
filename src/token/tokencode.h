@@ -55,6 +55,7 @@ typedef enum {
     TcPrint,     // print PRINT
     TcBeep,      // beep BEEP
     TcPlay,      // play PLAY
+    TcPrintwav,  // printwav PRINTWAV
 
     TcExit       // exit EXIT
 } tokencode_t;

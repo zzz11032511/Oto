@@ -8,7 +8,7 @@
 #define IS_VALID_NAME(tc)     (tc > TcExit)
 #define IS_SYMBOL(tc)         ((TcLF <= tc) && (tc < TcBegin))
 #define IS_NOT_SYMBOL(tc)     (tc >= TcBegin)
-#define IS_COMMAND(tc)        ((TcPrint <= tc) && (tc <= TcPlay))
+#define IS_COMMAND(tc)        ((TcPrint <= tc) && (tc <= TcPrintwav))
 #define IS_ARITH_OPERATOR(tc) ((TcPlus <= tc && tc <= TcGt) || (TcAnd <= tc && tc <= TcOr))
 
 /* トークンのパターン識別子 */ 

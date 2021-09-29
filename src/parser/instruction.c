@@ -35,6 +35,11 @@ void parser_instruction(uint32_t *cur, uint32_t *icp) {
         parser_args(icp, args_start, args_end, 2);
         put_ic(icp, OpBeep, 0, 0, 0, 0);
         break;
+
+    case TcPrintwav:
+        parser_args(icp, args_start, args_end, 4);
+        put_ic(icp, OpPrintWav, 0, 0, 0, 0);
+        break;
     
     default:
         call_error(SYNTAX_ERROR);

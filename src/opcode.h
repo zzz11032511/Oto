@@ -40,6 +40,7 @@ typedef enum {
     OpPrint,      // 変数の出力
     OpBeep,       // ビープ音の出力
     OpPlay,       // 音の出力
+    OpPrintWav,   // 波形の出力(音も出力する)
     
     OpExit        // 終了    
 } opcode_t;

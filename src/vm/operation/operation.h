@@ -47,6 +47,18 @@ void beep(struct var_stack *stack);
  */
 void play(struct var_stack *stack, uint64_t samples_per_sec);
 
+/**
+ * PRINTWAV FREQUENCY, LENGTH, VELOCITY, SOUND
+ * 指定したSOUNDを出力し、その波形を表示する
+ * 
+ * params:
+ *      FREQUENCY 鳴らす音の周波数[Hz](引数を省略した場合500Hz)
+ *      LENGTH 鳴らす音の長さ[sec](引数を省略した場合1s)
+ *      VELOCITY 音量(0 ~ 100)(引数を省略した場合100)
+ *      SOUND 出力する音源情報(引数を省略した場合正弦波)
+ */
+void print_wave(struct var_stack *stack, uint64_t samples_per_sec);
+
 void define_sound(var_t *v1, var_t *v2);
 void copy_sound(var_t *new_sound, var_t *sound);
 void connect_filter(struct var_stack *stack, var_t *sound, var_t *filter);

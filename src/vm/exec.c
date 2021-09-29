@@ -62,6 +62,10 @@ void exec() {
             copy_sound(icp[1], icp[2]);
             NEXT_OPERATION(icp);
 
+        case OpFilter:
+            connect_filter(&stack, icp[1], icp[2]);
+            NEXT_OPERATION(icp);
+
         case OpAdd:
         case OpSub:
         case OpMul:
@@ -134,6 +138,7 @@ void exec() {
             print_var(&stack);
             NEXT_OPERATION(icp);
 
+
         case OpBeep:
             beep(&stack);
             NEXT_OPERATION(icp);
@@ -142,8 +147,8 @@ void exec() {
             play(&stack, samples_per_sec);
             NEXT_OPERATION(icp);
 
-        case OpFilter:
-            connect_filter(&stack, icp[1], icp[2]);
+        case OpPrintWav:
+            print_wave(&stack, samples_per_sec);
             NEXT_OPERATION(icp);
             
         case OpExit:
