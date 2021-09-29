@@ -31,7 +31,7 @@ void exec() {
     uint64_t loop_var = 0;
     uint64_t loop_cnt = 0;
 
-    uint64_t samples_per_sec = 20000;
+    uint64_t samples_per_sec = 30000;
 
     while (1) {
         switch ((uint64_t)icp[0]) {

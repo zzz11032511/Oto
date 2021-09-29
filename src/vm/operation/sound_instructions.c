@@ -140,16 +140,40 @@ void play(struct var_stack *stack, uint64_t samples_per_sec) {
     play_track(t);
 }
 
+static AInt16a transform_tdata(double data, AInt32a height) {
+    if (data > 1) {
+        data = 1;
+    } else if (data < -1) {
+        data = -1;
+    }
+    return (AInt16a)((height / 2) - (data * (height / 2) * 0.8));
+}
+
 static void print_wave_sub(TRACK t) {
-    AWindow *w = aOpenWin(512, 160, "wave", 1);
-    AInt16a width  = 512;
-    AInt16a height = 160;
+    AInt16a width  = 1000;
+    AInt16a height = 200;
+    AWindow *w = aOpenWin(width, height * 2, "wave", 1);
 
     AInt32a color = aRgb8(0, 0, 0);
     for (AInt16a y = 0; y < height; y++) {
         for (AInt16a x = 0; x < width; x++) {
             aSetPix0(w, x, y, color);
         }
+    }
+
+    // 全体の波形
+    color = aRgb8(0, 255, 0);
+    int32_t a = t->length / width;
+    for (int32_t i = 0; i < width; i++) {
+        AInt16a y = transform_tdata(t->data[i * a], height);
+        aSetPix0(w, i, y, color);
+    }
+
+    // 拡大した波形
+    color = aRgb8(255, 0, 0);
+    for (int32_t i = 0; i < width; i++) {
+        AInt16a y = transform_tdata(t->data[i + t->length / 2], height) + height;
+        aSetPix0(w, i, y, color);
     }
 
     aWait(-1);
