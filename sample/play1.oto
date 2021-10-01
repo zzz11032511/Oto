@@ -1,0 +1,21 @@
+@include include/wave
+@include include/scale
+
+s1 = SOUND[SINE]
+s2 = SOUND[SAWTOOTH]    
+s3 = SOUND[SQUARE]
+s4 = SOUND[TRIANGLE]
+s5 = SOUND[PSG_SAWTOOTH]
+s6 = SOUND[PSG_SQUARE]
+s7 = SOUND[PSG_TRIANGLE]
+
+length = 0.5
+
+PLAY C5, length, 100, s1
+PLAY D5, length,  20, s2
+PLAY E5, length,  20, s3
+PLAY F5, length, 100, s4
+PLAY G5, length,  20, s5
+PLAY A5, length,  20, s6
+PLAY B5, length, 100, s7
+PLAY C6, length, 100, s1

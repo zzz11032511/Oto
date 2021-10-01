@@ -1,0 +1,11 @@
+@include include/wave
+@include include/scale
+
+s = SOUND[SAWTOOTH]
+
+f = C2
+
+LOOP [5] BEGIN
+    PLAY f, 0.4, 20, s
+    f = f * 2    /* 1オクターブ上げる */
+END
