@@ -3,7 +3,7 @@
 
 s = SOUND[SQUARE]
 
-s -> FADE_IN[1] -> TREMOLO[2, 0.2] \
+s -> FADE_IN[1] -> TREMOLO[10, 0.2] \
   -> FADE_OUT[1] -> s
 
 PLAY C5, 3, 20, s

@@ -133,9 +133,6 @@ typedef struct AWindow_ {
 
 #define DRAWOVALPARAM 1 
 
-static LRESULT CALLBACK aWndProc(HWND hw, unsigned int msg, WPARAM wp,
-                                 LPARAM lp);
-static int aWinthread(AWindow *w);
 void aInitWin0(AWindow *w, int xsiz, int ysiz, const char *title,
                int autoClose);
 void aWait0(AInt32a msec);
@@ -147,8 +144,6 @@ void aLeapFlushAll(AWindow *w, AInt32a ms);
 void aPutKeybuf(AWindow *w, AInt32a c);
 AInt aGetSpcKeybuf(AWindow *w);
 AWindow *aGetWinFromWId(HWND hw);
-static LRESULT CALLBACK aWndProc(HWND hw, unsigned int msg, WPARAM wp,
-                                 LPARAM lp);
 int aAliveWindows();
 
 void aSetPix0(AWindow *w, AInt16a x, AInt16a y, AInt32a c);
