@@ -6,6 +6,8 @@
 #include "../track.h"
 #include "../sound.h"
 
+#define PI 3.14159265358979323846
+
 typedef enum {
     NONE_FILTER = 0,
     FADE,
@@ -40,3 +42,6 @@ void fade(TRACK t, double start, double end);
 void amp(TRACK t, double gain);
 void tremolo(TRACK t, double speed, double range);
 void adsr(TRACK t, double attack, double decay, double sustain, double release);
+
+void iir_lpf(TRACK t, double fc);
+void iir_hpf(TRACK t, double fc);

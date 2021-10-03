@@ -107,7 +107,15 @@ void filtering(TRACK t, SOUND s) {
             );
             break;
         case LOW_PASS:
+            iir_lpf(t,
+                s->filters[i + 1].value.fVal / t->samples_per_sec
+            );
+            break;
         case HIGH_PASS:
+            iir_hpf(t,
+                s->filters[i + 1].value.fVal / t->samples_per_sec
+            );
+            break;
         case VIBRATO:
         case WAH:
         case DELAY:

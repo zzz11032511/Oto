@@ -7,8 +7,6 @@
 #include "../track.h"
 #include "../../util/util.h"
 
-#define PI 3.14159265358979323846
-
 void amp(TRACK t, double gain) {
     for (uint64_t n = 0; n < t->length; n++) {
         t->data[n] *= gain;
