@@ -30,11 +30,15 @@ void include_otofile(int8_t *arg_start, size_t fname_len) {
 
     strncpy(fname, arg_start, fname_len);
 
-    fname[fname_len + 0] = '.';
-    fname[fname_len + 1] = 'o';
-    fname[fname_len + 2] = 't';
-    fname[fname_len + 3] = 'o';
-    fname[fname_len + 4] = '\0';
+    if (strstr(fname, ".oto") == NULL) {
+        fname[fname_len + 0] = '.';
+        fname[fname_len + 1] = 'o';
+        fname[fname_len + 2] = 't';
+        fname[fname_len + 3] = 'o';
+        fname[fname_len + 4] = '\0';        
+    } else {
+        fname[fname_len + 0] = '\0';
+    }
 
     printf("%s\n", fname);
 
