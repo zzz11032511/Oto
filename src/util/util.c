@@ -33,7 +33,7 @@ size_t count_file_size(const char *filename) {
 
 void line_print(char *s) {
     int32_t i = 0;
-    while (s[i] != '\n' && s[i] != EOF) {
+    while (s[i] != '\n' && s[i] != EOF && s[i] != 0) {
         printf("%c", s[i]);
         i++;
     }
