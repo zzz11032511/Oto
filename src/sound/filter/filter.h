@@ -18,6 +18,7 @@ typedef enum {
     ADSR,
     LOW_PASS,
     HIGH_PASS,
+
     VIBRATO,
     WAH,
     DELAY,
@@ -45,3 +46,5 @@ void adsr(TRACK t, double attack, double decay, double sustain, double release);
 
 void iir_lpf(TRACK t, double fc);
 void iir_hpf(TRACK t, double fc);
+
+void vibrato(TRACK t, double speed, double depth);

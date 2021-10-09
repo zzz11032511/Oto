@@ -117,6 +117,11 @@ void filtering(TRACK t, SOUND s) {
             );
             break;
         case VIBRATO:
+            vibrato(t,
+                s->filters[i + 1].value.fVal,
+                s->filters[i + 2].value.fVal
+            );
+            break;
         case WAH:
         case DELAY:
         case REVERB:     
