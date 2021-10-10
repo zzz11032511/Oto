@@ -23,7 +23,7 @@ typedef enum {
 
 void set_filename(const int8_t *filename);
 void set_src(int8_t *src);
-const int8_t *get_filename();
+int8_t *get_filename();
 
 void oto_quit(int32_t exit_status);
 

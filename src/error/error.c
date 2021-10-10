@@ -10,23 +10,26 @@
 #include "../token/token.h"
 #include "../variable/type.h"
 
-static const int8_t *e_filename = NULL;
+static int8_t *e_filename = NULL;
 static int8_t *e_src = NULL;
 
 void set_filename(const int8_t *filename) {
-    e_filename = filename;
+    size_t len = count_string_length(filename, '\0');
+    e_filename = calloc(1, len);
+    strncpy(e_filename, filename, len);
 }
 
 void set_src(int8_t *src) {
     e_src = src;
 }
 
-const int8_t *get_filename() {
+int8_t *get_filename() {
     return e_filename;
 }
 
 void oto_quit(int32_t exit_status) {
     free(e_src);
+    free(e_filename);
     free_var();
     e_src = NULL;
     exit(exit_status);

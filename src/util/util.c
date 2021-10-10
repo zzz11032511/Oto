@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <string.h>
 
-size_t count_string_length(char *s, char endch) {
+size_t count_string_length(const char *s, char endch) {
     size_t size = 0;
     while (s[size] != endch) {
         if (s[size] == '\0') return size;
