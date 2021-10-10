@@ -44,7 +44,7 @@ void include_otofile(int8_t *arg_start, size_t fname_len) {
         fname[fname_len + 0] = '\0';
     }
 
-#ifndef DEBUG
+#ifdef DEBUG
     printf("include %s\n", fname);
 #endif
 

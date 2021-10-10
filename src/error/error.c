@@ -10,7 +10,7 @@
 #include "../token/token.h"
 #include "../variable/type.h"
 
-static int8_t *e_filename = NULL;
+static const int8_t *e_filename = NULL;
 static int8_t *e_src = NULL;
 
 void set_filename(const int8_t *filename) {
@@ -21,7 +21,7 @@ void set_src(int8_t *src) {
     e_src = src;
 }
 
-int8_t *get_filename() {
+const int8_t *get_filename() {
     return e_filename;
 }
 
