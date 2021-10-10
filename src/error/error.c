@@ -93,6 +93,10 @@ void call_error(errorcode_t error_code, ...) {
     case CIRCULAR_REFERENCE_ERROR:
         fprintf(stderr, "Circular reference error\n");
         break;
+    case UNKNOWN_ERROR:
+        fprintf(stderr, "Unknown error\n");
+        printf("Location : %s\n", va_arg(ap, int8_t *));
+        break;
     default:
         fprintf(stderr, "errorcode(%d)\n", error_code);
         break;

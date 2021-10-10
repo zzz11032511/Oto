@@ -42,7 +42,7 @@ void copy_sound(var_t *new, var_t *sound) {
 
 void connect_filter(struct var_stack *stack, var_t *sound, var_t *filter) {
     if (sound->type != TySound || filter->type != TyFilter) {
-        call_error(UNKNOWN_ERROR);
+        call_error(UNKNOWN_ERROR, "connect_filter()");
     }
 
     struct var_stack sub_stack;

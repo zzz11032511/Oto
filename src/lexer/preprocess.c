@@ -53,7 +53,7 @@ void include_otofile(int8_t *arg_start, size_t fname_len) {
     if (include_src_list == NULL) {
         include_src_list = new_str_list();
         if (include_src_list == NULL) {
-            call_error(UNKNOWN_ERROR);
+            call_error(UNKNOWN_ERROR, "include_otofile()");
         }
         append_str_item(include_src_list, get_filename());
     } else if (is_exist_str_item(include_src_list, fname)) {

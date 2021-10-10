@@ -15,6 +15,6 @@ void print_var(struct var_stack *stack) {
         printf("%lf\n", t.value.fVal);
         break;
     default:
-        call_error(UNKNOWN_ERROR);
+        call_error(UNKNOWN_ERROR, "print_var()");
     }
 }

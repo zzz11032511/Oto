@@ -42,7 +42,7 @@ var_t calculation(var_t v1, var_t v2, opcode_t opcode) {
         t.value.iVal = v1.value.iVal | v2.value.iVal;
         break;
     default:
-        call_error(ZERO_DIVISION_ERROR);
+        call_error(UNKNOWN_ERROR, "calculation()");
     }
 
     return t;
@@ -69,7 +69,7 @@ int32_t compare(var_t v1, var_t v2, uint32_t opcode) {
     case OpRiEqCmp:
         return v1Val >= v2Val;
     default:
-        call_error(UNKNOWN_ERROR);
+        call_error(UNKNOWN_ERROR, "compare()");
     }
 
     return 0;

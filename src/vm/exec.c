@@ -158,7 +158,7 @@ void exec() {
             NEXT_OPERATION(icp);
 
         default:
-            call_error(UNKNOWN_ERROR);
+            call_error(UNKNOWN_ERROR, "exec()");
         }
     }
 }
