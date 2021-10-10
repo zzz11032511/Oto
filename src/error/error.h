@@ -7,6 +7,7 @@ typedef enum {
     TOO_MANY_TOKEN_ERROR,
     FILE_NOT_FOUND_ERROR,
     INCLUDE_FILE_NOT_FOUND_ERROR,
+    CIRCULAR_REFERENCE_ERROR,
     
     INVALID_SYNTAX_ERROR,
     NAME_ERROR,
@@ -22,6 +23,7 @@ typedef enum {
 
 void set_filename(const int8_t *filename);
 void set_src(int8_t *src);
+int8_t *get_filename();
 
 void oto_quit(int32_t exit_status);
 

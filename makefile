@@ -6,7 +6,7 @@ SRCSLIST := main.c run.c \
 			token/token.c \
 			parser/parser.c parser/expr.c parser/block.c parser/flow.c \
 			parser/args.c parser/instruction.c parser/conn_filter.c \
-			util/util.c util/int_stack.c \
+			util/util.c util/int_stack.c util/linked_list.c \
 			variable/variable.c variable/var_stack.c \
 			vm/exec.c vm/operation/print.c vm/operation/alu.c \
 			vm/operation/sound_instructions.c \

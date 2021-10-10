@@ -6,6 +6,7 @@
 
 #include "lexer.h"
 #include "../util/util.h"
+#include "../util/linked_list.h"
 #include "../error/error.h"
 #include "../token/token.h"
 #include "../variable/type.h"
@@ -25,6 +26,9 @@ pre_command_t search_command(int8_t *cmd_start, size_t len) {
     }
 }
 
+/* 循環参照エラーを防ぐために現在参照しているファイルをリスト化する */
+static struct str_list *include_src_list = NULL;
+
 void include_otofile(int8_t *arg_start, size_t fname_len) {
     int8_t fname[fname_len + 5];
 
@@ -40,18 +44,37 @@ void include_otofile(int8_t *arg_start, size_t fname_len) {
         fname[fname_len + 0] = '\0';
     }
 
-    printf("%s\n", fname);
+#ifndef DEBUG
+    printf("include %s\n", fname);
+#endif
+
+    // 循環参照の検知
+    // TODO: ./の有無で多少無駄になる
+    if (include_src_list == NULL) {
+        include_src_list = new_str_list();
+        if (include_src_list == NULL) {
+            call_error(UNKNOWN_ERROR);
+        }
+        append_str_item(include_src_list, get_filename());
+    } else if (is_exist_str_item(include_src_list, fname)) {
+        call_error(CIRCULAR_REFERENCE_ERROR);
+    }
+
+    append_str_item(include_src_list, fname);
 
     int8_t *src = src_open(fname);
     if (src == NULL) {
-        call_error(INCLUDE_FILE_NOT_FOUND_ERROR);
+        call_error(INCLUDE_FILE_NOT_FOUND_ERROR, fname);
     }
 
     lexer(src);
 
-    // TODO: もしlexerがエラーのときfreeされない！
-    // TODO: 相互にincludeすることで無限ループが発生する
+    // 無事にincludeしたファイルをリストから削除
+    remove_tail_str_item(include_src_list);
     free(src);
+    if (count_str_num_of_item(include_src_list) <= 0) {
+        free_str_list(include_src_list);
+    }
 }
 
 uint32_t preprocess(int8_t *pre_start) {

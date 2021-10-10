@@ -10,7 +10,7 @@
 #include "../token/token.h"
 #include "../variable/type.h"
 
-static const int8_t *e_filename = NULL;
+static int8_t *e_filename = NULL;
 static int8_t *e_src = NULL;
 
 void set_filename(const int8_t *filename) {
@@ -19,6 +19,10 @@ void set_filename(const int8_t *filename) {
 
 void set_src(int8_t *src) {
     e_src = src;
+}
+
+int8_t *get_filename() {
+    return e_filename;
 }
 
 void oto_quit(int32_t exit_status) {
@@ -84,6 +88,10 @@ void call_error(errorcode_t error_code, ...) {
         break;
     case INCLUDE_FILE_NOT_FOUND_ERROR:
         fprintf(stderr, "Include file not found\n");
+        printf("filename : %s\n", va_arg(ap, int8_t *));
+        break;
+    case CIRCULAR_REFERENCE_ERROR:
+        fprintf(stderr, "Circular reference error\n");
         break;
     default:
         fprintf(stderr, "errorcode(%d)\n", error_code);
