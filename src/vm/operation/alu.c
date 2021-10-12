@@ -6,6 +6,8 @@
 #include "../../variable/variable.h"
 #include "../../variable/type.h"
 
+#define IS_JUST_ZERO(n) (n & 0xffffffff) == 0
+
 var_t calculation(var_t v1, var_t v2, opcode_t opcode) {
     var_t t;
 
@@ -24,6 +26,10 @@ var_t calculation(var_t v1, var_t v2, opcode_t opcode) {
         break;
     case OpDiv:
     case OpDiv2:
+        if (IS_JUST_ZERO(v2.value.iVal)) {
+            // 完全に0なら0除算とする
+            call_error(ZERO_DIVISION_ERROR);
+        }
         t.value.fVal = v1.value.fVal / v2.value.fVal;
         break;
     case OpMod:

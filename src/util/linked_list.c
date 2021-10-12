@@ -11,7 +11,7 @@
 struct str_list *new_str_list() {
     struct str_list *list = (struct str_list *)calloc(1, sizeof(struct str_list));
     if (list == NULL) {
-        // call_error(UNKNOWN_ERROR);
+        call_error(UNKNOWN_ERROR, "new_str_list()");
     }
 
     list->head = NULL;
@@ -23,7 +23,7 @@ struct str_list *new_str_list() {
 struct str_node *new_str_node(int8_t *item) {
     struct str_node *node = (struct str_node *)calloc(1, sizeof(struct str_node));
     if (node == NULL) {
-        // call_error(UNKNOWN_ERROR);
+        call_error(UNKNOWN_ERROR, "new_str_list()");
     }
 
     node->item = item;

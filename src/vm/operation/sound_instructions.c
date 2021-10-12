@@ -107,10 +107,10 @@ void play(struct var_stack *stack, uint64_t samples_per_sec) {
         length = (uint64_t)(t3.value.fVal * samples_per_sec);
     }
 
-    // if (length < 1600) {
-    //     // lengthが1600未満の時に何故かエラーが発生する
-    //     call_error(SOUND_PLAYER_ERROR);
-    // }
+    if (length < 1600) {
+        // lengthが1600未満の時に何故かエラーが発生する
+        call_error(SOUND_PLAYER_ERROR);
+    }
 
     double freq = 500;
     if (t4.type != TyInitVal) {

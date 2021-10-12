@@ -16,7 +16,6 @@ struct token {
     int8_t    *ts;  // トークンの内容(文字列)
 };
 
-// lexerしか使わないはず
 void set_tc(tokencode_t tc, uint32_t pc);
 
 /* ソースコードを変換したトークン列から, 指定した場所のトークン番号を取得 */

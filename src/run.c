@@ -21,7 +21,7 @@ void run(const int8_t *filename) {
 
     src = src_open((char *)filename);
     if (src == NULL) {
-        call_error(FILE_NOT_FOUND_ERROR);
+        call_error(FILE_NOT_FOUND_ERROR, filename);
         return;
     }
     set_src(src);
