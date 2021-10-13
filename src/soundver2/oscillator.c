@@ -5,9 +5,8 @@
 #include "../util/util.h"
 #include "../error/error.h"
 
-oscillator_t*
-new_oscillator(basicwave_t wave, oscillator_t *fm, oscillator_t *am) {
-    oscillator_t *osc = MYMALLOC(sizeof(oscillator_t));
+oscillator *new_oscillator(basicwave_t wave, oscillator *fm, oscillator *am) {
+    oscillator *osc = MYMALLOC(oscillator);
     if (osc == NULL) {
         call_error(UNKNOWN_ERROR, "new_oscillator()");
     }
@@ -19,7 +18,6 @@ new_oscillator(basicwave_t wave, oscillator_t *fm, oscillator_t *am) {
     return osc;
 }
 
-void
-free_oscillator(oscillator_t *osc) {
+void free_oscillator(oscillator *osc) {
     free(osc);
 }

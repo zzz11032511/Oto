@@ -11,9 +11,12 @@ typedef enum {
 } basicwave_t;
 
 struct oscillator {
-    basicwave_t basic;
+    basicwave_t wave;
     struct oscillator *fm;  // モジュレータ周波数(NULLなら0)
     struct oscillator *am;  // モジュレータ振幅(NULLなら0)
 };
 
-typedef struct oscillator oscillator_t;
+typedef struct oscillator oscillator;
+
+oscillator *new_oscillator(basicwave_t wave, oscillator *fm, oscillator *am);
+void free_oscillator(oscillator *osc);
