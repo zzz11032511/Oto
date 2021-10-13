@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <assert.h>
 
 char *src_open(const char *filename);
@@ -10,6 +11,7 @@ void line_print(char *s);
 
 #define GET_ARRAY_LENGTH(a) (sizeof(a)/sizeof(a[0]))
 #define CALC_TIME(s, e) ((double)(e - s) / CLOCKS_PER_SEC)
+#define MYMALLOC(size) calloc(1, size)
 
 #ifdef DEBUG
 
