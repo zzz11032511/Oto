@@ -8,7 +8,7 @@
 #include "../error/error.h"
 
 sound *new_sound(oscillator *oscillator) {
-    sound *s = MYMALLOC(sound);
+    sound *s = MYMALLOC1(sound);
     if (s == NULL) {
         call_error(UNKNOWN_ERROR, "new_sound()");
     }

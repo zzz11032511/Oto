@@ -2,11 +2,12 @@
 #include <stdlib.h>
 
 #include "oscillator.h"
+#include "track.h"
 #include "../util/util.h"
 #include "../error/error.h"
 
 oscillator *new_oscillator(basicwave_t wave, oscillator *fm, oscillator *am) {
-    oscillator *osc = MYMALLOC(oscillator);
+    oscillator *osc = MYMALLOC1(oscillator);
     if (osc == NULL) {
         call_error(UNKNOWN_ERROR, "new_oscillator()");
     }

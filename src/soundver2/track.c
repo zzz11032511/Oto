@@ -8,7 +8,7 @@
 
 track *new_track(uint64_t length, uint64_t channel, uint64_t samples_per_sec,
                  uint64_t bits_per_sample, uint64_t velocity) {
-    track *s = MYMALLOC(track);
+    track *s = MYMALLOC1(track);
     if (s == NULL) {
         call_error(UNKNOWN_ERROR, "new_track()");
     }

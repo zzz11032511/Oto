@@ -7,7 +7,7 @@
 #include "../error/error.h"
 
 filter *new_filter(filter_num_t filter_num, uint64_t param) {
-    filter *f = MYMALLOC(filter);
+    filter *f = MYMALLOC1(filter);
     if (f == NULL) {
         call_error(UNKNOWN_ERROR, "new_filter()");
     }
