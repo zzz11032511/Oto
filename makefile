@@ -30,7 +30,7 @@ DEBUGOBJS := $(addprefix $(OUTDIR)/,$(patsubst %.c,%_debug.o,$(SRCS)))
 
 CC      = gcc
 CFLAGS  = -Wall -O2
-LIB     = -lwinmm -lacl -lgdi32
+LIB     = -lwinmm -lacl -lgdi32 -lportaudio
 INCLUDE = -I ./include
 # ----------------------------------------------
 
@@ -97,3 +97,6 @@ builddir:
 
 clean:
 	del /s /q %cd%\build\*
+
+audiotest:
+	gcc -O2 -Wall -o audiotest audiotest.c $(INCLUDE) -L./$(LIBDIR) -lacl -lgdi32 -lportaudio

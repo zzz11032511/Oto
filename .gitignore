@@ -1,10 +1,10 @@
 *.exe
 *.log
 *.wav
+*.dll
 
 build/
 .vscode/
 
 aaa.oto
-
-makefile_forlinux
+audiotest.c
