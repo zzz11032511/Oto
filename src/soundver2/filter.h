@@ -3,24 +3,29 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#include "../variable/variable.h"
+#define OTO_FILTER inline void
 
-typedef enum {
-    NONE_FILTER = 0,
-    FADE,
-    FADE_IN,
-    FADE_OUT,
-    AMP,
-    TREMOLO,
-    ADSR
-} filter_num_t;
+OTO_FILTER clip(float *d);
+OTO_FILTER fade_in(float *d, uint64_t t, uint64_t length, double time);
+OTO_FILTER fade_out(float *d, uint64_t t, uint64_t length, double time);
+OTO_FILTER fade(float *d, uint64_t t, uint64_t length, double start, double end);
 
-struct filter {
-    filter_num_t filter_num;
-    uint64_t param;
-};
+// #include "../variable/variable.h"
 
-typedef struct filter filter;
+// typedef enum {
+//     NONE_FILTER = 0,
+//     FADE,
+//     FADE_IN,
+//     FADE_OUT,
+//     AMP,
+//     TREMOLO,
+//     ADSR
+// } filter_num_t;
 
-filter *new_filter(filter_num_t filter_num, uint64_t param);
-void free_filter(filter *f);
+// typedef struct {
+//     filter_num_t filter_num;
+//     uint64_t param;
+// } filter;
+
+// filter *new_filter(filter_num_t filter_num, uint64_t param);
+// void free_filter(filter *f);

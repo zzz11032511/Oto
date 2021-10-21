@@ -3,21 +3,25 @@
 #include <stdlib.h>
 
 #include "filter.h"
-#include "../util/util.h"
-#include "../error/error.h"
 
-filter *new_filter(filter_num_t filter_num, uint64_t param) {
-    filter *f = MYMALLOC1(filter);
-    if (f == NULL) {
-        call_error(UNKNOWN_ERROR, "new_filter()");
-    }
-
-    f->filter_num = filter_num;
-    f->param = param;
-
-    return f;
+OTO_FILTER clip(float *d) {
+    if (*d > 1) *d = 1;
+    else if (*d < -1) *d = -1;
 }
 
-void free_filter(filter *f) {
-    free(f);
+OTO_FILTER fade_in(float *d, uint64_t t, uint64_t length, double time) {
+    if (t < (time * length)) {
+        *d *= t / (time * length);
+    }
+}
+
+OTO_FILTER fade_out(float *d, uint64_t t, uint64_t length, double time) {
+    if ((length - t) < (time * length)) {
+        *d *= (length - t) / (time * length);
+    }
+}
+
+OTO_FILTER fade(float *d, uint64_t t, uint64_t length, double start, double end) {
+    fade_in(d, t, length, start);
+    fade_out(d, t, length, end);
 }

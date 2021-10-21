@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "oscillator.h"
 #include "track.h"
+#include "oscillator.h"
 #include "../util/util.h"
 #include "../error/error.h"
 
-oscillator *new_oscillator(basicwave_t wave, oscillator *fm, oscillator *am) {
-    oscillator *osc = MYMALLOC1(oscillator);
+Oscillator *new_oscillator(basicwave_t wave, Oscillator *fm, Oscillator *am) {
+    Oscillator *osc = MYMALLOC1(Oscillator);
     if (osc == NULL) {
         call_error(UNKNOWN_ERROR, "new_oscillator()");
     }
@@ -19,6 +19,6 @@ oscillator *new_oscillator(basicwave_t wave, oscillator *fm, oscillator *am) {
     return osc;
 }
 
-void free_oscillator(oscillator *osc) {
+void free_oscillator(Oscillator *osc) {
     free(osc);
 }

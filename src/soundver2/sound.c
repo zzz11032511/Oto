@@ -7,8 +7,8 @@
 #include "../util/util.h"
 #include "../error/error.h"
 
-sound *new_sound(oscillator *oscillator) {
-    sound *s = MYMALLOC1(sound);
+Sound *new_sound(Oscillator *oscillator) {
+    Sound *s = MYMALLOC1(Sound);
     if (s == NULL) {
         call_error(UNKNOWN_ERROR, "new_sound()");
     }
@@ -19,6 +19,6 @@ sound *new_sound(oscillator *oscillator) {
     return s;
 }
 
-void free_sound(sound *s) {
+void free_sound(Sound *s) {
     free(s);
 }
