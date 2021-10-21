@@ -6,6 +6,7 @@
 #include "otomath.h"
 #include "sound.h"
 #include "filter.h"
+#include "../error/error.h"
 
 static uint64_t fs = 44100;
 void set_sampling_freq(uint64_t f) {
@@ -74,7 +75,10 @@ static PaStreamParameters outParam;
 static Currentdata data;
 
 void init_sound_io() {
-    Pa_Initialize();
+    PaError err = paNoError;
+    
+    err = Pa_Initialize();
+    if (err != paNoError) call_error(SOUND_PLAYER_ERROR);
 
     outParam.channelCount = 1;
     outParam.sampleFormat = paFloat32;
@@ -90,13 +94,23 @@ void init_sound_io() {
         data.freq[i] = 1;
     }
 
-    Pa_OpenStream(&stream, NULL, &outParam, fs, frames_per_buffer, paClipOff,
-                  play_callback, &data);
-    Pa_StartStream(stream);
+    err = Pa_OpenStream(&stream, NULL, &outParam, fs, frames_per_buffer, paClipOff,
+                        play_callback, &data);
+    if (err != paNoError) call_error(SOUND_PLAYER_ERROR);
+
+    err = Pa_StartStream(stream);
+    if (err != paNoError) call_error(SOUND_PLAYER_ERROR);
 }
 
 void terminate_sound_io() {
-    Pa_StopStream(stream);
-    Pa_CloseStream(stream);
-    Pa_Terminate();
+    PaError err = paNoError;
+
+    err = Pa_StopStream(stream);
+    if (err != paNoError) call_error(SOUND_PLAYER_ERROR);
+
+    err = Pa_CloseStream(stream);
+    if (err != paNoError) call_error(SOUND_PLAYER_ERROR);
+
+    err = Pa_Terminate();
+    if (err != paNoError) call_error(SOUND_PLAYER_ERROR);
 }
