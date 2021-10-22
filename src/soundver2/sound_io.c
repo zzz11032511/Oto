@@ -8,18 +8,6 @@
 #include "filter.h"
 #include "../error/error.h"
 
-static uint64_t fs = 44100;
-void set_sampling_freq(uint64_t f) {
-    fs = f;
-}
-
-static double fade_range = 0.05;
-void set_fade_range(double range) {
-    fade_range = range;
-}
-
-static uint64_t frames_per_buffer = 128;
-
 /* 現在の出力音声情報 */
 typedef struct {
     Sound *sound;
@@ -54,14 +42,14 @@ static int play_callback(const void *inputBuffer,
         // オシレータ
         uint64_t cnt = 1;
         for (uint64_t ch = 0; ch < MAX_POLYPHONIC; ch++) {
-            ds[ch] = volume * sin(2 * PI * data->freq[ch] * data->t / fs);
+            ds[ch] = volume * sin(2 * PI * data->freq[ch] * data->t / SAMPLING_FREQ);
         }
         d = (ds[0] + ds[1] + ds[2] + ds[3] + ds[4] + ds[5] + ds[6] + ds[7]) / cnt;
 
         // フィルタリング
 
         clip(&d);
-        fade(&d, data->t, data->length, fade_range, fade_range);
+        io_fade(&d, data->t, data->length);
         
         *out++ = d;
         data->t += 1;
@@ -94,8 +82,8 @@ void init_sound_io() {
         data.freq[i] = 1;
     }
 
-    err = Pa_OpenStream(&stream, NULL, &outParam, fs, frames_per_buffer, paClipOff,
-                        play_callback, &data);
+    err = Pa_OpenStream(&stream, NULL, &outParam, SAMPLING_FREQ,
+                        FRAMES_PER_BUFFER, paClipOff, play_callback, &data);
     if (err != paNoError) call_error(SOUND_PLAYER_ERROR);
 
     err = Pa_StartStream(stream);

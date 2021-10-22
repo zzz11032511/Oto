@@ -25,3 +25,11 @@ OTO_FILTER fade(float *d, uint64_t t, uint64_t length, double start, double end)
     fade_in(d, t, length, start);
     fade_out(d, t, length, end);
 }
+
+/* クリックノイズ除去用のフェードの幅 */
+#define FADE_RANGE 0.05
+
+OTO_FILTER io_fade(float *d, uint64_t t, uint64_t length) {
+    fade_in(d, t, length, FADE_RANGE);
+    fade_out(d, t, length, FADE_RANGE);
+}

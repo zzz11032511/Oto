@@ -10,6 +10,8 @@ OTO_FILTER fade_in(float *d, uint64_t t, uint64_t length, double time);
 OTO_FILTER fade_out(float *d, uint64_t t, uint64_t length, double time);
 OTO_FILTER fade(float *d, uint64_t t, uint64_t length, double start, double end);
 
+OTO_FILTER io_fade(float *d, uint64_t t, uint64_t length);
+
 // #include "../variable/variable.h"
 
 // typedef enum {
