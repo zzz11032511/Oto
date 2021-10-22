@@ -10,7 +10,7 @@ typedef enum {
     WHITE_NOISE,    // PSG
 } basicwave_t;
 
-typedef struct {
+typedef struct Oscillator {
     basicwave_t wave;
     struct Oscillator *fm;  // モジュレータ周波数(NULLなら0)
     struct Oscillator *am;  // モジュレータ振幅(NULLなら0)
