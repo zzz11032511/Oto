@@ -7,7 +7,7 @@
 #include "../../variable/type.h"
 
 void print_var(struct var_stack *stack) {
-    var_t t = vpop(stack);
+    Var t = vpop(stack);
 
     switch (t.type) {
     case TyFloat:

@@ -77,37 +77,37 @@ void parser_if(uint32_t *cur, uint32_t *icp) {
         put_ic(icp, OpJmp, 0, 0, 0, 0);
 
         if (not_flag) {
-            put_ic(&jmp_icp1, OpJnz, (var_t *)((uint64_t)*icp), 0, 0, 0);
+            put_ic(&jmp_icp1, OpJnz, (Var *)((uint64_t)*icp), 0, 0, 0);
         } else {
-            put_ic(&jmp_icp1, OpJz, (var_t *)((uint64_t)*icp), 0, 0, 0);
+            put_ic(&jmp_icp1, OpJz, (Var *)((uint64_t)*icp), 0, 0, 0);
         }
 
         parser_if(&cur2, icp);
-        put_ic(&jmp_icp2, OpJmp, (var_t *)((uint64_t)*icp), 0, 0, 0);
+        put_ic(&jmp_icp2, OpJmp, (Var *)((uint64_t)*icp), 0, 0, 0);
 
     } else if (get_tc(cur2) == TcElse) {
         uint32_t jmp_icp3 = *icp;
         put_ic(icp, OpJmp, 0, 0, 0, 0);
 
         if (not_flag) {
-            put_ic(&jmp_icp1, OpJnz, (var_t *)((uint64_t)*icp), 0, 0, 0);
+            put_ic(&jmp_icp1, OpJnz, (Var *)((uint64_t)*icp), 0, 0, 0);
         } else {
-            put_ic(&jmp_icp1, OpJz, (var_t *)((uint64_t)*icp), 0, 0, 0);
+            put_ic(&jmp_icp1, OpJz, (Var *)((uint64_t)*icp), 0, 0, 0);
         }
 
         start = cur2 + 1;  // Elseの位置 + 1
         end = seek_block_if_end(start);
 
         parser_sub(icp, start, end - 1);
-        put_ic(&jmp_icp3, OpJmp, (var_t *)((uint64_t)*icp), 0, 0, 0);
+        put_ic(&jmp_icp3, OpJmp, (Var *)((uint64_t)*icp), 0, 0, 0);
 
         cur2 = end + 1;
 
     } else {
         if (not_flag) {
-            put_ic(&jmp_icp1, OpJnz, (var_t *)((uint64_t)*icp), 0, 0, 0);
+            put_ic(&jmp_icp1, OpJnz, (Var *)((uint64_t)*icp), 0, 0, 0);
         } else {
-            put_ic(&jmp_icp1, OpJz, (var_t *)((uint64_t)*icp), 0, 0, 0);
+            put_ic(&jmp_icp1, OpJz, (Var *)((uint64_t)*icp), 0, 0, 0);
         }
 
         cur2 = end + 1;
@@ -138,8 +138,8 @@ void parser_loop(uint32_t *cur, uint32_t *icp) {
 
     parser_sub(icp, start + 1, end - 1);
 
-    put_ic(icp, OpJmp, (var_t *)((uint64_t)jmp_icp), 0, 0, 0);
-    put_ic(&jmp_icp, OpLoop, (var_t *)((uint64_t)*icp), VAR_P(arg_tc), 0, 0);
+    put_ic(icp, OpJmp, (Var *)((uint64_t)jmp_icp), 0, 0, 0);
+    put_ic(&jmp_icp, OpLoop, (Var *)((uint64_t)*icp), VAR_P(arg_tc), 0, 0);
 
     *cur = end + 1;
 }

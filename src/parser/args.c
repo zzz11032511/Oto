@@ -56,7 +56,7 @@ uint32_t parser_args_sub(uint32_t *icp, uint32_t start, uint32_t end) {
             put_ic(icp, OpPush, VAR_P(tc), 0, 0, 0);
         
         } else if (arg_len == 0) {
-            put_ic(icp, OpPushC, (var_t *)TyInitVal, 0, 0, 0);
+            put_ic(icp, OpPushC, (Var *)TyInitVal, 0, 0, 0);
 
         } else {
             // 式か関数
@@ -88,7 +88,7 @@ void parser_args(uint32_t *icp, uint32_t start, uint32_t end, uint32_t max_of_pa
 
     // 引数が少ない分だけ初期値をPushする
     while (params < max_of_params) {
-        put_ic(icp, OpPushC, (var_t *)TyInitVal, 0, 0, 0);
+        put_ic(icp, OpPushC, (Var *)TyInitVal, 0, 0, 0);
         params++;
     }
 }

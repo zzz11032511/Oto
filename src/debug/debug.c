@@ -97,10 +97,10 @@ static const int8_t *typenames[] = {
     "TyFunc",
 };
 
-extern var_t *ic[];
+extern Var *ic[];
 
 void print_opcodes() {
-    var_t **p = ic;
+    Var **p = ic;
     uint64_t ic_num = 0;
 
     printf("\nExecute code\n");

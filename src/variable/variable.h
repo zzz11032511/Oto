@@ -14,10 +14,10 @@ typedef struct var {
         double  fVal;
         void   *pVal;
     } value;
-} var_t;
+} Var;
 
 
-var_t *get_var_pointer(tokencode_t tc);
+Var *get_var_pointer(tokencode_t tc);
 
 /* get_var_pointer()を短縮したもの */
 #define VAR_P(tc) get_var_pointer(tc)

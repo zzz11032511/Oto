@@ -14,10 +14,10 @@
 /* 内部コード列の長さ */
 #define IC_LIST_SIZE 20000
 
-var_t *ic[IC_LIST_SIZE] = {0};
+Var *ic[IC_LIST_SIZE] = {0};
 
-void put_ic(uint32_t *icp, opcode_t op, var_t *v1, var_t *v2, var_t *v3, var_t *v4) {
-    ic[(*icp)++] = (var_t *)((uint64_t)op);
+void put_ic(uint32_t *icp, opcode_t op, Var *v1, Var *v2, Var *v3, Var *v4) {
+    ic[(*icp)++] = (Var *)((uint64_t)op);
     ic[(*icp)++] = v1;
     ic[(*icp)++] = v2;
     ic[(*icp)++] = v3;

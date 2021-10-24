@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "../error/error.h"
 
-var_t vpush(struct var_stack *stack, var_t var) {
+Var vpush(struct var_stack *stack, Var var) {
     if (stack->sp >= VSTACK_SIZE) {
         call_error(STACK_OVERFLOW_ERROR);
     } 
@@ -11,12 +11,12 @@ var_t vpush(struct var_stack *stack, var_t var) {
     return var;
 }
 
-var_t const_vpush(struct var_stack *stack, uint64_t type, int64_t value) {
+Var const_vpush(struct var_stack *stack, uint64_t type, int64_t value) {
     if (stack->sp >= VSTACK_SIZE) {
         call_error(STACK_OVERFLOW_ERROR);
     } 
 
-    var_t var;
+    Var var;
     var.type = type;
     var.value.iVal = value;
 
@@ -25,7 +25,7 @@ var_t const_vpush(struct var_stack *stack, uint64_t type, int64_t value) {
     return var;
 }
 
-var_t vpop(struct var_stack *stack) {
+Var vpop(struct var_stack *stack) {
     if (stack->sp <= 0) {
         call_error(STACK_OVERFLOW_ERROR);
     }
@@ -33,6 +33,6 @@ var_t vpop(struct var_stack *stack) {
     return stack->q[stack->sp];
 }
 
-var_t vpeek(struct var_stack *stack) {
+Var vpeek(struct var_stack *stack) {
     return stack->q[stack->sp - 1]; 
 }

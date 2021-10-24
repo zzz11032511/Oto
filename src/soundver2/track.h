@@ -13,12 +13,12 @@ typedef struct {
     double freq;
     double length;
     uint8_t velocity;
-} note_data;
+} Notedata;
 
-struct track {
+typedef struct track {
     Sound *sound;
 
-    note_data *note;
+    Notedata *note;
     size_t max_of_notes;
     size_t num_of_notes;
     
@@ -31,5 +31,4 @@ struct track {
     uint64_t sample_per_sec;
     uint64_t bits_per_sample;
     uint8_t volume;
-};
-typedef struct track track;
+} Track;

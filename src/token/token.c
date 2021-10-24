@@ -14,12 +14,12 @@
 #include "../sound/filter/filter.h"
 
 /* 最初にlexerしておく記号・予約語 */
-struct symbol {
+typedef struct symbol {
     int8_t *s;
     tokencode_t tc;
-};
+} Symbol;
 
-static const struct symbol symbols[] = {
+static const Symbol symbols[] = {
     {"\n", TcLF},      {",",  TcComma},   {":", TcColon},
     {"[",  TcSqBrOpn}, {"]",  TcSqBrCls}, {"(", TcBrOpn}, {")",  TcBrCls},
     {"<-", TcLArrow},  {"->", TcRArrow},  {"=", TcEqu},   {"+",  TcPlus},
@@ -28,13 +28,13 @@ static const struct symbol symbols[] = {
     {">=", TcGe},      {"<=", TcLe}
 };
 
-struct rsvword {
+typedef struct rsvword {
     int8_t *lower;
     int8_t *upper;
     tokencode_t tc;
-};
+} Rsvword;
 
-static const struct rsvword rsvwords[] = {
+static const Rsvword rsvwords[] = {
     {"begin",    "BEGIN",    TcBegin    },
     {"end",      "END",      TcEnd      },
     {"define",   "DEFINE",   TcDefine   },
@@ -78,7 +78,7 @@ static tokencode_t get_rsvword_tc(int8_t *s, size_t len) {
 }
 
 /* ----------------------------- */
-static struct token token_list[MAX_TC] = {0};  // 変換済みトークン一覧
+static Token token_list[MAX_TC] = {0};  // 変換済みトークン一覧
 static uint32_t tcs = 0;  // 今まで発行したトークンコードの個数
 static uint32_t tcb = 0;  // tcsBuf[]の未使用領域
 

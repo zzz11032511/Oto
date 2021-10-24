@@ -6,9 +6,9 @@
 
 // トークン番号と変数の場所は対応している
 #define MAX_TC 4096
-static var_t var_list[MAX_TC] = {0};
+static Var var_list[MAX_TC] = {0};
 
-var_t *get_var_pointer(tokencode_t tc) {
+Var *get_var_pointer(tokencode_t tc) {
     return &var_list[tc];
 }
 

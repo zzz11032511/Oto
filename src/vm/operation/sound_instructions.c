@@ -16,12 +16,12 @@
 #include "../../sound/sound_io.h"
 #include "../../sound/oscillator.h"
 
-void define_sound(var_t *sound, var_t *wave) {
+void define_sound(Var *sound, Var *wave) {
     sound->type = TySound;
     sound->value.pVal = (void *)new_sound((uint64_t)wave->value.fVal, NULL, 0);
 }
 
-void copy_sound(var_t *new, var_t *sound) {
+void copy_sound(Var *new, Var *sound) {
     wave_t wave = ((SOUND)sound->value.pVal)->wave;
     if (new->type != TySound) {
         new->type = TySound;
@@ -33,14 +33,14 @@ void copy_sound(var_t *new, var_t *sound) {
     memcpy(
         ((SOUND)new->value.pVal)->filters, 
         ((SOUND)sound->value.pVal)->filters,
-        sizeof(var_t) * MAX_CONNECT
+        sizeof(Var) * MAX_CONNECT
     );
 
     ((SOUND)new->value.pVal)->num_of_filter = 
         ((SOUND)sound->value.pVal)->num_of_filter;
 }
 
-void connect_filter(struct var_stack *stack, var_t *sound, var_t *filter) {
+void connect_filter(struct var_stack *stack, Var *sound, Var *filter) {
     if (sound->type != TySound || filter->type != TyFilter) {
         call_error(UNKNOWN_ERROR, "connect_filter()");
     }
@@ -51,7 +51,7 @@ void connect_filter(struct var_stack *stack, var_t *sound, var_t *filter) {
     int32_t num_of_params = ((FILTER)filter->value.pVal)->param;
     
     // 現在つながっているフィルター
-    var_t *connected = ((SOUND)sound->value.pVal)->filters; 
+    Var *connected = ((SOUND)sound->value.pVal)->filters; 
     // 現在つながっているフィルターの数
     int32_t ptr = ((SOUND)sound->value.pVal)->num_of_filter;
 
@@ -70,8 +70,8 @@ void connect_filter(struct var_stack *stack, var_t *sound, var_t *filter) {
 }
 
 void beep(struct var_stack *stack) {
-    var_t t1 = vpop(stack);  // length
-    var_t t2 = vpop(stack);  // frequency
+    Var t1 = vpop(stack);  // length
+    Var t2 = vpop(stack);  // frequency
 
     if (t1.type == TyInitVal) {
         t1.value.fVal = 1;
@@ -89,10 +89,10 @@ void beep(struct var_stack *stack) {
 }
 
 void play(struct var_stack *stack, uint64_t samples_per_sec) {
-    var_t t1 = vpop(stack);  // sound
-    var_t t2 = vpop(stack);  // velocity
-    var_t t3 = vpop(stack);  // length
-    var_t t4 = vpop(stack);  // frequency
+    Var t1 = vpop(stack);  // sound
+    Var t2 = vpop(stack);  // velocity
+    Var t3 = vpop(stack);  // length
+    Var t4 = vpop(stack);  // frequency
 
     uint64_t velocity = 100;
     if (t2.type != TyInitVal) {
@@ -180,10 +180,10 @@ static void print_wave_sub(TRACK t) {
 }
 
 void print_wave(struct var_stack *stack, uint64_t samples_per_sec) {
-    var_t t1 = vpop(stack);  // sound
-    var_t t2 = vpop(stack);  // velocity
-    var_t t3 = vpop(stack);  // length
-    var_t t4 = vpop(stack);  // frequency
+    Var t1 = vpop(stack);  // sound
+    Var t2 = vpop(stack);  // velocity
+    Var t3 = vpop(stack);  // length
+    Var t4 = vpop(stack);  // frequency
 
     uint64_t velocity = 100;
     if (t2.type != TyInitVal) {

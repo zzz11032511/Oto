@@ -10,11 +10,11 @@
 #define MAX_TC 4096
 #define TC_LIST_SIZE 20000
 
-struct token {
+typedef struct token {
     tokencode_t tc;  // トークン番号
     size_t      tl;  // トークンの文字列の長さ
     int8_t    *ts;  // トークンの内容(文字列)
-};
+} Token;
 
 void set_tc(tokencode_t tc, uint32_t pc);
 

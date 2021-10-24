@@ -7,8 +7,8 @@
 #include "../../variable/var_stack.h"
 
 /* alu.c */
-var_t calculation(var_t v1, var_t v2, opcode_t opcode);
-int32_t compare(var_t v1, var_t v2, opcode_t opcode);
+Var calculation(Var v1, Var v2, opcode_t opcode);
+int32_t compare(Var v1, Var v2, opcode_t opcode);
 
 
 /* print.c */
@@ -59,6 +59,6 @@ void play(struct var_stack *stack, uint64_t samples_per_sec);
  */
 void print_wave(struct var_stack *stack, uint64_t samples_per_sec);
 
-void define_sound(var_t *v1, var_t *v2);
-void copy_sound(var_t *new_sound, var_t *sound);
-void connect_filter(struct var_stack *stack, var_t *sound, var_t *filter);
+void define_sound(Var *v1, Var *v2);
+void copy_sound(Var *new_sound, Var *sound);
+void connect_filter(struct var_stack *stack, Var *sound, Var *filter);

@@ -8,8 +8,8 @@
 
 #define IS_JUST_ZERO(n) (n & 0xffffffff) == 0
 
-var_t calculation(var_t v1, var_t v2, opcode_t opcode) {
-    var_t t;
+Var calculation(Var v1, Var v2, opcode_t opcode) {
+    Var t;
 
     switch (opcode) {
     case OpAdd:
@@ -54,7 +54,7 @@ var_t calculation(var_t v1, var_t v2, opcode_t opcode) {
     return t;
 }
 
-int32_t compare(var_t v1, var_t v2, uint32_t opcode) {
+int32_t compare(Var v1, Var v2, uint32_t opcode) {
     int64_t v1Val;
     int64_t v2Val;
 

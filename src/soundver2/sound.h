@@ -11,7 +11,7 @@
 typedef struct {
     Oscillator *oscillator;
 
-    var_t *filters[MAX_CONNECT];
+    Var *filters[MAX_CONNECT];
     size_t num_of_filter;
 } Sound;
 
