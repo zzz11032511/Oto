@@ -5,8 +5,11 @@
 #include "sound_io.h"
 #include "otomath.h"
 #include "sound.h"
+#include "oscillator.h"
 #include "filter.h"
 #include "../error/error.h"
+
+static uint64_t sampling_freq = 44100;
 
 /* 現在の出力音声情報 */
 typedef struct {
@@ -42,7 +45,13 @@ static int play_callback(const void *inputBuffer,
         // オシレータ
         uint64_t cnt = 1;
         for (uint64_t ch = 0; ch < MAX_POLYPHONIC; ch++) {
-            ds[ch] = volume * sin(2 * PI * data->freq[ch] * data->t / SAMPLING_FREQ);
+            ds[ch] = osc_output_wave(
+                data->sound->oscillator,
+                data->freq[ch],
+                data->t,
+                data->volume,
+                sampling_freq
+            );
         }
         d = (ds[0] + ds[1] + ds[2] + ds[3] + ds[4] + ds[5] + ds[6] + ds[7]) / cnt;
 
@@ -82,7 +91,7 @@ void init_sound_io() {
         data.freq[i] = 1;
     }
 
-    err = Pa_OpenStream(&stream, NULL, &outParam, SAMPLING_FREQ,
+    err = Pa_OpenStream(&stream, NULL, &outParam, sampling_freq,
                         FRAMES_PER_BUFFER, paClipOff, play_callback, &data);
     if (err != paNoError) call_error(SOUND_PLAYER_ERROR);
 

@@ -189,16 +189,16 @@ void init_osc_wave() {
     assign_float(tc, TyConst, 0);
 
     tc = allocate_tc("OSC_SAW_WAVE", strlen("OSC_SAW_WAVE"), TyConst);
-    assign_float(tc, TyConst, 0);
+    assign_float(tc, TyConst, 1);
 
     tc = allocate_tc("OSC_SQUARE_WAVE", strlen("OSC_SQUARE_WAVE"), TyConst);
-    assign_float(tc, TyConst, 0);
+    assign_float(tc, TyConst, 2);
 
     tc = allocate_tc("OSC_TRIANGLE_WAVE", strlen("OSC_TRIANGLE_WAVE"), TyConst);
-    assign_float(tc, TyConst, 0);
+    assign_float(tc, TyConst, 3);
 
     tc = allocate_tc("OSC_WHITE_NOISE", strlen("OSC_WHITE_NOISE"), TyConst);
-    assign_float(tc, TyConst, 0);
+    assign_float(tc, TyConst, 4);
 }
 
 void init_token() {
@@ -216,6 +216,7 @@ void init_token() {
     }
 
     init_filter();
-
+    init_osc_wave();
+    
     init_flag = true;
 }
