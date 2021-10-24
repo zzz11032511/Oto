@@ -18,3 +18,6 @@ typedef struct Oscillator {
 
 Oscillator *new_oscillator(basicwave_t wave, Oscillator *fm, Oscillator *am);
 void free_oscillator(Oscillator *osc);
+
+float osc_output_wave(Oscillator *osc, float freq, uint64_t t, uint8_t volume,
+                      uint64_t sampling_freq);
