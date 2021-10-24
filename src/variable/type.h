@@ -7,6 +7,7 @@ typedef enum {
     TyFloat,
     TyConst,
     TyInitVal,  // 引数が初期値であるもの
+    TyOsc,
     TySound,
     TyFilter,
     TyFunc

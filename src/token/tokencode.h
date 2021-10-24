@@ -34,7 +34,7 @@ typedef enum {
     
     TcDefine,    // define DEFINE
     TcFunc,      // func FUNC
-    TcChannel,   // channel CHANNEL
+    TcTrack,     // track TRACK
     TcFilter,    // filter FILTER
 
     TcIf,        // if IF
@@ -47,15 +47,23 @@ typedef enum {
     TcOr,        // or OR
     TcNot,       // not NOT
 
+    TcOscil,     // oscil OSCIL
     TcSound,     // sound SOUND
-    TcBpm,       // bpm BPM
-    TcNote,      // note NOTE
-    TcMute,      // mute MUTE
 
     TcPrint,     // print PRINT
     TcBeep,      // beep BEEP
     TcPlay,      // play PLAY
+    TcNote,      // note NOTE
+    TcMute,      // mute MUTE
+    TcBpm,       // bpm BPM
     TcPrintwav,  // printwav PRINTWAV
+    TcExportwav, // exportwav EXPORTWAV
+    TcImportwav, // importwav IMPORTWAV
+    TcDefse,     // defse DEFSE
+    TcSpectrum,  // spectrum SPECTRUM
+    TcSetfs,     // setfs SETFS
+    TcMidiin,    // midiin MIDIIN
+    TcMidiout,   // midiout MIDIOUT
 
     TcExit       // exit EXIT
 } tokencode_t;

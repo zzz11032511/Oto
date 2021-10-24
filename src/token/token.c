@@ -35,29 +35,37 @@ typedef struct rsvword {
 } Rsvword;
 
 static const Rsvword rsvwords[] = {
-    {"begin",    "BEGIN",    TcBegin    },
-    {"end",      "END",      TcEnd      },
-    {"define",   "DEFINE",   TcDefine   },
-    {"func",     "FUNC",     TcFunc     },
-    {"channel",  "CHANNEL",  TcChannel  },
-    {"filter",   "FILTER",   TcFilter   },
-    {"if",       "IF",       TcIf       },
-    {"elsif",    "ELSIF",    TcElsif    },
-    {"else",     "ELSE",     TcElse     },
-    {"then",     "THEN",     TcThen     },
-    {"loop",     "LOOP",     TcLoop     }, 
-    {"and",      "AND",      TcAnd      },
-    {"or",       "OR",       TcOr       },
-    {"not",      "NOT",      TcNot      },
-    {"sound",    "SOUND",    TcSound    },
-    {"bpm",      "BPM",      TcBpm      },
-    {"note",     "NOTE",     TcNote     },
-    {"mute",     "MUTE",     TcMute     },
-    {"print",    "PRINT",    TcPrint    },
-    {"beep",     "BEEP",     TcBeep     },
-    {"play",     "PLAY",     TcPlay     },
-    {"printwav", "PRINTWAV", TcPrintwav },
-    {"exit",     "EXIT",     TcExit     },
+    {"begin",     "BEGIN",     TcBegin     },
+    {"end",       "END",       TcEnd       },
+    {"define",    "DEFINE",    TcDefine    },
+    {"func",      "FUNC",      TcFunc      },
+    {"track",     "TRACK",     TcTrack     },
+    {"filter",    "FILTER",    TcFilter    },
+    {"if",        "IF",        TcIf        },
+    {"elsif",     "ELSIF",     TcElsif     },
+    {"else",      "ELSE",      TcElse      },
+    {"then",      "THEN",      TcThen      },
+    {"loop",      "LOOP",      TcLoop      }, 
+    {"and",       "AND",       TcAnd       },
+    {"or",        "OR",        TcOr        },
+    {"not",       "NOT",       TcNot       },
+    {"oscil",     "OSCIL",     TcOscil     },
+    {"sound",     "SOUND",     TcSound     },
+    {"print",     "PRINT",     TcPrint     },
+    {"BEEP",      "BEEP",      TcBeep      },
+    {"play",      "PLAY",      TcPlay      },
+    {"note",      "NOTE",      TcNote      },
+    {"mute",      "MUTE",      TcMute      },
+    {"bpm",       "BPM",       TcBpm       },
+    {"printwav",  "PRINTWAV",  TcPrintwav  },
+    {"exportwav", "EXPORTWAV", TcExportwav },
+    {"importwav", "IMPORTWAV", TcImportwav },
+    {"defse",     "DEFSE",     TcDefse     },
+    {"spectrum",  "SPECTRUM",  TcSpectrum  },
+    {"setfs",     "SETFS",     TcSetfs     },
+    {"midiin",    "MIDIIN",    TcMidiin    },
+    {"midiout",   "MIDIOUT",   TcMidiout   },
+    {"exit",      "EXIT",      TcExit      },
 };
 
 static tokencode_t get_rsvword_tc(int8_t *s, size_t len) {
@@ -174,14 +182,37 @@ tokencode_t allocate_tc(int8_t *s, size_t len, type_t type) {
     return tc;
 }
 
+/* OSCで指定する基本波の番号 */
+void init_osc_wave() {
+    tokencode_t tc;
+    tc = allocate_tc("OSC_SINE_WAVE", strlen("OSC_SINE_WAVE"), TyConst);
+    assign_float(tc, TyConst, 0);
+
+    tc = allocate_tc("OSC_SAW_WAVE", strlen("OSC_SAW_WAVE"), TyConst);
+    assign_float(tc, TyConst, 0);
+
+    tc = allocate_tc("OSC_SQUARE_WAVE", strlen("OSC_SQUARE_WAVE"), TyConst);
+    assign_float(tc, TyConst, 0);
+
+    tc = allocate_tc("OSC_TRIANGLE_WAVE", strlen("OSC_TRIANGLE_WAVE"), TyConst);
+    assign_float(tc, TyConst, 0);
+
+    tc = allocate_tc("OSC_WHITE_NOISE", strlen("OSC_WHITE_NOISE"), TyConst);
+    assign_float(tc, TyConst, 0);
+}
+
 void init_token() {
     if (init_flag) return;
     
+    tokencode_t tc = 0;
+
     for (uint32_t i = 0; i < GET_ARRAY_LENGTH(symbols); i++) {
-        allocate_tc(symbols[i].s, strlen(symbols[i].s), TySymbol);
+        tc = allocate_tc(symbols[i].s, strlen(symbols[i].s), TySymbol);
+        TEST_EQ(tc, symbols[i].tc);
     }
     for (uint32_t i = 0; i < GET_ARRAY_LENGTH(rsvwords); i++) {
-        allocate_tc(rsvwords[i].lower, strlen(rsvwords[i].lower), TyRsvWord);
+        tc = allocate_tc(rsvwords[i].lower, strlen(rsvwords[i].lower), TyRsvWord);
+        TEST_EQ(tc, rsvwords[i].tc);
     }
 
     init_filter();
