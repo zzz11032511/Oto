@@ -56,6 +56,7 @@ static int play_callback(const void *inputBuffer,
         d = (ds[0] + ds[1] + ds[2] + ds[3] + ds[4] + ds[5] + ds[6] + ds[7]) / cnt;
 
         // フィルタリング
+        filtering(&d, data->sound, data->t, data->length, sampling_freq);
 
         clip(&d);
         io_fade(&d, data->t, data->length);

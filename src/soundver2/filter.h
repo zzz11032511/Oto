@@ -9,25 +9,25 @@ OTO_FILTER clip(float *d);
 OTO_FILTER fade_in(float *d, uint64_t t, uint64_t length, double time);
 OTO_FILTER fade_out(float *d, uint64_t t, uint64_t length, double time);
 OTO_FILTER fade(float *d, uint64_t t, uint64_t length, double start, double end);
-
 OTO_FILTER io_fade(float *d, uint64_t t, uint64_t length);
 
-// #include "../variable/variable.h"
 
-// typedef enum {
-//     NONE_FILTER = 0,
-//     FADE,
-//     FADE_IN,
-//     FADE_OUT,
-//     AMP,
-//     TREMOLO,
-//     ADSR
-// } filter_num_t;
+typedef struct {
+    filter_num_t filter_num;
+    uint64_t param;
+} Filter;
 
-// typedef struct {
-//     filter_num_t filter_num;
-//     uint64_t param;
-// } filter;
+typedef enum {
+    NONE_FILTER = 0,
+    CLIP,
+    FADE_IN,
+    FADE_OUT,
+    FADE,
+    AMP,
+    TREMOLO
+} filter_num_t;
 
-// filter *new_filter(filter_num_t filter_num, uint64_t param);
-// void free_filter(filter *f);
+Filter *new_filter(filter_num_t filter_num, uint64_t param);
+
+void filtering(float *d, Sound *s, uint64_t t, uint64_t length,
+               uint64_t sampling_freq);
