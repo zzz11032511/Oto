@@ -1,107 +1,114 @@
 #include <stdio.h>
 #include <stdint.h>
-#include <windows.h>
-#include <mmsystem.h>
-#include <math.h>
+#include <portaudio.h>
 
-#include "track.h"
+#include "sound_io.h"
+#include "otomath.h"
+#include "sound.h"
+#include "oscillator.h"
+#include "filter.h"
+#include "../error/error.h"
 
-#define NUMBER_OF_BUFFER 8
-#define BUFFER_SIZE      200
+static uint64_t sampling_freq = 44100;
 
-#define MAX_VOLUME 8000
+/* 現在の出力音声情報 */
+typedef struct {
+    Sound *sound;
+    uint64_t length;
+    uint64_t t;
 
-void play_track(TRACK t) {
-    int16_t out_buffer[NUMBER_OF_BUFFER][BUFFER_SIZE];
+    float freq[MAX_POLYPHONIC];
+    uint8_t volume;
+} Currentdata;
 
-    WAVEHDR out_header[NUMBER_OF_BUFFER] = {0};
+static int play_callback(const void *inputBuffer,
+                         void *outputBuffer,
+                         unsigned long framesPerBuffer,
+                         const PaStreamCallbackTimeInfo *timeInfo,
+                         PaStreamCallbackFlags statusFlags,
+                         void *userData)
+{
+    Currentdata *data = (Currentdata *)userData;
+    float *out = (float *)outputBuffer;
 
-    uint32_t sound_data_byte = t->bits_per_sample / 8;
-    HWAVEOUT out_handle = NULL;
-    WAVEFORMATEX wave_format_ex = {
-        WAVE_FORMAT_PCM,
-        t->channel,
-        t->samples_per_sec,
-        t->samples_per_sec * sound_data_byte,
-        sound_data_byte,
-        t->bits_per_sample,
-        0
-    };
-    waveOutOpen(&out_handle, 0, &wave_format_ex, 0, 0, CALLBACK_NULL);
-    waveOutPause(out_handle);
+    float volume = (float)data->volume / MAX_VOLUME;
+    float ds[MAX_POLYPHONIC] = {0};
+    float d = 0;
 
-    int32_t out0 = 0;  // 何番目のバッファを書き込んでるのかを指す
-    int32_t out1 = 0;
-    int32_t offset = 0;
-
-    double out_volume = ((double)t->velocity / 100) * MAX_VOLUME;
-
-    int32_t num_of_frame = t->length / BUFFER_SIZE;
-    int32_t frame = 0;
-    while (frame < num_of_frame) {
-        if (out0 < NUMBER_OF_BUFFER) {
-            // バッファへの1frame分の書き込み
-            for (int32_t n = 0; n < BUFFER_SIZE; n++) {
-                out_buffer[out0][n] = (int16_t)(out_volume * t->data[offset + n]);
-            }
-            offset += BUFFER_SIZE;
-            frame++;
-
-            // バッファの設定
-            out_header[out0].lpData = (char *)out_buffer[out0];  // 音データの場所
-            out_header[out0].dwBufferLength = BUFFER_SIZE * 2;  // buffer_size * 2[byte](int16)
-            out_header[out0].dwFlags = 0;
-
-            // バッファのロック
-            waveOutPrepareHeader(out_handle, &out_header[out0], sizeof(WAVEHDR));
-
-            // バッファを出力待ちキューに追加する
-            waveOutWrite(out_handle, &out_header[out0], sizeof(WAVEHDR));
-
-            out0++;
-            if (out0 == NUMBER_OF_BUFFER) {
-                waveOutRestart(out_handle);
-            }
-
-        } else if ((out_header[out1].dwFlags & WHDR_DONE) != 0) {
-            // 出力バッファのおわりまで音データが再生された
-            for (int32_t n = 0; n < BUFFER_SIZE; n++) {
-                out_buffer[out1][n] = (int16_t)(out_volume * t->data[offset + n]);
-            }
-            offset += BUFFER_SIZE;
-            frame++;
-
-            waveOutPrepareHeader(out_handle, &out_header[out1], sizeof(WAVEHDR));
-
-            // バッファの設定
-            out_header[out1].lpData = (char *)out_buffer[out1];  // 音データの場所
-            out_header[out1].dwBufferLength = BUFFER_SIZE * 2;  // buffer_size * 2[byte](int16)
-            out_header[out1].dwFlags = 0;
-
-            // バッファのロック
-            waveOutPrepareHeader(out_handle, &out_header[out1], sizeof(WAVEHDR));
-
-            // バッファを出力待ちキューに追加する
-            waveOutWrite(out_handle, &out_header[out1], sizeof(WAVEHDR));
-
-            out1++;
-            if (out1 == NUMBER_OF_BUFFER) out1 = 0;
+    for (uint64_t i = 0; i < framesPerBuffer; i++) {
+        if (data->t >= data->length) {
+            *out++ = 0;
+            data->t += 1;
+            continue;
         }
+
+        // オシレータ
+        uint64_t cnt = 1;
+        for (uint64_t ch = 0; ch < MAX_POLYPHONIC; ch++) {
+            ds[ch] = osc_output_wave(
+                data->sound->oscillator,
+                data->freq[ch],
+                data->t,
+                data->volume,
+                sampling_freq
+            );
+        }
+        d = (ds[0] + ds[1] + ds[2] + ds[3] + ds[4] + ds[5] + ds[6] + ds[7]) / cnt;
+
+        // フィルタリング
+        filtering(&d, data->sound, data->t, data->length, sampling_freq);
+
+        clip(&d);
+        io_fade(&d, data->t, data->length);
+        
+        *out++ = d;
+        data->t += 1;
     }
 
-    for (out0 = 0; out0 < NUMBER_OF_BUFFER; out0++) {
-        while ((out_header[out0].dwFlags & WHDR_DONE) == 0) {
-            Sleep(1);
-        }
+    return 0;
+}
+
+static PaStream *stream = NULL;
+static PaStreamParameters outParam;
+static Currentdata data;
+
+void init_sound_io() {
+    PaError err = paNoError;
+    
+    err = Pa_Initialize();
+    if (err != paNoError) call_error(SOUND_PLAYER_ERROR);
+
+    outParam.channelCount = 1;
+    outParam.sampleFormat = paFloat32;
+    outParam.device = Pa_GetDefaultOutputDevice();
+    outParam.suggestedLatency = 
+        Pa_GetDeviceInfo(outParam.device)->defaultLowOutputLatency;
+    outParam.hostApiSpecificStreamInfo = NULL;
+
+    data.length = 0;
+    data.volume = 0;
+    data.t = 0;
+    for (uint64_t i = 0; i < MAX_POLYPHONIC; i++) {
+        data.freq[i] = 1;
     }
 
-    waveOutPause(out_handle);
+    err = Pa_OpenStream(&stream, NULL, &outParam, sampling_freq,
+                        FRAMES_PER_BUFFER, paClipOff, play_callback, &data);
+    if (err != paNoError) call_error(SOUND_PLAYER_ERROR);
 
-    for (out0 = 0; out0 < NUMBER_OF_BUFFER; out0++) {
-        if ((out_header[out0].dwFlags & WHDR_PREPARED) != 0) {
-            waveOutUnprepareHeader(out_handle, &out_header[out0], sizeof(WAVEHDR));
-        }
-    }
+    err = Pa_StartStream(stream);
+    if (err != paNoError) call_error(SOUND_PLAYER_ERROR);
+}
 
-    waveOutClose(out_handle);
+void terminate_sound_io() {
+    PaError err = paNoError;
+
+    err = Pa_StopStream(stream);
+    if (err != paNoError) call_error(SOUND_PLAYER_ERROR);
+
+    err = Pa_CloseStream(stream);
+    if (err != paNoError) call_error(SOUND_PLAYER_ERROR);
+
+    err = Pa_Terminate();
+    if (err != paNoError) call_error(SOUND_PLAYER_ERROR);
 }

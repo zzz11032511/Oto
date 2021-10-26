@@ -59,6 +59,7 @@ void play(struct var_stack *stack, uint64_t samples_per_sec);
  */
 void print_wave(struct var_stack *stack, uint64_t samples_per_sec);
 
-void define_sound(Var *v1, Var *v2);
+void define_oscillator(Var *osc, Var *wave);
+void define_sound(Var *sound, Var *wave);
 void copy_sound(Var *new_sound, Var *sound);
 void connect_filter(struct var_stack *stack, Var *sound, Var *filter);

@@ -4,6 +4,7 @@
 #include <windows.h>
 
 #include "operation/operation.h"
+#include "../sound/sound_io.h"
 #include "../opcode.h"
 #include "../error/error.h"
 #include "../debug/debug.h"
@@ -52,6 +53,10 @@ void exec() {
 
         case OpPushC:
             const_vpush(&stack, (uint64_t)icp[1], (uint64_t)icp[2]);
+            NEXT_OPERATION(icp);
+
+        case OpDefOsc:
+            define_oscillator(icp[1], icp[2]);
             NEXT_OPERATION(icp);
 
         case OpDefS:
@@ -137,7 +142,6 @@ void exec() {
         case OpPrint:
             print_var(&stack);
             NEXT_OPERATION(icp);
-
 
         case OpBeep:
             beep(&stack);

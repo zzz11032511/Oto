@@ -1,21 +1,23 @@
 #pragma once
 
 #include <stdint.h>
-#include <stdbool.h>
-
-#include "track.h"
 
 typedef enum {
     SINE_WAVE = 0,
-    SAWTOOTH_WAVE,
-    SQUARE_WAVE,
-    TRIANGLE_WAVE,
-    PSG_SAW_WAVE,
-    PSG_SQUARE_WAVE,
-    PSG_TRIANGLE_WAVE,
-    WHITE_NOISE,
-} wave_t;
+    SAWTOOTH_WAVE,  // PSG
+    SQUARE_WAVE,    // PSG
+    TRIANGLE_WAVE,  // PSG
+    WHITE_NOISE,    // PSG
+} basicwave_t;
 
-void write_wave(int32_t wave, 
-                TRACK t, double freq, uint64_t length,
-                int32_t sampling_freq, bool fade_flag, bool seek_cursol_flag);
+typedef struct Oscillator {
+    basicwave_t wave;
+    struct Oscillator *fm;  // モジュレータ周波数(NULLなら0)
+    struct Oscillator *am;  // モジュレータ振幅(NULLなら0)
+} Oscillator;
+
+Oscillator *new_oscillator(basicwave_t wave, Oscillator *fm, Oscillator *am);
+void free_oscillator(Oscillator *osc);
+
+float osc_output_wave(Oscillator *osc, float freq, uint64_t t, uint8_t volume,
+                      uint64_t sampling_freq);

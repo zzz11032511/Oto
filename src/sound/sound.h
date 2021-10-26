@@ -7,15 +7,13 @@
 
 #define MAX_CONNECT 250
 
-struct sound {
-    int32_t wave;
-    var_t filters[MAX_CONNECT];
-    int32_t num_of_filter;
+/* 音色情報 */
+typedef struct {
+    Oscillator *oscillator;
 
-    struct sound *prev;
-    struct sound *next;
-    double fm;  // 変調周波数
-};
-typedef struct sound *SOUND;
+    Var *filters[MAX_CONNECT];
+    size_t num_of_filter;
+} Sound;
 
-SOUND new_sound(wave_t wave, SOUND in_sound, double fm);
+Sound *new_sound(Oscillator *oscillator);
+void free_sound(Sound *s);

@@ -4,14 +4,21 @@
 
 #include "sound.h"
 #include "oscillator.h"
+#include "../util/util.h"
+#include "../error/error.h"
 
-SOUND new_sound(wave_t wave, SOUND in_sound, double fm) {
-    SOUND s = calloc(1, sizeof(struct sound));
-    s->wave = wave;
-    s->fm   = fm;
-    s->prev = in_sound;
-    s->next = NULL;
+Sound *new_sound(Oscillator *oscillator) {
+    Sound *s = MYMALLOC1(Sound);
+    if (s == NULL) {
+        call_error(UNKNOWN_ERROR, "new_sound()");
+    }
+
+    s->oscillator = oscillator;
     s->num_of_filter = 0;
 
     return s;
+}
+
+void free_sound(Sound *s) {
+    free(s);
 }

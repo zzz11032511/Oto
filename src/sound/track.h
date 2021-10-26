@@ -2,23 +2,33 @@
 
 #include <stdint.h>
 
+#include "sound.h"
+
 #define MONO   1
 #define STEREO 2
 
-/* 音データを保存する構造体 */
-struct track_t {
-    uint64_t length;
-    double *data;
-    uint64_t ptr;  // 音データをここまで書き込んだ
+/* 演奏情報 */
+typedef struct {
+    Sound *sound;
+    double freq;
+    double length;
+    uint8_t velocity;
+} Notedata;
 
-    uint64_t channel;          // MONO or STEREO
-    uint64_t samples_per_sec;  // サンプリング周波数[Hz]
-    uint64_t bits_per_sample;  // 量子化ビット数
-    uint64_t velocity;         // 音量
-};
-typedef struct track_t *TRACK;
+typedef struct track {
+    Sound *sound;
 
-TRACK new_track(uint64_t length, uint64_t channel, uint64_t samples_per_sec,
-                uint64_t bits_per_sample, uint64_t velocity);
+    Notedata *note;
+    size_t max_of_notes;
+    size_t num_of_notes;
+    
+    uint32_t bpm;
+    uint32_t beat;
 
-void free_track(TRACK s);
+    uint64_t t;  // 時変数
+
+    uint8_t channel;
+    uint64_t sample_per_sec;
+    uint64_t bits_per_sample;
+    uint8_t volume;
+} Track;

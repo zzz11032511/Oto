@@ -4,6 +4,7 @@
 *.dll
 
 build/
+src/oldsound/
 .vscode/
 
 aaa.oto

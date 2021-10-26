@@ -16,6 +16,11 @@
 #include "../../sound/sound_io.h"
 #include "../../sound/oscillator.h"
 
+void define_oscillator(Var *osc, Var *wave) {
+    osc->type = TyOsc;
+    osc->value.pVal = (void *)new_oscillator((uint64_t)wave->value.fVal, NULL, NULL);
+}
+
 void define_sound(Var *sound, Var *wave) {
     sound->type = TySound;
     sound->value.pVal = (void *)new_sound((uint64_t)wave->value.fVal, NULL, 0);

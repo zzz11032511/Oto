@@ -33,6 +33,7 @@ typedef enum {
     OpJnz,        // スタックの上が0でないならジャンプ
 
     // Soundはparseの段階で作ってもいいかも
+    OpDefOsc,     // オシレータ定義
     OpDefS,       // Soundの定義
     OpCpyS,       // Soundのコピー
     OpFilter,     // FilterをSoundにつなぐ
