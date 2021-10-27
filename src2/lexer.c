@@ -46,12 +46,47 @@ static size_t count_varname_len(int8_t *s) {
     return len;
 }
 
+static struct {
+    int8_t *name;
+    tokencode_t tc;
+} symbols[] = {
+    {"\n", TcLF      },
+    {",",  TcComma   }, {":",  TcColon   },
+    {"[",  TcSqBrOpn }, {"]",  TcSqBrCls },
+    {"(",  TcBrOpn   }, {")",  TcBrCls   },
+    {"<-", TcLArrow  }, {"->", TcRArrow  },
+    {"=",  TcEqu     }, {"+",  TcPlus    },
+    {"-",  TcMinus   }, {"*",  TcAster   },
+    {"/",  TcSlash   }, {"%",  TcPerce   },
+    {"==", TcEEq     }, {"!=", TcNEq     },
+    {">",  TcGt      }, {"<",  TcLt      },
+    {">=", TcGe      }, {"<=", TcLe      },
+    {NULL, 0         }  
+};
+
+static bool is_valid_operator(int8_t *s, size_t len) {
+    uint64_t i = 0;
+    while (symbols[i].name != NULL) {
+        if (strcmp(s, symbols[i].name) == 0) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 static size_t count_operator_len(int8_t *s) {
     size_t len = 0;
     while (is_symbol(s[len]) && s[len] != '\0') {
         len++;
     }
 
-    // 有効な演算子かどうかチェック
-    // int32_t op_num = GET_ARRAY_LENGTH()
+    return len;
+}
+
+#define IS_IGNORE_CHAR(c) c == ' ' || c == '\t' || c == '\r'
+#define IS_PREPROCESS(c) c == '@'
+
+uint32_t lexer(int8_t *s) {
+    
 }

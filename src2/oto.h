@@ -8,8 +8,10 @@
 #include <time.h>
 #include <mymacro.h>
 
+#include "oto_util.h"
+
 // Tokencodes
-typedef enum {
+enum {
     TcLF = 0,    // \n
     TcComma,     // ,
     TcColon,     // :
@@ -65,28 +67,20 @@ typedef enum {
     TcMidiout,   // midiout MIDIOUT
 
     TcExit       // exit EXIT
-} tokencode_t;
+};
+typedef uint64_t tokencode_t;
 
 // All Oto reserve words and operators
 
-typedef struct {
-    int8_t *s;
-    tokencode_t tc;
-} Rsvwords;
-extern const Rsvwords rsvwords[];
-
-// utils.c and utility macros
-
-#define IS_RSVWORD(tc)        ((TcBegin <= tc) && (tc <= TcExit))
-#define IS_AVAILABLE_VAR(tc)  (tc > TcExit)
-#define IS_SYMBOL(tc)         ((TcLF <= tc) && (tc < TcBegin))
-#define IS_NOT_SYMBOL(tc)     (!IS_SYMBOL(tc))
-#define IS_INSTRUCTION(tc)    ((TcPrint <= tc) && (tc < TcExit))
-#define IS_ARITH_OPERATOR(tc) ((TcPlus <= tc && tc <= TcGt) || (TcAnd <= tc && tc <= TcOr))
+// typedef struct {
+//     int8_t *s;
+//     tokencode_t tc;
+// } Rsvwords;
+// extern const Rsvwords rsvwords[];
 
 // Operation codes
 
-typedef enum {
+enum {
     OpNop = 0,    // 何もしない
 
     /**
@@ -174,10 +168,11 @@ typedef enum {
     OpJz,         // スタックの上が0ならジャンプ
     OpJnz,        // スタックの上が0でないならジャンプ
 };
+typedef uint64_t opcode_t;
 
 // Types
 
-typedef enum {
+enum {
     TyVoid = 0,
     TyRsvWord,  // 変数として使用不可能なもの
     TyConst,
@@ -189,7 +184,17 @@ typedef enum {
     TySound,
     TyFilter,
     TyFunc
-} type_t;
+};
+typedef uint64_t type_t;
+
+// utils.c and utility macros
+
+#define IS_RSVWORD(tc)        ((TcBegin <= tc) && (tc <= TcExit))
+#define IS_AVAILABLE_VAR(tc)  (tc > TcExit)
+#define IS_SYMBOL(tc)         ((TcLF <= tc) && (tc < TcBegin))
+#define IS_NOT_SYMBOL(tc)     (!IS_SYMBOL(tc))
+#define IS_INSTRUCTION(tc)    ((TcPrint <= tc) && (tc < TcExit))
+#define IS_ARITH_OPERATOR(tc) ((TcPlus <= tc && tc <= TcGt) || (TcAnd <= tc && tc <= TcOr))
 
 // run.c
 
