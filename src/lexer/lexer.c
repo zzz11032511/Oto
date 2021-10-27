@@ -14,6 +14,20 @@ static bool is_number(int8_t c) {
     if ('0' <= c && c <= '9') return 1;
     return 0;
 }
+static bool is_varname(int8_t c) {
+    if ('0' <= c && c <= '9') return 1;
+    if ('a' <= c && c <= 'z') return 1;
+    if ('A' <= c && c <= 'Z') return 1;
+    if (c == '_') return 1;
+    if (c == '#') return 1;
+    return 0;
+}
+static const int8_t *symbol = "=+-*/%<>!";
+static bool is_symbol(int8_t c) {
+    if (strchr(symbol, c) != 0) return 1;
+    return 0;
+}
+
 
 static size_t count_constant_len(int8_t *s) {
     size_t len = 0;
@@ -33,25 +47,10 @@ static size_t count_constant_len(int8_t *s) {
     return len;
 }
 
-static bool is_varname(int8_t c) {
-    if ('0' <= c && c <= '9') return 1;
-    if ('a' <= c && c <= 'z') return 1;
-    if ('A' <= c && c <= 'Z') return 1;
-    if (c == '_') return 1;
-    if (c == '#') return 1;
-    return 0;
-}
-
 static size_t count_varname_len(int8_t *s) {
     size_t len = 0;
     while (is_varname(s[len])) len++;
     return len;
-}
-
-static const int8_t *symbol = "=+-*/%<>!";
-static bool is_symbol(int8_t c) {
-    if (strchr(symbol, c) != 0) return 1;
-    return 0;
 }
 
 static const int8_t *operators[] = {
