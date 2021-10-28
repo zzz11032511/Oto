@@ -175,3 +175,27 @@ bool is_otofile(const char *path) {
     if (strcmp(ext, ".oto") == 0) return true;
     return false;
 }
+
+char to_lower(char ch) {
+    if (0x61 <= ch && ch <= 0x7a) {
+        return ch - 0x20;
+    }
+    return ch;
+}
+
+char to_upper(char ch) {
+    if (0x41 <= ch && ch <= 0x5a) {
+        return ch + 0x20;
+    }
+    return ch;
+}
+
+int32_t strncmp_cs(const char *str1, const char *str2, size_t maxcount) {
+    while (to_lower(*str1) == to_lower(*str2)) {
+        if (*str1 == '\0') {
+            return 0;
+        }
+    }
+
+    return *str1 - *str2;
+}

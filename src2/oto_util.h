@@ -20,6 +20,14 @@ char *src_open(const char *path);
 size_t count_file_size(const char *path);
 bool is_otofile(const char *path);
 
+// String functions
+
+char to_lower(char ch);
+char to_upper(char ch);
+
+/* strncmp case-insensitive */
+int32_t strncmp_cs(const char *str1, const char *str2, size_t maxcount);
+
 // Vector<uint64_t>
 
 typedef struct {
