@@ -52,6 +52,64 @@ void set_vector_ui64(VectorUI64 *vec, uint64_t idx, uint64_t data) {
     vec->data[idx] = data;
 }
 
+VectorPTR *new_vector_ptr(size_t capacity) {
+    VectorPTR *vec = MYMALLOC1(VectorPTR);
+    if (IS_NULL(vec)) {
+        return NULL;
+    }
+
+    vec->length = 0;
+    vec->capacity = capacity;
+    vec->data = MYMALLOC(capacity, void *);
+    if (IS_NULL(vec->data)) {
+        free(vec);
+        return NULL;
+    }
+
+    return vec;
+}
+
+void free_item_vector_ptr(VectorPTR *vec) {
+    uint64_t i = 0;
+    while (i < vec->length) {
+        free(vec->data[i]);
+    }
+}
+
+void free_vector_ptr(VectorPTR *vec) {
+    free(vec);
+}
+
+static void realloc_vector_ptr(VectorPTR *vec, size_t realloc_size) {
+    void *new_data = realloc(vec->data, (sizeof(void *) * realloc_size));
+    if (IS_NULL(new_data)) {
+        return;
+    }
+    
+    vec->data = new_data;
+    vec->capacity = realloc_size;
+
+    return;
+}
+
+void append_vector_ptr(VectorPTR *vec, void *data) {
+    if (vec->length >= vec->capacity) {
+        realloc_vector_ptr(vec, vec->capacity + 10);
+        // TODO: エラー処理を書く
+    }
+
+    vec->data[(vec->length)++] = data;
+}
+
+void set_vector_ptr(VectorPTR *vec, uint64_t idx, void *data) {
+    if (vec->length >= vec->capacity) {
+        realloc_vector_ui64(vec, vec->capacity + 10);
+        // TODO: エラー処理を書く
+    }
+
+    vec->data[idx] = data;
+}
+
 static FILE *open_file(const char *path) {
     FILE *fp = fopen(path, "r");
     if (IS_NULL(fp)) {
