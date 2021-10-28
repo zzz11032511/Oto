@@ -25,14 +25,12 @@
     printf("time : %f[s]\n", CALC_TIME(start, end)); \
 } while (0) \
 
-#ifdef DEBUG
+#ifndef DEBUG
 
 #define TEST_PRINT(a, b, op) do { \
-    printf(#a); \
-    printf(" : %d %f | ", a, a); \
-    printf(#b); \
-    printf(" : %d %f | ", b, b); \
-    printf("%s %s %s | ", #a, #op, #b); \
+    printf("%15s : %10d %10.5f | ", #a, a, a); \
+    printf("%15s : %10d %10.5f | ", #b, b, b); \
+    printf("%s %2s %s | ", #a, #op, #b); \
     assert(a op b); \
     printf("ok.\n"); \
 } while (0) \
