@@ -103,7 +103,7 @@ void append_vector_ptr(VectorPTR *vec, void *data) {
 
 void set_vector_ptr(VectorPTR *vec, uint64_t idx, void *data) {
     if (vec->length >= vec->capacity) {
-        realloc_vector_ui64(vec, vec->capacity + 10);
+        realloc_vector_ptr(vec, vec->capacity + 10);
         // TODO: エラー処理を書く
     }
 
@@ -177,25 +177,27 @@ bool is_otofile(const char *path) {
 }
 
 char to_lower(char ch) {
-    if (0x61 <= ch && ch <= 0x7a) {
-        return ch - 0x20;
-    }
-    return ch;
-}
-
-char to_upper(char ch) {
     if (0x41 <= ch && ch <= 0x5a) {
         return ch + 0x20;
     }
     return ch;
 }
 
+char to_upper(char ch) {
+    if (0x61 <= ch && ch <= 0x7a) {
+        return ch - 0x20;
+    }
+    return ch;
+}
+
 int32_t strncmp_cs(const char *str1, const char *str2, size_t maxcount) {
-    while (to_lower(*str1) == to_lower(*str2)) {
-        if (*str1 == '\0') {
-            return 0;
+    uint64_t i = 0;
+    while (i < maxcount) {
+        if (to_lower(str1[i]) != to_lower(str2[i])) {
+            return str1[i] - str2[i];
         }
+        i++;
     }
 
-    return *str1 - *str2;
+    return 0;
 }

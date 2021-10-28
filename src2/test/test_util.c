@@ -30,8 +30,23 @@ void test_fileio() {
     TEST_EQ(is_otofile(".oto"), true);
 }
 
+void test_string() {
+    TEST_EQ(to_lower('A'), 'a');
+    TEST_EQ(to_lower('Z'), 'z');
+    TEST_EQ(to_lower('m'), 'm');
+    TEST_EQ(to_upper('a'), 'A');
+    TEST_EQ(to_upper('z'), 'Z');
+    TEST_EQ(to_upper('B'), 'B');
+
+    TEST_EQ(strncmp_cs("ABC", "ABC", 3), 0);
+    TEST_EQ(strncmp_cs("ABC", "abc", 3), 0);
+    TEST_LT(strncmp_cs("abc", "aBi", 3), 0);
+    TEST_EQ(strncmp_cs("abc", "aBi", 2), 0);
+}
+
 int main(void) {
     // gcc -o test_util src2/test/test_util.c src2/util.c -I./include 
     test_vector_ui64();
     test_fileio();
+    test_string();
 }
