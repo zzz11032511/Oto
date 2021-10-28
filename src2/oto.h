@@ -6,7 +6,6 @@
 #include <string.h>
 #include <stdbool.h>
 #include <time.h>
-#include <mymacro.h>
 
 #include "oto_util.h"
 

@@ -1,5 +1,9 @@
 #pragma once
 
+#include <assert.h>
+#include <stdint.h>
+#include <mymacro.h>
+
 // Token comparison macros
 
 #define IS_RSVWORD(tc)        ((TcBegin <= tc) && (tc <= TcExit))
