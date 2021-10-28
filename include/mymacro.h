@@ -13,6 +13,7 @@
 #define ARRAY_BEGIN_ADDR(array) (array)
 #define ARRAY_END_ADDR(array)   (array + GET_ARRAY_LENGTH(array))
 
+#define IS_NULL(ptr)  ( (ptr) == NULL )
 #define IS_NOT_NULL(ptr) ( (ptr) != NULL )
 
 #define CALC_TIME(s, e) ((double)(e - s) / CLOCKS_PER_SEC)
@@ -28,11 +29,12 @@
 #ifndef DEBUG
 
 #define TEST_PRINT(a, b, op) do { \
-    printf("%15s : %10d %10.5f | ", #a, a, a); \
-    printf("%15s : %10d %10.5f | ", #b, b, b); \
+    printf("[TEST]\n"); \
+    printf("%30s : %10d %10.5f\n", #a, a, a); \
+    printf("%30s : %10d %10.5f\n", #b, b, b); \
     printf("%s %2s %s | ", #a, #op, #b); \
     assert(a op b); \
-    printf("ok.\n"); \
+    printf("ok.\n\n"); \
 } while (0) \
 
 #define TEST_EQ(a, b) TEST_PRINT(a, b, ==)

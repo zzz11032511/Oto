@@ -23,7 +23,15 @@ void test_vector_ui64() {
     free_vector_ui64(vec);
 }
 
+void test_fileio() {
+    TEST_EQ(is_otofile("aaa.oto"), true);
+    TEST_EQ(is_otofile("./abc/aaa.oto"), true);
+    TEST_EQ(is_otofile("aaa.ot"), false);
+    TEST_EQ(is_otofile(".oto"), true);
+}
+
 int main(void) {
     // gcc -o test_util src2/test/test_util.c src2/util.c -I./include 
     test_vector_ui64();
+    test_fileio();
 }

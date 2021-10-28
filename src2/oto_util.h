@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include <mymacro.h>
 
 // Token comparison macros
@@ -13,7 +14,14 @@
 #define IS_INSTRUCTION(tc)    ((TcPrint <= tc) && (tc < TcExit))
 #define IS_ARITH_OPERATOR(tc) ((TcPlus <= tc && tc <= TcGt) || (TcAnd <= tc && tc <= TcOr))
 
+// File io functions
+
+char *src_open(const char *path);
+size_t count_file_size(const char *path);
+bool is_otofile(const char *path);
+
 // Vector<uint64_t>
+
 typedef struct {
     uint64_t *data;
     size_t length;
