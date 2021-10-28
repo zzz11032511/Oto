@@ -186,15 +186,6 @@ enum {
 };
 typedef uint64_t type_t;
 
-// utils.c and utility macros
-
-#define IS_RSVWORD(tc)        ((TcBegin <= tc) && (tc <= TcExit))
-#define IS_AVAILABLE_VAR(tc)  (tc > TcExit)
-#define IS_SYMBOL(tc)         ((TcLF <= tc) && (tc < TcBegin))
-#define IS_NOT_SYMBOL(tc)     (!IS_SYMBOL(tc))
-#define IS_INSTRUCTION(tc)    ((TcPrint <= tc) && (tc < TcExit))
-#define IS_ARITH_OPERATOR(tc) ((TcPlus <= tc && tc <= TcGt) || (TcAnd <= tc && tc <= TcOr))
-
 // run.c
 
 void oto_run(const int8_t *filename);
@@ -211,3 +202,7 @@ typedef struct {
 } Token;
 
 tokencode_t allocate_tc(int8_t *s, size_t len, type_t type);
+
+// lexer.c
+void tokenize(char *s, VectorUI64 *tc_list);
+VectorUI64 *lexer(char *s);
