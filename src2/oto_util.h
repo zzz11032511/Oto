@@ -7,12 +7,12 @@
 
 // Token comparison macros
 
-#define IS_RSVWORD(tc)        ((TcBegin <= tc) && (tc <= TcExit))
-#define IS_AVAILABLE_VAR(tc)  (tc > TcExit)
-#define IS_SYMBOL(tc)         ((TcLF <= tc) && (tc < TcBegin))
+#define IS_RSVWORD(tc)        ((TC_BEGIN <= tc) && (tc <= TC_EXIT))
+#define IS_AVAILABLE_VAR(tc)  (tc > TC_EXIT)
+#define IS_SYMBOL(tc)         ((TC_LF <= tc) && (tc < TC_BEGIN))
 #define IS_NOT_SYMBOL(tc)     (!IS_SYMBOL(tc))
-#define IS_INSTRUCTION(tc)    ((TcPrint <= tc) && (tc < TcExit))
-#define IS_ARITH_OPERATOR(tc) ((TcPlus <= tc && tc <= TcGt) || (TcAnd <= tc && tc <= TcOr))
+#define IS_INSTRUCTION(tc)    ((TC_PRINT <= tc) && (tc < TC_EXIT))
+#define IS_ARITH_OPERATOR(tc) ((TC_PLUS <= tc && tc <= TC_GT) || (TC_AND <= tc && tc <= TC_OR))
 
 // File io functions
 

@@ -11,61 +11,61 @@
 
 // Tokencodes
 enum {
-    TcLF = 0,    // \n
-    TcComma,     // ,
-    TcColon,     // :
-    TcSqBrOpn,   // [
-    TcSqBrCls,   // ]
-    TcBrOpn,     // (
-    TcBrCls,     // )
-    TcLArrow,    // <-
-    TcRArrow,    // ->
-    TcEqu,       // =
-    TcPlus,      // +
-    TcMinus,     // -
-    TcAster,     // *
-    TcSlash,     // /
-    TcPerce,     // %
-    TcEEq,       // '=='
-    TcNEq,       // '!='
-    TcGt,        // '>'
-    TcLt,        // '<'
-    TcGe,        // '>='
-    TcLe,        // '<='
+    TC_LF = 0,    // \n
+    TC_COMMA,     // ,
+    TC_COLON,     // :
+    TC_SQBROPN,   // [
+    TC_SQBRCLS,   // ]
+    TC_BROPN,     // (
+    TC_BRCLS,     // )
+    TC_LARROW,    // <-
+    TC_RARROW,    // ->
+    TC_EQU,       // =
+    TC_PLUS,      // +
+    TC_MINUS,     // -
+    TC_ASTER,     // *
+    TC_SLASH,     // /
+    TC_PERCE,     // %
+    TC_EEQ,       // '=='
+    TC_NEQ,       // '!='
+    TC_GT,        // '>'
+    TC_LT,        // '<'
+    TC_GE,        // '>='
+    TC_LE,        // '<='
     
-    TcBegin,     // begin BEGIN
-    TcEnd,       // end END
-    TcDefine,    // define DEFINE
-    TcIf,        // if IF
-    TcElsif,     // elsif ELSIF
-    TcElse,      // else ELSE
-    TcThen,      // then THEN
-    TcLoop,      // loop LOOP
-    TcAnd,       // and AND
-    TcOr,        // or OR
-    TcNot,       // not NOT
-    TcFunc,      // func FUNC
-    TcTrack,     // track TRACK
-    TcFilter,    // filter FILTER
-    TcOscil,     // oscil OSCIL
-    TcSound,     // sound SOUND
+    TC_BEGIN,     // begin BEGIN
+    TC_END,       // end END
+    TC_DEFINE,    // define DEFINE
+    TC_IF,        // if IF
+    TC_ELSIF,     // elsif ELSIF
+    TC_ELSE,      // else ELSE
+    TC_THEN,      // then THEN
+    TC_LOOP,      // loop LOOP
+    TC_AND,       // and AND
+    TC_OR,        // or OR
+    TC_NOT,       // not NOT
+    TC_FUNC,      // func FUNC
+    TC_TRACK,     // track TRACK
+    TC_FILTER,    // filter FILTER
+    TC_OSCIL,     // oscil OSCIL
+    TC_SOUND,     // sound SOUND
 
-    TcPrint,     // print PRINT
-    TcBeep,      // beep BEEP
-    TcPlay,      // play PLAY
-    TcNote,      // note NOTE
-    TcMute,      // mute MUTE
-    TcBpm,       // bpm BPM
-    TcPrintwav,  // printwav PRINTWAV
-    TcExportwav, // exportwav EXPORTWAV
-    TcImportwav, // importwav IMPORTWAV
-    TcDefse,     // defse DEFSE
-    TcSpectrum,  // spectrum SPECTRUM
-    TcSetfs,     // setfs SETFS
-    TcMidiin,    // midiin MIDIIN
-    TcMidiout,   // midiout MIDIOUT
+    TC_PRINT,     // print PRINT
+    TC_BEEP,      // beep BEEP
+    TC_PLAY,      // play PLAY
+    TC_NOTE,      // note NOTE
+    TC_MUTE,      // mute MUTE
+    TC_BPM,       // bpm BPM
+    TC_PRINTWAV,  // printwav PRINTWAV
+    TC_EXPORTWAV, // exportwav EXPORTWAV
+    TC_IMPORTWAV, // importwav IMPORTWAV
+    TC_DEFSE,     // defse DEFSE
+    TC_SPECTRUM,  // spectrum SPECTRUM
+    TC_SETFS,     // setfs SETFS
+    TC_MIDIIN,    // midiin MIDIIN
+    TC_MIDIOUT,   // midiout MIDIOUT
 
-    TcExit       // exit EXIT
+    TC_EXIT       // exit EXIT
 };
 typedef uint64_t tokencode_t;
 
@@ -80,37 +80,37 @@ typedef uint64_t tokencode_t;
 // Operation codes
 
 enum {
-    OpNop = 0,    // 何もしない
+    OP_NOP = 0,    // 何もしない
 
     /**
      * 変数への単純代入
      * 
      * example:
-     *   CpyD Var1 Var2
+     *   CPYD Var1 Var2
      *   Var1にVar2の内容をコピーして代入する
      */
-    OpCpyD,
+    OP_CPYD,
 
     /**
      * スタックからポップしたものを変数に代入
      * 
      * example:
-     *   CpyP Var1
+     *   CPYP Var1
      *   Var1にスタックからポップしてきたものを代入する
      */
-    OpCpyP,
+    OP_CPYP,
 
     /* スタックにプッシュする */
-    OpPush,
+    OP_PUSH,
     
     /**
      * スタックに定数をプッシュする
      * 
      * example:
-     *   PushC Type Value
+     *   PUSHC Type Value
      *   Typeで指定した型として, スタックにValueという定数をプッシュする
      */
-    OpPushC,
+    OP_PUSHC,
 
     /**
      * 算術演算命令
@@ -119,70 +119,70 @@ enum {
      * note:
      *   先にプッシュしたほうが初めの項となる
      */
-    OpAdd,        // 加算
-    OpSub,        // 引算
-    OpMul,        // 掛算
-    OpDiv,        // 割算
-    OpMod,        // 余り
-    OpAnd,        // 論理積
-    OpOr,         // 論理和
-    OpEq,         // == 
-    OpNEq,        // !=
-    OpLtCmp,      // <
-    OpLtEqCmp,    // <=
-    OpRiCmp,      // >
-    OpRiEqCmp,    // >=
+    OP_ADD,        // 加算
+    OP_SUB,        // 引算
+    OP_MUL,        // 掛算
+    OP_DIV,        // 割算
+    OP_MOD,        // 余り
+    OP_AND,        // 論理積
+    OP_OR,         // 論理和
+    OP_EQ,         // == 
+    OP_NEQ,        // !=
+    OP_LTCMP,      // <
+    OP_LTEQCMP,    // <=
+    OP_RICMP,      // >
+    OP_RIEQCMP,    // >=
     
     /**
      * 二項演算命令
      * 引数に指定した変数同士を演算をする. 算術演算命令より速い.
      * 
      * example:
-     *   Add Var1 Var2 Var3
+     *   ADD Var1 Var2 Var3
      *   Var1に, Var2とVar3を加算したものを代入する
      */
-    OpAdd2,       // 二項加算
-    OpSub2,       // 二項引算
-    OpMul2,       // 二項掛算
-    OpDiv2,       // 二項割算
-    OpMod2,       // 二項余り
+    OP_ADD2,       // 二項加算
+    OP_SUB2,       // 二項引算
+    OP_MUL2,       // 二項掛算
+    OP_DIV2,       // 二項割算
+    OP_MOD2,       // 二項余り
 
     /**
      * ループ命令
      * 指定した回数ループを行う
      * 
      * example:
-     *   Loop Addr Loop_Cnt Loop_Var
+     *   LOOP Addr Loop_Cnt Loop_Var
      *   Addrをループ場所として, Loop_Cnt回分ループする.
      *   Loop_Varは制御変数である.
      */
-    OpLoop,
+    OP_LOOP,
 
     /**
      * 分岐命令
      * 
      * 条件が成立していれば, 指定した場所へジャンプする
      */
-    OpJmp,        // 無条件ジャンプ
-    OpJz,         // スタックの上が0ならジャンプ
-    OpJnz,        // スタックの上が0でないならジャンプ
+    OP_JMP,        // 無条件ジャンプ
+    OP_JZ,         // スタックの上が0ならジャンプ
+    OP_JNZ,        // スタックの上が0でないならジャンプ
 };
 typedef uint64_t opcode_t;
 
 // Types
 
 enum {
-    TyVoid = 0,
-    TyRsvWord,  // 変数として使用不可能なもの
-    TyConst,
-    TyFloat,
-    TyArray,
-    TyString,
-    TyInitVal,  // 引数が初期値であるもの
-    TyOsc,
-    TySound,
-    TyFilter,
-    TyFunc
+    TY_VOID = 0,
+    TY_RSVWORD,  // 変数として使用不可能なもの
+    TY_CONST,
+    TY_FLOAT,
+    TY_ARRAY,
+    TY_STRING,
+    TY_INITVAL,  // 引数が初期値であるもの
+    TY_OSCIL,
+    TY_SOUND,
+    TY_FILTER,
+    TY_FUNC
 };
 typedef uint64_t type_t;
 
@@ -201,3 +201,13 @@ void oto_run(const int8_t *filename);
 void oto_quit();
 
 void set_timecount_flag(bool flag);
+
+// token.c
+
+typedef struct {
+    tokencode_t tc;
+    char *str; 
+    size_t len;
+} Token;
+
+tokencode_t allocate_tc(int8_t *s, size_t len, type_t type);
