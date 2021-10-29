@@ -40,8 +40,13 @@ void test_string() {
 
     TEST_EQ(strncmp_cs("ABC", "ABC", 3), 0);
     TEST_EQ(strncmp_cs("ABC", "abc", 3), 0);
-    TEST_LT(strncmp_cs("abc", "aBi", 3), 0);
+    TEST_NE(strncmp_cs("abc", "aBi", 3), 0);
     TEST_EQ(strncmp_cs("abc", "aBi", 2), 0);
+
+    TEST_EQ(strcmp_cs("ABC", "ABC"),  0);
+    TEST_NE(strcmp_cs("ABC", "AB"),   0);
+    TEST_NE(strcmp_cs("ABC", "ABCD"), 0);
+    TEST_NE(strcmp_cs("BCD", "ABD"),  0);
 }
 
 int main(void) {

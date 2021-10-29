@@ -27,6 +27,7 @@ char to_upper(char ch);
 
 /* strncmp case-insensitive */
 int32_t strncmp_cs(const char *str1, const char *str2, size_t maxcount);
+int32_t strcmp_cs(const char *str1, const char *str2);
 
 // Vector<uint64_t>
 

@@ -201,7 +201,8 @@ typedef struct {
     size_t len;
 } Token;
 
-tokencode_t allocate_tc(int8_t *s, size_t len, type_t type);
+tokencode_t allocate_tc(VectorPTR *tc_list, char *str, size_t len, type_t type);
+bool is_rsvword(char *str, size_t len);
 
 // lexer.c
 void tokenize(char *s, VectorUI64 *tc_list);
