@@ -89,7 +89,7 @@ static size_t count_operator_len(int8_t *s) {
 #define IS_COMMENT_BEGIN(s) (c == '/' && &(c + 1) == '*')
 #define IS_COMMENT_END(s)   (c == '*' && &() == '/')
 
-void tokenize(char *s, VectorUI64 *tc_list) {
+void tokenize(char *s, VectorUI64 *src_tokens) {
     uint32_t i = 0;
 
     while (s[i] != 0) {
@@ -106,7 +106,7 @@ void tokenize(char *s, VectorUI64 *tc_list) {
         }
 
         size_t len = 0;
-        type_t type = TY_VOID;
+        tokentype_t type = -1;
         if (IS_PREPROCESS(s[i])) {
             // pre-process
         
@@ -120,47 +120,73 @@ void tokenize(char *s, VectorUI64 *tc_list) {
         } else if (s[i] == ';') {
             // 改行と読み替える
             s[i] = '\n';
-            len = 1;
+            len  = 1;
+            type = TK_TY_SYMBOL;
         
         } else if (strchr("()[]:,\n", s[i]) != 0) {
-            type = TY_RSVWORD;
             len  = 1;
-
-        } else if (is_number(s[i])) {
-            type = TY_CONST;
-            len  = count_constant_len(&s[i]);
-        
-        } else if (is_varname(s[i])) {
-            len = count_varname_len(&s[i]);
+            type = TK_TY_SYMBOL;
 
         } else if (is_symbol_char(s[i])) {
             len = count_operator_len(&s[i]);
             if (is_valid_operator(&s[i], len) == false) {
+
                 // call error
             }
+            type = TK_TY_SYMBOL;
+
+        } else if (is_number(s[i])) {
+            len  = count_constant_len(&s[i]);
+            type = TK_TY_LITERAL;
+        
+        } else if (is_varname(s[i])) {
+            len  = count_varname_len(&s[i]);
+            type = TK_TY_VARIABLE;
 
         } else {
-            // call error
+            // エラー処理
+            printf("error\n");
+            return;
+        }
+
+        if (type == -1) {
+            // 一応...
+            printf("error\n");
+            return;
         }
 
         append_vector_ui64(
-            tc_list,
+            src_tokens,
             allocate_tc(&s[i], len, type)
         );
         i += len;
     }
 
-    append_vector_ui64(tc_list, TC_LF);
+    append_vector_ui64(src_tokens, TC_LF);
 
     return;
 }
 
-#define DEFAULT_MAX_TC 4096
+void lexer(char *s, VectorUI64 *src_tokens, VectorPTR *var_list) {
+    if (IS_NOT_NULL(src_tokens)) {
+        free_vector_ui64(src_tokens);
+    }
 
-VectorUI64 *lexer(char *s) {
-    VectorUI64 *tc_list = new_vector_ui64(DEFAULT_MAX_TC);
+    src_tokens = new_vector_ui64(DEFAULT_MAX_TC);
+    if (IS_NULL(src_tokens)) {
+        // TODO: まじめにかく
+        printf("error");
+        return;
+    }
 
-    tokenize(s, tc_list);
+    tokenize(s, src_tokens);
 
-    return tc_list;
+    var_list = make_var_list();
+    if (IS_NULL(var_list)) {
+        // TODO: まじめにかく
+        printf("error");
+        return;
+    }
+
+    return;
 }

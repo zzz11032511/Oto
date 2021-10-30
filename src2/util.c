@@ -44,8 +44,8 @@ void append_vector_ui64(VectorUI64 *vec, uint64_t data) {
 }
 
 void set_vector_ui64(VectorUI64 *vec, uint64_t idx, uint64_t data) {
-    if (vec->length >= vec->capacity) {
-        realloc_vector_ui64(vec, vec->capacity + 10);
+    if (idx >= vec->length) {
+        realloc_vector_ui64(vec, idx + 10);
         // TODO: エラー処理を書く
     }
 
@@ -102,8 +102,8 @@ void append_vector_ptr(VectorPTR *vec, void *data) {
 }
 
 void set_vector_ptr(VectorPTR *vec, uint64_t idx, void *data) {
-    if (vec->length >= vec->capacity) {
-        realloc_vector_ptr(vec, vec->capacity + 10);
+    if (idx >= vec->length) {
+        realloc_vector_ptr(vec, idx + 10);
         // TODO: エラー処理を書く
     }
 
