@@ -1,7 +1,9 @@
 #include "../oto.h"
 
-void test_tokenise() {
+void test_lexer() {
     init_token_list();
+
+    init_rsvword();
 
     char s[] = "a bb 12 = /* c a */ aaa a ; (] <= a";
 
@@ -23,5 +25,5 @@ void test_tokenise() {
 
 int main(void) {
     // gcc -o test_lexer src2/test/test_lexer.c src2/util.c src2/lexer.c src2/token.c -I./include
-    test_tokenise();
+    test_lexer();
 }

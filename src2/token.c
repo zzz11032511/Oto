@@ -1,5 +1,40 @@
 #include "oto.h"
 
+const Token symbols[] = {
+    {TC_LF,     "\n",  1, 0},
+    {TC_COMMA,   ",",  1, 0}, {TC_COLON,   ":",  1, 0},
+    {TC_SQBROPN, "[",  1, 0}, {TC_SQBRCLS, "]",  1, 0},
+    {TC_BROPN,   "(",  1, 0}, {TC_BRCLS,   ")",  1, 0},
+    {TC_LARROW,  "<-", 2, 0}, {TC_RARROW,  "->", 2, 0},
+    {TC_EQU,     "=",  1, 0}, {TC_PLUS,    "+",  1, 0},
+    {TC_MINUS,   "-",  1, 0}, {TC_ASTER,   "*",  1, 0},
+    {TC_SLASH,   "/",  1, 0}, {TC_PERCE,   "%",  1, 0},
+    {TC_EEQ,     "==", 2, 0}, {TC_NEQ,     "!=", 2, 0},
+    {TC_GT,      ">",  1, 0}, {TC_LT,      "<",  1, 0},
+    {TC_GE,      ">=", 2, 0}, {TC_LE,      "<=", 2, 0},
+    {0,          NULL, 0, 0}
+};
+
+const Token rsvwords[] = {
+    {TC_BEGIN,     "begin",     5, 1}, {TC_END,       "end",       3, 1},
+    {TC_DEFINE,    "define",    6, 1}, {TC_IF,        "if",        2, 1},
+    {TC_ELSIF,     "elsif",     5, 1}, {TC_ELSE,      "else",      4, 1},
+    {TC_THEN,      "then",      4, 1}, {TC_LOOP,      "loop",      4, 1}, 
+    {TC_AND,       "and",       3, 1}, {TC_OR,        "or",        2, 1},
+    {TC_NOT,       "not",       3, 1}, {TC_FUNC,      "func",      4, 1},
+    {TC_TRACK,     "track",     5, 1}, {TC_FILTER,    "filter",    6, 1},
+    {TC_OSCIL,     "oscil",     5, 1}, {TC_SOUND,     "sound",     5, 1},
+    {TC_PRINT,     "print",     5, 1}, {TC_BEEP,      "beep",      4, 1},
+    {TC_PLAY,      "play",      4, 1}, {TC_NOTE,      "note",      4, 1},
+    {TC_MUTE,      "mute",      4, 1}, {TC_BPM,       "bpm",       3, 1},
+    {TC_PRINTWAV,  "printwav",  8, 1}, {TC_EXPORTWAV, "exportwav", 9, 1},
+    {TC_IMPORTWAV, "importwav", 9, 1}, {TC_DEFSE,     "defse",     5, 1},
+    {TC_SPECTRUM,  "spectrum",  8, 1}, {TC_SETFS,     "setfs",     5, 1},
+    {TC_MIDIIN,    "midiin",    4, 1}, {TC_MIDIOUT,   "midiout",   7, 1},
+    {TC_EXIT,      "exit",      4, 1},
+    {0,            NULL,        0, 1},
+};
+
 static VectorPTR *token_list = NULL;
 
 void init_token_list() {
@@ -45,8 +80,6 @@ static void add_new_token(tokencode_t tc,
         return;
     }
 
-    TEST_EQ_NOT_PRINT(tc, token_list->length);
-
     if (IS_NOT_NULL(token_list->data[tc])) {
         free(token_list->data[tc]);
     }
@@ -58,31 +91,28 @@ static void append_new_token(char *str, size_t len, tokentype_t type) {
     add_new_token(token_list->length, str, len, type);
 }
 
-static struct rsvword {
-    int8_t *str;
-    tokencode_t tc;
-} rsvwords[] = {
-    {"begin",     TC_BEGIN     }, {"end",       TC_END       },
-    {"define",    TC_DEFINE    }, {"if",        TC_IF        },
-    {"elsif",     TC_ELSIF     }, {"else",      TC_ELSE      },
-    {"then",      TC_THEN      }, {"loop",      TC_LOOP      }, 
-    {"and",       TC_AND       }, {"or",        TC_OR        },
-    {"not",       TC_NOT       }, {"func",      TC_FUNC      },
-    {"track",     TC_TRACK     }, {"filter",    TC_FILTER    },
-    {"oscil",     TC_OSCIL     }, {"sound",     TC_SOUND     },
-    {"print",     TC_PRINT     }, {"beep",      TC_BEEP      },
-    {"play",      TC_PLAY      }, {"note",      TC_NOTE      },
-    {"mute",      TC_MUTE      }, {"bpm",       TC_BPM       },
-    {"printwav",  TC_PRINTWAV  }, {"exportwav", TC_EXPORTWAV },
-    {"importwav", TC_IMPORTWAV }, {"defse",     TC_DEFSE     },
-    {"spectrum",  TC_SPECTRUM  }, {"setfs",     TC_SETFS     },
-    {"midiin",    TC_MIDIIN    }, {"midiout",   TC_MIDIOUT   },
-    {"exit",      TC_EXIT      },
-    {NULL,        0            },
-};
+void init_rsvword() {
+    if (IS_NULL(token_list)) {
+        return;
+    }
+
+    uint64_t i = 0;
+    while (symbols[i].str != NULL) {
+        append_new_token(symbols[i].str, symbols[i].len, TK_TY_SYMBOL);
+        // TEST_EQ(((Token *)token_list->data[i])->tc, symbols[i].tc);
+        i++;
+    }
+
+    i = 0;
+    while (rsvwords[i].str != NULL) {
+        append_new_token(rsvwords[i].str, rsvwords[i].len, TK_TY_RSVWORD);
+        // TEST_EQ(((Token *)token_list->data[i])->tc, rsvwords[i].tc);
+        i++;
+    }
+}
 
 tokencode_t get_rsvword_tc(char *str, size_t len) {
-    tokencode_t tc = 0;
+    tokencode_t tc = TC_BEGIN;
     while (rsvwords[tc].str != NULL) {
         if (strcmp_cs(rsvwords[tc].str, str) == 0) {
             return tc;
@@ -182,10 +212,10 @@ void print_var(VectorPTR *var_list) {
         Var *var = ((Var *)var_list->data[i]);
 
         printf("var_list[%d] : ", i);
-        printf("tc : %d,",  var->token->tc);
-        printf("str : %s ", var->token->str);
-        printf("strlen : %d,",  var->token->len);
-        printf("var_type : %d", var->type);
+        printf("tc : %d, ",  var->token->tc);
+        printf("str : %s, ", var->token->str);
+        printf("strlen : %d, ",  var->token->len);
+        printf("var_type : %d, ", var->type);
         printf("value : %f", var->value.f);
         printf("\n");
         i++;

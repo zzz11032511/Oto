@@ -78,5 +78,7 @@
 
 #define DEBUG_IPRINT(v) while (0) {}
 #define DEBUG_FPRINT(v) while (0) {}
+#define DEBUG_CPRINT(v) while (0) {}
+#define DEBUG_SPRINT(v) while (0) {}
 
 #endif

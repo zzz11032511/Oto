@@ -46,28 +46,10 @@ static size_t count_varname_len(int8_t *s) {
     return len;
 }
 
-static struct {
-    int8_t *name;
-    tokencode_t tc;
-} symbols[] = {
-    {"\n", TC_LF      },
-    {",",  TC_COMMA   }, {":",  TC_COLON   },
-    {"[",  TC_SQBROPN }, {"]",  TC_SQBRCLS },
-    {"(",  TC_BROPN   }, {")",  TC_BRCLS   },
-    {"<-", TC_LARROW  }, {"->", TC_RARROW  },
-    {"=",  TC_EQU     }, {"+",  TC_PLUS    },
-    {"-",  TC_MINUS   }, {"*",  TC_ASTER   },
-    {"/",  TC_SLASH   }, {"%",  TC_PERCE   },
-    {"==", TC_EEQ     }, {"!=", TC_NEQ     },
-    {">",  TC_GT      }, {"<",  TC_LT      },
-    {">=", TC_GE      }, {"<=", TC_LE      },
-    {NULL, 0          }  
-};
-
 static bool is_valid_operator(int8_t *s, size_t len) {
     uint64_t i = 0;
-    while (symbols[i].name != NULL) {
-        if (strcmp(s, symbols[i].name) == 0) {
+    while (symbols[i].str != NULL) {
+        if (strcmp(s, symbols[i].str) == 0) {
             return true;
         }
         i++;

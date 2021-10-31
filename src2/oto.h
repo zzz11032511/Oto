@@ -29,6 +29,11 @@ typedef struct {
     vartype_t type;
 } Var;
 
+// initial reservation words
+
+extern const Token symbols[];
+extern const Token rsvwords[];
+
 // run.c
 
 void oto_init();
@@ -40,6 +45,7 @@ void set_timecount_flag(bool flag);
 // token.c
 
 void init_token_list();
+void init_rsvword();
 tokencode_t allocate_tc(char *str, size_t len, tokentype_t type);
 bool is_rsvword(char *str, size_t len);
 tokencode_t get_rsvword_tc(char *str, size_t len);
