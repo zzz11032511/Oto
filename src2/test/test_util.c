@@ -1,4 +1,4 @@
-#include "../oto_util.h"
+#include "../oto.h"
 
 void test_vector_ui64() {
     size_t cap = 3;

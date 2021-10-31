@@ -45,6 +45,7 @@ bool is_rsvword(char *str, size_t len);
 tokencode_t get_rsvword_tc(char *str, size_t len);
 
 VectorPTR *make_var_list();
+void print_var(VectorPTR *var_list);
 
 // lexer.c
 

@@ -9,14 +9,19 @@ void test_tokenise() {
     tokenize(s, vec);
 
     for (uint32_t i = 0; i < vec->length; i++) {
-        printf("tc[%d] = %d\n", i, vec->data[i]);
+        printf("%d ", vec->data[i]);
     }
+    printf("\n");
+
+    VectorPTR *var_list = make_var_list();
+    print_var(var_list);
 
     free(vec);
+    free(var_list);
     printf("success\n");
 }
 
 int main(void) {
-    //gcc -o test_tokenize src2/test/test_tokenize.c src2/util.c src2/lexer.c src2/token.c -I./include
+    // gcc -o test_lexer src2/test/test_lexer.c src2/util.c src2/lexer.c src2/token.c -I./include
     test_tokenise();
 }

@@ -175,3 +175,20 @@ VectorPTR *make_var_list() {
 
     return var_list;
 }
+
+void print_var(VectorPTR *var_list) {
+    uint64_t i = 0;
+    do {
+        Var *var = ((Var *)var_list->data[i]);
+
+        printf("var_list[%d] : ", i);
+        printf("tc : %d,",  var->token->tc);
+        printf("str : %s ", var->token->str);
+        printf("strlen : %d,",  var->token->len);
+        printf("var_type : %d", var->type);
+        printf("value : %f", var->value.f);
+        printf("\n");
+        i++;
+
+    } while (i < var_list->length);
+}
