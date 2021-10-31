@@ -46,11 +46,13 @@ void set_timecount_flag(bool flag);
 
 void init_token_list();
 void init_rsvword();
+void free_token_list();
 tokencode_t allocate_tc(char *str, size_t len, tokentype_t type);
 bool is_rsvword(char *str, size_t len);
 tokencode_t get_rsvword_tc(char *str, size_t len);
 
 VectorPTR *make_var_list();
+void free_var_list(VectorPTR *var_list);
 void print_var(VectorPTR *var_list);
 
 // lexer.c

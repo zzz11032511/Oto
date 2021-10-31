@@ -39,14 +39,24 @@ static VectorPTR *token_list = NULL;
 
 void init_token_list() {
     if (IS_NOT_NULL(token_list)) {
-        free_item_vector_ptr(token_list);
-        free(token_list);
+        free_token_list();
+        token_list = NULL;
     }
 
     token_list = new_vector_ptr(DEFAULT_MAX_TC);
     if (IS_NULL(token_list)) {
         // エラー処理
         return;
+    }
+}
+
+void free_token_list() {
+    uint64_t i = 0;
+    while (i < token_list->length) {
+        free(((Token *)(token_list->data[i]))->str);
+        free(token_list->data[i]);
+        token_list->data[i] = NULL;
+        i++;
     }
 }
 
@@ -204,6 +214,26 @@ VectorPTR *make_var_list() {
     }
 
     return var_list;
+}
+
+#define IS_HEAP_TYPE(type) \
+    (type == TY_ARRAY || type == TY_STRING || type == TY_OSCIL || \
+     type == TY_SOUND || type == TY_FILTER)
+
+void free_var_list(VectorPTR *var_list) {
+    // free_item_vector_ptr(var_list);
+    uint64_t i = 0;
+    while (i < var_list->length) {
+        Var *var = ((Var *)var_list->data[i]);
+
+        if (IS_HEAP_TYPE(var->type)) {
+            free(var->value.p);
+        }
+        free(var);
+        var = NULL;
+        i++;
+    }
+    free(var_list);
 }
 
 void print_var(VectorPTR *var_list) {

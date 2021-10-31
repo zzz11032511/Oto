@@ -76,14 +76,6 @@ VectorPTR *new_vector_ptr(size_t capacity) {
     return vec;
 }
 
-void free_item_vector_ptr(VectorPTR *vec) {
-    uint64_t i = 0;
-    while (i < vec->length) {
-        free(vec->data[i]);
-        vec->data[i] = NULL;
-    }
-}
-
 void free_vector_ptr(VectorPTR *vec) {
     free(vec);
 }

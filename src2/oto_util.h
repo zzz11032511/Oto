@@ -51,7 +51,6 @@ typedef struct {
 } VectorPTR;
 
 VectorPTR *new_vector_ptr(size_t capacity);
-void free_item_vector_ptr(VectorPTR *vec);
 void free_vector_ptr(VectorPTR *vec);
 void append_vector_ptr(VectorPTR *vec, void *data);
 void set_vector_ptr(VectorPTR *vec, uint64_t idx, void *data);
