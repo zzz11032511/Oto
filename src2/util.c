@@ -44,13 +44,19 @@ void append_vector_ui64(VectorUI64 *vec, uint64_t data) {
 }
 
 void set_vector_ui64(VectorUI64 *vec, uint64_t idx, uint64_t data) {
-    if (idx >= vec->length) {
-        realloc_vector_ui64(vec, idx + 10);
-        // TODO: エラー処理を書く
-        vec->length = idx + 1;
+    // TODO: エラー処理を書く
+    if (vec->length >= vec->capacity) {
+        if (idx >= vec->length) {
+            realloc_vector_ui64(vec, idx + 10);
+        } else {
+            realloc_vector_ui64(vec, vec->capacity + 10);
+        }
     }
 
     vec->data[idx] = data;
+    if (idx >= vec->length) {
+        vec->length = idx + 1;
+    }
 }
 
 VectorPTR *new_vector_ptr(size_t capacity) {
@@ -104,13 +110,19 @@ void append_vector_ptr(VectorPTR *vec, void *data) {
 }
 
 void set_vector_ptr(VectorPTR *vec, uint64_t idx, void *data) {
-    if (idx >= vec->length) {
-        realloc_vector_ptr(vec, idx + 10);
-        // TODO: エラー処理を書く
-        vec->length = idx + 1;
+    // TODO: エラー処理を書く
+    if (vec->length >= vec->capacity) {
+        if (idx >= vec->length) {
+            realloc_vector_ptr(vec, idx + 10);
+        } else {
+            realloc_vector_ptr(vec, vec->capacity + 10);
+        }
     }
 
     vec->data[idx] = data;
+    if (idx >= vec->length) {
+        vec->length = idx + 1;
+    }
 }
 
 static FILE *open_file(const char *path) {
