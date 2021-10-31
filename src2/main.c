@@ -1,10 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <string.h>
-
-#include "run.h"
+#include "oto.h"
 
 void usage(const char *name) {
     fprintf(stderr, "Example : %s XXX.oto\n", name);
@@ -31,10 +25,9 @@ int main(int argc, const char **argv) {
         exit(1);
     }
 
-    set_filename(argv[i]);
-    run(argv[i]);
-
-    oto_quit(EXIT_SUCCESS);
+    oto_init();
+    oto_run(argv[i]);
+    oto_quit();
 
     return 0;
 }

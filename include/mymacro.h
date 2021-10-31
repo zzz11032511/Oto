@@ -54,6 +54,14 @@
     printf(#v); \
     printf(" : %f\n", v); \
 } while (0)
+#define DEBUG_CPRINT(v) do { \
+    printf(#v); \
+    printf(" : %c\n", v); \
+} while (0)
+#define DEBUG_SPRINT(v) do { \
+    printf(#v); \
+    printf(" : %s\n", v); \
+} while (0)
 
 #else
 

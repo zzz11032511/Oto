@@ -70,6 +70,7 @@ static bool is_valid_operator(int8_t *s, size_t len) {
         if (strcmp(s, symbols[i].name) == 0) {
             return true;
         }
+        i++;
     }
 
     return false;
@@ -77,7 +78,7 @@ static bool is_valid_operator(int8_t *s, size_t len) {
 
 static size_t count_operator_len(int8_t *s) {
     size_t len = 0;
-    while (is_symbol(s[len]) && s[len] != '\0') {
+    while (is_symbol_char(s[len]) && s[len] != '\0') {
         len++;
     }
 
@@ -91,7 +92,6 @@ static size_t count_operator_len(int8_t *s) {
 
 void tokenize(char *s, VectorUI64 *src_tokens) {
     uint32_t i = 0;
-
     while (s[i] != 0) {
         if (IS_IGNORE_CHAR(s[i])) {
             i++;
@@ -104,6 +104,7 @@ void tokenize(char *s, VectorUI64 *src_tokens) {
             i += 2;
             continue;
         }
+
 
         size_t len = 0;
         tokentype_t type = -1;

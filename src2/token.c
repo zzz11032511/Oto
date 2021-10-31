@@ -3,6 +3,11 @@
 static VectorPTR *token_list = NULL;
 
 void init_token_list() {
+    if (IS_NOT_NULL(token_list)) {
+        free_item_vector_ptr(token_list);
+        free(token_list);
+    }
+
     token_list = new_vector_ptr(DEFAULT_MAX_TC);
     if (IS_NULL(token_list)) {
         // エラー処理
@@ -137,28 +142,30 @@ VectorPTR *make_var_list() {
     for (uint64_t i = 0; i < token_list->length; i++) {
         now_token = ((Token *)token_list->data[i]);
 
-        tokentype_t var_type = TY_UNABLE;
         switch (now_token->type) {
         case TK_TY_SYMBOL:
         case TK_TY_RSVWORD:
+            new_var = new_variable(now_token, TY_UNABLE);
             break;
         
         case TK_TY_VARIABLE:
-            var_type = TY_VOID;
+            new_var = new_variable(now_token, TY_VOID);
             break;
 
         case TK_TY_LITERAL:
-            var_type = TY_CONST;
+            new_var = new_variable(now_token, TY_CONST);
             break;
 
         default:
             return NULL;
         }
-
-        new_var = new_variable(now_token, var_type);
         if (IS_NULL(new_var)) {
             free(var_list);
             return NULL;
+        }
+
+        if (now_token->type == TK_TY_LITERAL) {
+            new_var->value.f = strtod(now_token->str, 0);
         }
 
         TEST_EQ_NOT_PRINT(i, var_list->length);

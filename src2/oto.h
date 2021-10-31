@@ -31,14 +31,15 @@ typedef struct {
 
 // run.c
 
-void oto_run(const int8_t *filename);
+void oto_init();
+void oto_run(const int8_t *path);
 void oto_quit();
 
 void set_timecount_flag(bool flag);
 
 // token.c
 
-void init_token();
+void init_token_list();
 tokencode_t allocate_tc(char *str, size_t len, tokentype_t type);
 bool is_rsvword(char *str, size_t len);
 tokencode_t get_rsvword_tc(char *str, size_t len);
@@ -46,5 +47,6 @@ tokencode_t get_rsvword_tc(char *str, size_t len);
 VectorPTR *make_var_list();
 
 // lexer.c
+
 void tokenize(char *s, VectorUI64 *src_tokens);
 void lexer(char *s, VectorUI64 *src_tokens, VectorPTR *var_list);

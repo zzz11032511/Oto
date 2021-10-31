@@ -47,6 +47,7 @@ void set_vector_ui64(VectorUI64 *vec, uint64_t idx, uint64_t data) {
     if (idx >= vec->length) {
         realloc_vector_ui64(vec, idx + 10);
         // TODO: エラー処理を書く
+        vec->length = idx + 1;
     }
 
     vec->data[idx] = data;
@@ -73,6 +74,7 @@ void free_item_vector_ptr(VectorPTR *vec) {
     uint64_t i = 0;
     while (i < vec->length) {
         free(vec->data[i]);
+        vec->data[i] = NULL;
     }
 }
 
@@ -105,6 +107,7 @@ void set_vector_ptr(VectorPTR *vec, uint64_t idx, void *data) {
     if (idx >= vec->length) {
         realloc_vector_ptr(vec, idx + 10);
         // TODO: エラー処理を書く
+        vec->length = idx + 1;
     }
 
     vec->data[idx] = data;
