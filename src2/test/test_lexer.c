@@ -2,7 +2,6 @@
 
 void test_lexer() {
     init_token_list();
-
     init_rsvword();
 
     char s[] = "a bb 12 = /* c a */ aaa a ; (] <= a";

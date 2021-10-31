@@ -121,15 +121,26 @@ void init_rsvword() {
     }
 }
 
-tokencode_t get_rsvword_tc(char *str, size_t len) {
-    tokencode_t tc = TC_BEGIN;
-    while (rsvwords[tc].str != NULL) {
-        if (strcmp_cs(rsvwords[tc].str, str) == 0) {
-            return tc;
+/* もし予約語でない場合は0を返す */
+static tokencode_t get_rsvword_tc(char *str, size_t len) {
+    tokencode_t i = 0;
+    while (rsvwords[i].str != NULL) {
+        // 予約語については大文字小文字を区別しない
+        if (strcmp_cs(rsvwords[i].str, str) == 0) {
+            return rsvwords[i].tc;
         }
-        tc++;
+        i++;
     }
     return 0;
+}
+
+bool is_rsvword(char *str, size_t len) {
+    tokencode_t tc = get_rsvword_tc(str, len);
+    DEBUG_IPRINT(tc);
+    if (tc != 0) {
+        return true;
+    }
+    return false;
 }
 
 tokencode_t allocate_tc(char *str, size_t len, tokentype_t type) {
