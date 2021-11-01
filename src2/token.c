@@ -71,7 +71,8 @@ static Token *new_token(tokencode_t tc,
     token->len  = len;
     token->type = type;
 
-    char *s = MYMALLOC(len, char);
+    // '\0"の分1足す
+    char *s = MYMALLOC(len + 1, char);
     if (IS_NULL(s)) {
         return NULL;
     }
@@ -109,14 +110,14 @@ void init_rsvword() {
     uint64_t i = 0;
     while (symbols[i].str != NULL) {
         append_new_token(symbols[i].str, symbols[i].len, TK_TY_SYMBOL);
-        // TEST_EQ(((Token *)token_list->data[i])->tc, symbols[i].tc);
+        // printf("%5I64d : %s\n", i, ((Token *)token_list->data[i])->str);
         i++;
     }
 
     i = 0;
     while (rsvwords[i].str != NULL) {
         append_new_token(rsvwords[i].str, rsvwords[i].len, TK_TY_RSVWORD);
-        // TEST_EQ(((Token *)token_list->data[i])->tc, rsvwords[i].tc);
+        // printf("%5I64d : %s\n", 21 + i, ((Token *)token_list->data[21 + i])->str);
         i++;
     }
 }
@@ -136,7 +137,6 @@ static tokencode_t get_rsvword_tc(char *str, size_t len) {
 
 bool is_rsvword(char *str, size_t len) {
     tokencode_t tc = get_rsvword_tc(str, len);
-    DEBUG_IPRINT(tc);
     if (tc != 0) {
         return true;
     }
@@ -252,11 +252,11 @@ void print_var(VectorPTR *var_list) {
     do {
         Var *var = ((Var *)var_list->data[i]);
 
-        printf("var_list[%d] : ", i);
-        printf("tc : %d, ",  var->token->tc);
-        printf("str : %s, ", var->token->str);
-        printf("strlen : %d, ",  var->token->len);
-        printf("var_type : %d, ", var->type);
+        // printf("var_list[%5I64d] : ", i);
+        printf("tc : %5I64d, ",  var->token->tc);
+        printf("str : %15s, ", var->token->str);
+        printf("strlen : %I64d, ",  var->token->len);
+        printf("var_type : %I64d, ", var->type);
         printf("value : %f", var->value.f);
         printf("\n");
         i++;
