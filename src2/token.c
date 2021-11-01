@@ -113,7 +113,6 @@ void init_rsvword() {
         // printf("%5I64d : %s\n", i, ((Token *)token_list->data[i])->str);
         i++;
     }
-
     i = 0;
     while (rsvwords[i].str != NULL) {
         append_new_token(rsvwords[i].str, rsvwords[i].len, TK_TY_RSVWORD);
@@ -127,7 +126,7 @@ static tokencode_t get_rsvword_tc(char *str, size_t len) {
     tokencode_t i = 0;
     while (rsvwords[i].str != NULL) {
         // 予約語については大文字小文字を区別しない
-        if (strcmp_cs(rsvwords[i].str, str) == 0) {
+        if (strncmp_cs(rsvwords[i].str, str, len) == 0) {
             return rsvwords[i].tc;
         }
         i++;

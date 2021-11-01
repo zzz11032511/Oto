@@ -52,8 +52,8 @@ static bool ptn_cmp(uint64_t i, const int64_t *pattarn) {
     while (pattarn[ptn] != PTN_END) {
         tokencode_t tc = SRC(i);
 
-        DEBUG_IPRINT(tc);
-        DEBUG_IPRINT(pattarn[ptn]);
+        // DEBUG_IPRINT(tc);
+        // DEBUG_IPRINT(pattarn[ptn]);
         
         if (tc == pattarn[ptn]) {
             // パターン一致
@@ -68,13 +68,13 @@ static bool ptn_cmp(uint64_t i, const int64_t *pattarn) {
             break;
 
         } else {
-            printf("\n");
+            // printf("\n");
             return false;
         }
         ptn++;
         i++;
     }
-    printf("matched\n\n");
+    // printf("matched\n\n");
 
     return true;
 }
@@ -190,6 +190,7 @@ VectorPTR *compiler(VectorUI64 *src_tokens, VectorPTR *var_list) {
         return NULL;
     }
     init_compile(src_tokens, var_list, opcodes);
+
     // opcodeをどこまで書き込んだか
     uint64_t icp = 0;
 
