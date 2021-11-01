@@ -7,5 +7,7 @@ build/
 src/oldsound/
 .vscode/
 
+makefile_sub
+
 aaa.oto
 audiotest.c

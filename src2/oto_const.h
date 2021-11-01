@@ -68,7 +68,7 @@ enum {
 
     TC_EXIT       // exit EXIT
 };
-typedef uint64_t tokencode_t;
+typedef int64_t tokencode_t;
 
 // Token types
 enum {
@@ -77,7 +77,7 @@ enum {
     TK_TY_LITERAL,
     TK_TY_VARIABLE
 };
-typedef uint64_t tokentype_t;
+typedef int64_t tokentype_t;
 
 // Variable types
 enum {
@@ -93,7 +93,7 @@ enum {
     TY_FILTER,
     TY_FUNC
 };
-typedef uint64_t vartype_t;
+typedef int64_t vartype_t;
 
 // operation codes
 enum {
@@ -183,5 +183,8 @@ enum {
     OP_JMP,        // 無条件ジャンプ
     OP_JZ,         // スタックの上が0ならジャンプ
     OP_JNZ,        // スタックの上が0でないならジャンプ
+
+    OP_PRINT,
+    OP_EXIT
 };
-typedef uint64_t opcode_t;
+typedef int64_t opcode_t;

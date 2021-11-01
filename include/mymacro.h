@@ -48,7 +48,7 @@
 
 #define DEBUG_IPRINT(v) do { \
     printf(#v); \
-    printf(" : %d\n", v); \
+    printf(" : %I64d\n", v); \
 } while (0)
 #define DEBUG_FPRINT(v) do { \
     printf(#v); \

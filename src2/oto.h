@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdarg.h>
 #include <string.h>
 #include <stdbool.h>
 #include <mymacro.h>
@@ -19,7 +20,7 @@
 #define IS_RSVWORD(tc)        ((TC_BEGIN <= tc) && (tc <= TC_EXIT))
 #define IS_AVAILABLE_VAR(tc)  (tc > TC_EXIT)
 #define IS_SYMBOL(tc)         ((TC_LF <= tc) && (tc < TC_BEGIN))
-#define IS_NOT_SYMBOL(tc)     (!IS_SYMBOL(tc))
+#define IS_NOT_SYMBOL(tc)     (tc >= TC_BEGIN)
 #define IS_INSTRUCTION(tc)    ((TC_PRINT <= tc) && (tc < TC_EXIT))
 #define IS_ARITH_OPERATOR(tc) ((TC_PLUS <= tc && tc <= TC_GT) || (TC_AND <= tc && tc <= TC_OR))
 
@@ -60,8 +61,8 @@ void free_vector_ptr(VectorPTR *vec);
 void append_vector_ptr(VectorPTR *vec, void *data);
 void set_vector_ptr(VectorPTR *vec, uint64_t idx, void *data);
 
-// token_list's default capatity 
-#define DEFAULT_MAX_TC 4096
+// token_listの最大容量の初期値
+#define DEFAULT_MAX_TC  4096
 
 typedef struct {
     tokencode_t tc;
@@ -108,4 +109,17 @@ void print_var(VectorPTR *var_list);
 /* lexer.c */
 
 void tokenize(char *s, VectorUI64 *src_tokens);
-void lexer(char *s, VectorUI64 *src_tokens, VectorPTR *var_list);
+VectorUI64 * lexer(char *s);
+
+/* compile.c */
+
+// opcodesの最大容量の初期値
+#define DEFAULT_MAX_OPCODES 4096
+
+// トークン化したソースコードを内部コード列に変換する
+VectorPTR *compiler(VectorUI64 *src_tokens, VectorPTR *var_list);
+void compiler_sub(uint64_t *icp, uint64_t start, uint64_t end);
+
+/* exec.c */
+
+void exec(VectorPTR *ic_list);

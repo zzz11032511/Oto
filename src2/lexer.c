@@ -73,7 +73,7 @@ static size_t count_operator_len(int8_t *s) {
 #define IS_COMMENT_END(s)   (c == '*' && &() == '/')
 
 void tokenize(char *s, VectorUI64 *src_tokens) {
-    uint32_t i = 0;
+    uint64_t i = 0;
     while (s[i] != 0) {
         if (IS_IGNORE_CHAR(s[i])) {
             i++;
@@ -86,7 +86,6 @@ void tokenize(char *s, VectorUI64 *src_tokens) {
             i += 2;
             continue;
         }
-
 
         size_t len = 0;
         tokentype_t type = -1;
@@ -150,26 +149,15 @@ void tokenize(char *s, VectorUI64 *src_tokens) {
     return;
 }
 
-void lexer(char *s, VectorUI64 *src_tokens, VectorPTR *var_list) {
-    if (IS_NOT_NULL(src_tokens)) {
-        free_vector_ui64(src_tokens);
-    }
-
-    src_tokens = new_vector_ui64(DEFAULT_MAX_TC);
+VectorUI64 *lexer(char *s) {
+    VectorUI64 *src_tokens = new_vector_ui64(DEFAULT_MAX_TC);
     if (IS_NULL(src_tokens)) {
         // TODO: まじめにかく
         printf("error");
-        return;
+        return NULL;
     }
 
     tokenize(s, src_tokens);
 
-    var_list = make_var_list();
-    if (IS_NULL(var_list)) {
-        // TODO: まじめにかく
-        printf("error");
-        return;
-    }
-
-    return;
+    return src_tokens;
 }
