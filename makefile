@@ -1,4 +1,4 @@
-SRCSLIST := main.c util.c run.c token.c lexer.c compiler.c exec.c
+SRCSLIST := main.c util.c run.c token.c lexer.c compile.c exec.c
 
 PROGRAM       := oto
 DEBUGPROGRAM  := debug

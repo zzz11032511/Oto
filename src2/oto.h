@@ -117,8 +117,8 @@ VectorUI64 * lexer(char *s);
 #define DEFAULT_MAX_OPCODES 4096
 
 // トークン化したソースコードを内部コード列に変換する
-VectorPTR *compiler(VectorUI64 *src_tokens, VectorPTR *var_list);
-void compiler_sub(uint64_t *icp, uint64_t start, uint64_t end);
+VectorPTR *compile(VectorUI64 *src_tokens, VectorPTR *var_list);
+void compile_sub(uint64_t *icp, uint64_t start, uint64_t end);
 
 /* exec.c */
 

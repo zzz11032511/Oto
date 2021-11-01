@@ -92,7 +92,7 @@ const int64_t PTNS_LABEL_ONLY[] = {PTN_LABEL, TC_LF, PTN_END};
 const int64_t PTNS_PRINT[] = {TC_PRINT, PTN_LABEL, TC_LF, PTN_END};
 const int64_t PTNS_EXIT[] = {TC_EXIT, TC_LF, PTN_END};
 
-void compiler_sub(uint64_t *icp, uint64_t start, uint64_t end) {
+void compile_sub(uint64_t *icp, uint64_t start, uint64_t end) {
     uint64_t i = start;
 
     DEBUG_IPRINT(start);
@@ -184,7 +184,7 @@ void compiler_sub(uint64_t *icp, uint64_t start, uint64_t end) {
     }
 }
 
-VectorPTR *compiler(VectorUI64 *src_tokens, VectorPTR *var_list) {
+VectorPTR *compile(VectorUI64 *src_tokens, VectorPTR *var_list) {
     VectorPTR *opcodes = new_vector_ptr(DEFAULT_MAX_OPCODES);
     if (IS_NULL(opcodes)) {
         return NULL;
@@ -194,7 +194,7 @@ VectorPTR *compiler(VectorUI64 *src_tokens, VectorPTR *var_list) {
     // opcodeをどこまで書き込んだか
     uint64_t icp = 0;
 
-    compiler_sub(&icp, 0, src_tokens->length);
+    compile_sub(&icp, 0, src_tokens->length);
 
     return opcodes;
 }

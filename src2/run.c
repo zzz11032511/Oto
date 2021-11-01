@@ -23,10 +23,12 @@ void oto_run(const int8_t *path) {
         return;
     }
 
+    // トークン化したソースコードの表示
+    printf("tc : ");
     for (uint64_t i = 0; i < src_tokens->length; i++) {
-        printf("%d ", src_tokens->data[i]);
+        printf("%I64d ", src_tokens->data[i]);
     }
-    printf("\n");
+    printf("\n\n");
 
     VectorPTR *var_list = make_var_list();
     if (IS_NULL(var_list)) {
@@ -36,7 +38,7 @@ void oto_run(const int8_t *path) {
 
     print_var(var_list);
 
-    VectorPTR *ic_list = compiler(src_tokens, var_list);
+    VectorPTR *ic_list = compile(src_tokens, var_list);
     if (IS_NULL(ic_list)) {
         printf("error\n");
         return;
