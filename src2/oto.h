@@ -104,7 +104,6 @@ bool is_rsvword(char *str, size_t len);
 
 VectorPTR *make_var_list();
 void free_var_list(VectorPTR *var_list);
-void print_var(VectorPTR *var_list);
 
 /* lexer.c */
 
@@ -123,3 +122,9 @@ void compile_sub(uint64_t *icp, uint64_t start, uint64_t end);
 /* exec.c */
 
 void exec(VectorPTR *ic_list);
+
+/* debug.c */
+
+void print_src_tokens(VectorUI64 *src_tokens);
+void print_var(VectorPTR *var_list);
+void print_ic_list(VectorPTR *ic_list);

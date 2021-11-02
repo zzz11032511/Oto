@@ -245,20 +245,3 @@ void free_var_list(VectorPTR *var_list) {
     }
     free(var_list);
 }
-
-void print_var(VectorPTR *var_list) {
-    uint64_t i = 0;
-    do {
-        Var *var = ((Var *)var_list->data[i]);
-
-        // printf("var_list[%5I64d] : ", i);
-        printf("tc : %5I64d, ",  var->token->tc);
-        printf("str : %15s, ", var->token->str);
-        printf("strlen : %I64d, ",  var->token->len);
-        printf("var_type : %I64d, ", var->type);
-        printf("value : %f", var->value.f);
-        printf("\n");
-        i++;
-
-    } while (i < var_list->length);
-}
