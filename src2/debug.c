@@ -1,11 +1,37 @@
 #include "oto.h"
 
 void print_src_tokens(VectorUI64 *src_tokens) {
-    printf("tc : ");
+    printf("- Source tokens -\n");
     for (uint64_t i = 0; i < src_tokens->length; i++) {
         printf("%I64d ", src_tokens->data[i]);
     }
     printf("\n\n");
+}
+
+void print_var(VectorPTR *var_list) {
+    printf("- Variable list -\n");
+
+    uint64_t i = 0;
+    do {
+        Var *var = ((Var *)var_list->data[i]);
+
+        // printf("var_list[%5I64d] : ", i);
+        printf("tc : %5I64d, ",  var->token->tc);
+
+        if (i == TC_LF) {
+            printf("str : %15s, ", "\\n");
+        } else {
+            printf("str : %15s, ", var->token->str);
+        }
+
+        printf("strlen : %I64d, ",  var->token->len);
+        printf("var_type : %2I64d, ", var->type);
+        printf("value : %f", var->value.f);
+        printf("\n");
+        i++;
+
+    } while (i < var_list->length);
+    printf("\n");
 }
 
 static struct operation {
@@ -31,6 +57,8 @@ static struct operation {
 };
 
 void print_ic_list(VectorPTR *ic_list) {
+    printf("- Internal code -\n");
+
     opcode_t op = 0;
     Var *v1 = NULL;
     Var *v2 = NULL;
@@ -67,28 +95,5 @@ void print_ic_list(VectorPTR *ic_list) {
         printf("%10s ", v4->token->str);
         printf("\n");
     }
-}
-
-void print_var(VectorPTR *var_list) {
-    uint64_t i = 0;
-    do {
-        Var *var = ((Var *)var_list->data[i]);
-
-        // printf("var_list[%5I64d] : ", i);
-        printf("tc : %5I64d, ",  var->token->tc);
-
-        if (i == TC_LF) {
-            printf("str : %15s, ", "\\n");
-        } else {
-            printf("str : %15s, ", var->token->str);
-        }
-
-        printf("strlen : %I64d, ",  var->token->len);
-        printf("var_type : %I64d, ", var->type);
-        printf("value : %f", var->value.f);
-        printf("\n");
-        i++;
-
-    } while (i < var_list->length);
     printf("\n");
 }

@@ -65,8 +65,6 @@ static bool ptn_cmp(uint64_t i, const int64_t *pattarn) {
 
         } else if (pattarn[ptn] == PTN_LABEL && IS_NOT_SYMBOL(tc)) {
             tmpvars[vp++] = tc;
-            DEBUG_IPRINT(tc);
-            DEBUG_IPRINT(tmpvars[vp - 1]);
 
         }  else if (pattarn[ptn] == PTN_INST && IS_INSTRUCTION(tc)) {
             // 命令
@@ -101,9 +99,6 @@ const int64_t PTNS_EXIT[] = {TC_EXIT, TC_LF, PTN_END};
 
 void compile_sub(uint64_t *icp, uint64_t start, uint64_t end) {
     uint64_t i = start;
-
-    DEBUG_IPRINT(start);
-    DEBUG_IPRINT(end);
 
     while (i < end) {
         if (SRC(i) == TC_LF) {
