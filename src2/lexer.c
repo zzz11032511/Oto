@@ -72,15 +72,15 @@ static size_t count_operator_len(int8_t *s) {
 #define IS_COMMENT_BEGIN(s) (c == '/' && &(c + 1) == '*')
 #define IS_COMMENT_END(s)   (c == '*' && &() == '/')
 
-void tokenize(char *s, VectorUI64 *src_tokens) {
+void tokenize(char *src, VectorUI64 *src_tokens) {
     uint64_t i = 0;
-    while (s[i] != 0) {
-        if (IS_IGNORE_CHAR(s[i])) {
+    while (src[i] != 0) {
+        if (IS_IGNORE_CHAR(src[i])) {
             i++;
             continue;
         
-        } else if (s[i] == '/' && s[i + 1] == '*') {
-            while (!(s[i] == '*' && s[i + 1] == '/')) {
+        } else if (src[i] == '/' && src[i + 1] == '*') {
+            while (!(src[i] == '*' && src[i + 1] == '/')) {
                 i++;
             }
             i += 2;
@@ -89,40 +89,40 @@ void tokenize(char *s, VectorUI64 *src_tokens) {
 
         size_t len = 0;
         tokentype_t type = -1;
-        if (IS_PREPROCESS(s[i])) {
+        if (IS_PREPROCESS(src[i])) {
             // pre-process
         
-        } else if (s[i] == '\\') {
+        } else if (src[i] == '\\') {
             // 1行に書かなければいけない処理を複数行書けるようにする
             do {
                 i++;
-            } while (s[i] == ' ' || s[i] == '\n');
+            } while (src[i] == ' ' || src[i] == '\n');
             continue;
         
-        } else if (s[i] == ';') {
+        } else if (src[i] == ';') {
             // 改行と読み替える
-            s[i] = '\n';
+            src[i] = '\n';
             len  = 1;
             type = TK_TY_SYMBOL;
         
-        } else if (strchr("()[]:,\n", s[i]) != 0) {
+        } else if (strchr("()[]:,\n", src[i]) != 0) {
             len  = 1;
             type = TK_TY_SYMBOL;
 
-        } else if (is_symbol_char(s[i])) {
-            len = count_operator_len(&s[i]);
-            if (is_valid_operator(&s[i], len) == false) {
+        } else if (is_symbol_char(src[i])) {
+            len = count_operator_len(&src[i]);
+            if (is_valid_operator(&src[i], len) == false) {
 
                 // call error
             }
             type = TK_TY_SYMBOL;
 
-        } else if (is_number(s[i])) {
-            len  = count_constant_len(&s[i]);
+        } else if (is_number(src[i])) {
+            len  = count_constant_len(&src[i]);
             type = TK_TY_LITERAL;
         
-        } else if (is_varname(s[i])) {
-            len  = count_varname_len(&s[i]);
+        } else if (is_varname(src[i])) {
+            len  = count_varname_len(&src[i]);
             type = TK_TY_VARIABLE;
 
         } else {
@@ -139,7 +139,7 @@ void tokenize(char *s, VectorUI64 *src_tokens) {
 
         append_vector_ui64(
             src_tokens,
-            allocate_tc(&s[i], len, type)
+            allocate_tc(&src[i], len, type)
         );
         i += len;
     }
@@ -149,7 +149,7 @@ void tokenize(char *s, VectorUI64 *src_tokens) {
     return;
 }
 
-VectorUI64 *lexer(char *s) {
+VectorUI64 *lexer(char *src) {
     VectorUI64 *src_tokens = new_vector_ui64(DEFAULT_MAX_TC);
     if (IS_NULL(src_tokens)) {
         // TODO: まじめにかく
@@ -157,7 +157,7 @@ VectorUI64 *lexer(char *s) {
         return NULL;
     }
 
-    tokenize(s, src_tokens);
+    tokenize(src, src_tokens);
 
     return src_tokens;
 }

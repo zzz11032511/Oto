@@ -33,6 +33,6 @@ void test_lexer2() {
 }
 
 int main(void) {
-    // gcc -o test_lexer src2/test/test_lexer.c src2/util.c src2/lexer.c src2/token.c -I./include
+    // gcc -o test_lexer src2/test/test_lexer.c src2/util.c src2/lexer.c src2/token.c src2/debug.c -I./include
     test_lexer();
 }
