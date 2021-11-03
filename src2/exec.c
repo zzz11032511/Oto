@@ -3,8 +3,8 @@
 #define VAR(tc)  ((Var *)(ic_list->data[tc]))
 
 void exec(VectorPTR *ic_list) {
-    uint64_t i = 0;
-    uint64_t end = ic_list->length;
+    int64_t i = 0;
+    int64_t end = ic_list->length;
 
     while (i < end) {
         switch ((opcode_t)ic_list->data[i]) {

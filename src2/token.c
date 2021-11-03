@@ -51,7 +51,7 @@ void init_token_list() {
 }
 
 void free_token_list() {
-    uint64_t i = 0;
+    int64_t i = 0;
     while (i < token_list->length) {
         free(((Token *)(token_list->data[i]))->str);
         free(token_list->data[i]);
@@ -95,7 +95,7 @@ static void add_new_token(tokencode_t tc,
         free(token_list->data[tc]);
     }
 
-    set_vector_ptr(token_list, tc, (void *)token);
+    vector_ptr_set(token_list, tc, (void *)token);
 }
 
 static void append_new_token(char *str, size_t len, tokentype_t type) {
@@ -107,23 +107,21 @@ void init_rsvword() {
         return;
     }
 
-    uint64_t i = 0;
+    int64_t i = 0;
     while (symbols[i].str != NULL) {
         append_new_token(symbols[i].str, symbols[i].len, TK_TY_SYMBOL);
-        // printf("%5I64d : %s\n", i, ((Token *)token_list->data[i])->str);
         i++;
     }
     i = 0;
     while (rsvwords[i].str != NULL) {
         append_new_token(rsvwords[i].str, rsvwords[i].len, TK_TY_RSVWORD);
-        // printf("%5I64d : %s\n", 21 + i, ((Token *)token_list->data[21 + i])->str);
         i++;
     }
 }
 
 /* もし予約語でない場合は0を返す */
 static tokencode_t get_rsvword_tc(char *str, size_t len) {
-    tokencode_t i = 0;
+    int64_t i = 0;
     // TODO: 厳密にテストするべき
     while (rsvwords[i].str != NULL) {
         // 予約語については大文字小文字を区別しない
@@ -190,7 +188,7 @@ VectorPTR *make_var_list() {
 
     Token *now_token = NULL;    
     Var *new_var = NULL;
-    for (uint64_t i = 0; i < token_list->length; i++) {
+    for (int64_t i = 0; i < token_list->length; i++) {
         now_token = ((Token *)token_list->data[i]);
 
         switch (now_token->type) {
@@ -221,7 +219,7 @@ VectorPTR *make_var_list() {
 
         TEST_EQ_NOT_PRINT(i, var_list->length);
 
-        append_vector_ptr(var_list, (void *)new_var);
+        vector_ptr_append(var_list, (void *)new_var);
     }
 
     return var_list;
@@ -233,7 +231,7 @@ VectorPTR *make_var_list() {
 
 void free_var_list(VectorPTR *var_list) {
     // free_item_vector_ptr(var_list);
-    uint64_t i = 0;
+    int64_t i = 0;
     while (i < var_list->length) {
         Var *var = ((Var *)var_list->data[i]);
 

@@ -1,7 +1,7 @@
 #include "oto.h"
 
 /* idxは最初の「"」の位置 */
-char *new_string_literal(char *src, uint64_t idx) {
+char *new_string_literal(char *src, int64_t idx) {
     if (src[idx] != '"') {
         return NULL;
     }
@@ -31,7 +31,7 @@ static Map *include_file_list = NULL;
  * 
  * 引数には実行した最初のファイルのパスを渡す
  */
-void init_include_file_manager(const char *root_path) {
+void init_include_file_manager(char *root_path) {
     if (include_file_list == NULL) {
         include_file_list = new_map();
         if (IS_NULL(include_file_list)) {
@@ -62,7 +62,7 @@ static void check_circular_ref(char *path) {
     }
 }
 
-static void include_file(char *src, uint64_t idx, VectorUI64 *src_tokens) {
+static void include_file(char *src, int64_t idx, VectorI64 *src_tokens) {
     // "include"の分
     idx += 7;
 
@@ -98,7 +98,7 @@ static void include_file(char *src, uint64_t idx, VectorUI64 *src_tokens) {
     free(path);
 }
 
-void preprocess(char *src, uint64_t idx, VectorUI64 *src_tokens) {
+void preprocess(char *src, int64_t idx, VectorI64 *src_tokens) {
     idx++;
 
     if (strncmp_cs("include", &src[idx], 7) == 0) {

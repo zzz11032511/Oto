@@ -48,6 +48,8 @@ $(OUTDIR)/%_debug.o: %.c
 
 # runするときに実行するファイル名
 TESTSRCPATH = aaa.oto
+build: $(TARGET)
+
 run: $(TARGET)
 	$(TARGET) $(TESTSRCPATH)
 

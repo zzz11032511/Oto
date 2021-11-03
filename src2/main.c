@@ -5,7 +5,7 @@ void usage(const char *name) {
     return;
 }
 
-int main(int argc, const char **argv) {
+int main(int argc, char **argv) {
     uint32_t i = 1;
 
     if (argc == 1) {

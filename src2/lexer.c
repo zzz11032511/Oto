@@ -1,11 +1,11 @@
 #include "oto.h"
 
-static bool is_number(int8_t c) {
+static bool is_number(char c) {
     if ('0' <= c && c <= '9') return true;
     return false;
 }
 
-static bool is_varname(int8_t c) {
+static bool is_varname(char c) {
     if ('0' <= c && c <= '9') return true;
     if ('a' <= c && c <= 'z') return true;
     if ('A' <= c && c <= 'Z') return true;
@@ -14,12 +14,12 @@ static bool is_varname(int8_t c) {
     return false;
 }
 
-static bool is_symbol_char(int8_t c) {
+static bool is_symbol_char(char c) {
     if (strchr("=+-*/%<>!", c) != 0) return true;
     return false;
 }
 
-static size_t count_constant_len(int8_t *s) {
+static size_t count_constant_len(char *s) {
     size_t len = 0;
     bool is_float = false;
 
@@ -37,7 +37,7 @@ static size_t count_constant_len(int8_t *s) {
     return len;
 }
 
-static size_t count_varname_len(int8_t *s) {
+static size_t count_varname_len(char *s) {
     size_t len = 0;
     while (is_varname(s[len])) {
         len++;
@@ -46,8 +46,8 @@ static size_t count_varname_len(int8_t *s) {
     return len;
 }
 
-static bool is_valid_operator(int8_t *s, size_t len) {
-    uint64_t i = 0;
+static bool is_valid_operator(char *s, size_t len) {
+    int64_t i = 0;
     while (symbols[i].str != NULL) {
         if (strcmp(s, symbols[i].str) == 0) {
             return true;
@@ -58,7 +58,7 @@ static bool is_valid_operator(int8_t *s, size_t len) {
     return false;
 }
 
-static size_t count_operator_len(int8_t *s) {
+static size_t count_operator_len(char *s) {
     size_t len = 0;
     while (is_symbol_char(s[len]) && s[len] != '\0') {
         len++;
@@ -72,8 +72,8 @@ static size_t count_operator_len(int8_t *s) {
 #define IS_COMMENT_BEGIN(s) (c == '/' && &(c + 1) == '*')
 #define IS_COMMENT_END(s)   (c == '*' && &() == '/')
 
-void tokenize(char *src, VectorUI64 *src_tokens) {
-    uint64_t i = 0;
+void tokenize(char *src, VectorI64 *src_tokens) {
+    int64_t i = 0;
     while (src[i] != 0) {
         if (IS_IGNORE_CHAR(src[i])) {
             i++;
@@ -143,7 +143,7 @@ void tokenize(char *src, VectorUI64 *src_tokens) {
             return;
         }
 
-        append_vector_ui64(
+        vector_i64_append(
             src_tokens,
             allocate_tc(&src[i], len, type)
         );
@@ -153,8 +153,8 @@ void tokenize(char *src, VectorUI64 *src_tokens) {
     return;
 }
 
-VectorUI64 *lexer(char *src) {
-    VectorUI64 *src_tokens = new_vector_ui64(DEFAULT_MAX_TC);
+VectorI64 *lexer(char *src) {
+    VectorI64 *src_tokens = new_vector_i64(DEFAULT_MAX_TC);
     if (IS_NULL(src_tokens)) {
         // TODO: まじめにかく
         printf("error");
@@ -162,7 +162,7 @@ VectorUI64 *lexer(char *src) {
     }
 
     tokenize(src, src_tokens);
-    append_vector_ui64(src_tokens, TC_LF);
+    vector_i64_append(src_tokens, TC_LF);
 
     return src_tokens;
 }

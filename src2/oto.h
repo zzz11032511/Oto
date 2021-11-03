@@ -13,72 +13,6 @@
 #include "oto_const.h"
 #include "oto_sound.h"
 
-/* util.c */
-
-// Token comparison macros
-
-#define IS_RSVWORD(tc)        ((TC_BEGIN <= tc) && (tc <= TC_EXIT))
-#define IS_AVAILABLE_VAR(tc)  (tc > TC_EXIT)
-#define IS_SYMBOL(tc)         ((TC_LF <= tc) && (tc < TC_BEGIN))
-#define IS_NOT_SYMBOL(tc)     (tc >= TC_BEGIN)
-#define IS_INSTRUCTION(tc)    ((TC_PRINT <= tc) && (tc < TC_EXIT))
-#define IS_ARITH_OPERATOR(tc) ((TC_PLUS <= tc && tc <= TC_GT) || (TC_AND <= tc && tc <= TC_OR))
-
-char *src_open(const char *path);
-size_t count_file_size(const char *path);
-bool is_otofile(const char *path);
-
-char to_lower(char ch);
-char to_upper(char ch);
-
-// strncmp case-insensitive
-int32_t strncmp_cs(const char *str1, const char *str2, size_t maxcount);
-
-// strcmp case-insensitive
-int32_t strcmp_cs(const char *str1, const char *str2);
-
-// Vector<uint64_t>
-typedef struct {
-    uint64_t *data;
-    size_t length;
-    size_t capacity;
-} VectorUI64;
-
-VectorUI64 *new_vector_ui64(size_t capacity);
-void free_vector_ui64(VectorUI64 *vec);
-void append_vector_ui64(VectorUI64 *vec, uint64_t data);
-void set_vector_ui64(VectorUI64 *vec, uint64_t idx, uint64_t data);
-
-// Vector<pointer>
-typedef struct {
-    void **data;
-    size_t length;
-    size_t capacity;
-} VectorPTR;
-
-VectorPTR *new_vector_ptr(size_t capacity);
-void free_vector_ptr(VectorPTR *vec);
-void free_vector_items_ptr(VectorPTR *vec);
-void append_vector_ptr(VectorPTR *vec, void *data);
-void set_vector_ptr(VectorPTR *vec, uint64_t idx, void *data);
-
-
-// Map<pointer>
-typedef struct {
-    VectorPTR *keys;
-    VectorPTR *vals;
-} Map;
-#define DEFAULT_MAX_MAP_CAPACITY 1000
-
-Map *new_map();
-void free_map();
-void map_puti(Map *map, char *key, int64_t val);
-int64_t map_geti(Map *map, char *key);
-bool map_exist_key(Map *map, char *key);
-void map_inc_val(Map *map, char *key);
-void map_dec_val(Map *map, char *key);
-void map_printi(Map *map);
-
 #define DEFAULT_MAX_TC  4096
 
 typedef struct {
@@ -98,14 +32,86 @@ typedef struct {
     vartype_t type;
 } Var;
 
-// initial reservation words 
-
+/* 記号一覧 */
 extern const Token symbols[];
+
+/* 予約語一覧 */
 extern const Token rsvwords[];
+
+/* トークン比較用マクロ */
+
+#define IS_RSVWORD(tc)        ((TC_BEGIN <= tc) && (tc <= TC_EXIT))
+#define IS_AVAILABLE_VAR(tc)  (tc > TC_EXIT)
+#define IS_SYMBOL(tc)         ((TC_LF <= tc) && (tc < TC_BEGIN))
+#define IS_NOT_SYMBOL(tc)     (tc >= TC_BEGIN)
+#define IS_INSTRUCTION(tc)    ((TC_PRINT <= tc) && (tc < TC_EXIT))
+#define IS_ARITH_OPERATOR(tc) ((TC_PLUS <= tc && tc <= TC_GT) || (TC_AND <= tc && tc <= TC_OR))
+
+/* util.c */
+
+char *src_open(const char *path);
+size_t count_file_size(const char *path);
+bool is_otofile(const char *path);
+
+char to_lower(char ch);
+char to_upper(char ch);
+
+/* 大文字小文字を区別しないstrncmp() */
+int32_t strncmp_cs(const char *str1, const char *str2, size_t maxcount);
+
+/* 大文字小文字を区別しないstrcmp() */
+int32_t strcmp_cs(const char *str1, const char *str2);
+
+/* Vector<uint64_t> */
+typedef struct {
+    int64_t *data;
+    size_t length;
+    size_t capacity;
+} VectorI64;
+
+VectorI64 *new_vector_i64(size_t capacity);
+void free_vector_i64(VectorI64 *vec);
+void vector_i64_append(VectorI64 *vec, int64_t data);
+void vector_i64_set(VectorI64 *vec, int64_t idx, int64_t data);
+
+/* Vector<pointer> */
+typedef struct {
+    void **data;
+    size_t length;
+    size_t capacity;
+} VectorPTR;
+
+VectorPTR *new_vector_ptr(size_t capacity);
+void free_vector_ptr(VectorPTR *vec);
+
+/* ベクタの要素をfreeする(結構危険) */
+void free_items_vector_ptr(VectorPTR *vec);
+void vector_ptr_append(VectorPTR *vec, void *data);
+void vector_ptr_set(VectorPTR *vec, int64_t idx, void *data);
+
+/* Map */
+typedef struct {
+    VectorPTR *keys;
+    VectorPTR *vals;
+} Map;
+#define DEFAULT_MAX_MAP_CAPACITY 1000
+
+Map *new_map();
+void free_map();
+void map_puti(Map *map, char *key, int64_t val);
+int64_t map_geti(Map *map, char *key);
+bool map_exist_key(Map *map, char *key);
+
+/* 指定したキーのデータに1加算する */
+void map_inc_val(Map *map, char *key);
+
+/* 指定したキーのデータに1減算する */
+void map_dec_val(Map *map, char *key);
+void map_printi(Map *map);
 
 /* run.c */
 
-void oto_init(const char *path);
+void oto_init(char *path);
 void oto_run(const char *path);
 void oto_quit();
 
@@ -124,23 +130,23 @@ void free_var_list(VectorPTR *var_list);
 
 /* lexer.c */
 
-void tokenize(char *src, VectorUI64 *src_tokens);
-VectorUI64 * lexer(char *src);
+void tokenize(char *src, VectorI64 *src_tokens);
+VectorI64 * lexer(char *src);
 
 /* preprocess.c */
 
-void init_include_file_manager(const char *root_path);
-char *new_string_literal(char *src, uint64_t idx) ;
-void preprocess(char *src, uint64_t idx, VectorUI64 *src_tokens);
+void init_include_file_manager(char *root_path);
+char *new_string_literal(char *src, int64_t idx) ;
+void preprocess(char *src, int64_t idx, VectorI64 *src_tokens);
 
 /* compile.c */
 
-// opcodesの最大容量の初期値
+/* opcodesの最大容量の初期値 */
 #define DEFAULT_MAX_OPCODES 4096
 
-// トークン化したソースコードを内部コード列に変換する
-VectorPTR *compile(VectorUI64 *src_tokens, VectorPTR *var_list);
-void compile_sub(uint64_t *icp, uint64_t start, uint64_t end);
+/* トークン化したソースコードを内部コード列に変換する */
+VectorPTR *compile(VectorI64 *src_tokens, VectorPTR *var_list);
+void compile_sub(int64_t *icp, int64_t start, int64_t end);
 
 /* exec.c */
 
@@ -148,6 +154,6 @@ void exec(VectorPTR *ic_list);
 
 /* debug.c */
 
-void print_src_tokens(VectorUI64 *src_tokens);
+void print_src_tokens(VectorI64 *src_tokens);
 void print_var(VectorPTR *var_list);
 void print_ic_list(VectorPTR *ic_list);

@@ -1,14 +1,16 @@
 #include "oto.h"
 
-VectorUI64 *new_vector_ui64(size_t capacity) {
-    VectorUI64 *vec = MYMALLOC1(VectorUI64);
+/* Vector<int64_t> */
+
+VectorI64 *new_vector_i64(size_t capacity) {
+    VectorI64 *vec = MYMALLOC1(VectorI64);
     if (IS_NULL(vec)) {
         return NULL;
     }
 
     vec->length = 0;
     vec->capacity = capacity;
-    vec->data = MYMALLOC(capacity, uint64_t);
+    vec->data = MYMALLOC(capacity, int64_t);
     if (IS_NULL(vec->data)) {
         free(vec);
         return NULL;
@@ -17,13 +19,13 @@ VectorUI64 *new_vector_ui64(size_t capacity) {
     return vec;
 }
 
-void free_vector_ui64(VectorUI64 *vec) {
+void free_vector_i64(VectorI64 *vec) {
     free(vec->data);
     free(vec);
 }
 
-static void realloc_vector_ui64(VectorUI64 *vec, size_t realloc_size) {
-    uint64_t *new_data = realloc(vec->data, (sizeof(uint64_t) * realloc_size));
+static void realloc_vector_i64(VectorI64 *vec, size_t realloc_size) {
+    int64_t *new_data = realloc(vec->data, (sizeof(int64_t) * realloc_size));
     if (IS_NULL(new_data)) {
         return;
     }
@@ -34,22 +36,22 @@ static void realloc_vector_ui64(VectorUI64 *vec, size_t realloc_size) {
     return;
 }
 
-void append_vector_ui64(VectorUI64 *vec, uint64_t data) {
+void vector_i64_append(VectorI64 *vec, int64_t data) {
     if (vec->length >= vec->capacity) {
-        realloc_vector_ui64(vec, vec->capacity + 10);
+        realloc_vector_i64(vec, vec->capacity + 10);
         // TODO: エラー処理を書く
     }
 
     vec->data[(vec->length)++] = data;
 }
 
-void set_vector_ui64(VectorUI64 *vec, uint64_t idx, uint64_t data) {
+void vector_i64_set(VectorI64 *vec, int64_t idx, int64_t data) {
     // TODO: エラー処理を書く
     if (vec->length >= vec->capacity) {
         if (idx >= vec->length) {
-            realloc_vector_ui64(vec, idx + 10);
+            realloc_vector_i64(vec, idx + 10);
         } else {
-            realloc_vector_ui64(vec, vec->capacity + 10);
+            realloc_vector_i64(vec, vec->capacity + 10);
         }
     }
 
@@ -58,6 +60,8 @@ void set_vector_ui64(VectorUI64 *vec, uint64_t idx, uint64_t data) {
         vec->length = idx + 1;
     }
 }
+
+/* Vector<pointer> */
 
 VectorPTR *new_vector_ptr(size_t capacity) {
     VectorPTR *vec = MYMALLOC1(VectorPTR);
@@ -81,8 +85,8 @@ void free_vector_ptr(VectorPTR *vec) {
     free(vec);
 }
 
-void free_vector_items_ptr(VectorPTR *vec) {
-    for (uint64_t i = 0; i < vec->length; i++) {
+void free_items_vector_ptr(VectorPTR *vec) {
+    for (int64_t i = 0; i < vec->length; i++) {
         free(vec->data[i]);
         vec->data[i] = NULL;
     }
@@ -102,7 +106,7 @@ static void realloc_vector_ptr(VectorPTR *vec, size_t realloc_size) {
     return;
 }
 
-void append_vector_ptr(VectorPTR *vec, void *data) {
+void vector_ptr_append(VectorPTR *vec, void *data) {
     if (vec->length >= vec->capacity) {
         realloc_vector_ptr(vec, vec->capacity + 10);
         // TODO: エラー処理を書く
@@ -111,7 +115,7 @@ void append_vector_ptr(VectorPTR *vec, void *data) {
     vec->data[(vec->length)++] = data;
 }
 
-void set_vector_ptr(VectorPTR *vec, uint64_t idx, void *data) {
+void vector_ptr_set(VectorPTR *vec, int64_t idx, void *data) {
     // TODO: エラー処理を書く
     if (vec->length >= vec->capacity) {
         if (idx >= vec->length) {
@@ -126,6 +130,8 @@ void set_vector_ptr(VectorPTR *vec, uint64_t idx, void *data) {
         vec->length = idx + 1;
     }
 }
+
+/* Map */
 
 Map *new_map() {
     Map *map = MYMALLOC1(Map);
@@ -154,8 +160,8 @@ void free_map(Map *map) {
 }
 
 void map_puti(Map *map, char *key, int64_t val) {
-    append_vector_ptr(map->keys, key);
-    append_vector_ptr(map->vals, (void *)val);
+    vector_ptr_append(map->keys, key);
+    vector_ptr_append(map->vals, (void *)val);
 }
 
 int64_t map_geti(Map *map, char *key) {
@@ -184,7 +190,6 @@ bool map_exist_key(Map *map, char *key) {
     return true;
 }
 
-/* 指定したキーのデータに1加算する */
 void map_inc_val(Map *map, char *key) {
     int64_t idx = map_get_idx(map, key);
     if (idx < 0) {
@@ -195,7 +200,6 @@ void map_inc_val(Map *map, char *key) {
     map->vals->data[idx] = (void *)new_data;
 }
 
-/* 指定したキーのデータに1減算する */
 void map_dec_val(Map *map, char *key) {
     int64_t idx = map_get_idx(map, key);
     if (idx < 0) {
@@ -214,6 +218,8 @@ void map_printi(Map *map) {
         );
     }
 }
+
+/* File functions */
 
 static FILE *open_file(const char *path) {
     FILE *fp = fopen(path, "r");
@@ -268,7 +274,7 @@ char *src_open(const char *path) {
 
 #ifdef DEBUG
     printf("Source file info\n");
-    printf("name : %s, size : %I64d bytes\n\n", filename, fsize);
+    printf("name : %s, size : %I64d bytes\n\n", path, fsize);
 #endif
 
     return src;
@@ -280,6 +286,8 @@ bool is_otofile(const char *path) {
     if (strcmp(ext, ".oto") == 0) return true;
     return false;
 }
+
+/* String functions */
 
 char to_lower(char ch) {
     if ('A' <= ch && ch <= 'Z') {
@@ -296,7 +304,7 @@ char to_upper(char ch) {
 }
 
 int32_t strncmp_cs(const char *str1, const char *str2, size_t maxcount) {
-    uint64_t i = 0;
+    int64_t i = 0;
     while (i < maxcount) {
         if (to_lower(str1[i]) != to_lower(str2[i])) {
             return str1[i] - str2[i];
@@ -308,7 +316,7 @@ int32_t strncmp_cs(const char *str1, const char *str2, size_t maxcount) {
 }
 
 int32_t strcmp_cs(const char *str1, const char *str2) {
-    uint64_t i = 0;
+    int64_t i = 0;
     while (to_lower(str1[i]) == to_lower(str2[i])) {
         i++;
         if (str1[i] == '\0' && str2[i] == '\0') {

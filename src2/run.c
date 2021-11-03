@@ -5,7 +5,7 @@ void set_timecount_flag(bool flag) {
     timecount_flag = flag;
 }
 
-void oto_init(const char *path) {
+void oto_init(char *path) {
     init_token_list();
     init_rsvword();
     init_include_file_manager(path);
@@ -18,13 +18,12 @@ void oto_run(const char *path) {
         return;
     }
 
-    VectorUI64 *src_tokens = lexer(src);
+    VectorI64 *src_tokens = lexer(src);
     if (IS_NULL(src_tokens)) {
         printf("error\n");
         return;
     }
 
-    print_src_tokens(src_tokens);
 
     VectorPTR *var_list = make_var_list();
     if (IS_NULL(var_list)) {
@@ -32,7 +31,6 @@ void oto_run(const char *path) {
         return;
     }
 
-    print_var(var_list);
 
     VectorPTR *ic_list = compile(src_tokens, var_list);
     if (IS_NULL(ic_list)) {
@@ -40,16 +38,19 @@ void oto_run(const char *path) {
         return;
     }
 
+#ifdef DEBUG
+    print_src_tokens(src_tokens);
+    print_var(var_list);
     print_ic_list(ic_list);
+#endif
 
     exec(ic_list);
 
-    free_vector_ui64(src_tokens);
+    free_vector_i64(src_tokens);
     free_vector_ptr(ic_list);
     free_var_list(var_list);
     free_token_list();
-
-    printf("end\n");
+    free(src);
 }
 
 void oto_quit() {

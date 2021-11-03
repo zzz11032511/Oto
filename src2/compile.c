@@ -5,11 +5,11 @@
  * よく参照するので, 楽に呼び出すためにcompile.c内全体で
  * 使えるようにする
  */
-static VectorUI64 *srctcs = NULL;
+static VectorI64 *srctcs = NULL;
 static VectorPTR *vars = NULL;
 static VectorPTR *ops = NULL;
 
-static void init_compile(VectorUI64 *src_tokens, VectorPTR *var_list,
+static void init_compile(VectorI64 *src_tokens, VectorPTR *var_list,
                          VectorPTR *opcodes) {
     srctcs = src_tokens;
     vars = var_list;
@@ -21,19 +21,19 @@ static void init_compile(VectorUI64 *src_tokens, VectorPTR *var_list,
 #define VAR(tc)  ((Var *)(vars->data[tc]))
 
 /* 内部コードを書き込むための便利関数 */
-static void put_opcode(uint64_t *icp, opcode_t op, Var *v1, Var *v2, Var *v3, Var *v4) {
-    set_vector_ptr(ops, (*icp)++, (Var *)op);
-    set_vector_ptr(ops, (*icp)++, v1);
-    set_vector_ptr(ops, (*icp)++, v2);
-    set_vector_ptr(ops, (*icp)++, v3);
-    set_vector_ptr(ops, (*icp)++, v4);
+static void put_opcode(int64_t *icp, opcode_t op, Var *v1, Var *v2, Var *v3, Var *v4) {
+    vector_ptr_set(ops, (*icp)++, (Var *)op);
+    vector_ptr_set(ops, (*icp)++, v1);
+    vector_ptr_set(ops, (*icp)++, v2);
+    vector_ptr_set(ops, (*icp)++, v3);
+    vector_ptr_set(ops, (*icp)++, v4);
 }
 
 
 /* ptn_cmp()で一致したトークンを一時的に格納する */
 #define TMPVARS_LENGTH 6
 static tokencode_t tmpvars[TMPVARS_LENGTH];
-static uint64_t vp = 1;   // tmpvarsへのポインタ(1が先頭)
+static int64_t vp = 1;   // tmpvarsへのポインタ(1が先頭)
 
 /* トークンのパターン識別子 */ 
 #define PTN_END         -1  // 終端
@@ -49,11 +49,11 @@ static void reset_tmpvars() {
 }
 
 /* src[i]から続くトークン列が指定したパターンと一致していればtrue */
-static bool ptn_cmp(uint64_t i, const int64_t *pattarn) {
+static bool ptn_cmp(int64_t i, const int64_t *pattarn) {
     // tmpvarsのリセット
     reset_tmpvars();
 
-    uint64_t ptn = 0;
+    int64_t ptn = 0;
     while (pattarn[ptn] != PTN_END) {
         tokencode_t tc = SRC(i);
 
@@ -97,8 +97,8 @@ const int64_t PTNS_LABEL_ONLY[] = {PTN_LABEL, TC_LF, PTN_END};
 const int64_t PTNS_PRINT[] = {TC_PRINT, PTN_LABEL, TC_LF, PTN_END};
 const int64_t PTNS_EXIT[] = {TC_EXIT, TC_LF, PTN_END};
 
-void compile_sub(uint64_t *icp, uint64_t start, uint64_t end) {
-    uint64_t i = start;
+void compile_sub(int64_t *icp, int64_t start, int64_t end) {
+    int64_t i = start;
 
     while (i < end) {
         if (SRC(i) == TC_LF) {
@@ -186,7 +186,7 @@ void compile_sub(uint64_t *icp, uint64_t start, uint64_t end) {
     }
 }
 
-VectorPTR *compile(VectorUI64 *src_tokens, VectorPTR *var_list) {
+VectorPTR *compile(VectorI64 *src_tokens, VectorPTR *var_list) {
     VectorPTR *opcodes = new_vector_ptr(DEFAULT_MAX_OPCODES);
     if (IS_NULL(opcodes)) {
         return NULL;
@@ -194,7 +194,7 @@ VectorPTR *compile(VectorUI64 *src_tokens, VectorPTR *var_list) {
     init_compile(src_tokens, var_list, opcodes);
 
     // opcodeをどこまで書き込んだか
-    uint64_t icp = 0;
+    int64_t icp = 0;
 
     compile_sub(&icp, 0, src_tokens->length);
 
