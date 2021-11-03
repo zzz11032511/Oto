@@ -39,12 +39,16 @@ void test_string() {
     TEST_EQ(to_upper('B'), 'B');
 
     TEST_EQ(strncmp_cs("ABC", "ABC", 3), 0);
+    TEST_NE(strncmp_cs("AB", "ABC", 3),  0);
+    TEST_NE(strncmp_cs("ABC", "AB", 3),  0);
     TEST_EQ(strncmp_cs("ABC", "abc", 3), 0);
     TEST_NE(strncmp_cs("abc", "aBi", 3), 0);
     TEST_EQ(strncmp_cs("abc", "aBi", 2), 0);
 
     TEST_EQ(strcmp_cs("ABC", "ABC"),  0);
+    TEST_EQ(strcmp_cs("abc", "ABC"),  0);
     TEST_NE(strcmp_cs("ABC", "AB"),   0);
+    TEST_NE(strcmp_cs("AB", "ABC"),   0);
     TEST_NE(strcmp_cs("ABC", "ABCD"), 0);
     TEST_NE(strcmp_cs("BCD", "ABD"),  0);
 }
@@ -82,7 +86,6 @@ int main(void) {
     test_fileio();
     test_map();
     test_string();
-
 
     printf("success\n");
 }
