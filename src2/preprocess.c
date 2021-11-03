@@ -25,7 +25,45 @@ char *new_string_literal(char *src, uint64_t idx) {
     return str;
 }
 
+static Map *include_file_list = NULL;
+/**
+ * 循環参照発見機構の初期化
+ * 
+ * 引数には実行した最初のファイルのパスを渡す
+ */
+void init_include_file_manager(const char *root_path) {
+    if (include_file_list == NULL) {
+        include_file_list = new_map();
+        if (IS_NULL(include_file_list)) {
+            return;
+        }
+    }
+    map_puti(include_file_list, root_path, 1);
+}
+
+/**
+ * 循環参照を発見する
+ * 
+ * インクルードしたファイルのパスを
+ * include_file_listに参照回数1回として追加し
+ * もし既に参照されていた場合はエラーとする
+ */
+static void check_circular_ref(char *path) {
+    if (map_exist_key(include_file_list, path)) {
+        if (map_geti(include_file_list, path) >= 1) {
+            // 循環参照
+            printf("Circular reference!\n");
+            exit(1);
+        } else {
+            map_inc_val(include_file_list, path);
+        }
+    } else {
+        map_puti(include_file_list, path, 1);
+    }
+}
+
 static void include_file(char *src, uint64_t idx, VectorUI64 *src_tokens) {
+    // "include"の分
     idx += 7;
 
     while (src[idx] == ' ') {
@@ -38,18 +76,12 @@ static void include_file(char *src, uint64_t idx, VectorUI64 *src_tokens) {
     }
 
     char *path = NULL;
-    if (src[idx] == '"') {
-        path = new_string_literal(src, idx);
-        if (IS_NULL(path)) {
-            printf("include error2\n");
-            return;
-        }
-
-    } else {
-        // pathが正しく指定されていない
-        printf("include error3\n");
+    path = new_string_literal(src, idx);
+    if (IS_NULL(path)) {
+        printf("include error2\n");
         return;
     }
+    check_circular_ref(path);
 
     char *new_src = src_open(path);
     if (IS_NULL(new_src)) {
@@ -59,6 +91,9 @@ static void include_file(char *src, uint64_t idx, VectorUI64 *src_tokens) {
 
     tokenize(new_src, src_tokens);
 
+    // ファイル参照回数を1減らす
+    map_dec_val(include_file_list, path);
+
     free(new_src);
     free(path);
 }
@@ -66,7 +101,7 @@ static void include_file(char *src, uint64_t idx, VectorUI64 *src_tokens) {
 void preprocess(char *src, uint64_t idx, VectorUI64 *src_tokens) {
     idx++;
 
-    if (strcmp_cs("include", &src[idx]) == 0) {
+    if (strncmp_cs("include", &src[idx], 7) == 0) {
         include_file(src, idx, src_tokens);
     }
 }

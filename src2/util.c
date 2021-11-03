@@ -164,7 +164,6 @@ int64_t map_geti(Map *map, char *key) {
             return (int64_t)map->vals->data[i];
         }
     }
-    printf("not found\n");
     return 0;
 }
 
@@ -174,15 +173,21 @@ static int64_t map_get_idx(Map *map, char *key) {
             return i;
         }
     }
-    printf("not found\n");
     return -1;
+}
+
+bool map_exist_key(Map *map, char *key) {
+    int64_t idx = map_get_idx(map, key);
+    if (idx == -1) {
+        return false;
+    }
+    return true;
 }
 
 /* 指定したキーのデータに1加算する */
 void map_inc_val(Map *map, char *key) {
     int64_t idx = map_get_idx(map, key);
     if (idx < 0) {
-        printf("not found\n");
         return;
     }
     
@@ -194,7 +199,6 @@ void map_inc_val(Map *map, char *key) {
 void map_dec_val(Map *map, char *key) {
     int64_t idx = map_get_idx(map, key);
     if (idx < 0) {
-        printf("not found\n");
         return;
     }
     
@@ -204,8 +208,8 @@ void map_dec_val(Map *map, char *key) {
 
 void map_printi(Map *map) {
     for (int64_t i = 0; i < map->keys->length; i++) {
-        printf("%s : %d\n",
-            map->keys->data[i],
+        printf("%s : %I64d\n",
+            (char *)map->keys->data[i],
             (int64_t)map->vals->data[i]
         );
     }

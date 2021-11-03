@@ -5,12 +5,13 @@ void set_timecount_flag(bool flag) {
     timecount_flag = flag;
 }
 
-void oto_init() {
+void oto_init(const char *path) {
     init_token_list();
     init_rsvword();
+    init_include_file_manager(path);
 }
 
-void oto_run(const int8_t *path) {
+void oto_run(const char *path) {
     char *src = src_open(path);
     if (IS_NULL(src)) {
         printf("error\n");

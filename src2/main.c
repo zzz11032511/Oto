@@ -25,7 +25,7 @@ int main(int argc, const char **argv) {
         exit(1);
     }
 
-    oto_init();
+    oto_init(argv[i]);
     oto_run(argv[i]);
     oto_quit();
 

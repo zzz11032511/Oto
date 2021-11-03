@@ -74,6 +74,7 @@ Map *new_map();
 void free_map();
 void map_puti(Map *map, char *key, int64_t val);
 int64_t map_geti(Map *map, char *key);
+bool map_exist_key(Map *map, char *key);
 void map_inc_val(Map *map, char *key);
 void map_dec_val(Map *map, char *key);
 void map_printi(Map *map);
@@ -104,8 +105,8 @@ extern const Token rsvwords[];
 
 /* run.c */
 
-void oto_init();
-void oto_run(const int8_t *path);
+void oto_init(const char *path);
+void oto_run(const char *path);
 void oto_quit();
 
 void set_timecount_flag(bool flag);
@@ -128,6 +129,7 @@ VectorUI64 * lexer(char *src);
 
 /* preprocess.c */
 
+void init_include_file_manager(const char *root_path);
 char *new_string_literal(char *src, uint64_t idx) ;
 void preprocess(char *src, uint64_t idx, VectorUI64 *src_tokens);
 
