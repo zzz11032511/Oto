@@ -91,6 +91,12 @@ void tokenize(char *src, VectorUI64 *src_tokens) {
         tokentype_t type = -1;
         if (IS_PREPROCESS(src[i])) {
             // pre-process
+            preprocess(src, i, src_tokens);
+            while (src[i] != '\n' && src[i] != '\0') {
+                i++;
+            }
+
+            continue;
         
         } else if (src[i] == '\\') {
             // 1行に書かなければいけない処理を複数行書けるようにする
@@ -144,8 +150,6 @@ void tokenize(char *src, VectorUI64 *src_tokens) {
         i += len;
     }
 
-    append_vector_ui64(src_tokens, TC_LF);
-
     return;
 }
 
@@ -158,6 +162,7 @@ VectorUI64 *lexer(char *src) {
     }
 
     tokenize(src, src_tokens);
+    append_vector_ui64(src_tokens, TC_LF);
 
     return src_tokens;
 }

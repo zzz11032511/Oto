@@ -113,8 +113,7 @@ VectorUI64 * lexer(char *src);
 /* preprocess.c */
 
 char *new_string_literal(char *src, uint64_t idx) ;
-void preprocess(char *src, uint64_t *idx, VectorUI64 *src_tokens);
-
+void preprocess(char *src, uint64_t idx, VectorUI64 *src_tokens);
 
 /* compile.c */
 

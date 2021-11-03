@@ -6,6 +6,8 @@ void test_new_string_literal() {
     char *str = new_string_literal(src, 4);
 
     printf("%s\n", str);
+
+    printf("success\n");
 }
 
 int main(void) {
