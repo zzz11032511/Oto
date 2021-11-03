@@ -32,8 +32,8 @@ static void put_opcode(uint64_t *icp, opcode_t op, Var *v1, Var *v2, Var *v3, Va
 
 /* ptn_cmp()で一致したトークンを一時的に格納する */
 #define TMPVARS_LENGTH 6
-tokencode_t tmpvars[TMPVARS_LENGTH];
-uint64_t vp = 1;   // tmpvarsへのポインタ(1が先頭)
+static tokencode_t tmpvars[TMPVARS_LENGTH];
+static uint64_t vp = 1;   // tmpvarsへのポインタ(1が先頭)
 
 /* トークンのパターン識別子 */ 
 #define PTN_END         -1  // 終端
@@ -41,12 +41,17 @@ uint64_t vp = 1;   // tmpvarsへのポインタ(1が先頭)
 #define PTN_EXPR        -3   // 式
 #define PTN_INST        -4   // 命令
 
-/* src[i]から続くトークン列が指定したパターンと一致していればtrue */
-static bool ptn_cmp(uint64_t i, const int64_t *pattarn) {
-    // tmpvarsのリセット
+static void reset_tmpvars() {
     for (int32_t i = 0; i < TMPVARS_LENGTH; i++) {
         tmpvars[i] = 0;
     }
+    vp = 1;
+}
+
+/* src[i]から続くトークン列が指定したパターンと一致していればtrue */
+static bool ptn_cmp(uint64_t i, const int64_t *pattarn) {
+    // tmpvarsのリセット
+    reset_tmpvars();
 
     uint64_t ptn = 0;
     while (pattarn[ptn] != PTN_END) {
@@ -60,6 +65,8 @@ static bool ptn_cmp(uint64_t i, const int64_t *pattarn) {
 
         } else if (pattarn[ptn] == PTN_LABEL && IS_NOT_SYMBOL(tc)) {
             tmpvars[vp++] = tc;
+            DEBUG_IPRINT(tc);
+            DEBUG_IPRINT(tmpvars[vp - 1]);
 
         }  else if (pattarn[ptn] == PTN_INST && IS_INSTRUCTION(tc)) {
             // 命令

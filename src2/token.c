@@ -124,6 +124,7 @@ void init_rsvword() {
 /* もし予約語でない場合は0を返す */
 static tokencode_t get_rsvword_tc(char *str, size_t len) {
     tokencode_t i = 0;
+    // TODO: 厳密にテストするべき
     while (rsvwords[i].str != NULL) {
         // 予約語については大文字小文字を区別しない
         if (strncmp_cs(rsvwords[i].str, str, rsvwords[i].len) == 0) {
