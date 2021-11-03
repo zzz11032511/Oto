@@ -39,27 +39,27 @@ int32_t strcmp_cs(const char *str1, const char *str2);
 
 // Vector<uint64_t>
 typedef struct {
-    uint64_t *data;
+    uint64_t *val;
     size_t length;
     size_t capacity;
 } VectorUI64;
 
 VectorUI64 *new_vector_ui64(size_t capacity);
 void free_vector_ui64(VectorUI64 *vec);
-void append_vector_ui64(VectorUI64 *vec, uint64_t data);
-void set_vector_ui64(VectorUI64 *vec, uint64_t idx, uint64_t data);
+void append_vector_ui64(VectorUI64 *vec, uint64_t val);
+void set_vector_ui64(VectorUI64 *vec, uint64_t idx, uint64_t val);
 
 // Vector<uint64_t>
 typedef struct {
-    void **data;
+    void **val;
     size_t length;
     size_t capacity;
 } VectorPTR;
 
 VectorPTR *new_vector_ptr(size_t capacity);
 void free_vector_ptr(VectorPTR *vec);
-void append_vector_ptr(VectorPTR *vec, void *data);
-void set_vector_ptr(VectorPTR *vec, uint64_t idx, void *data);
+void append_vector_ptr(VectorPTR *vec, void *val);
+void set_vector_ptr(VectorPTR *vec, uint64_t idx, void *val);
 
 // token_listの最大容量の初期値
 #define DEFAULT_MAX_TC  4096

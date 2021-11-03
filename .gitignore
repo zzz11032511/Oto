@@ -10,4 +10,5 @@ src/oldsound/
 makefile_sub
 
 aaa.oto
+bbb.oto
 audiotest.c

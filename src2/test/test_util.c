@@ -14,11 +14,11 @@ void test_vector_ui64() {
     TEST_EQ(vec->length, 5);
     TEST_EQ(vec->capacity, cap + 10);
 
-    TEST_EQ(vec->data[2], 2);
-    TEST_EQ(vec->data[4], 4);
+    TEST_EQ(vec->val[2], 2);
+    TEST_EQ(vec->val[4], 4);
 
     set_vector_ui64(vec, 2, 10);
-    TEST_EQ(vec->data[2], 10);
+    TEST_EQ(vec->val[2], 10);
 
     free_vector_ui64(vec);
 }

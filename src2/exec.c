@@ -1,13 +1,13 @@
 #include "oto.h"
 
-#define VAR(tc)  ((Var *)(ic_list->data[tc]))
+#define VAR(tc)  ((Var *)(ic_list->val[tc]))
 
 void exec(VectorPTR *ic_list) {
     uint64_t i = 0;
     uint64_t end = ic_list->length;
 
     while (i < end) {
-        switch ((opcode_t)ic_list->data[i]) {
+        switch ((opcode_t)ic_list->val[i]) {
         case OP_CPYD:
             VAR(i + 1)->type    = TY_FLOAT;
             VAR(i + 1)->value.f = VAR(i + 2)->value.f;

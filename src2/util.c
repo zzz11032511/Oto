@@ -8,8 +8,8 @@ VectorUI64 *new_vector_ui64(size_t capacity) {
 
     vec->length = 0;
     vec->capacity = capacity;
-    vec->data = MYMALLOC(capacity, uint64_t);
-    if (IS_NULL(vec->data)) {
+    vec->val = MYMALLOC(capacity, uint64_t);
+    if (IS_NULL(vec->val)) {
         free(vec);
         return NULL;
     }
@@ -18,32 +18,32 @@ VectorUI64 *new_vector_ui64(size_t capacity) {
 }
 
 void free_vector_ui64(VectorUI64 *vec) {
-    free(vec->data);
+    free(vec->val);
     free(vec);
 }
 
 static void realloc_vector_ui64(VectorUI64 *vec, size_t realloc_size) {
-    uint64_t *new_data = realloc(vec->data, (sizeof(uint64_t) * realloc_size));
-    if (IS_NULL(new_data)) {
+    uint64_t *new_val = realloc(vec->val, (sizeof(uint64_t) * realloc_size));
+    if (IS_NULL(new_val)) {
         return;
     }
     
-    vec->data = new_data;
+    vec->val = new_val;
     vec->capacity = realloc_size;
 
     return;
 }
 
-void append_vector_ui64(VectorUI64 *vec, uint64_t data) {
+void append_vector_ui64(VectorUI64 *vec, uint64_t val) {
     if (vec->length >= vec->capacity) {
         realloc_vector_ui64(vec, vec->capacity + 10);
         // TODO: エラー処理を書く
     }
 
-    vec->data[(vec->length)++] = data;
+    vec->val[(vec->length)++] = val;
 }
 
-void set_vector_ui64(VectorUI64 *vec, uint64_t idx, uint64_t data) {
+void set_vector_ui64(VectorUI64 *vec, uint64_t idx, uint64_t val) {
     // TODO: エラー処理を書く
     if (vec->length >= vec->capacity) {
         if (idx >= vec->length) {
@@ -53,7 +53,7 @@ void set_vector_ui64(VectorUI64 *vec, uint64_t idx, uint64_t data) {
         }
     }
 
-    vec->data[idx] = data;
+    vec->val[idx] = val;
     if (idx >= vec->length) {
         vec->length = idx + 1;
     }
@@ -67,8 +67,8 @@ VectorPTR *new_vector_ptr(size_t capacity) {
 
     vec->length = 0;
     vec->capacity = capacity;
-    vec->data = MYMALLOC(capacity, void *);
-    if (IS_NULL(vec->data)) {
+    vec->val = MYMALLOC(capacity, void *);
+    if (IS_NULL(vec->val)) {
         free(vec);
         return NULL;
     }
@@ -81,27 +81,27 @@ void free_vector_ptr(VectorPTR *vec) {
 }
 
 static void realloc_vector_ptr(VectorPTR *vec, size_t realloc_size) {
-    void *new_data = realloc(vec->data, (sizeof(void *) * realloc_size));
-    if (IS_NULL(new_data)) {
+    void *new_val = realloc(vec->val, (sizeof(void *) * realloc_size));
+    if (IS_NULL(new_val)) {
         return;
     }
     
-    vec->data = new_data;
+    vec->val = new_val;
     vec->capacity = realloc_size;
 
     return;
 }
 
-void append_vector_ptr(VectorPTR *vec, void *data) {
+void append_vector_ptr(VectorPTR *vec, void *val) {
     if (vec->length >= vec->capacity) {
         realloc_vector_ptr(vec, vec->capacity + 10);
         // TODO: エラー処理を書く
     }
 
-    vec->data[(vec->length)++] = data;
+    vec->val[(vec->length)++] = val;
 }
 
-void set_vector_ptr(VectorPTR *vec, uint64_t idx, void *data) {
+void set_vector_ptr(VectorPTR *vec, uint64_t idx, void *val) {
     // TODO: エラー処理を書く
     if (vec->length >= vec->capacity) {
         if (idx >= vec->length) {
@@ -111,7 +111,7 @@ void set_vector_ptr(VectorPTR *vec, uint64_t idx, void *data) {
         }
     }
 
-    vec->data[idx] = data;
+    vec->val[idx] = val;
     if (idx >= vec->length) {
         vec->length = idx + 1;
     }

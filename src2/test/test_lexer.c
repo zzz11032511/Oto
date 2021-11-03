@@ -10,7 +10,7 @@ void test_lexer() {
     tokenize(s, src_tokens);
 
     for (uint64_t i = 0; i < src_tokens->length; i++) {
-        printf("%d ", src_tokens->data[i]);
+        printf("%d ", src_tokens->val[i]);
     }
     printf("\n");
 

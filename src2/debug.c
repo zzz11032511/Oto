@@ -3,7 +3,7 @@
 void print_src_tokens(VectorUI64 *src_tokens) {
     printf("- Source tokens -\n");
     for (uint64_t i = 0; i < src_tokens->length; i++) {
-        printf("%I64d ", src_tokens->data[i]);
+        printf("%I64d ", src_tokens->val[i]);
     }
     printf("\n\n");
 }
@@ -13,7 +13,7 @@ void print_var(VectorPTR *var_list) {
 
     uint64_t i = 0;
     do {
-        Var *var = ((Var *)var_list->data[i]);
+        Var *var = ((Var *)var_list->val[i]);
 
         // printf("var_list[%5I64d] : ", i);
         printf("tc : %5I64d, ",  var->token->tc);
@@ -67,11 +67,11 @@ void print_ic_list(VectorPTR *ic_list) {
     
     uint64_t i = 0;
     while (i < ic_list->length) {
-        op = (opcode_t)ic_list->data[i++];
-        v1 = (Var *)ic_list->data[i++];
-        v2 = (Var *)ic_list->data[i++];
-        v3 = (Var *)ic_list->data[i++];
-        v4 = (Var *)ic_list->data[i++];
+        op = (opcode_t)ic_list->val[i++];
+        v1 = (Var *)ic_list->val[i++];
+        v2 = (Var *)ic_list->val[i++];
+        v3 = (Var *)ic_list->val[i++];
+        v4 = (Var *)ic_list->val[i++];
 
         printf("%5I64d : %10s ", i, operations[op].str);
         printf("%10s ", v1->token->str);
