@@ -39,29 +39,45 @@ int32_t strcmp_cs(const char *str1, const char *str2);
 
 // Vector<uint64_t>
 typedef struct {
-    uint64_t *val;
+    uint64_t *data;
     size_t length;
     size_t capacity;
 } VectorUI64;
 
 VectorUI64 *new_vector_ui64(size_t capacity);
 void free_vector_ui64(VectorUI64 *vec);
-void append_vector_ui64(VectorUI64 *vec, uint64_t val);
-void set_vector_ui64(VectorUI64 *vec, uint64_t idx, uint64_t val);
+void append_vector_ui64(VectorUI64 *vec, uint64_t data);
+void set_vector_ui64(VectorUI64 *vec, uint64_t idx, uint64_t data);
 
-// Vector<uint64_t>
+// Vector<pointer>
 typedef struct {
-    void **val;
+    void **data;
     size_t length;
     size_t capacity;
 } VectorPTR;
 
 VectorPTR *new_vector_ptr(size_t capacity);
 void free_vector_ptr(VectorPTR *vec);
-void append_vector_ptr(VectorPTR *vec, void *val);
-void set_vector_ptr(VectorPTR *vec, uint64_t idx, void *val);
+void free_vector_items_ptr(VectorPTR *vec);
+void append_vector_ptr(VectorPTR *vec, void *data);
+void set_vector_ptr(VectorPTR *vec, uint64_t idx, void *data);
 
-// token_listの最大容量の初期値
+
+// Map<pointer>
+typedef struct {
+    VectorPTR *keys;
+    VectorPTR *vals;
+} Map;
+#define DEFAULT_MAX_MAP_CAPACITY 1000
+
+Map *new_map();
+void free_map();
+void map_puti(Map *map, char *key, int64_t val);
+int64_t map_geti(Map *map, char *key);
+void map_inc_val(Map *map, char *key);
+void map_dec_val(Map *map, char *key);
+void map_printi(Map *map);
+
 #define DEFAULT_MAX_TC  4096
 
 typedef struct {

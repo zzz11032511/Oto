@@ -53,9 +53,9 @@ void init_token_list() {
 void free_token_list() {
     uint64_t i = 0;
     while (i < token_list->length) {
-        free(((Token *)(token_list->val[i]))->str);
-        free(token_list->val[i]);
-        token_list->val[i] = NULL;
+        free(((Token *)(token_list->data[i]))->str);
+        free(token_list->data[i]);
+        token_list->data[i] = NULL;
         i++;
     }
 }
@@ -91,8 +91,8 @@ static void add_new_token(tokencode_t tc,
         return;
     }
 
-    if (IS_NOT_NULL(token_list->val[tc])) {
-        free(token_list->val[tc]);
+    if (IS_NOT_NULL(token_list->data[tc])) {
+        free(token_list->data[tc]);
     }
 
     set_vector_ptr(token_list, tc, (void *)token);
@@ -153,8 +153,8 @@ tokencode_t allocate_tc(char *str, size_t len, tokentype_t type) {
     size_t tcs = token_list->length;
 
     for (tc = 0; tc < tcs; tc++) {
-        size_t tl = ((Token *)token_list->val[tc])->len;
-        char *ts  = ((Token *)token_list->val[tc])->str;
+        size_t tl = ((Token *)token_list->data[tc])->len;
+        char *ts  = ((Token *)token_list->data[tc])->str;
         if (len == tl && (strncmp(str, ts, len) == 0)) {
             break;
         }
@@ -191,7 +191,7 @@ VectorPTR *make_var_list() {
     Token *now_token = NULL;    
     Var *new_var = NULL;
     for (uint64_t i = 0; i < token_list->length; i++) {
-        now_token = ((Token *)token_list->val[i]);
+        now_token = ((Token *)token_list->data[i]);
 
         switch (now_token->type) {
         case TK_TY_SYMBOL:
@@ -235,7 +235,7 @@ void free_var_list(VectorPTR *var_list) {
     // free_item_vector_ptr(var_list);
     uint64_t i = 0;
     while (i < var_list->length) {
-        Var *var = ((Var *)var_list->val[i]);
+        Var *var = ((Var *)var_list->data[i]);
 
         if (IS_HEAP_TYPE(var->type)) {
             free(var->value.p);

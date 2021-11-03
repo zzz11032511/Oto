@@ -47,6 +47,8 @@ void oto_run(const int8_t *path) {
     free_vector_ptr(ic_list);
     free_var_list(var_list);
     free_token_list();
+
+    printf("end\n");
 }
 
 void oto_quit() {

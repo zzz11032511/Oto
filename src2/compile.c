@@ -17,8 +17,8 @@ static void init_compile(VectorUI64 *src_tokens, VectorPTR *var_list,
 }
 
 /* トークンや変数を取得するための便利マクロ */
-#define SRC(idx) srctcs->val[idx]
-#define VAR(tc)  ((Var *)(vars->val[tc]))
+#define SRC(idx) srctcs->data[idx]
+#define VAR(tc)  ((Var *)(vars->data[tc]))
 
 /* 内部コードを書き込むための便利関数 */
 static void put_opcode(uint64_t *icp, opcode_t op, Var *v1, Var *v2, Var *v3, Var *v4) {

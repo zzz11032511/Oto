@@ -14,11 +14,11 @@ void test_vector_ui64() {
     TEST_EQ(vec->length, 5);
     TEST_EQ(vec->capacity, cap + 10);
 
-    TEST_EQ(vec->val[2], 2);
-    TEST_EQ(vec->val[4], 4);
+    TEST_EQ(vec->data[2], 2);
+    TEST_EQ(vec->data[4], 4);
 
     set_vector_ui64(vec, 2, 10);
-    TEST_EQ(vec->val[2], 10);
+    TEST_EQ(vec->data[2], 10);
 
     free_vector_ui64(vec);
 }
@@ -49,9 +49,40 @@ void test_string() {
     TEST_NE(strcmp_cs("BCD", "ABD"),  0);
 }
 
+void test_map() {
+    Map *map = new_map();
+
+    map_puti(map, "aaa.oto", 10);
+    map_puti(map, "bbb.oto", 20);
+    map_puti(map, "ccc.oto", 30);
+
+    TEST_EQ(map_geti(map, "aaa.oto"), 10);
+    TEST_EQ(map_geti(map, "bbb.oto"), 20);
+    TEST_EQ(map_geti(map, "ccc.oto"), 30);
+
+    map_inc_val(map, "bbb.oto");
+    map_inc_val(map, "bbb.oto");
+    TEST_EQ(map_geti(map, "bbb.oto"), 22);
+
+    map_dec_val(map, "aaa.oto");
+    map_dec_val(map, "ccc.oto");
+    TEST_EQ(map_geti(map, "aaa.oto"), 9);
+    TEST_EQ(map_geti(map, "ccc.oto"), 29);
+    
+    map_printi(map);
+    printf("\n");
+
+    free_map(map);
+}
+
 int main(void) {
     // gcc -o test_util src2/test/test_util.c src2/util.c -I./include 
+    
     test_vector_ui64();
     test_fileio();
+    test_map();
     test_string();
+
+
+    printf("success\n");
 }

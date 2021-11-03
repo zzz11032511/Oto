@@ -8,8 +8,8 @@ VectorUI64 *new_vector_ui64(size_t capacity) {
 
     vec->length = 0;
     vec->capacity = capacity;
-    vec->val = MYMALLOC(capacity, uint64_t);
-    if (IS_NULL(vec->val)) {
+    vec->data = MYMALLOC(capacity, uint64_t);
+    if (IS_NULL(vec->data)) {
         free(vec);
         return NULL;
     }
@@ -18,32 +18,32 @@ VectorUI64 *new_vector_ui64(size_t capacity) {
 }
 
 void free_vector_ui64(VectorUI64 *vec) {
-    free(vec->val);
+    free(vec->data);
     free(vec);
 }
 
 static void realloc_vector_ui64(VectorUI64 *vec, size_t realloc_size) {
-    uint64_t *new_val = realloc(vec->val, (sizeof(uint64_t) * realloc_size));
-    if (IS_NULL(new_val)) {
+    uint64_t *new_data = realloc(vec->data, (sizeof(uint64_t) * realloc_size));
+    if (IS_NULL(new_data)) {
         return;
     }
     
-    vec->val = new_val;
+    vec->data = new_data;
     vec->capacity = realloc_size;
 
     return;
 }
 
-void append_vector_ui64(VectorUI64 *vec, uint64_t val) {
+void append_vector_ui64(VectorUI64 *vec, uint64_t data) {
     if (vec->length >= vec->capacity) {
         realloc_vector_ui64(vec, vec->capacity + 10);
         // TODO: エラー処理を書く
     }
 
-    vec->val[(vec->length)++] = val;
+    vec->data[(vec->length)++] = data;
 }
 
-void set_vector_ui64(VectorUI64 *vec, uint64_t idx, uint64_t val) {
+void set_vector_ui64(VectorUI64 *vec, uint64_t idx, uint64_t data) {
     // TODO: エラー処理を書く
     if (vec->length >= vec->capacity) {
         if (idx >= vec->length) {
@@ -53,7 +53,7 @@ void set_vector_ui64(VectorUI64 *vec, uint64_t idx, uint64_t val) {
         }
     }
 
-    vec->val[idx] = val;
+    vec->data[idx] = data;
     if (idx >= vec->length) {
         vec->length = idx + 1;
     }
@@ -67,8 +67,8 @@ VectorPTR *new_vector_ptr(size_t capacity) {
 
     vec->length = 0;
     vec->capacity = capacity;
-    vec->val = MYMALLOC(capacity, void *);
-    if (IS_NULL(vec->val)) {
+    vec->data = MYMALLOC(capacity, void *);
+    if (IS_NULL(vec->data)) {
         free(vec);
         return NULL;
     }
@@ -77,31 +77,41 @@ VectorPTR *new_vector_ptr(size_t capacity) {
 }
 
 void free_vector_ptr(VectorPTR *vec) {
+    free(vec->data);
+    free(vec);
+}
+
+void free_vector_items_ptr(VectorPTR *vec) {
+    for (uint64_t i = 0; i < vec->length; i++) {
+        free(vec->data[i]);
+        vec->data[i] = NULL;
+    }
+    free(vec->data);
     free(vec);
 }
 
 static void realloc_vector_ptr(VectorPTR *vec, size_t realloc_size) {
-    void *new_val = realloc(vec->val, (sizeof(void *) * realloc_size));
-    if (IS_NULL(new_val)) {
+    void *new_data = realloc(vec->data, (sizeof(void *) * realloc_size));
+    if (IS_NULL(new_data)) {
         return;
     }
     
-    vec->val = new_val;
+    vec->data = new_data;
     vec->capacity = realloc_size;
 
     return;
 }
 
-void append_vector_ptr(VectorPTR *vec, void *val) {
+void append_vector_ptr(VectorPTR *vec, void *data) {
     if (vec->length >= vec->capacity) {
         realloc_vector_ptr(vec, vec->capacity + 10);
         // TODO: エラー処理を書く
     }
 
-    vec->val[(vec->length)++] = val;
+    vec->data[(vec->length)++] = data;
 }
 
-void set_vector_ptr(VectorPTR *vec, uint64_t idx, void *val) {
+void set_vector_ptr(VectorPTR *vec, uint64_t idx, void *data) {
     // TODO: エラー処理を書く
     if (vec->length >= vec->capacity) {
         if (idx >= vec->length) {
@@ -111,7 +121,7 @@ void set_vector_ptr(VectorPTR *vec, uint64_t idx, void *val) {
         }
     }
 
-    vec->val[idx] = val;
+    vec->data[idx] = data;
     if (idx >= vec->length) {
         vec->length = idx + 1;
     }
@@ -219,4 +229,88 @@ int32_t strcmp_cs(const char *str1, const char *str2) {
     }
 
     return str1[i] - str2[i];
+}
+
+Map *new_map() {
+    Map *map = MYMALLOC1(Map);
+    if (IS_NULL(map)) {
+        return NULL;
+    }
+
+    map->keys = new_vector_ptr(DEFAULT_MAX_MAP_CAPACITY);
+    map->vals = new_vector_ptr(DEFAULT_MAX_MAP_CAPACITY);
+    if (IS_NULL(map->keys) || IS_NULL(map->vals)) {
+        free_map(map);
+        return NULL;
+    }
+
+    return map;
+}
+
+void free_map(Map *map) {
+    free_vector_ptr(map->keys);
+    map->keys = NULL;
+    
+    free_vector_ptr(map->vals);
+    map->vals = NULL;
+
+    free(map);
+}
+
+void map_puti(Map *map, char *key, int64_t val) {
+    append_vector_ptr(map->keys, key);
+    append_vector_ptr(map->vals, (void *)val);
+}
+
+int64_t map_geti(Map *map, char *key) {
+    for (int64_t i = 0; i < map->keys->length; i++) {
+        if (strcmp(map->keys->data[i], key) == 0) {
+            return (int64_t)map->vals->data[i];
+        }
+    }
+    printf("not found\n");
+    return 0;
+}
+
+static int64_t map_get_idx(Map *map, char *key) {
+    for (int64_t i = 0; i < map->keys->length; i++) {
+        if (strcmp(map->keys->data[i], key) == 0) {
+            return i;
+        }
+    }
+    printf("not found\n");
+    return -1;
+}
+
+/* 指定したキーのデータに1加算する */
+void map_inc_val(Map *map, char *key) {
+    int64_t idx = map_get_idx(map, key);
+    if (idx < 0) {
+        printf("not found\n");
+        return;
+    }
+    
+    int64_t new_data = (int64_t)map->vals->data[idx] + 1;
+    map->vals->data[idx] = (void *)new_data;
+}
+
+/* 指定したキーのデータに1減算する */
+void map_dec_val(Map *map, char *key) {
+    int64_t idx = map_get_idx(map, key);
+    if (idx < 0) {
+        printf("not found\n");
+        return;
+    }
+    
+    int64_t new_data = (int64_t)map->vals->data[idx] - 1;
+    map->vals->data[idx] = (void *)new_data;
+}
+
+void map_printi(Map *map) {
+    for (int64_t i = 0; i < map->keys->length; i++) {
+        printf("%s : %d\n",
+            map->keys->data[i],
+            (int64_t)map->vals->data[i]
+        );
+    }
 }
