@@ -3,12 +3,28 @@
 #include <stdint.h>
 
 // Errorcodes
-
 enum {
-    NO_ERROR = 0,
-    SYNTAX_ERROR
+    OTO_NO_ERROR = 0,
+    OTO_UNKNOWN_ERROR = -10000,
+    OTO_INTERNAL_ERROR,
+    
+    OTO_PREPROCESS_ERROR,
+    OTO_FILE_NOT_FOUND_ERROR,
+    OTO_INCLUDE_FILE_NOT_FOUND_ERROR,
+    OTO_CIRCULAR_REFERENCE_ERROR,
+
+    OTO_UNAVAILABLE_OPERATOR_ERROR,
+    
+    OTO_INVALID_SYNTAX_ERROR,
+    OTO_DEFINE_ERROR,
+    OTO_NAME_ERROR,
+    OTO_ASSIGN_TO_LITERAL_ERROR,
+    OTO_TOO_MANY_ARGUMENTS_ERROR,
+
+    ZERO_DIVISION_ERROR,
+    SOUND_PLAYER_ERROR
 };
-typedef uint64_t errorcode_t;
+typedef int64_t errorcode_t;
 
 // Tokencodes
 enum {

@@ -218,8 +218,6 @@ VectorPTR *make_var_list() {
             new_var->value.f = strtod(now_token->str, 0);
         }
 
-        TEST_EQ_NOT_PRINT(i, var_list->length);
-
         vector_ptr_append(var_list, (void *)new_var);
     }
 

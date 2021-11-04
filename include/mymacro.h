@@ -26,7 +26,7 @@
     printf("time : %f[s]\n", CALC_TIME(start, end)); \
 } while (0) \
 
-#ifndef DEBUG
+#ifdef DEBUG
 
 #define TEST_PRINT(a, b, op) do { \
     printf("[TEST]\n"); \
