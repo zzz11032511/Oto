@@ -1,4 +1,4 @@
-#include "oto.h"
+#include <oto.h>
 
 static bool is_number(char c) {
     if ('0' <= c && c <= '9') return true;

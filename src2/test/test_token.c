@@ -1,4 +1,4 @@
-#include "../oto.h"
+#include <oto.h>
 
 void test_is_rsvword() {
     TEST_EQ(is_rsvword("begin", 5), true);

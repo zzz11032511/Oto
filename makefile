@@ -1,5 +1,8 @@
-SRCSLIST := main.c util.c run.c token.c lexer.c \
-			preprocess.c compile.c exec.c debug.c
+SRCSLIST := main.c  run.c token.c debug.c error.c \
+			util/util.c \
+			lexer/lexer.c lexer/preprocess.c \
+			compiler/compile.c \
+			interpreter/exec.c
 
 PROGRAM       := oto
 DEBUGPROGRAM  := debug
@@ -70,6 +73,11 @@ time: $(TARGET)
 WIN_BUILD_DIR := $(OUTDIR)/$(SRCDIR)
 builddir:
 	mkdir "./$(WIN_BUILD_DIR)/test"
+	mkdir "./$(WIN_BUILD_DIR)/util"
+	mkdir "./$(WIN_BUILD_DIR)/lexer"
+	mkdir "./$(WIN_BUILD_DIR)/compiler"
+	mkdir "./$(WIN_BUILD_DIR)/interpreter"
+# mkdir "./$(WIN_BUILD_DIR)/sound"
 
 clean:
 	del /s /q %cd%\build\*

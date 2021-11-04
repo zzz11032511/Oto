@@ -1,4 +1,4 @@
-#include "oto.h"
+#include <oto.h>
 
 /* idxは最初の「"」の位置 */
 char *new_string_literal(char *src, int64_t idx) {

@@ -1,4 +1,4 @@
-#include "oto.h"
+#include <oto.h>
 
 #define VAR(tc)  ((Var *)(ic_list->data[tc]))
 

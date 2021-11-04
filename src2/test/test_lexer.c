@@ -1,4 +1,4 @@
-#include "../oto.h"
+#include <oto.h>
 
 void test_lexer() {
     init_token_list();
@@ -6,7 +6,7 @@ void test_lexer() {
 
     char s[] = "a bb 12 = /* c a */ aaa a ; (] <= a";
 
-    VectorUI64 *src_tokens = new_vector_ui64(DEFAULT_MAX_TC);
+    VectorI64 *src_tokens = new_vector_i64(DEFAULT_MAX_TC);
     tokenize(s, src_tokens);
 
     for (uint64_t i = 0; i < src_tokens->length; i++) {
@@ -17,19 +17,11 @@ void test_lexer() {
     VectorPTR *var_list = make_var_list();
     print_var(var_list);
 
-    free_vector_ui64(src_tokens);
+    free_vector_i64(src_tokens);
     free_var_list(var_list);
     free_token_list();
 
     printf("success\n");
-}
-
-void test_lexer2() {
-    init_token_list();
-    init_rsvword();
-
-    char s[] = "a bb 12 = /* c a */ aaa a ; (] <= a";
-    
 }
 
 int main(void) {

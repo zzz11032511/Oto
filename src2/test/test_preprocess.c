@@ -1,4 +1,4 @@
-#include "../oto.h"
+#include <oto.h>
 
 void test_new_string_literal() {
     char src[] = "ABC \"12345\" CBA\0";

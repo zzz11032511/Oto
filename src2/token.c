@@ -1,4 +1,4 @@
-#include "oto.h"
+#include <oto.h>
 
 const Token symbols[] = {
     {TC_LF,     "\n",  1, 0},

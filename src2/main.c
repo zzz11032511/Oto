@@ -1,4 +1,4 @@
-#include "oto.h"
+#include <oto.h>
 
 void usage(const char *name) {
     fprintf(stderr, "Example : %s XXX.oto\n", name);
