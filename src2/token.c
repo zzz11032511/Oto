@@ -55,9 +55,10 @@ void free_token_list() {
     while (i < token_list->length) {
         free(((Token *)(token_list->data[i]))->str);
         free(token_list->data[i]);
-        token_list->data[i] = NULL;
         i++;
     }
+    free_vector_ptr(token_list);
+    token_list = NULL;
 }
 
 static Token *new_token(tokencode_t tc,
@@ -230,16 +231,15 @@ VectorPTR *make_var_list() {
      type == TY_SOUND || type == TY_FILTER)
 
 void free_var_list(VectorPTR *var_list) {
-    // free_item_vector_ptr(var_list);
     int64_t i = 0;
     while (i < var_list->length) {
         Var *var = ((Var *)var_list->data[i]);
 
         if (IS_HEAP_TYPE(var->type)) {
+            // 動的に確保するオブジェクトのfree
             free(var->value.p);
         }
         free(var);
-        var = NULL;
         i++;
     }
     free(var_list);
