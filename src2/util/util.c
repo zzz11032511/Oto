@@ -20,6 +20,9 @@ VectorI64 *new_vector_i64(size_t capacity) {
 }
 
 void free_vector_i64(VectorI64 *vec) {
+    if (IS_NULL(vec)) {
+        return;
+    }
     free(vec->data);
     free(vec);
 }
@@ -81,6 +84,9 @@ VectorPTR *new_vector_ptr(size_t capacity) {
 }
 
 void free_vector_ptr(VectorPTR *vec) {
+    if (IS_NULL(vec)) {
+        return;
+    }
     free(vec->data);
     free(vec);
 }

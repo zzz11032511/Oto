@@ -157,3 +157,7 @@ void exec(VectorPTR *ic_list);
 void print_src_tokens(VectorI64 *src_tokens);
 void print_var(VectorPTR *var_list);
 void print_ic_list(VectorPTR *ic_list);
+
+/* error.c */
+
+void print_error(errorcode_t err);

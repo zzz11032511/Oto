@@ -45,12 +45,16 @@ void init_token_list() {
 
     token_list = new_vector_ptr(DEFAULT_MAX_TC);
     if (IS_NULL(token_list)) {
-        // エラー処理
-        return;
+        print_error(OTO_INTERNAL_ERROR);
+        exit(EXIT_FAILURE);
     }
 }
 
 void free_token_list() {
+    if (IS_NULL(token_list)) {
+        return;
+    }
+
     int64_t i = 0;
     while (i < token_list->length) {
         free(((Token *)(token_list->data[i]))->str);
@@ -65,7 +69,8 @@ static Token *new_token(tokencode_t tc,
                         char *str, size_t len, tokentype_t type) {
     Token *token = MYMALLOC1(Token);
     if (IS_NULL(token)) {
-        return NULL;
+        print_error(OTO_INTERNAL_ERROR);
+        exit(EXIT_FAILURE);
     }
 
     token->tc   = tc;
@@ -75,7 +80,8 @@ static Token *new_token(tokencode_t tc,
     // '\0"の分1足す
     char *s = MYMALLOC(len + 1, char);
     if (IS_NULL(s)) {
-        return NULL;
+        print_error(OTO_INTERNAL_ERROR);
+        exit(EXIT_FAILURE);
     }
 
     token->str = s;
@@ -88,8 +94,8 @@ static void add_new_token(tokencode_t tc,
                           char *str, size_t len, tokentype_t type) {
     Token *token = new_token(tc, str, len, type);
     if (IS_NULL(token)) {
-        // エラー処理
-        return;
+        print_error(OTO_INTERNAL_ERROR);
+        exit(EXIT_FAILURE);
     }
 
     if (IS_NOT_NULL(token_list->data[tc])) {
@@ -171,7 +177,8 @@ tokencode_t allocate_tc(char *str, size_t len, tokentype_t type) {
 static Var *new_variable(Token *token, tokentype_t type) {
     Var *var = MYMALLOC1(Var);
     if (IS_NULL(var)) {
-        return NULL;
+        print_error(OTO_INTERNAL_ERROR);
+        exit(EXIT_FAILURE);
     }
 
     var->token   = token;
@@ -184,7 +191,8 @@ static Var *new_variable(Token *token, tokentype_t type) {
 VectorPTR *make_var_list() {
     VectorPTR *var_list = new_vector_ptr(token_list->length);
     if (IS_NULL(var_list)) {
-        return NULL;
+        print_error(OTO_INTERNAL_ERROR);
+        exit(EXIT_FAILURE);
     }
 
     Token *now_token = NULL;    
@@ -211,7 +219,8 @@ VectorPTR *make_var_list() {
         }
         if (IS_NULL(new_var)) {
             free(var_list);
-            return NULL;
+            print_error(OTO_INTERNAL_ERROR);
+            exit(EXIT_FAILURE);
         }
 
         if (now_token->type == TK_TY_LITERAL) {
@@ -229,6 +238,10 @@ VectorPTR *make_var_list() {
      type == TY_SOUND || type == TY_FILTER)
 
 void free_var_list(VectorPTR *var_list) {
+    if (IS_NULL(var_list)) {
+        return;
+    }
+
     int64_t i = 0;
     while (i < var_list->length) {
         Var *var = ((Var *)var_list->data[i]);

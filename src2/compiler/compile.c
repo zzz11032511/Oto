@@ -50,15 +50,11 @@ static void reset_tmpvars() {
 
 /* src[i]から続くトークン列が指定したパターンと一致していればtrue */
 static bool ptn_cmp(int64_t i, const int64_t *pattarn) {
-    // tmpvarsのリセット
     reset_tmpvars();
 
     int64_t ptn = 0;
     while (pattarn[ptn] != PTN_END) {
         tokencode_t tc = SRC(i);
-
-        // DEBUG_IPRINT(tc);
-        // DEBUG_IPRINT(pattarn[ptn]);
         
         if (tc == pattarn[ptn]) {
             // パターン一致
@@ -73,13 +69,11 @@ static bool ptn_cmp(int64_t i, const int64_t *pattarn) {
             break;
 
         } else {
-            // printf("\n");
             return false;
         }
         ptn++;
         i++;
     }
-    // printf("matched\n\n");
 
     return true;
 }
@@ -106,8 +100,8 @@ void compile_sub(int64_t *icp, int64_t start, int64_t end) {
 
         } else if (ptn_cmp(i, PTNS_DEFINE)) {
             if (VAR(tmpvars[2])->type != TY_CONST) {
-                printf("define error\n");
-                return;
+                print_error(OTO_DEFINE_ERROR);
+                exit(EXIT_FAILURE);
             }
             VAR(tmpvars[1])->value = VAR(tmpvars[2])->value;
             VAR(tmpvars[1])->type  = TY_CONST;
@@ -179,9 +173,8 @@ void compile_sub(int64_t *icp, int64_t start, int64_t end) {
             i += 2;
 
         } else {
-            // error
-            printf("compile error\n");
-            return;
+            print_error(OTO_INVALID_SYNTAX_ERROR);
+            exit(EXIT_FAILURE);
         }
     }
 }
@@ -189,7 +182,8 @@ void compile_sub(int64_t *icp, int64_t start, int64_t end) {
 VectorPTR *compile(VectorI64 *src_tokens, VectorPTR *var_list) {
     VectorPTR *opcodes = new_vector_ptr(DEFAULT_MAX_OPCODES);
     if (IS_NULL(opcodes)) {
-        return NULL;
+        print_error(OTO_INTERNAL_ERROR);
+        exit(EXIT_FAILURE);
     }
     init_compile(src_tokens, var_list, opcodes);
 

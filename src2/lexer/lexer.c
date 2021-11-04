@@ -15,7 +15,7 @@ static bool is_varname(char c) {
 }
 
 static bool is_symbol_char(char c) {
-    if (strchr("=+-*/%<>!", c) != 0) return true;
+    if (strchr("=+-*/%<>!:~|'$`^", c) != 0) return true;
     return false;
 }
 
@@ -49,7 +49,7 @@ static size_t count_varname_len(char *s) {
 static bool is_valid_operator(char *s, size_t len) {
     int64_t i = 0;
     while (symbols[i].str != NULL) {
-        if (strcmp(s, symbols[i].str) == 0) {
+        if (strncmp(s, symbols[i].str, len) == 0) {
             return true;
         }
         i++;
@@ -118,8 +118,8 @@ void tokenize(char *src, VectorI64 *src_tokens) {
         } else if (is_symbol_char(src[i])) {
             len = count_operator_len(&src[i]);
             if (is_valid_operator(&src[i], len) == false) {
-
-                // call error
+                print_error(OTO_UNAVAILABLE_OPERATOR_ERROR);
+                exit(EXIT_FAILURE);
             }
             type = TK_TY_SYMBOL;
 
@@ -132,15 +132,8 @@ void tokenize(char *src, VectorI64 *src_tokens) {
             type = TK_TY_VARIABLE;
 
         } else {
-            // エラー処理
-            printf("error\n");
-            return;
-        }
-
-        if (type == -1) {
-            // 一応...
-            printf("error\n");
-            return;
+            print_error(OTO_SYNTAX_ERROR);
+            exit(EXIT_FAILURE);
         }
 
         vector_i64_append(
@@ -156,9 +149,8 @@ void tokenize(char *src, VectorI64 *src_tokens) {
 VectorI64 *lexer(char *src) {
     VectorI64 *src_tokens = new_vector_i64(DEFAULT_MAX_TC);
     if (IS_NULL(src_tokens)) {
-        // TODO: まじめにかく
-        printf("error");
-        return NULL;
+        print_error(OTO_INTERNAL_ERROR);
+        exit(EXIT_FAILURE);
     }
 
     tokenize(src, src_tokens);

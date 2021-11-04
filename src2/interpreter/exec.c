@@ -47,7 +47,8 @@ void exec(VectorPTR *ic_list) {
             return;
 
         default:
-            break;
+            print_error(OTO_UNKNOWN_ERROR);
+            exit(EXIT_FAILURE);
         }
 
         i += 5;
