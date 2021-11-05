@@ -89,6 +89,16 @@ void free_items_vector_ptr(VectorPTR *vec);
 void vector_ptr_append(VectorPTR *vec, void *data);
 void vector_ptr_set(VectorPTR *vec, int64_t idx, void *data);
 
+/* Slice<int64_t> */
+typedef struct {
+    int64_t *data;
+    size_t length;
+} SliceI64;
+
+SliceI64 *new_slice_i64(VectorI64 *vec, int64_t start, int64_t end);
+void free_slice_i64(SliceI64 *slice);
+int64_t slice_i64_get(SliceI64 *slice, int64_t idx);
+
 /* Map */
 typedef struct {
     VectorPTR *keys;

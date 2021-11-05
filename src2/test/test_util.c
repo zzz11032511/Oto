@@ -79,13 +79,33 @@ void test_map() {
     free_map(map);
 }
 
+void test_slice() {
+    VectorI64 *veci64 = new_vector_i64(10);
+
+    for (int64_t i = 0; i < 10; i++) {
+        vector_i64_append(veci64, i);
+        TEST_EQ_NOT_PRINT(veci64->data[i], i);
+    }
+
+    SliceI64 *slice = new_slice_i64(veci64, 3, 7);
+    TEST_EQ(slice->length, 4);
+
+    for (int64_t i = 0; i < slice->length; i++) {
+        TEST_EQ(slice_i64_get(slice, i), veci64->data[i + 3]);
+    }
+
+    TEST_EQ(slice_i64_get(slice, -1), 0);
+    TEST_EQ(slice_i64_get(slice, 10), 0);
+}
+
 int main(void) {
-    // gcc -o test_util src2/test/test_util.c src2/util.c -I./include 
+    // gcc -o test_util -D DEBUG src2/test/test_util.c src2/util/util.c -I./include 
     
-    test_vector_i64();
-    test_fileio();
-    test_map();
-    test_string();
+    // test_vector_i64();
+    // test_fileio();
+    // test_map();
+    // test_string();
+    test_slice();
 
     printf("success\n");
 }

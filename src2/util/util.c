@@ -1,5 +1,7 @@
 #include <oto.h>
 
+#define VECTOR_REALLOC_SIZE 50
+
 /* Vector<int64_t> */
 
 VectorI64 *new_vector_i64(size_t capacity) {
@@ -41,7 +43,7 @@ static void realloc_vector_i64(VectorI64 *vec, size_t realloc_size) {
 
 void vector_i64_append(VectorI64 *vec, int64_t data) {
     if (vec->length >= vec->capacity) {
-        realloc_vector_i64(vec, vec->capacity + 10);
+        realloc_vector_i64(vec, vec->capacity + VECTOR_REALLOC_SIZE);
         // TODO: エラー処理を書く
     }
 
@@ -52,9 +54,9 @@ void vector_i64_set(VectorI64 *vec, int64_t idx, int64_t data) {
     // TODO: エラー処理を書く
     if (vec->length >= vec->capacity) {
         if (idx >= vec->length) {
-            realloc_vector_i64(vec, idx + 10);
+            realloc_vector_i64(vec, idx + VECTOR_REALLOC_SIZE);
         } else {
-            realloc_vector_i64(vec, vec->capacity + 10);
+            realloc_vector_i64(vec, vec->capacity + VECTOR_REALLOC_SIZE);
         }
     }
 
@@ -114,7 +116,7 @@ static void realloc_vector_ptr(VectorPTR *vec, size_t realloc_size) {
 
 void vector_ptr_append(VectorPTR *vec, void *data) {
     if (vec->length >= vec->capacity) {
-        realloc_vector_ptr(vec, vec->capacity + 10);
+        realloc_vector_ptr(vec, vec->capacity + VECTOR_REALLOC_SIZE);
         // TODO: エラー処理を書く
     }
 
@@ -125,9 +127,9 @@ void vector_ptr_set(VectorPTR *vec, int64_t idx, void *data) {
     // TODO: エラー処理を書く
     if (vec->length >= vec->capacity) {
         if (idx >= vec->length) {
-            realloc_vector_ptr(vec, idx + 10);
+            realloc_vector_ptr(vec, idx + VECTOR_REALLOC_SIZE);
         } else {
-            realloc_vector_ptr(vec, vec->capacity + 10);
+            realloc_vector_ptr(vec, vec->capacity + VECTOR_REALLOC_SIZE);
         }
     }
 
@@ -135,6 +137,40 @@ void vector_ptr_set(VectorPTR *vec, int64_t idx, void *data) {
     if (idx >= vec->length) {
         vec->length = idx + 1;
     }
+}
+
+/* Slice<int64_t> */
+SliceI64 *new_slice_i64(VectorI64 *vec, int64_t start, int64_t end) {
+    if (IS_NULL(vec)) {
+        return NULL;
+    } else if (start > end) {
+        return NULL;
+    }
+    
+    SliceI64 *slice = MYMALLOC1(SliceI64);
+    if (IS_NULL(slice)) {
+        return NULL;
+    }
+    slice->data = &(vec->data[start]);
+
+    if (end > vec->length) {
+        slice->length = vec->length;
+    } else {
+        slice->length = end - start;
+    }
+
+    return slice;
+}
+
+void free_slice_i64(SliceI64 *slice) {
+    free(slice);
+}
+
+int64_t slice_i64_get(SliceI64 *slice, int64_t idx) {
+    if (idx >= slice->length || idx < 0) {
+        return 0;
+    }
+    return slice->data[idx];
 }
 
 /* Map */
