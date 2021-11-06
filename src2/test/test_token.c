@@ -12,6 +12,6 @@ void test_is_rsvword() {
 }
 
 int main(void) {
-    //gcc -o test_token src2/test/test_token.c src2/util.c src2/token.c -I./include
+    // gcc -o test_token src2/test/test_token.c src2/util/util.c src2/util/vector.c src2/token.c src2/error.c -I./include
     test_is_rsvword();
 }

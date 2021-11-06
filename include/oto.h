@@ -104,7 +104,6 @@ typedef struct {
     VectorPTR *keys;
     VectorPTR *vals;
 } Map;
-#define DEFAULT_MAX_MAP_CAPACITY 1000
 
 Map *new_map();
 void free_map();
@@ -118,6 +117,21 @@ void map_inc_val(Map *map, char *key);
 /* 指定したキーのデータに1減算する */
 void map_dec_val(Map *map, char *key);
 void map_printi(Map *map);
+
+/* Stack */
+typedef struct {
+    VectorPTR *datas;
+    int64_t sp;
+} Stack;
+
+Stack *new_stack();
+void free_stack(Stack *stack);
+void stack_push(Stack *stack, void *data);
+void stack_pushi(Stack *stack, int64_t data);
+void *stack_pop(Stack *stack);
+int64_t stack_popi(Stack *stack);
+void *stack_peek(Stack *stack);
+int64_t stack_peeki(Stack *stack);
 
 /* run.c */
 

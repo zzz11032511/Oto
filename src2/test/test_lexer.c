@@ -25,6 +25,6 @@ void test_lexer() {
 }
 
 int main(void) {
-    // gcc -o test_lexer src2/test/test_lexer.c src2/util.c src2/lexer.c src2/token.c src2/debug.c -I./include
+    // gcc -o test_lexer src2/test/test_lexer.c src2/util/util.c src2/util/vector.c src2/util/map.c src2/util/stack.c src2/util/slice.c src2/lexer/lexer.c src2/lexer/preprocess.c src2/token.c src2/debug.c src2/error.c -I./include
     test_lexer();
 }

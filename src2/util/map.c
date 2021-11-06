@@ -1,5 +1,7 @@
 #include <oto.h>
 
+#define DEFAULT_MAX_MAP_CAPACITY 100
+
 Map *new_map() {
     Map *map = MYMALLOC1(Map);
     if (IS_NULL(map)) {

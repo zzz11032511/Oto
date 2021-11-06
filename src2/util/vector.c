@@ -1,6 +1,6 @@
 #include <oto.h>
 
-#define VECTOR_REALLOC_SIZE 50
+#define VECTOR_REALLOC_SIZE 100
 
 VectorI64 *new_vector_i64(size_t capacity) {
     VectorI64 *vec = MYMALLOC1(VectorI64);

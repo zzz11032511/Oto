@@ -12,7 +12,7 @@ void test_vector_i64() {
     }
 
     TEST_EQ(vec->length, 5);
-    TEST_EQ(vec->capacity, cap + 10);
+    TEST_EQ(vec->capacity, cap + 100);
 
     TEST_EQ(vec->data[2], 2);
     TEST_EQ(vec->data[4], 4);
@@ -98,14 +98,63 @@ void test_slice() {
     TEST_EQ(slice_i64_get(slice, 10), 0);
 }
 
-int main(void) {
-    // gcc -o test_util -D DEBUG src2/test/test_util.c src2/util/util.c -I./include 
+void test_stack() {
+    Stack *stack = new_stack();
+
+    printf("sp : %d\n", stack->sp);
+    stack_pushi(stack, 1);
+    printf("sp : %d\n", stack->sp);
+    stack_pushi(stack, 2);
+    printf("sp : %d\n", stack->sp);
+    stack_pushi(stack, 3);
+    printf("sp : %d\n", stack->sp);
+    stack_pushi(stack, 4);
+    printf("sp : %d\n", stack->sp);
+    stack_pushi(stack, 5);
+    printf("sp : %d\n", stack->sp);
+    stack_pushi(stack, 6);
+    printf("sp : %d\n", stack->sp);
+
+    int64_t val = 0;
     
-    // test_vector_i64();
-    // test_fileio();
-    // test_map();
-    // test_string();
+    val = stack_popi(stack);
+    TEST_EQ(val, 6);
+    val = stack_popi(stack);
+    TEST_EQ(val, 5);
+    val = stack_popi(stack);
+    TEST_EQ(val, 4);
+    TEST_EQ(stack_peeki(stack), 3);
+    val = stack_popi(stack);
+    TEST_EQ(val, 3);
+
+    stack_pushi(stack, 10);
+    stack_pushi(stack, 15);
+
+    DEBUG_IPRINT(stack_peeki(stack));
+
+    val = stack_popi(stack);
+    TEST_EQ(val, 15);
+    val = stack_popi(stack);
+    TEST_EQ(val, 10);
+    val = stack_popi(stack);
+    TEST_EQ(val, 2);
+    val = stack_popi(stack);
+    TEST_EQ(val, 1);
+    val = stack_popi(stack);
+    TEST_EQ(val, 0);
+    val = stack_popi(stack);
+    TEST_EQ(val, 0);
+}
+
+int main(void) {
+    // gcc -o test_util -D DEBUG src2/test/test_util.c src2/util/util.c src2/util/vector.c src2/util/map.c src2/util/stack.c src2/util/slice.c -I./include 
+    
+    test_vector_i64();
+    test_fileio();
+    test_map();
+    test_string();
     test_slice();
+    test_stack();
 
     printf("success\n");
 }
