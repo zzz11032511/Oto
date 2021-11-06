@@ -1,5 +1,5 @@
 SRCSLIST := main.c  run.c token.c debug.c error.c \
-			util/util.c util/vector.c util/map.c util/slice.c \
+			util/util.c util/vector.c util/map.c util/slice.c util/stack.c \
 			lexer/lexer.c lexer/preprocess.c \
 			compiler/compile.c \
 			interpreter/exec.c
@@ -46,6 +46,27 @@ $(DEBUGTARGET): $(DEBUGOBJS)
 $(OUTDIR)/%_debug.o: %.c
 # @if [ ! -e `dirname $@` ]; then mkdir -p `dirname $@`; fi
 	$(CC) $(CFLAGS) -D DEBUG -o $@ -c $< -I./$(INCLUDEDIR) -L./$(LIBDIR) $(LIB)
+
+# ----------------------------------------------
+
+TESTDIR := $(SRCDIR)/test
+TESTSRCSLIST := $(addprefix $(SRCDIR)/, $(filter-out main.c, $(SRCSLIST)))
+TESTTARGET := test_lexer test_preprocess test_token test_util
+TESTEXE := $(addsuffix .exe, $(TESTTARGET))
+
+# テスト
+$(TESTTARGET) :
+	$(CC) -D DEBUG -o $@ $(TESTSRCSLIST) $(TESTDIR)/$@.c -I./$(INCLUDEDIR)
+
+test : $(TESTTARGET)
+	test_lexer.exe
+	test_preprocess.exe
+	test_token.exe
+	test_util.exe
+	echo success
+
+testclean :
+	del $(TESTEXE)
 
 # ----------------------------------------------
 

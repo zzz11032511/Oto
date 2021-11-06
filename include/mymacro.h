@@ -45,6 +45,7 @@
 #define TEST_LE(a, b) TEST_PRINT(a, b, <=)
 
 #define TEST_EQ_NOT_PRINT(a, b) assert(a == b)
+#define TEST_NE_NOT_PRINT(a, b) assert(a != b)
 
 #define DEBUG_IPRINT(v) do { \
     printf(#v); \
@@ -75,6 +76,7 @@
 #define TEST_LE(a, b) while (0) {}
 
 #define TEST_EQ_NOT_PRINT(a, b) while (0) {}
+#define TEST_NE_NOT_PRINT(a, b) while (0) {}
 
 #define DEBUG_IPRINT(v) while (0) {}
 #define DEBUG_FPRINT(v) while (0) {}
