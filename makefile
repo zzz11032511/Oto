@@ -1,5 +1,5 @@
 SRCSLIST := main.c  run.c token.c debug.c error.c \
-			util/util.c \
+			util/util.c util/vector.c util/map.c util/slice.c \
 			lexer/lexer.c lexer/preprocess.c \
 			compiler/compile.c \
 			interpreter/exec.c
