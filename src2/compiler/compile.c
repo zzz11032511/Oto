@@ -90,6 +90,13 @@ const int64_t PTNS_LABEL_ONLY[] = {PTN_LABEL, TC_LF, PTN_END};
 const int64_t PTNS_PRINT[] = {TC_PRINT, PTN_LABEL, TC_LF, PTN_END};
 const int64_t PTNS_EXIT[] = {TC_EXIT, TC_LF, PTN_END};
 
+void assign_to_literal_error_check(tokencode_t tc) {
+    tokentype_t type = VAR(tc)->token->type;
+    if (type == TK_TY_LITERAL || type == TK_TY_RSVWORD || type == TK_TY_SYMBOL) {
+        oto_error_exit(OTO_ASSIGN_TO_LITERAL_ERROR);
+    }
+}
+
 void compile_sub(int64_t *icp, int64_t start, int64_t end) {
     int64_t i = start;
 
@@ -98,6 +105,7 @@ void compile_sub(int64_t *icp, int64_t start, int64_t end) {
             i++;
 
         } else if (ptn_cmp(i, PTNS_DEFINE)) {
+            assign_to_literal_error_check(tmpvars[1]);
             if (VAR(tmpvars[2])->type != TY_CONST) {
                 oto_error_exit(OTO_DEFINE_ERROR);
             }
@@ -113,30 +121,37 @@ void compile_sub(int64_t *icp, int64_t start, int64_t end) {
 
         // } 
         else if (ptn_cmp(i, PTNS_CPYD)) {
+            assign_to_literal_error_check(tmpvars[1]);
             put_opcode(icp, OP_CPYD, VAR(tmpvars[1]), VAR(tmpvars[2]), 0, 0);
             i += 4;
 
         } else if (ptn_cmp(i, PTNS_ADD2)) {
+            assign_to_literal_error_check(tmpvars[1]);
             put_opcode(icp, OP_ADD2, VAR(tmpvars[1]), VAR(tmpvars[2]), VAR(tmpvars[3]), 0);
             i += 6;
 
         } else if (ptn_cmp(i, PTNS_SUB2)) {
+            assign_to_literal_error_check(tmpvars[1]);
             put_opcode(icp, OP_SUB2, VAR(tmpvars[1]), VAR(tmpvars[2]), VAR(tmpvars[3]), 0);
             i += 6;
 
         } else if (ptn_cmp(i, PTNS_MUL2)) {
+            assign_to_literal_error_check(tmpvars[1]);
             put_opcode(icp, OP_MUL2, VAR(tmpvars[1]), VAR(tmpvars[2]), VAR(tmpvars[3]), 0);
             i += 6;
 
         } else if (ptn_cmp(i, PTNS_DIV2)) {
+            assign_to_literal_error_check(tmpvars[1]);
             put_opcode(icp, OP_DIV2, VAR(tmpvars[1]), VAR(tmpvars[2]), VAR(tmpvars[3]), 0);
             i += 6;
 
         } else if (ptn_cmp(i, PTNS_MOD2)) {
+            assign_to_literal_error_check(tmpvars[1]);
             put_opcode(icp, OP_MOD2, VAR(tmpvars[1]), VAR(tmpvars[2]), VAR(tmpvars[3]), 0);
             i += 6;
 
         } else if (ptn_cmp(i, PTNS_CPY_EXPR)) {
+            assign_to_literal_error_check(tmpvars[1]);
             SliceI64 *expr_tcs = make_line_tokencodes(srctcs, i + 2);
             expr(icp, expr_tcs, vars);
 
