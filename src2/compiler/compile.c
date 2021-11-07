@@ -20,15 +20,13 @@ static void init_compile(SliceI64 *src_tokens, VectorPTR *var_list,
 #define SRC(idx) slice_i64_get(srctcs, idx)
 #define VAR(tc)  ((Var *)(vars->data[tc]))
 
-/* 内部コードを書き込むための便利関数 */
-static void put_opcode(int64_t *icp, opcode_t op, Var *v1, Var *v2, Var *v3, Var *v4) {
+void put_opcode(int64_t *icp, opcode_t op, Var *v1, Var *v2, Var *v3, Var *v4) {
     vector_ptr_set(ops, (*icp)++, (Var *)op);
     vector_ptr_set(ops, (*icp)++, v1);
     vector_ptr_set(ops, (*icp)++, v2);
     vector_ptr_set(ops, (*icp)++, v3);
     vector_ptr_set(ops, (*icp)++, v4);
 }
-
 
 /* ptn_cmp()で一致したトークンを一時的に格納する */
 #define TMPVARS_LENGTH 6
@@ -140,7 +138,15 @@ void compile_sub(int64_t *icp, int64_t start, int64_t end) {
             i += 6;
 
         } else if (ptn_cmp(i, PTNS_CPY_EXPR)) {
-            i++;
+            SliceI64 *expr_tcs = make_line_tokencodes(srctcs, i + 2);
+            expr(icp, expr_tcs, vars);
+
+            put_opcode(icp, OP_CPYP, VAR(tmpvars[1]), 0, 0, 0);
+
+            /* "<Var> =" の分だけ+2 */
+            i += expr_tcs->length + 2;
+            DEBUG_IPRINT(i);
+            free_slice_i64(expr_tcs);
         }
 
         // } else if (ptn_cmp(i, TC_LOOP, PTN_END)) {
@@ -187,6 +193,7 @@ VectorPTR *compile(VectorI64 *src_tokens, VectorPTR *var_list) {
         exit(EXIT_FAILURE);
     }
 
+    // 式や制御構文の解析でスライスの方が扱いやすい
     SliceI64 *srctcs_slice = new_slice_i64(src_tokens, 0, src_tokens->length);
     init_compile(srctcs_slice, var_list, opcodes);
 

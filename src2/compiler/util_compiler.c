@@ -1,6 +1,6 @@
 #include <oto.h>
 
-SliceI64 *make_line_tokencodes(VectorI64 *srctcs, int64_t start) {
+SliceI64 *make_line_tokencodes(SliceI64 *srctcs, int64_t start) {
     int64_t end = start;
     while (srctcs->data[end] != TC_LF) {
         end++;
@@ -10,7 +10,7 @@ SliceI64 *make_line_tokencodes(VectorI64 *srctcs, int64_t start) {
         }
     }
 
-    SliceI64 *slice = new_slice_i64(srctcs, start, end);
+    SliceI64 *slice = new_slice_i64_from_slice(srctcs, start, end);
     if (IS_NULL(slice)) {
         print_error(OTO_INTERNAL_ERROR);
         exit(EXIT_FAILURE);
@@ -19,7 +19,7 @@ SliceI64 *make_line_tokencodes(VectorI64 *srctcs, int64_t start) {
     return slice;
 }
 
-SliceI64 *make_args_enclosed_sqbr(VectorI64 *srctcs, int64_t sqbropn) {
+SliceI64 *make_args_enclosed_br(SliceI64 *srctcs, int64_t sqbropn) {
     int64_t start = sqbropn + 1;
     int64_t end = sqbropn;
 
@@ -42,7 +42,7 @@ SliceI64 *make_args_enclosed_sqbr(VectorI64 *srctcs, int64_t sqbropn) {
         end++;
     }
 
-    SliceI64 *slice = new_slice_i64(srctcs, start, end);
+    SliceI64 *slice = new_slice_i64_from_slice(srctcs, start, end);
     if (IS_NULL(slice)) {
         print_error(OTO_INTERNAL_ERROR);
         exit(EXIT_FAILURE);
@@ -51,7 +51,7 @@ SliceI64 *make_args_enclosed_sqbr(VectorI64 *srctcs, int64_t sqbropn) {
     return slice;
 }
 
-SliceI64 *make_begin_end_block(VectorI64 *srctcs, int64_t begin) {
+SliceI64 *make_begin_end_block(SliceI64 *srctcs, int64_t begin) {
     int64_t start = begin + 1;
     int64_t end = begin;
 
@@ -76,7 +76,7 @@ SliceI64 *make_begin_end_block(VectorI64 *srctcs, int64_t begin) {
         end++;
     }
 
-    SliceI64 *slice = new_slice_i64(srctcs, start, end);
+    SliceI64 *slice = new_slice_i64_from_slice(srctcs, start, end);
     if (IS_NULL(slice)) {
         print_error(OTO_INTERNAL_ERROR);
         exit(EXIT_FAILURE);

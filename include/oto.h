@@ -173,9 +173,14 @@ void preprocess(char *src, int64_t idx, VectorI64 *src_tokens);
 VectorPTR *compile(VectorI64 *src_tokens, VectorPTR *var_list);
 void compile_sub(int64_t *icp, int64_t start, int64_t end);
 
-SliceI64 *make_line_tokencodes(VectorI64 *srctcs, int64_t start);
-SliceI64 *make_args_enclosed_sqbr(VectorI64 *srctcs, int64_t sqbropn);
-SliceI64 *make_begin_end_block(VectorI64 *srctcs, int64_t begin);
+/* 内部コードを書き込むための便利関数 */
+void put_opcode(int64_t *icp, opcode_t op, Var *v1, Var *v2, Var *v3, Var *v4);
+
+SliceI64 *make_line_tokencodes(SliceI64 *srctcs, int64_t start);
+SliceI64 *make_args_enclosed_br(SliceI64 *srctcs, int64_t sqbropn);
+SliceI64 *make_begin_end_block(SliceI64 *srctcs, int64_t begin);
+
+void expr(int64_t *icp, SliceI64 *exprtcs, VectorPTR *vars);
 
 /* exec.c */
 
