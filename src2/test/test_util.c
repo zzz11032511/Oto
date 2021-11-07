@@ -86,15 +86,27 @@ void test_slice() {
         TEST_EQ_NOT_PRINT(veci64->data[i], i);
     }
 
-    SliceI64 *slice = new_slice_i64(veci64, 3, 7);
-    TEST_EQ_NOT_PRINT(slice->length, 4);
+    SliceI64 *slice = new_slice_i64(veci64, 2, 8);
+    TEST_EQ_NOT_PRINT(slice->length, 6);
 
     for (int64_t i = 0; i < slice->length; i++) {
-        TEST_EQ_NOT_PRINT(slice_i64_get(slice, i), veci64->data[i + 3]);
+        TEST_EQ_NOT_PRINT(slice_i64_get(slice, i), veci64->data[i + 2]);
+        // printf("slice[%d] : %d\n", i, slice_i64_get(slice, i));
     }
 
     TEST_EQ_NOT_PRINT(slice_i64_get(slice, -1), 0);
     TEST_EQ_NOT_PRINT(slice_i64_get(slice, 10), 0);
+
+    SliceI64 *slice2 = new_slice_i64_from_slice(slice, 1, 4);
+    TEST_EQ_NOT_PRINT(slice2->length, 3);
+
+    for (int64_t i = 0; i < slice2->length; i++) {
+        TEST_EQ_NOT_PRINT(slice_i64_get(slice2, i), slice_i64_get(slice, i + 1));
+        // printf("slice2[%d] : %d\n", i, slice_i64_get(slice2, i));
+    }
+
+    free_slice_i64(slice);
+    free_slice_i64(slice2);
 }
 
 void test_stack() {

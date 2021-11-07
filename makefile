@@ -55,15 +55,10 @@ TESTTARGET := test_lexer test_preprocess test_token test_util
 TESTEXE := $(addsuffix .exe, $(TESTTARGET))
 
 # テスト
-$(TESTTARGET) :
+test_% :
 	$(CC) -D DEBUG -o $@ $(TESTSRCSLIST) $(TESTDIR)/$@.c -I./$(INCLUDEDIR)
-
-test : $(TESTTARGET)
-	test_lexer.exe
-	test_preprocess.exe
-	test_token.exe
-	test_util.exe
-	echo success
+	@$@
+	@echo success
 
 testclean :
 	del $(TESTEXE)

@@ -22,6 +22,26 @@ SliceI64 *new_slice_i64(VectorI64 *vec, int64_t start, int64_t end) {
     return slice;
 }
 
+SliceI64 *new_slice_i64_from_slice(SliceI64 *org_slice, int64_t start, int64_t end) {
+    if (IS_NULL(org_slice)) {
+        return NULL;
+    }
+
+    SliceI64 *slice = MYMALLOC1(SliceI64);
+    if (IS_NULL(slice)) {
+        return NULL;
+    }
+    slice->data = &(org_slice->data[start]);
+
+    if (end > org_slice->length) {
+        slice->length = org_slice->length;
+    } else {
+        slice->length = end - start;
+    }
+
+    return slice;
+}
+
 void free_slice_i64(SliceI64 *slice) {
     free(slice);
 }

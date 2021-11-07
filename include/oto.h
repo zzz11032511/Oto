@@ -96,6 +96,7 @@ typedef struct {
 } SliceI64;
 
 SliceI64 *new_slice_i64(VectorI64 *vec, int64_t start, int64_t end);
+SliceI64 *new_slice_i64_from_slice(SliceI64 *org_slice, int64_t start, int64_t end);
 void free_slice_i64(SliceI64 *slice);
 int64_t slice_i64_get(SliceI64 *slice, int64_t idx);
 
@@ -171,6 +172,10 @@ void preprocess(char *src, int64_t idx, VectorI64 *src_tokens);
 /* トークン化したソースコードを内部コード列に変換する */
 VectorPTR *compile(VectorI64 *src_tokens, VectorPTR *var_list);
 void compile_sub(int64_t *icp, int64_t start, int64_t end);
+
+SliceI64 *make_line_tokencodes(VectorI64 *srctcs, int64_t start);
+SliceI64 *make_args_enclosed_sqbr(VectorI64 *srctcs, int64_t sqbropn);
+SliceI64 *make_begin_end_block(VectorI64 *srctcs, int64_t begin);
 
 /* exec.c */
 
