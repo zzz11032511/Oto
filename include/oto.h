@@ -45,7 +45,7 @@ extern const Token rsvwords[];
 #define IS_SYMBOL(tc)         ((TC_LF <= tc) && (tc < TC_BEGIN))
 #define IS_NOT_SYMBOL(tc)     (tc >= TC_BEGIN)
 #define IS_INSTRUCTION(tc)    ((TC_PRINT <= tc) && (tc < TC_EXIT))
-#define IS_ARITH_OPERATOR(tc) ((TC_PLUS <= tc && tc <= TC_GT) || (TC_AND <= tc && tc <= TC_OR))
+#define IS_ARITH_OPERATOR(tc) ((TC_PLUS <= tc && tc <= TC_LE) || (TC_AND <= tc && tc <= TC_OR))
 
 /* util.c */
 
@@ -189,6 +189,7 @@ void exec(VectorPTR *ic_list);
 /* debug.c */
 
 void print_src_tokens(VectorI64 *src_tokens);
+void print_rpn_tc(VectorI64 *rpntcs);
 void print_var(VectorPTR *var_list);
 void print_ic_list(VectorPTR *ic_list);
 

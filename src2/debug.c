@@ -8,6 +8,14 @@ void print_src_tokens(VectorI64 *src_tokens) {
     printf("\n\n");
 }
 
+void print_rpn_tc(VectorI64 *rpntcs) {
+    printf("rpn_tc : ");
+    for (uint64_t i = 0; i < rpntcs->length; i++) {
+        printf("%I64d ", rpntcs->data[i]);
+    }
+    printf("\n\n");
+}
+
 void print_var(VectorPTR *var_list) {
     printf("- Variable list -\n");
 
@@ -81,15 +89,21 @@ void print_ic_list(VectorPTR *ic_list) {
     
     uint64_t i = 0;
     while (i < ic_list->length) {
-        op = (opcode_t)ic_list->data[i++];
+        op = (opcode_t)ic_list->data[i];
+        printf("%5I64d : %10s ", i, operations[op].str);
+        i++;
+
         v1 = (Var *)ic_list->data[i++];
         v2 = (Var *)ic_list->data[i++];
         v3 = (Var *)ic_list->data[i++];
         v4 = (Var *)ic_list->data[i++];
 
-        printf("%5I64d : %10s ", i, operations[op].str);
+        if (IS_NULL(v1)) {
+            printf("\n");
+            continue;
+        }
         printf("%10s ", v1->token->str);
-        
+
         if (IS_NULL(v2)) {
             printf("\n");
             continue;
@@ -107,6 +121,7 @@ void print_ic_list(VectorPTR *ic_list) {
             continue;
         }
         printf("%10s ", v4->token->str);
+        
         printf("\n");
     }
     printf("\n");

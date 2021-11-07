@@ -145,7 +145,6 @@ void compile_sub(int64_t *icp, int64_t start, int64_t end) {
 
             /* "<Var> =" の分だけ+2 */
             i += expr_tcs->length + 2;
-            DEBUG_IPRINT(i);
             free_slice_i64(expr_tcs);
         }
 

@@ -25,15 +25,16 @@ void oto_run(const char *path) {
     src = src_open(path);
 
     src_tokens = lexer(src);
-    var_list = make_var_list();
-
 #ifdef DEBUG
     print_src_tokens(src_tokens);
+#endif
+
+    var_list = make_var_list();
+#ifdef DEBUG
     print_var(var_list);
 #endif
 
     ic_list = compile(src_tokens, var_list);
-
 #ifdef DEBUG
     print_ic_list(ic_list);
 #endif

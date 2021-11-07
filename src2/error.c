@@ -58,6 +58,10 @@ void print_error(errorcode_t err) {
         fprintf(stderr, "Too many arguments error\n");
         break;
 
+    case OTO_STACK_OVERFLOW_ERROR:
+        fprintf(stderr, "Stack overflow error\n");
+        break;
+
     case OTO_ZERO_DIVISION_ERROR:
         fprintf(stderr, "Zero division error\n");
         break;

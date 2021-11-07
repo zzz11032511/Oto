@@ -73,8 +73,10 @@ static void rpn(SliceI64 *exprtcs, VectorI64 *rpntcs) {
             rpn(exprtcs2, rpntcs);
             i += exprtcs2->length;
             free_slice_i64(exprtcs2);
+            is_before_op = false;
 
         } else if (IS_ARITH_OPERATOR(tc)) {
+            DEBUG_IPRINT(tc);
             if (is_before_op) {
                 /* 演算子が連続していればエラー */
                 print_error(OTO_INVALID_SYNTAX_ERROR);
@@ -127,6 +129,10 @@ static void expr_sub(int64_t *icp, VectorI64 *rpntcs, VectorPTR *vars) {
 void expr(int64_t *icp, SliceI64 *exprtcs, VectorPTR *vars) {
     VectorI64 *rpntcs = new_vector_i64(DEFAULT_RPN_TC_LIST_SIZE);
     rpn(exprtcs, rpntcs);
+#ifdef DEBUG
+    print_rpn_tc(rpntcs);
+#endif
 
     expr_sub(icp, rpntcs, vars);
+    free(rpntcs);
 }

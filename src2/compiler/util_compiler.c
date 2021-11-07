@@ -26,13 +26,14 @@ SliceI64 *make_args_enclosed_br(SliceI64 *srctcs, int64_t sqbropn) {
     int64_t nest = 0;
     for (;;) {
         tokencode_t tc = srctcs->data[end];
+
         if (tc == TC_SQBROPN || tc == TC_BROPN) {
             nest++;
         } else if  (tc == TC_SQBRCLS || tc == TC_BRCLS) {
             nest--;
         }
         
-        if (tc == TC_SQBRCLS && nest == 0) {
+        if ((tc == TC_SQBRCLS || TC_BRCLS) && nest == 0) {
             break;
         } else if (end >= srctcs->length) {
             print_error(OTO_INVALID_SYNTAX_ERROR);
