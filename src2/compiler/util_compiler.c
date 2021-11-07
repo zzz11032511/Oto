@@ -1,0 +1,86 @@
+#include <oto.h>
+
+SliceI64 *make_line_tokencodes(VectorI64 *srctcs, int64_t start) {
+    int64_t end = start;
+    while (srctcs->data[end] != TC_LF) {
+        end++;
+        if (end >= srctcs->length) {
+            print_error(OTO_INVALID_SYNTAX_ERROR);
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    SliceI64 *slice = new_slice_i64(srctcs, start, end);
+    if (IS_NULL(slice)) {
+        print_error(OTO_INTERNAL_ERROR);
+        exit(EXIT_FAILURE);
+    }
+
+    return slice;
+}
+
+SliceI64 *make_args_enclosed_sqbr(VectorI64 *srctcs, int64_t sqbropn) {
+    int64_t start = sqbropn + 1;
+    int64_t end = sqbropn;
+
+    int64_t nest = 0;
+    for (;;) {
+        tokencode_t tc = srctcs->data[end];
+        if (tc == TC_SQBROPN || tc == TC_BROPN) {
+            nest++;
+        } else if  (tc == TC_SQBRCLS || tc == TC_BRCLS) {
+            nest--;
+        }
+        
+        if (tc == TC_SQBRCLS && nest == 0) {
+            break;
+        } else if (end >= srctcs->length) {
+            print_error(OTO_INVALID_SYNTAX_ERROR);
+            exit(EXIT_FAILURE);
+        }
+
+        end++;
+    }
+
+    SliceI64 *slice = new_slice_i64(srctcs, start, end);
+    if (IS_NULL(slice)) {
+        print_error(OTO_INTERNAL_ERROR);
+        exit(EXIT_FAILURE);
+    }
+
+    return slice;
+}
+
+SliceI64 *make_begin_end_block(VectorI64 *srctcs, int64_t begin) {
+    int64_t start = begin + 1;
+    int64_t end = begin;
+
+    int64_t nest = 0;
+    for (;;) {
+        tokencode_t tc = srctcs->data[end];
+
+        /* ifの個数とifブロックのendの個数は一致する */
+        if (tc == TC_BEGIN || tc == TC_IF) {
+            nest++;
+        } else if  (tc == TC_END) {
+            nest--;
+        }
+
+        if (tc == TC_END && nest == 0) {
+            break;
+        } else if (end >= srctcs->length) {
+            print_error(OTO_INVALID_SYNTAX_ERROR);
+            exit(EXIT_FAILURE);
+        }
+
+        end++;
+    }
+
+    SliceI64 *slice = new_slice_i64(srctcs, start, end);
+    if (IS_NULL(slice)) {
+        print_error(OTO_INTERNAL_ERROR);
+        exit(EXIT_FAILURE);
+    }
+
+    return slice;
+}

@@ -87,6 +87,7 @@ const int64_t PTNS_SUB2[] = {PTN_LABEL, TC_EQU, PTN_LABEL, TC_MINUS, PTN_LABEL, 
 const int64_t PTNS_MUL2[] = {PTN_LABEL, TC_EQU, PTN_LABEL, TC_ASTER, PTN_LABEL, TC_LF, PTN_END};
 const int64_t PTNS_DIV2[] = {PTN_LABEL, TC_EQU, PTN_LABEL, TC_SLASH, PTN_LABEL, TC_LF, PTN_END};
 const int64_t PTNS_MOD2[] = {PTN_LABEL, TC_EQU, PTN_LABEL, TC_PERCE, PTN_LABEL, TC_LF, PTN_END};
+const int64_t PTNS_CPY_EXPR[] = {PTN_LABEL, TC_EQU, PTN_EXPR, PTN_END};
 const int64_t PTNS_LABEL_ONLY[] = {PTN_LABEL, TC_LF, PTN_END};
 const int64_t PTNS_PRINT[] = {TC_PRINT, PTN_LABEL, TC_LF, PTN_END};
 const int64_t PTNS_EXIT[] = {TC_EXIT, TC_LF, PTN_END};
@@ -138,9 +139,9 @@ void compile_sub(int64_t *icp, int64_t start, int64_t end) {
             put_opcode(icp, OP_MOD2, VAR(tmpvars[1]), VAR(tmpvars[2]), VAR(tmpvars[3]), 0);
             i += 6;
 
+        } else if (ptn_cmp(i, PTNS_CPY_EXPR)) {
+            i++;
         }
-        // else if (ptn_cmp(i, PTN_LABEL, TC_EQU, PTN_EXPR, PTN_END)) {
-        //     i++;
 
         // } else if (ptn_cmp(i, TC_LOOP, PTN_END)) {
         //     i++;
@@ -162,7 +163,7 @@ void compile_sub(int64_t *icp, int64_t start, int64_t end) {
 
         // } 
         else if (ptn_cmp(i, PTNS_LABEL_ONLY)) {
-            i++;
+            i += 2;
 
         } else if (ptn_cmp(i, PTNS_PRINT)) {
             put_opcode(icp, OP_PRINT, VAR(tmpvars[1]), 0, 0, 0);
