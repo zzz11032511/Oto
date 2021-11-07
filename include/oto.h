@@ -167,21 +167,8 @@ void preprocess(char *src, int64_t idx, VectorI64 *src_tokens);
 
 /* compile.c */
 
-/* opcodesの最大容量の初期値 */
-#define DEFAULT_MAX_OPCODES 4096
-
 /* トークン化したソースコードを内部コード列に変換する */
 VectorPTR *compile(VectorI64 *src_tokens, VectorPTR *var_list);
-void compile_sub(int64_t *icp, int64_t start, int64_t end);
-
-/* 内部コードを書き込むための便利関数 */
-void put_opcode(int64_t *icp, opcode_t op, Var *v1, Var *v2, Var *v3, Var *v4);
-
-SliceI64 *make_line_tokencodes(SliceI64 *srctcs, int64_t start);
-SliceI64 *make_args_enclosed_br(SliceI64 *srctcs, int64_t sqbropn);
-SliceI64 *make_begin_end_block(SliceI64 *srctcs, int64_t begin);
-
-void expr(int64_t *icp, SliceI64 *exprtcs, VectorPTR *vars);
 
 /* exec.c */
 

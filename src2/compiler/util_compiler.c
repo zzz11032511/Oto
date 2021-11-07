@@ -1,5 +1,7 @@
 #include <oto.h>
 
+#include "compiler.h"
+
 SliceI64 *make_line_tokencodes(SliceI64 *srctcs, int64_t start) {
     int64_t end = start;
     while (srctcs->data[end] != TC_LF) {

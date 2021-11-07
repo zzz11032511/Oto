@@ -1,5 +1,7 @@
 #include <oto.h>
 
+#include "compiler.h"
+
 #define DEFAULT_RPN_TC_LIST_SIZE 1000
 
 static opcode_t tc2op(tokencode_t tc) {

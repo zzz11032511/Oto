@@ -1,13 +1,17 @@
 #include <oto.h>
 
+#include "compiler.h"
+
 /**
  * トークン化したソースコード, 変数リスト, 内部コード列は
  * よく参照するので, 楽に呼び出すためにcompile.c内全体で
  * 使えるようにする
+ * TODO: compiler全体で使えるようにする
  */
-static SliceI64 *srctcs = NULL;
-static VectorPTR *vars  = NULL;
-static VectorPTR *ops   = NULL;
+
+SliceI64 *srctcs = NULL;
+VectorPTR *vars  = NULL;
+VectorPTR *ops   = NULL;
 
 static void init_compile(SliceI64 *src_tokens, VectorPTR *var_list,
                          VectorPTR *opcodes) {
@@ -15,10 +19,6 @@ static void init_compile(SliceI64 *src_tokens, VectorPTR *var_list,
     vars = var_list;
     ops = opcodes;
 }
-
-/* トークンや変数を取得するための便利マクロ */
-#define SRC(idx) slice_i64_get(srctcs, idx)
-#define VAR(tc)  ((Var *)(vars->data[tc]))
 
 void put_opcode(int64_t *icp, opcode_t op, Var *v1, Var *v2, Var *v3, Var *v4) {
     vector_ptr_set(ops, (*icp)++, (Var *)op);
@@ -86,6 +86,7 @@ const int64_t PTNS_MUL2[] = {PTN_LABEL, TC_EQU, PTN_LABEL, TC_ASTER, PTN_LABEL, 
 const int64_t PTNS_DIV2[] = {PTN_LABEL, TC_EQU, PTN_LABEL, TC_SLASH, PTN_LABEL, TC_LF, PTN_END};
 const int64_t PTNS_MOD2[] = {PTN_LABEL, TC_EQU, PTN_LABEL, TC_PERCE, PTN_LABEL, TC_LF, PTN_END};
 const int64_t PTNS_CPY_EXPR[] = {PTN_LABEL, TC_EQU, PTN_EXPR, PTN_END};
+const int64_t PTNS_LOOP[] = {TC_LOOP, PTN_END};
 const int64_t PTNS_LABEL_ONLY[] = {PTN_LABEL, TC_LF, PTN_END};
 const int64_t PTNS_PRINT[] = {TC_PRINT, PTN_LABEL, TC_LF, PTN_END};
 const int64_t PTNS_EXIT[] = {TC_EXIT, TC_LF, PTN_END};
@@ -152,19 +153,19 @@ void compile_sub(int64_t *icp, int64_t start, int64_t end) {
 
         } else if (ptn_cmp(i, PTNS_CPY_EXPR)) {
             assign_to_literal_error_check(tmpvars[1]);
-            SliceI64 *expr_tcs = make_line_tokencodes(srctcs, i + 2);
-            expr(icp, expr_tcs, vars);
+            SliceI64 *exprtcs = make_line_tokencodes(srctcs, i + 2);
+            expr(icp, exprtcs, vars);
 
             put_opcode(icp, OP_CPYP, VAR(tmpvars[1]), 0, 0, 0);
 
             /* "<Var> =" の分だけ+2 */
-            i += expr_tcs->length + 2;
-            free_slice_i64(expr_tcs);
+            i += exprtcs->length + 2;
+            free_slice_i64(exprtcs);
+
+        } else if (ptn_cmp(i, PTNS_LOOP)) {
+            compile_loop(icp, &i);
+
         }
-
-        // } else if (ptn_cmp(i, TC_LOOP, PTN_END)) {
-        //     i++;
-
         // } else if (ptn_cmp(i, TC_IF, PTN_END)) {
         //     i++;
 
@@ -197,6 +198,8 @@ void compile_sub(int64_t *icp, int64_t start, int64_t end) {
         }
     }
 }
+
+#define DEFAULT_MAX_OPCODES 4096
 
 VectorPTR *compile(VectorI64 *src_tokens, VectorPTR *var_list) {
     VectorPTR *opcodes = new_vector_ptr(DEFAULT_MAX_OPCODES);

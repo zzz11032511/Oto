@@ -98,6 +98,16 @@ void print_ic_list(VectorPTR *ic_list) {
         v3 = (Var *)ic_list->data[i++];
         v4 = (Var *)ic_list->data[i++];
 
+        if (op == OP_LOOP) {
+            printf("%10I64d ", (int64_t)v1);
+            printf("%10s\n", v2->token->str);
+            continue;
+
+        } else if (op == OP_JMP || op == OP_JZ || op == OP_JNZ) {
+            printf("%10I64d\n", (int64_t)v1);
+            continue;
+        }
+
         if (IS_NULL(v1)) {
             printf("\n");
             continue;
