@@ -138,7 +138,8 @@ int64_t stack_peeki(Stack *stack);
 
 void oto_init(char *path);
 void oto_run(const char *path);
-void oto_quit();
+void oto_exit_process();
+void oto_error_exit(errorcode_t err);
 
 void set_timecount_flag(bool flag);
 

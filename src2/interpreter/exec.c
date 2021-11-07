@@ -141,8 +141,7 @@ void exec(VectorPTR *ic_list) {
             return;
 
         default:
-            print_error(OTO_UNKNOWN_ERROR);
-            exit(EXIT_FAILURE);
+            oto_error_exit(OTO_UNKNOWN_ERROR);
         }
 
         i += 5;

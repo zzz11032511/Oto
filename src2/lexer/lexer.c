@@ -118,8 +118,7 @@ void tokenize(char *src, VectorI64 *src_tokens) {
         } else if (is_symbol_char(src[i])) {
             len = count_operator_len(&src[i]);
             if (is_valid_operator(&src[i], len) == false) {
-                print_error(OTO_UNAVAILABLE_OPERATOR_ERROR);
-                exit(EXIT_FAILURE);
+                oto_error_exit(OTO_UNAVAILABLE_OPERATOR_ERROR);
             }
             type = TK_TY_SYMBOL;
 
@@ -132,8 +131,7 @@ void tokenize(char *src, VectorI64 *src_tokens) {
             type = TK_TY_VARIABLE;
 
         } else {
-            print_error(OTO_SYNTAX_ERROR);
-            exit(EXIT_FAILURE);
+            oto_error_exit(OTO_SYNTAX_ERROR);
         }
 
         vector_i64_append(
@@ -149,8 +147,7 @@ void tokenize(char *src, VectorI64 *src_tokens) {
 VectorI64 *lexer(char *src) {
     VectorI64 *src_tokens = new_vector_i64(DEFAULT_MAX_TC);
     if (IS_NULL(src_tokens)) {
-        print_error(OTO_INTERNAL_ERROR);
-        exit(EXIT_FAILURE);
+        oto_error_exit(OTO_INTERNAL_ERROR);
     }
 
     tokenize(src, src_tokens);

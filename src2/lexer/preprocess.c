@@ -35,8 +35,7 @@ void init_include_file_manager(char *root_path) {
     if (include_file_list == NULL) {
         include_file_list = new_map();
         if (IS_NULL(include_file_list)) {
-            print_error(OTO_INTERNAL_ERROR);
-            exit(EXIT_FAILURE);
+            oto_error_exit(OTO_INTERNAL_ERROR);
         }
     }
     map_puti(include_file_list, root_path, 1);
@@ -53,8 +52,7 @@ static void check_circular_ref(char *path) {
     if (map_exist_key(include_file_list, path)) {
         if (map_geti(include_file_list, path) >= 1) {
             // 循環参照
-            print_error(OTO_CIRCULAR_REFERENCE_ERROR);
-            exit(EXIT_FAILURE);
+            oto_error_exit(OTO_CIRCULAR_REFERENCE_ERROR);
         } else {
             map_inc_val(include_file_list, path);
         }
@@ -71,23 +69,20 @@ static void include_file(char *src, int64_t idx, VectorI64 *src_tokens) {
         idx++;
         if (src[idx] == '\n' && src[idx] == '\0') {
             // pathが指定されていない
-            print_error(OTO_PREPROCESS_ERROR);
-            exit(EXIT_FAILURE);
+            oto_error_exit(OTO_PREPROCESS_ERROR);
         }
     }
 
     char *path = NULL;
     path = new_string_literal(src, idx);
     if (IS_NULL(path)) {
-        print_error(OTO_PREPROCESS_ERROR);
-        exit(EXIT_FAILURE);
+        oto_error_exit(OTO_PREPROCESS_ERROR);
     }
     check_circular_ref(path);
 
     char *new_src = src_open(path);
     if (IS_NULL(new_src)) {
-        print_error(OTO_INCLUDE_FILE_NOT_FOUND_ERROR);
-        exit(EXIT_FAILURE);
+        oto_error_exit(OTO_INCLUDE_FILE_NOT_FOUND_ERROR);
     }
 
     tokenize(new_src, src_tokens);

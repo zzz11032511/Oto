@@ -45,8 +45,7 @@ void init_token_list() {
 
     token_list = new_vector_ptr(DEFAULT_MAX_TC);
     if (IS_NULL(token_list)) {
-        print_error(OTO_INTERNAL_ERROR);
-        exit(EXIT_FAILURE);
+        oto_error_exit(OTO_INTERNAL_ERROR);
     }
 }
 
@@ -69,8 +68,7 @@ static Token *new_token(tokencode_t tc,
                         char *str, size_t len, tokentype_t type) {
     Token *token = MYMALLOC1(Token);
     if (IS_NULL(token)) {
-        print_error(OTO_INTERNAL_ERROR);
-        exit(EXIT_FAILURE);
+        oto_error_exit(OTO_INTERNAL_ERROR);
     }
 
     token->tc   = tc;
@@ -80,8 +78,7 @@ static Token *new_token(tokencode_t tc,
     // '\0"の分1足す
     char *s = MYMALLOC(len + 1, char);
     if (IS_NULL(s)) {
-        print_error(OTO_INTERNAL_ERROR);
-        exit(EXIT_FAILURE);
+        oto_error_exit(OTO_INTERNAL_ERROR);
     }
 
     token->str = s;
@@ -94,8 +91,7 @@ static void add_new_token(tokencode_t tc,
                           char *str, size_t len, tokentype_t type) {
     Token *token = new_token(tc, str, len, type);
     if (IS_NULL(token)) {
-        print_error(OTO_INTERNAL_ERROR);
-        exit(EXIT_FAILURE);
+        oto_error_exit(OTO_INTERNAL_ERROR);
     }
 
     if (IS_NOT_NULL(token_list->data[tc])) {
@@ -177,8 +173,7 @@ tokencode_t allocate_tc(char *str, size_t len, tokentype_t type) {
 static Var *new_variable(Token *token, tokentype_t type) {
     Var *var = MYMALLOC1(Var);
     if (IS_NULL(var)) {
-        print_error(OTO_INTERNAL_ERROR);
-        exit(EXIT_FAILURE);
+        oto_error_exit(OTO_INTERNAL_ERROR);
     }
 
     var->token   = token;
@@ -191,8 +186,7 @@ static Var *new_variable(Token *token, tokentype_t type) {
 VectorPTR *make_var_list() {
     VectorPTR *var_list = new_vector_ptr(token_list->length);
     if (IS_NULL(var_list)) {
-        print_error(OTO_INTERNAL_ERROR);
-        exit(EXIT_FAILURE);
+        oto_error_exit(OTO_INTERNAL_ERROR);
     }
 
     Token *now_token = NULL;    
@@ -219,8 +213,7 @@ VectorPTR *make_var_list() {
         }
         if (IS_NULL(new_var)) {
             free(var_list);
-            print_error(OTO_INTERNAL_ERROR);
-            exit(EXIT_FAILURE);
+            oto_error_exit(OTO_INTERNAL_ERROR);
         }
 
         if (now_token->type == TK_TY_LITERAL) {

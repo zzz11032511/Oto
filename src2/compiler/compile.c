@@ -99,8 +99,7 @@ void compile_sub(int64_t *icp, int64_t start, int64_t end) {
 
         } else if (ptn_cmp(i, PTNS_DEFINE)) {
             if (VAR(tmpvars[2])->type != TY_CONST) {
-                print_error(OTO_DEFINE_ERROR);
-                exit(EXIT_FAILURE);
+                oto_error_exit(OTO_DEFINE_ERROR);
             }
             VAR(tmpvars[1])->value = VAR(tmpvars[2])->value;
             VAR(tmpvars[1])->type  = TY_CONST;
@@ -179,8 +178,7 @@ void compile_sub(int64_t *icp, int64_t start, int64_t end) {
             i += 2;
 
         } else {
-            print_error(OTO_INVALID_SYNTAX_ERROR);
-            exit(EXIT_FAILURE);
+            oto_error_exit(OTO_INVALID_SYNTAX_ERROR);
         }
     }
 }
@@ -188,8 +186,7 @@ void compile_sub(int64_t *icp, int64_t start, int64_t end) {
 VectorPTR *compile(VectorI64 *src_tokens, VectorPTR *var_list) {
     VectorPTR *opcodes = new_vector_ptr(DEFAULT_MAX_OPCODES);
     if (IS_NULL(opcodes)) {
-        print_error(OTO_INTERNAL_ERROR);
-        exit(EXIT_FAILURE);
+        oto_error_exit(OTO_INTERNAL_ERROR);
     }
 
     // 式や制御構文の解析でスライスの方が扱いやすい

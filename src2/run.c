@@ -1,13 +1,17 @@
 #include <oto.h>
 
+static char *src = NULL;
+static VectorI64 *src_tokens = NULL;
+static VectorPTR *var_list   = NULL;
+static VectorPTR *ic_list    = NULL;
+
 static bool timecount_flag = false;
 void set_timecount_flag(bool flag) {
     timecount_flag = flag;
 }
 
 void oto_init(char *path) {
-    if (atexit(oto_quit) != 0) {
-        print_error(OTO_UNKNOWN_ERROR);
+    if (atexit(oto_exit_process) != 0) {
         exit(EXIT_FAILURE);
     }
 
@@ -16,13 +20,12 @@ void oto_init(char *path) {
     init_include_file_manager(path);
 }
 
-static char *src = NULL;
-static VectorI64 *src_tokens = NULL;
-static VectorPTR *var_list   = NULL;
-static VectorPTR *ic_list    = NULL;
-
 void oto_run(const char *path) {
     src = src_open(path);
+    if (IS_NULL(src)) {
+        print_error(OTO_FILE_NOT_FOUND_ERROR);
+        exit(EXIT_FAILURE);
+    }
 
     src_tokens = lexer(src);
 #ifdef DEBUG
@@ -42,7 +45,7 @@ void oto_run(const char *path) {
     exec(ic_list);
 }
 
-void oto_quit() {
+void oto_exit_process() {
     free_vector_i64(src_tokens);
     free_vector_ptr(ic_list);
     free_var_list(var_list);
@@ -52,4 +55,9 @@ void oto_quit() {
 #ifdef DEBUG
     printf("success\n");
 #endif
+}
+
+void oto_error_exit(errorcode_t err) {
+    print_error(err);
+    exit(EXIT_FAILURE);
 }
