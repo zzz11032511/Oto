@@ -19,3 +19,5 @@ int64_t vmstack_popi();
 double vmstack_popf();
 Var *vmstack_popv();
 void *vmstack_popp();
+
+void alu(opcode_t op);

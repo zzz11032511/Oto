@@ -2,7 +2,7 @@ SRCSLIST := main.c  run.c token.c debug.c error.c \
 			util/util.c util/vector.c util/map.c util/slice.c util/stack.c \
 			lexer/lexer.c lexer/preprocess.c \
 			compiler/compile.c compiler/util_compiler.c compiler/expr.c \
-			interpreter/exec.c interpreter/vmstack.c 
+			interpreter/exec.c interpreter/vmstack.c interpreter/alu.c \
 
 PROGRAM       := oto
 DEBUGPROGRAM  := debug
