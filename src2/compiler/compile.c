@@ -5,11 +5,11 @@
  * よく参照するので, 楽に呼び出すためにcompile.c内全体で
  * 使えるようにする
  */
-static VectorI64 *srctcs = NULL;
-static VectorPTR *vars = NULL;
-static VectorPTR *ops = NULL;
+static SliceI64 *srctcs = NULL;
+static VectorPTR *vars  = NULL;
+static VectorPTR *ops   = NULL;
 
-static void init_compile(VectorI64 *src_tokens, VectorPTR *var_list,
+static void init_compile(SliceI64 *src_tokens, VectorPTR *var_list,
                          VectorPTR *opcodes) {
     srctcs = src_tokens;
     vars = var_list;
@@ -17,7 +17,7 @@ static void init_compile(VectorI64 *src_tokens, VectorPTR *var_list,
 }
 
 /* トークンや変数を取得するための便利マクロ */
-#define SRC(idx) srctcs->data[idx]
+#define SRC(idx) slice_i64_get(srctcs, idx)
 #define VAR(tc)  ((Var *)(vars->data[tc]))
 
 /* 内部コードを書き込むための便利関数 */
@@ -186,12 +186,15 @@ VectorPTR *compile(VectorI64 *src_tokens, VectorPTR *var_list) {
         print_error(OTO_INTERNAL_ERROR);
         exit(EXIT_FAILURE);
     }
-    init_compile(src_tokens, var_list, opcodes);
+
+    SliceI64 *srctcs_slice = new_slice_i64(src_tokens, 0, src_tokens->length);
+    init_compile(srctcs_slice, var_list, opcodes);
 
     // opcodeをどこまで書き込んだか
     int64_t icp = 0;
-
     compile_sub(&icp, 0, src_tokens->length);
+
+    free_slice_i64(srctcs_slice);
 
     return opcodes;
 }
