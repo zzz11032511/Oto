@@ -93,7 +93,7 @@ builddir:
 	mkdir "./$(WIN_BUILD_DIR)/lexer"
 	mkdir "./$(WIN_BUILD_DIR)/compiler"
 	mkdir "./$(WIN_BUILD_DIR)/interpreter"
-# mkdir "./$(WIN_BUILD_DIR)/sound"
+	mkdir "./$(WIN_BUILD_DIR)/sound"
 
 clean:
 	del /s /q %cd%\build\*
