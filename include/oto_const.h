@@ -210,6 +210,7 @@ enum {
 
     OP_PRINT,
     OP_BEEP,
+    OP_PLAY,
     OP_EXIT
 };
 typedef int64_t opcode_t;

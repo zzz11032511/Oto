@@ -120,6 +120,10 @@ void exec(VectorPTR *ic_list) {
             oto_instr_beep();
             break;
 
+        case OP_PLAY:
+            oto_instr_play();
+            break;
+
         case OP_EXIT:
             return;
 

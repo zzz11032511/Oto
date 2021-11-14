@@ -23,6 +23,7 @@ typedef struct {
 Currentdata out_data;
 
 static void init_out_data() {
+    out_data.sound = NULL;
     out_data.length = 0;
     out_data.volume = 0;
     out_data.t = 0;
@@ -41,6 +42,8 @@ void update_out_data(Playdata data) {
     out_data.volume = data.volume;
 }
 
+#define FADE_RANGE 0.15
+
 static int play_callback(const void *inputBuffer,
                          void *outputBuffer,
                          unsigned long framesPerBuffer,
@@ -54,6 +57,7 @@ static int play_callback(const void *inputBuffer,
     
     // ここに出力データを書き込む
     float *out = (float *)outputBuffer;
+    float d = 0;
 
     for (uint64_t i = 0; i < framesPerBuffer; i++) {
         if (data->t >= data->length) {
@@ -61,7 +65,32 @@ static int play_callback(const void *inputBuffer,
             data->t += 1;
             continue;
         }
+
+        // uint64_t num_of_sounds = 0;
+        // for (uint64_t i = 0; i < MAX_POLYPHONIC; i++) {
+        //     ds[i] = sin(2 * PI * data->freq[i] * data->t / sampling_freq);
+        // }
+
+        // for (uint64_t i = 0; i < MAX_POLYPHONIC; i++) {
+        //     d += ds[i];
+        // }
+        // d = d / MAX_POLYPHONIC;
+
+        d = sin(2 * PI * data->freq[0] * data->t / sampling_freq);
+
+        /* フェード処理 */
+        if (data->t < (uint64_t)(FADE_RANGE * data->length)) {
+            d *= data->t / (FADE_RANGE * data->length);
+        } else if ((data->length - data->t) < (uint64_t)(FADE_RANGE * data->length)) {
+            d *= (data->length - data->t) / (FADE_RANGE * data->length);
+        }
+
+        *out++ = d;
+
+        data->t += 1;
     }
+
+    return 0;
 }
 
 static PaStream *stream;
