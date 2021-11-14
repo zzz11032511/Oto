@@ -139,13 +139,9 @@ enum {
     OP_PUSH,
 
     /**
-     * スタックに定数をプッシュする
-     * 
-     * example:
-     *   PUSHC Type Value
-     *   Typeで指定した型として, スタックにValueという定数をプッシュする
+     * 引数が省略されたので初期値を用いる
      */
-    OP_PUSHC,
+    OP_PUSH_INITVAL,
     
     /**
      * スタックからポップしたものを変数に代入

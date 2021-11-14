@@ -1,6 +1,8 @@
 #include <oto.h>
 #include <oto_sound.h>
 
+static uint64_t sampling_freq = 44100;
+
 static PaStreamParameters out_param;
 static void init_stream_param() {
     out_param.channelCount = MONO_CH;
@@ -11,7 +13,15 @@ static void init_stream_param() {
     out_param.hostApiSpecificStreamInfo = NULL;
 }
 
-static Playdata out_data;
+typedef struct {
+    Sound *sound;
+    uint64_t length;
+    uint64_t t;
+    float freq[MAX_POLYPHONIC];
+    int8_t volume; 
+} Currentdata;
+Currentdata out_data;
+
 static void init_out_data() {
     out_data.length = 0;
     out_data.volume = 0;
@@ -24,11 +34,11 @@ static void init_out_data() {
 void update_out_data(Playdata data) {
     out_data.sound = data.sound;
     out_data.length = data.length;
-    out_data.t = data.t;
+    out_data.t = 0;
     for (uint64_t i = 0; i < MAX_POLYPHONIC; i++) {
         out_data.freq[i] = data.freq[i];
     }
-    out_data = data.volume;
+    out_data.volume = data.volume;
 }
 
 static int play_callback(const void *inputBuffer,
@@ -38,7 +48,7 @@ static int play_callback(const void *inputBuffer,
                          PaStreamCallbackFlags statusFlags,
                          void *userData)
 {
-    Playdata *data = (Playdata *)userData;
+    Currentdata *data = (Currentdata *)userData;
     float volume = (float)data->volume / MAX_VOLUME;
     float ds[MAX_POLYPHONIC] = {0};
     
@@ -55,7 +65,7 @@ static int play_callback(const void *inputBuffer,
 }
 
 static PaStream *stream;
-void init_sound_stream(int64_t sampling_freq) {
+void init_sound_stream() {
     PaError err = paNoError;
 
     err = Pa_Initialize();

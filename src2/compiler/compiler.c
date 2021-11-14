@@ -90,6 +90,7 @@ const int64_t PTNS_LOOP[] = {TC_LOOP, PTN_END};
 const int64_t PTNS_LABEL_ONLY[] = {PTN_LABEL, TC_LF, PTN_END};
 const int64_t PTNS_PRINT[] = {TC_PRINT, PTN_LABEL, TC_LF, PTN_END};
 const int64_t PTNS_EXIT[] = {TC_EXIT, TC_LF, PTN_END};
+const int64_t PTNS_INST[] = {PTN_INST, PTN_END};
 
 void assign_to_literal_error_check(tokencode_t tc) {
     tokentype_t type = VAR(tc)->token->type;
@@ -154,7 +155,7 @@ void compile_sub(int64_t *icp, int64_t start, int64_t end) {
         } else if (ptn_cmp(i, PTNS_CPY_EXPR)) {
             assign_to_literal_error_check(tmpvars[1]);
             SliceI64 *exprtcs = make_line_tokencodes(srctcs, i + 2);
-            expr(icp, exprtcs, vars);
+            compile_expr(icp, exprtcs, vars);
 
             put_opcode(icp, OP_CPYP, VAR(tmpvars[1]), 0, 0, 0);
 
@@ -165,23 +166,13 @@ void compile_sub(int64_t *icp, int64_t start, int64_t end) {
         } else if (ptn_cmp(i, PTNS_LOOP)) {
             compile_loop(icp, &i);
 
-        }
+        } else if (ptn_cmp(i, PTNS_INST)) {
+            compile_instruction(icp, &i);
+
+        } 
         // } else if (ptn_cmp(i, TC_IF, PTN_END)) {
         //     i++;
 
-        // } else if (ptn_cmp(i, TC_FUNC, PTN_END)) {
-        //     i++;
-
-        // } else if (ptn_cmp(i, TC_TRACK, PTN_END)) {
-        //     i++;
-
-        // } else if (ptn_cmp(i, TC_FILTER, PTN_END)) {
-        //     i++;
-
-        // } else if (ptn_cmp(i, PTN_INST, PTN_END)) {
-        //     i++;
-
-        // } 
         else if (ptn_cmp(i, PTNS_LABEL_ONLY)) {
             i += 2;
 

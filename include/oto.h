@@ -11,7 +11,6 @@
 #include <time.h>
 
 #include "oto_const.h"
-#include "oto_sound.h"
 
 #define DEFAULT_MAX_TC  4096
 

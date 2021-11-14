@@ -125,7 +125,7 @@ static void expr_sub(int64_t *icp, VectorI64 *rpntcs, VectorPTR *vars) {
 }
 
 /* idxは式の先頭 */
-void expr(int64_t *icp, SliceI64 *exprtcs, VectorPTR *vars) {
+void compile_expr(int64_t *icp, SliceI64 *exprtcs, VectorPTR *vars) {
     VectorI64 *rpntcs = new_vector_i64(DEFAULT_RPN_TC_LIST_SIZE);
     rpn(exprtcs, rpntcs);
 #ifdef DEBUG
@@ -133,5 +133,5 @@ void expr(int64_t *icp, SliceI64 *exprtcs, VectorPTR *vars) {
 #endif
 
     expr_sub(icp, rpntcs, vars);
-    free(rpntcs);
+    free_vector_i64(rpntcs);
 }

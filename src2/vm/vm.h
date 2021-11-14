@@ -12,6 +12,7 @@ typedef int64_t vmvaltype_t;
 vmvaltype_t vmstack_typecheck();
 
 void vmstack_pushi(int64_t i);
+void vmstack_push_initval();
 void vmstack_pushf(double f);
 void vmstack_pushv(Var *v);
 void vmstack_pushp(void *p);

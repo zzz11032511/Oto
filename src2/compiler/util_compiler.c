@@ -81,3 +81,46 @@ SliceI64 *make_begin_end_block(SliceI64 *srctcs, int64_t begin) {
 
     return slice;
 }
+
+void compile_args(int64_t *icp, SliceI64 *argtcs, int64_t max_params) {
+    int64_t idx = 0;
+    int64_t params = 0;
+    tokencode_t tc = slice_i64_get(argtcs, idx);
+
+    while (tc != TC_LF) {
+        int64_t start = idx;
+        int64_t end   = idx;
+        while (slice_i64_get(argtcs, end) != TC_COMMA 
+               && slice_i64_get(argtcs, end) != TC_LF) {
+            end++;
+        }
+
+        if (end - start == 1) {
+            put_opcode(icp, OP_PUSH, VAR(tc), 0, 0, 0);
+            idx += 1;
+
+        } else if (end - start == 0) {
+            put_opcode(icp, OP_PUSH_INITVAL, 0, 0, 0, 0);
+
+        } else {
+            // 引数一つのコンパイル
+            SliceI64 *slice = new_slice_i64_from_slice(argtcs, start, end);
+            compile_expr(icp, slice, vars);
+            idx += slice->length;
+            free_slice_i64(slice);          
+        }
+
+        params++;
+        idx++;
+        tc = slice_i64_get(argtcs, idx);
+    }
+
+    if (params > max_params) {
+        oto_error_exit(OTO_TOO_MANY_ARGUMENTS_ERROR);
+    }
+
+    while (params < max_params) {
+        put_opcode(icp, OP_PUSH_INITVAL, 0, 0, 0, 0);
+        params++;
+    }
+}

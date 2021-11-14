@@ -15,7 +15,6 @@ static struct {
 static int64_t sp = 0;
 
 vmvaltype_t vmstack_typecheck() {
-    DEBUG_IPRINT(sp);
     return vmstack[sp - 1].type;
 }
 
@@ -25,6 +24,15 @@ void vmstack_pushi(int64_t i) {
     }
     vmstack[sp].value.i = i;
     vmstack[sp].type = VM_TY_IMMEDIATE;
+    sp++;
+}
+
+void vmstack_push_initval() {
+    if (sp >= VMSTACK_SIZE) {
+        oto_error_exit(OTO_STACK_OVERFLOW_ERROR);
+    }
+    vmstack[sp].value.i = 0;
+    vmstack[sp].type = VM_TY_INITVAL;
     sp++;
 }
 

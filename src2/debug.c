@@ -46,36 +46,36 @@ static struct operation {
     char *str;
     opcode_t opcode;
 } operations[] = {
-    {"NOP",      OP_NOP      },
-    {"CPYD",     OP_CPYD     }, 
-    {"CPYP",     OP_CPYP     },
-    {"PUSH",     OP_PUSH     },
-    {"PUSHC",    OP_PUSHC    },
-    {"POP",      OP_POP      },
-    {"ADD",      OP_ADD      },
-    {"SUB",      OP_SUB      },
-    {"MUL",      OP_MUL      },
-    {"DIV",      OP_DIV      },
-    {"MOD",      OP_MOD      },
-    {"AND",      OP_AND      },
-    {"OR",       OP_OR       },
-    {"EQ",       OP_EQ       },
-    {"NEQ",      OP_NEQ      },
-    {"LTCMP",    OP_LTCMP    },
-    {"LTEQCMP",  OP_LTEQCMP  },
-    {"RICMP",    OP_RICMP    },
-    {"RIEQCMP",  OP_RIEQCMP  },
-    {"ADD2",     OP_ADD2     },
-    {"SUB2",     OP_SUB2     },
-    {"MUL2",     OP_MUL2     },
-    {"DIV2",     OP_DIV2     },
-    {"MOD2",     OP_MOD2     },
-    {"LOOP",     OP_LOOP     },
-    {"JMP",      OP_JMP      },
-    {"JZ",       OP_JZ       },
-    {"JNZ",      OP_JNZ      },
-    {"PRINT",    OP_PRINT    },
-    {"EXIT",     OP_EXIT     }
+    {"NOP",          OP_NOP          },
+    {"CPYD",         OP_CPYD         }, 
+    {"CPYP",         OP_CPYP         },
+    {"PUSH",         OP_PUSH         },
+    {"PUSH_INITVAL", OP_PUSH_INITVAL },
+    {"POP",          OP_POP          },
+    {"ADD",          OP_ADD          },
+    {"SUB",          OP_SUB          },
+    {"MUL",          OP_MUL          },
+    {"DIV",          OP_DIV          },
+    {"MOD",          OP_MOD          },
+    {"AND",          OP_AND          },
+    {"OR",           OP_OR           },
+    {"EQ",           OP_EQ           },
+    {"NEQ",          OP_NEQ          },
+    {"LTCMP",        OP_LTCMP        },
+    {"LTEQCMP",      OP_LTEQCMP      },
+    {"RICMP",        OP_RICMP        },
+    {"RIEQCMP",      OP_RIEQCMP      },
+    {"ADD2",         OP_ADD2         },
+    {"SUB2",         OP_SUB2         },
+    {"MUL2",         OP_MUL2         },
+    {"DIV2",         OP_DIV2         },
+    {"MOD2",         OP_MOD2         },
+    {"LOOP",         OP_LOOP         },
+    {"JMP",          OP_JMP          },
+    {"JZ",           OP_JZ           },
+    {"JNZ",          OP_JNZ          },
+    {"PRINT",        OP_PRINT        },
+    {"EXIT",         OP_EXIT         }
 };
 
 void print_ic_list(VectorPTR *ic_list) {
@@ -90,7 +90,7 @@ void print_ic_list(VectorPTR *ic_list) {
     uint64_t i = 0;
     while (i < ic_list->length) {
         op = (opcode_t)ic_list->data[i];
-        printf("%5I64d : %10s ", i, operations[op].str);
+        printf("%5I64d : %15s ", i, operations[op].str);
         i++;
 
         v1 = (Var *)ic_list->data[i++];

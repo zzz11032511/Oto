@@ -33,6 +33,10 @@ void exec(VectorPTR *ic_list) {
             vmstack_pushv(VAR(i + 1));
             break;
 
+        case OP_PUSH_INITVAL:
+            vmstack_push_initval();
+            break;
+
         case OP_ADD:
         case OP_SUB:
         case OP_MUL:
@@ -109,7 +113,11 @@ void exec(VectorPTR *ic_list) {
             break;
 
         case OP_PRINT:
-            printf("%f\n", VAR(i + 1)->value.f);
+            if (vmstack_typecheck() == VM_TY_VARPTR) {
+                printf("%f\n", vmstack_popv()->value.f);
+            } else if (vmstack_typecheck() == VM_TY_IMMEDIATE) {
+                printf("%f\n", vmstack_popf());
+            }
             break;
 
         case OP_EXIT:
