@@ -209,6 +209,7 @@ enum {
     OP_JNZ,        // スタックの上が0でないならジャンプ
 
     OP_PRINT,
+    OP_BEEP,
     OP_EXIT
 };
 typedef int64_t opcode_t;

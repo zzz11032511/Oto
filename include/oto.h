@@ -9,6 +9,7 @@
 #include <stdbool.h>
 #include <mymacro.h>
 #include <time.h>
+#include <windows.h>
 
 #include "oto_const.h"
 

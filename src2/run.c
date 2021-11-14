@@ -1,4 +1,5 @@
 #include <oto.h>
+#include <oto_sound.h>
 
 static char *src = NULL;
 static VectorI64 *src_tokens = NULL;
@@ -18,6 +19,7 @@ void oto_init(char *path) {
     init_token_list();
     init_rsvword();
     init_include_file_manager(path);
+    // init_sound_stream();
 }
 
 void oto_run(const char *path) {
@@ -46,6 +48,7 @@ void oto_run(const char *path) {
 }
 
 void oto_exit_process() {
+    // terminate_sound_stream();
     free_vector_i64(src_tokens);
     free_vector_ptr(ic_list);
     free_var_list(var_list);

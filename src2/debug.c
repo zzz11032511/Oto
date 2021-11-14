@@ -75,6 +75,7 @@ static struct operation {
     {"JZ",           OP_JZ           },
     {"JNZ",          OP_JNZ          },
     {"PRINT",        OP_PRINT        },
+    {"BEEP",         OP_BEEP         },
     {"EXIT",         OP_EXIT         }
 };
 

@@ -11,10 +11,10 @@ void compile_instruction(int64_t *icp, int64_t *idx) {
         compile_args(icp, argtcs, 1);
         put_opcode(icp, OP_PRINT, 0, 0, 0, 0);
         break;
-
-    // case TC_BEEP:
-    //     compile_args(icp, argtcs);
-    //     break;
+    case TC_BEEP:
+        compile_args(icp, argtcs, 2);
+        put_opcode(icp, OP_BEEP, 0, 0, 0, 0);
+        break;
     // case TC_PLAY:
     //     compile_args(icp, argtcs);
     //     break;
