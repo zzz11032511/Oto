@@ -117,6 +117,8 @@ void exec(VectorPTR *ic_list) {
                 printf("%f\n", vmstack_popv()->value.f);
             } else if (vmstack_typecheck() == VM_TY_IMMEDIATE) {
                 printf("%f\n", vmstack_popf());
+            } else if (vmstack_typecheck() == VM_TY_INITVAL) {
+                oto_error_exit(OTO_MISSING_ARGUMENTS_ERROR);
             }
             break;
 
