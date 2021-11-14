@@ -69,8 +69,6 @@ static size_t count_operator_len(char *s) {
 
 #define IS_IGNORE_CHAR(c)   (c == ' ' || c == '\t' || c == '\r')
 #define IS_PREPROCESS(c)    (c == '@')
-#define IS_COMMENT_BEGIN(s) (c == '/' && &(c + 1) == '*')
-#define IS_COMMENT_END(s)   (c == '*' && &() == '/')
 
 void tokenize(char *src, VectorI64 *src_tokens) {
     int64_t i = 0;
@@ -85,12 +83,22 @@ void tokenize(char *src, VectorI64 *src_tokens) {
             }
             i += 2;
             continue;
+
+        } else if (src[i] == -29 && src[i + 1] == -128 && src[i + 2] == -128) {
+            // UTF-8の全角スペース
+            i += 3;
+            continue;
+
+        } else if (src[i] == -127 && src[i + 1] == 64) {
+            // Shift-JISの全角スペース
+            i += 2;
+            continue;
+
         }
 
         size_t len = 0;
         tokentype_t type = -1;
         if (IS_PREPROCESS(src[i])) {
-            // pre-process
             preprocess(src, i, src_tokens);
             while (src[i] != '\n' && src[i] != '\0') {
                 i++;
