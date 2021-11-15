@@ -80,13 +80,16 @@ void exec(VectorPTR *ic_list) {
             break;
 
         case OP_LOOP:
-            tmpi1 = (int64_t)VAR(i + 3);
+            tmpi1 = (int64_t)ic_list->data[i + 3];
             tmpi1++;
             ic_list->data[i + 3] = (void *)tmpi1;
 
             tmpi2 = (int64_t)VAR(i + 2)->value.f;
 
             if (tmpi1 > tmpi2) {
+                // ループカウンタを初期化する
+                ic_list->data[i + 3] = 0;
+
                 i = (int64_t)VAR(i + 1);
                 continue;
             }
