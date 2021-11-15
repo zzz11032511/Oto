@@ -1,6 +1,7 @@
 #pragma once
 
 #include <math.h>
+#include <unistd.h>
 #include <portaudio.h>
 
 // #define MAX_POLYPHONIC 8
@@ -11,17 +12,9 @@
 #define MONO_CH   1
 #define STEREO_CH 2
 
-#ifndef PI
-    #define PI          3.14159265358979323846
-#endif
-
-#ifndef M_SQRT2
-    #define M_SQRT2		1.41421356237309504880
-#endif
-
-#ifndef M_SQRT1_2
-    #define M_SQRT1_2	0.70710678118654752440
-#endif
+#define PI 3.14159265358979323846
+#define M_SQRT2   1.41421356237309504880
+#define M_SQRT1_2 0.70710678118654752440
 
 typedef enum {
     SINE_WAVE = 0,
@@ -54,10 +47,9 @@ typedef struct {
     int8_t volume;
 } Playdata;
 
-void init_sound_stream();
-void start_sound_stream();
-void stop_sound_stream();
+void init_sound_stream(int64_t sample_rate);
 void terminate_sound_stream();
-int64_t get_stream_status();
 
-void update_out_data(Playdata data);
+bool is_stream_working();
+
+void write_out_data(Playdata data);

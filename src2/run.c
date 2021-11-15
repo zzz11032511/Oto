@@ -19,7 +19,7 @@ void oto_init(char *path) {
     init_token_list();
     init_rsvword();
     init_include_file_manager(path);
-    init_sound_stream();
+    init_sound_stream(44100);
 }
 
 void oto_run(const char *path) {

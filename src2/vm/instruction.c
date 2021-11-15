@@ -60,12 +60,14 @@ void oto_instr_play() {
     data.sound   = NULL;
     data.volume  = 100;
 
-    start_sound_stream();
-    update_out_data(data);
-
-    while (get_stream_status()) {
-        // Pa_Sleep(1);
-    }
+    write_out_data(data);
+    printf("[Play] ");
+    printf("frequency : %8.3f, length : %2.2f, velocity : %3I64d, wave : %3d\n", 
+           freq, duration, 100, 1);
     
-    stop_sound_stream();
+
+    while (is_stream_working()) {
+        // Pa_Sleep(1);
+        usleep(100);
+    }
 }
