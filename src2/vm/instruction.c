@@ -60,8 +60,12 @@ void oto_instr_play() {
     data.sound   = NULL;
     data.volume  = 100;
 
+    start_sound_stream();
     update_out_data(data);
 
-    Sleep(duration * 1000);
-
+    while (get_stream_status()) {
+        // Pa_Sleep(1);
+    }
+    
+    stop_sound_stream();
 }

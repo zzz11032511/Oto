@@ -55,6 +55,9 @@ typedef struct {
 } Playdata;
 
 void init_sound_stream();
+void start_sound_stream();
+void stop_sound_stream();
 void terminate_sound_stream();
+int64_t get_stream_status();
 
 void update_out_data(Playdata data);
