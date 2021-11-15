@@ -32,9 +32,13 @@ static void init_out_data(int64_t sample_rate) {
     out_data.sample_rate = sample_rate;
 }
 
-static bool stream_working = false;
-bool is_stream_working() {
-    return stream_working;
+static bool stream_active_flag = false;
+bool is_stream_active() {
+    return stream_active_flag;
+}
+
+void set_stream_active_flag(bool b) {
+    stream_active_flag = b;
 }
 
 void write_out_data(Playdata data) {
@@ -45,8 +49,6 @@ void write_out_data(Playdata data) {
         out_data.freq[i] = data.freq[i];
     }
     out_data.volume = data.volume;
-
-    stream_working = true;
 }
 
 #define FADE_RANGE 0.05
@@ -84,7 +86,7 @@ static int play_callback(const void *inputBuffer,
     }
 
     if (data->t > data->length) {
-        stream_working = false;
+        stream_active_flag = false;
     }
 
     return 0;

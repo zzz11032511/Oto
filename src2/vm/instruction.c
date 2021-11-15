@@ -65,9 +65,8 @@ void oto_instr_play() {
     printf("frequency : %8.3f, length : %2.2f, velocity : %3I64d, wave : %3d\n", 
            freq, duration, 100, 1);
     
-
-    while (is_stream_working()) {
-        // Pa_Sleep(1);
-        usleep(100);
+    set_stream_active_flag(true);
+    while (is_stream_active()) {
+        // usleep(10);
     }
 }

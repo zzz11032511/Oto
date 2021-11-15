@@ -30,3 +30,38 @@ void compile_loop(int64_t *icp, int64_t *idx) {
 
     free_slice_i64(slice);
 }
+
+// void compile_if(int64_t *icp, int64_t *idx) {
+//     int64_t idx2 = *idx + 1;
+
+//     bool not_flag = false;
+//     if (SRC(idx2) == TC_NOT) {
+//         not_flag = true;
+//         idx2++;
+//     }
+
+//     SliceI64 *slice = make_args_enclosed_br(srctcs, idx2);
+//     compile_expr(icp, slice, vars);
+//     idx2 += slice->length;
+//     free_slice_i64(slice);
+
+//     int64_t jmp_icp = *icp;
+//     put_opcode(icp, OP_JZ, 0, 0, 0, 0);
+
+//     // ifの中のコンパイル
+//     slice = make_begin_end_block(srctcs, idx2);
+//     SliceI64 *srctcs_org = srctcs;
+//     srctcs = slice;
+//     compile_sub(icp, 0, slice->length);
+//     srctcs = srctcs_org;
+
+//     idx2 += slice->length;
+//     if (SRC(idx2) == TC_ELSIF) {
+
+//     } else if (SRC(idx2) == TC_ELSE) {
+        
+//     } else {
+//         if ()
+//     }
+
+// }

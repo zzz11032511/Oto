@@ -50,6 +50,7 @@ typedef struct {
 void init_sound_stream(int64_t sample_rate);
 void terminate_sound_stream();
 
-bool is_stream_working();
+bool is_stream_active();
+void set_stream_active_flag(bool b);
 
 void write_out_data(Playdata data);

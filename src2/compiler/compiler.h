@@ -14,6 +14,7 @@ void put_opcode(int64_t *icp, opcode_t op, Var *v1, Var *v2, Var *v3, Var *v4);
 
 void compile_sub(int64_t *icp, int64_t start, int64_t end);
 void compile_loop(int64_t *icp, int64_t *idx);
+void compile_if(int64_t *icp, int64_t *idx);
 void compile_expr(int64_t *icp, SliceI64 *exprtcs, VectorPTR *vars);
 void compile_args(int64_t *icp, SliceI64 *argtcs, int64_t max_params);
 void compile_instruction(int64_t *icp, int64_t *idx);
