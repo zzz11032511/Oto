@@ -1,0 +1,33 @@
+@include "include/doremi.oto"
+
+printflag = 0
+
+i = 1
+LOOP [100] BEGIN
+    IF [i % 3 == 0 AND i % 5 == 0] THEN
+        PLAY Do2, 0.05
+        if [printflag == 1] THEN
+            print 33335555
+        END
+
+    ELSIF [i % 3 == 0] THEN
+        PLAY Do1, 0.05
+        if [printflag == 1] THEN
+            print 3333
+        END
+
+    ELSIF [i % 5 == 0] THEN
+        PLAY Mi1, 0.05
+        if [printflag == 1] THEN
+            print 5555
+        END
+
+    ELSE
+        PLAY So1, 0.05
+        if [printflag == 1] THEN
+            print i
+        END
+        
+    END
+    i = i + 1
+END

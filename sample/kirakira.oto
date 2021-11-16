@@ -1,0 +1,42 @@
+@include "include/doremi.oto"
+
+PLAY Do2, 0.5
+PLAY Re2, 0.5
+PLAY Mi2, 0.5
+PLAY Fa2, 0.5
+PLAY Mi2, 0.5
+PLAY Re2, 0.5
+PLAY Do2, 0.5
+
+PLAY 0, 0.5
+
+PLAY Mi2, 0.5
+PLAY Fa2, 0.5
+PLAY So2, 0.5
+PLAY La2, 0.5
+PLAY So2, 0.5
+PLAY Fa2, 0.5
+PLAY Mi2, 0.5
+
+PLAY 0, 0.5
+
+PLAY Do2, 0.9
+PLAY 0, 0.1
+PLAY Do2, 0.9
+PLAY 0, 0.1
+PLAY Do2, 0.9
+PLAY 0, 0.1
+PLAY Do2, 0.9
+PLAY 0, 0.1
+
+PLAY Do2, 0.25
+PLAY Do2, 0.25
+PLAY Re2, 0.25
+PLAY Re2, 0.25
+PLAY Mi2, 0.25
+PLAY Mi2, 0.25
+PLAY Fa2, 0.25
+PLAY Fa2, 0.25
+PLAY Mi2, 0.5
+PLAY Re2, 0.5
+PLAY Do2, 0.5

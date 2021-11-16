@@ -1,0 +1,9 @@
+i = 10
+LOOP [4] BEGIN
+    j = 1
+    LOOP [100] BEGIN
+        PLAY i * j, 0.005
+        j = j + 1
+    END
+    i = i + 5
+END

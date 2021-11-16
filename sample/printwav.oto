@@ -1,9 +1,0 @@
-@include include/wave
-@include include/scale
-
-s = SOUND[SINE]
-
-s -> FADE_IN[1] -> TREMOLO[4, 0.3] \
-  -> FADE_OUT[1] -> s
-
-PRINTWAV C5, 3, 100, s
