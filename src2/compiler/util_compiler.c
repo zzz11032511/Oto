@@ -172,7 +172,7 @@ void print_slice_srcs(SliceI64 *srctcs) {
     printf("\n[slice]\n");
 
     for (int64_t i = 0; i < srctcs->length; i++) {
-        printf("%d : %s\n", i, VAR(slice_i64_get(srctcs, i))->token->str);
+        printf("%I64d : %s\n", i, VAR(slice_i64_get(srctcs, i))->token->str);
     }
     printf("\n");
 }
