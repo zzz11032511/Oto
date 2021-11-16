@@ -96,6 +96,7 @@ int32_t strncmp_cs(const char *str1, const char *str2, size_t maxcount) {
 
 int32_t strcmp_cs(const char *str1, const char *str2) {
     int64_t i = 0;
+    
     while (to_lower(str1[i]) == to_lower(str2[i])) {
         i++;
         if (str1[i] == '\0' && str2[i] == '\0') {
@@ -104,4 +105,11 @@ int32_t strcmp_cs(const char *str1, const char *str2) {
     }
 
     return str1[i] - str2[i];
+}
+
+bool is_str_equal_cs(const char *str1, size_t s1len, const char *str2, size_t s2len) {
+    if (s1len == s2len && strncmp_cs(str1, str2, s1len) == 0) {
+        return true;
+    }
+    return false;
 }

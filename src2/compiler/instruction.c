@@ -2,8 +2,8 @@
 
 #include "compiler.h"
 
-void compile_instruction(int64_t *icp, int64_t *idx) {
-    tokencode_t instr = SRC(*idx);
+void compile_instruction(int64_t *icp, SliceI64 *srctcs, int64_t *idx) {
+    tokencode_t instr = slice_i64_get(srctcs, *idx);
     SliceI64 *argtcs = make_line_tokencodes(srctcs, *idx + 1);
     
     switch (instr) {

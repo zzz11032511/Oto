@@ -62,6 +62,9 @@ int32_t strncmp_cs(const char *str1, const char *str2, size_t maxcount);
 /* 大文字小文字を区別しないstrcmp() */
 int32_t strcmp_cs(const char *str1, const char *str2);
 
+/* 大文字小文字を区別しないis_equal()<string> */
+bool is_str_equal_cs(const char *str1, size_t s1len, const char *str2, size_t s2len);
+
 /* Vector<uint64_t> */
 typedef struct {
     int64_t *data;

@@ -52,9 +52,9 @@ SliceI64 *make_args_enclosed_br(SliceI64 *srctcs, int64_t sqbropn) {
 
 SliceI64 *make_begin_end_block(SliceI64 *srctcs, int64_t begin) {
     int64_t start = begin + 1;
-    int64_t end = begin;
+    int64_t end = begin + 1;
 
-    int64_t nest = 0;
+    int64_t nest = 1;
     for (;;) {
         tokencode_t tc = srctcs->data[end];
 
@@ -66,6 +66,49 @@ SliceI64 *make_begin_end_block(SliceI64 *srctcs, int64_t begin) {
         }
 
         if (tc == TC_END && nest == 0) {
+            break;
+        } else if (end >= srctcs->length) {
+            oto_error_exit(OTO_INVALID_SYNTAX_ERROR);
+        }
+
+        end++;
+    }
+
+    SliceI64 *slice = new_slice_i64_from_slice(srctcs, start, end);
+    if (IS_NULL(slice)) {
+        oto_error_exit(OTO_INTERNAL_ERROR);
+    }
+
+    return slice;
+}
+
+/* then ~ elsif, elseのばしょを返す */
+SliceI64 *make_ifthen_block(SliceI64 *srctcs, int64_t then) {
+    int64_t start = then + 1;
+    int64_t end = then;
+
+    for (;;) {
+        tokencode_t tc = srctcs->data[end];
+
+        // ブロック内のif-end, begin-endを飛ばす
+        if (tc == TC_IF || tc == TC_BEGIN) {
+            int64_t nest = 0;
+            for (;;) {
+                tc = srctcs->data[end];
+                if (tc == TC_IF || tc == TC_BEGIN) {
+                    nest++;
+                } else if (tc == TC_END) {
+                    nest--;
+                }
+
+                if (tc == TC_END && nest == 0) {
+                    break;
+                } else if (end >= srctcs->length) {
+                    oto_error_exit(OTO_INVALID_SYNTAX_ERROR);
+                }  
+                end++;
+            }
+        } else if (tc == TC_ELSIF || tc == TC_ELSE || tc == TC_END) {
             break;
         } else if (end >= srctcs->length) {
             oto_error_exit(OTO_INVALID_SYNTAX_ERROR);
@@ -123,4 +166,13 @@ void compile_args(int64_t *icp, SliceI64 *argtcs, int64_t max_params) {
         put_opcode(icp, OP_PUSH_INITVAL, 0, 0, 0, 0);
         params++;
     }
+}
+
+void print_slice_srcs(SliceI64 *srctcs) {
+    printf("\n[slice]\n");
+
+    for (int64_t i = 0; i < srctcs->length; i++) {
+        printf("%d : %s\n", i, VAR(slice_i64_get(srctcs, i))->token->str);
+    }
+    printf("\n");
 }

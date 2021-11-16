@@ -78,7 +78,18 @@ void tokenize(char *src, VectorI64 *src_tokens) {
             continue;
         
         } else if (src[i] == '/' && src[i + 1] == '*') {
-            while (!(src[i] == '*' && src[i + 1] == '/')) {
+            int64_t nest = 0;
+            for (;;) {
+                if (src[i] == '/' && src[i + 1] == '*') {
+                    nest++;
+                } else if (src[i] == '*' && src[i + 1] == '/') {
+                    nest--;
+                    if (nest == 0) {
+                        break;
+                    } else if (src[i] == 0) {
+                        oto_error_exit(OTO_SYNTAX_ERROR);
+                    }
+                }
                 i++;
             }
             i += 2;

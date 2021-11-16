@@ -128,7 +128,7 @@ static tokencode_t get_rsvword_tc(char *str, size_t len) {
     // TODO: 厳密にテストするべき
     while (rsvwords[i].str != NULL) {
         // 予約語については大文字小文字を区別しない
-        if (strncmp_cs(rsvwords[i].str, str, rsvwords[i].len) == 0) {
+        if (is_str_equal_cs(str, len, rsvwords[i].str, rsvwords[i].len)) {
             return rsvwords[i].tc;
         }
         i++;
