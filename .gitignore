@@ -4,11 +4,8 @@
 *.dll
 
 build/
-src/oldsound/
+oldsrc/
 .vscode/
-
-makefile_sub
 
 aaa.oto
 bbb.oto
-audiotest.c

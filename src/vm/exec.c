@@ -1,168 +1,142 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <windows.h>
+#include <oto.h>
 
-#include "operation/operation.h"
-#include "../sound/sound_io.h"
-#include "../opcode.h"
-#include "../error/error.h"
-#include "../debug/debug.h"
-#include "../ic/ic.h"
-#include "../variable/variable.h"
-#include "../variable/var_stack.h"
-#include "../variable/type.h"
+#include "vm.h"
 
-extern Var *ic[];
+#define VAR(tc)  ((Var *)(ic_list->data[tc]))
 
-#define NEXT_OPERATION(icp) icp += 5; continue;
+void exec(VectorPTR *ic_list) {
+    int64_t i = 0;
+    int64_t end = ic_list->length;
 
-void exec() {
-    Var **icp = ic;
-    Var **base = ic;
+    double  tmpf  = 0;
+    int64_t tmpi1 = 0;
+    int64_t tmpi2 = 0;
 
-    struct var_stack stack;
-    stack.sp = 0;
+    while (i < end) {
+        switch ((opcode_t)ic_list->data[i]) {
+        case OP_CPYD:
+            VAR(i + 1)->type    = TY_FLOAT;
+            VAR(i + 1)->value.f = VAR(i + 2)->value.f;
+            break;
 
-    Var t1;
-    Var t2;
-    Var t3;
+        case OP_CPYP:
+            if (vmstack_typecheck() == VM_TY_VARPTR) {
+                tmpf = vmstack_popv()->value.f;
+            } else if (vmstack_typecheck() == VM_TY_IMMEDIATE) {
+                tmpf = vmstack_popf();
+            }
+            VAR(i + 1)->type    = TY_FLOAT;
+            VAR(i + 1)->value.f = tmpf;
+            break;
 
-    // ループの制御変数
-    uint64_t loop_var = 0;
-    uint64_t loop_cnt = 0;
+        case OP_PUSH:
+            vmstack_pushv(VAR(i + 1));
+            break;
 
-    uint64_t samples_per_sec = 20000;
+        case OP_PUSH_INITVAL:
+            vmstack_push_initval();
+            break;
 
-    while (1) {
-        switch ((uint64_t)icp[0]) {
-        case OpCpyD:
-            icp[1]->type = TyFloat;
-            icp[1]->value.fVal = icp[2]->value.fVal;
-            NEXT_OPERATION(icp);
+        case OP_ADD:
+        case OP_SUB:
+        case OP_MUL:
+        case OP_DIV:
+        case OP_MOD:
+        case OP_AND:
+        case OP_OR:
+        case OP_EQ:
+        case OP_NEQ:
+        case OP_LTCMP:
+        case OP_LTEQCMP:
+        case OP_RICMP:
+        case OP_RIEQCMP:
+            alu((opcode_t)ic_list->data[i]);
+            break;
 
-        case OpCpyP:
-            t1 = vpop(&stack);
-            icp[1]->type = TyFloat;
-            icp[1]->value.fVal = t1.value.fVal;
-            NEXT_OPERATION(icp);           
-        
-        case OpPush:
-            vpush(&stack, *icp[1]);
-            NEXT_OPERATION(icp);
+        case OP_ADD2:
+            VAR(i + 1)->type    = TY_FLOAT;
+            VAR(i + 1)->value.f = VAR(i + 2)->value.f + VAR(i + 3)->value.f;
+            break;
 
-        case OpPushC:
-            const_vpush(&stack, (uint64_t)icp[1], (uint64_t)icp[2]);
-            NEXT_OPERATION(icp);
+        case OP_SUB2:
+            VAR(i + 1)->type    = TY_FLOAT;
+            VAR(i + 1)->value.f = VAR(i + 2)->value.f - VAR(i + 3)->value.f;
+            break;
 
-        case OpDefOsc:
-            define_oscillator(icp[1], icp[2]);
-            NEXT_OPERATION(icp);
+        case OP_MUL2:
+            VAR(i + 1)->type    = TY_FLOAT;
+            VAR(i + 1)->value.f = VAR(i + 2)->value.f * VAR(i + 3)->value.f;
+            break;
 
-        case OpDefS:
-            define_sound(icp[1], icp[2]);
-            NEXT_OPERATION(icp);
+        case OP_DIV2:
+            VAR(i + 1)->type    = TY_FLOAT;
+            VAR(i + 1)->value.f = VAR(i + 2)->value.f / VAR(i + 3)->value.f;
+            break;
 
-        case OpCpyS:
-            copy_sound(icp[1], icp[2]);
-            NEXT_OPERATION(icp);
+        case OP_MOD2:
+            VAR(i + 1)->type    = TY_FLOAT;
+            VAR(i + 1)->value.f = 
+                (int64_t)VAR(i + 2)->value.f % (int64_t)VAR(i + 3)->value.f;
+            break;
 
-        case OpFilter:
-            connect_filter(&stack, icp[1], icp[2]);
-            NEXT_OPERATION(icp);
+        case OP_LOOP:
+            tmpi1 = (int64_t)ic_list->data[i + 3];
+            tmpi1++;
+            ic_list->data[i + 3] = (void *)tmpi1;
 
-        case OpAdd:
-        case OpSub:
-        case OpMul:
-        case OpDiv:
-        case OpMod:
-        case OpAnd:
-        case OpOr:
-            t1 = vpop(&stack);
-            t2 = vpop(&stack);
-            t3 = calculation(t2, t1, (uint64_t)icp[0]);
-            vpush(&stack, t3);
-            NEXT_OPERATION(icp);
+            tmpi2 = (int64_t)VAR(i + 2)->value.f;
 
-        case OpAdd2:
-        case OpSub2:
-        case OpMul2:
-        case OpDiv2:
-        case OpMod2:
-            icp[1]->type = TyFloat;
-            icp[1]->value.fVal = 
-                calculation(*icp[2], *icp[3], (uint64_t)icp[0]).value.fVal;
-            NEXT_OPERATION(icp);
+            if (tmpi1 > tmpi2) {
+                // ループカウンタを初期化する
+                ic_list->data[i + 3] = 0;
 
-        case OpEq:
-        case OpNEq:
-        case OpLtCmp:
-        case OpLtEqCmp:
-        case OpRiCmp:
-        case OpRiEqCmp:
-            t1 = vpop(&stack);
-            t2 = vpop(&stack);
-            t3.value.iVal = compare(t2, t1, (uint64_t)icp[0]);
-            vpush(&stack, t3);
-            NEXT_OPERATION(icp);
-
-        case OpLoop:
-            loop_var = (uint64_t)icp[3];
-            loop_var++;
-            icp[3] = (Var *)loop_var;
-
-            loop_cnt = (uint64_t)icp[2]->value.fVal;
-            
-            if (loop_var > loop_cnt) {
-                icp = base + (uint64_t)icp[1];
+                i = (int64_t)VAR(i + 1);
                 continue;
             }
-            NEXT_OPERATION(icp);
+            break;
 
-        case OpJmp:
-            icp = base + (uint64_t)icp[1];
+        case OP_JMP:
+            i = (int64_t)VAR(i + 1);
             continue;
 
-        case OpJz:
-            t1 = vpop(&stack);
-            if (t1.value.iVal == 0) {
-                icp = base + (uint64_t)icp[1];
+        case OP_JZ:
+            tmpi1 = vmstack_popi();
+            if (tmpi1 == 0) {
+                i = (int64_t)VAR(i + 1);
                 continue;
             }
-            NEXT_OPERATION(icp);
+            break;
 
-        case OpJnz:
-            t1 = vpop(&stack);
-            if (t1.value.iVal != 0) {
-                icp = base + (uint64_t)icp[1];
+        case OP_JNZ:
+            tmpi1 = vmstack_popi();
+            if (tmpi1 != 0) {
+                i = (int64_t)VAR(i + 1);
                 continue;
             }
-            NEXT_OPERATION(icp);
+            break;
 
-        case OpPrint:
-            print_var(&stack);
-            NEXT_OPERATION(icp);
+        case OP_PRINT:
+            oto_instr_print();
+            break;
 
-        case OpBeep:
-            beep(&stack);
-            NEXT_OPERATION(icp);
+        case OP_BEEP:
+            oto_instr_beep();
+            break;
 
-        case OpPlay:
-            play(&stack, samples_per_sec);
-            NEXT_OPERATION(icp);
+        case OP_PLAY:
+            oto_instr_play();
+            break;
 
-        case OpPrintWav:
-            print_wave(&stack, samples_per_sec);
-            NEXT_OPERATION(icp);
-            
-        case OpExit:
+        case OP_EXIT:
             return;
 
-        case OpNop:
-            NEXT_OPERATION(icp);
+        case OP_NOP:
+            break;
 
         default:
-            call_error(UNKNOWN_ERROR, "exec()");
+            oto_error_exit(OTO_UNKNOWN_ERROR);
         }
+
+        i += 5;
     }
 }

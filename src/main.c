@@ -1,18 +1,11 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <string.h>
-
-#include "run.h"
-#include "error/error.h"
+#include <oto.h>
 
 void usage(const char *name) {
     fprintf(stderr, "Example : %s XXX.oto\n", name);
     return;
 }
 
-int main(int argc, const char **argv) {
+int main(int argc, char **argv) {
     uint32_t i = 1;
 
     if (argc == 1) {
@@ -32,10 +25,8 @@ int main(int argc, const char **argv) {
         exit(1);
     }
 
-    set_filename(argv[i]);
-    run(argv[i]);
-
-    oto_quit(EXIT_SUCCESS);
+    oto_init(argv[i]);
+    oto_run(argv[i]);
 
     return 0;
 }

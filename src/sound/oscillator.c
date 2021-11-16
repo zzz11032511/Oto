@@ -1,29 +1,22 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "oscillator.h"
-#include "otomath.h"
-#include "../util/util.h"
-#include "../error/error.h"
+#include <oto.h>
+#include <oto_sound.h>
 
 Oscillator *new_oscillator(basicwave_t wave, Oscillator *fm, Oscillator *am) {
-    Oscillator *osc = MYMALLOC1(Oscillator);
-    if (osc == NULL) {
-        call_error(UNKNOWN_ERROR, "new_oscillator()");
+    Oscillator *oscil = MYMALLOC1(Oscillator);
+    if (IS_NULL(oscil)) {
+        oto_error_exit(OTO_INTERNAL_ERROR);
     }
 
-    osc->wave = wave;
-    osc->fm   = fm;
-    osc->am   = am;
+    oscil->wave = wave;
+    oscil->fm = fm;
+    oscil->am = am;
+    oscil->fm_mod_freq = 1;
+    oscil->am_mod_freq = 1;
 
-    return osc;
+    return oscil;
 }
 
-void free_oscillator(Oscillator *osc) {
-    free(osc);
-}
-
-static float osc_sine_wave(float freq, uint64_t t, uint8_t volume, float phase,
+static float osc_sine_wave(float freq, uint64_t t, float phase,
                            uint64_t sampling_freq) {
     return volume * sin(2 * PI * freq * t / sampling_freq + phase);
 }
@@ -86,18 +79,9 @@ static float osc_output_wave_sub(Oscillator *osc, float freq, uint64_t t,
         d = osc_white_noise(freq, t, volume, sampling_freq);
         break;
     default:
-        call_error(UNKNOWN_ERROR, "osc_output_wave()");
     }    
 }
 
-float osc_output_wave(Oscillator *osc, float freq, uint64_t t, uint8_t volume,
-                      uint64_t sampling_freq) {
-    if (osc->fm != NULL) {
-        // fm
-    }
-    if (osc->am != NULL) {
-        // am
-    }
+float osc_output_wave(Oscillator *osc, float freq, uint64_t t) {
 
-    return osc_output_wave_sub(osc, freq, t, volume, sampling_freq);
 }

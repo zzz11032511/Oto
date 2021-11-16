@@ -7,7 +7,7 @@ SRCSLIST := main.c  run.c token.c debug.c error.c \
 
 PROGRAM       := oto
 DEBUGPROGRAM  := debug
-SRCDIR        := src2
+SRCDIR        := src
 OUTDIR        := build
 LIBDIR        := lib
 INCLUDEDIR    := include
