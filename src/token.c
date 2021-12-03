@@ -183,47 +183,64 @@ static Var *new_variable(Token *token, tokentype_t type) {
     return var;
 }
 
+void add_new_variable(VectorPTR *var_list, Token *new_token) {
+    Var *new_var = NULL;
+
+    switch (new_token->type) {
+    case TK_TY_SYMBOL:
+    case TK_TY_RSVWORD:
+        new_var = new_variable(new_token, TY_UNABLE);
+        break;
+    
+    case TK_TY_VARIABLE:
+        new_var = new_variable(new_token, TY_VOID);
+        break;
+
+    case TK_TY_LITERAL:
+        new_var = new_variable(new_token, TY_CONST);
+        break;
+
+    default:
+        return;
+    }
+
+    if (IS_NULL(new_var)) {
+        free(var_list);
+        oto_error_exit(OTO_INTERNAL_ERROR);
+    }
+
+    if (new_token->type == TK_TY_LITERAL) {
+        new_var->value.f = strtod(new_token->str, 0);
+    }
+
+    vector_ptr_append(var_list, (void *)new_var);
+}
+
 VectorPTR *make_var_list() {
     VectorPTR *var_list = new_vector_ptr(token_list->length);
     if (IS_NULL(var_list)) {
         oto_error_exit(OTO_INTERNAL_ERROR);
     }
 
-    Token *now_token = NULL;    
-    Var *new_var = NULL;
     for (int64_t i = 0; i < token_list->length; i++) {
-        now_token = ((Token *)token_list->data[i]);
-
-        switch (now_token->type) {
-        case TK_TY_SYMBOL:
-        case TK_TY_RSVWORD:
-            new_var = new_variable(now_token, TY_UNABLE);
-            break;
-        
-        case TK_TY_VARIABLE:
-            new_var = new_variable(now_token, TY_VOID);
-            break;
-
-        case TK_TY_LITERAL:
-            new_var = new_variable(now_token, TY_CONST);
-            break;
-
-        default:
-            return NULL;
-        }
-        if (IS_NULL(new_var)) {
-            free(var_list);
-            oto_error_exit(OTO_INTERNAL_ERROR);
-        }
-
-        if (now_token->type == TK_TY_LITERAL) {
-            new_var->value.f = strtod(now_token->str, 0);
-        }
-
-        vector_ptr_append(var_list, (void *)new_var);
+        add_new_variable(var_list, ((Token *)token_list->data[i]));
     }
 
     return var_list;
+}
+
+/**
+ * REPL専用
+ * 前回から追加されたTokenに対応する変数を作る
+ */
+void update_var_list(VectorPTR *var_list) {
+    if (IS_NULL(var_list)) {
+        oto_error_exit(OTO_INTERNAL_ERROR);
+    }
+
+    for (int64_t i = var_list->length; i < token_list->length; i++) {
+        add_new_variable(var_list, ((Token *)token_list->data[i]));
+    }
 }
 
 #define IS_HEAP_TYPE(type) \

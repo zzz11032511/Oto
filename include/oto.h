@@ -144,6 +144,9 @@ void oto_run(const char *path);
 void oto_exit_process();
 void oto_error_exit(errorcode_t err);
 
+// Read-Eval-Print Loop
+void repl();
+
 void set_timecount_flag(bool flag);
 
 /* token.c */
@@ -155,6 +158,8 @@ tokencode_t allocate_tc(char *str, size_t len, tokentype_t type);
 bool is_rsvword(char *str, size_t len);
 
 VectorPTR *make_var_list();
+void add_new_variable(VectorPTR *var_list, Token *new_token);
+void update_var_list(VectorPTR *var_list);
 void free_var_list(VectorPTR *var_list);
 
 /* lexer.c */

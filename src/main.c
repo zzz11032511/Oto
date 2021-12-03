@@ -9,8 +9,9 @@ int main(int argc, char **argv) {
     uint32_t i = 1;
 
     if (argc == 1) {
-        usage(argv[0]);
-        exit(0);
+        oto_init("");
+        repl();
+        return 0;
     }
 
     // 実行時間表示

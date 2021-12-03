@@ -56,11 +56,40 @@ void oto_exit_process() {
     free(src);
 
 #ifdef DEBUG
-    printf("success\n");
 #endif
+    printf("success\n");
 }
 
 void oto_error_exit(errorcode_t err) {
     print_error(err);
     exit(EXIT_FAILURE);
+}
+
+#define REPL_STR_BUFSIZE 10000
+void repl() {
+    char str[REPL_STR_BUFSIZE] = {0};
+
+    var_list = make_var_list();
+    while (true) {
+        printf(">>> ");
+        fgets(str, REPL_STR_BUFSIZE, stdin);
+        
+        int i = strlen(str);
+        if (str[i - 1] == '\n') {
+            str[i - 1] = 0;
+        }
+
+        if (strncmp_cs(str, "EXIT", 4) == 0) {
+            break;
+        }
+
+        src_tokens = lexer(str);
+        update_var_list(var_list);
+        ic_list = compile(src_tokens, var_list);
+        
+        exec(ic_list);
+
+        free_vector_i64(src_tokens);
+        free_vector_ptr(ic_list);
+    }
 }
