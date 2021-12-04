@@ -73,6 +73,10 @@ void print_error(errorcode_t err) {
     case OTO_SOUND_PLAYER_ERROR:
         fprintf(stderr, "Sound player error\n");
         break;
+    
+    case OTO_REPL_ERROR:
+        fprintf(stderr, "REPLモードでは実行できない命令です\n");
+        break;
 
     default:
         break;

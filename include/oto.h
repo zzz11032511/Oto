@@ -148,6 +148,8 @@ void oto_error_exit(errorcode_t err);
 void repl();
 
 void set_timecount_flag(bool flag);
+void set_repl_flag(bool flag);
+bool get_repl_flag();
 
 /* token.c */
 

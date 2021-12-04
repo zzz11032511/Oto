@@ -73,6 +73,9 @@ build: $(TARGET)
 run: $(TARGET)
 	$(TARGET) $(TESTSRCPATH)
 
+repl: $(TARGET)
+	$(TARGET)
+
 debug: $(DEBUGTARGET)
 	$(DEBUGTARGET) $(TESTSRCPATH)
 

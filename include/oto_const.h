@@ -25,7 +25,9 @@ enum {
 
     OTO_STACK_OVERFLOW_ERROR,
     OTO_ZERO_DIVISION_ERROR,
-    OTO_SOUND_PLAYER_ERROR
+    OTO_SOUND_PLAYER_ERROR,
+
+    OTO_REPL_ERROR
 };
 typedef int64_t errorcode_t;
 

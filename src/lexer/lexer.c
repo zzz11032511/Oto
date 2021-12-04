@@ -88,6 +88,7 @@ void tokenize(char *src, VectorI64 *src_tokens) {
                         break;
                     } else if (src[i] == 0) {
                         oto_error_exit(OTO_SYNTAX_ERROR);
+                        return;
                     }
                 }
                 i++;
@@ -110,7 +111,11 @@ void tokenize(char *src, VectorI64 *src_tokens) {
         size_t len = 0;
         tokentype_t type = -1;
         if (IS_PREPROCESS(src[i])) {
-            preprocess(src, i, src_tokens);
+            if (get_repl_flag() == true) {
+                oto_error_exit(OTO_REPL_ERROR);
+            } else {
+                preprocess(src, i, src_tokens);
+            }
             while (src[i] != '\n' && src[i] != '\0') {
                 i++;
             }

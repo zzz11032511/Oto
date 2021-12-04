@@ -11,6 +11,15 @@ void set_timecount_flag(bool flag) {
     timecount_flag = flag;
 }
 
+static bool repl_flag = false;
+void set_repl_flag(bool flag) {
+    repl_flag = flag;
+}
+
+bool get_repl_flag() {
+    return repl_flag;
+}
+
 void oto_init(char *path) {
     if (atexit(oto_exit_process) != 0) {
         exit(EXIT_FAILURE);
@@ -56,13 +65,24 @@ void oto_exit_process() {
     free(src);
 
 #ifdef DEBUG
-#endif
     printf("success\n");
+#endif
 }
 
 void oto_error_exit(errorcode_t err) {
     print_error(err);
     exit(EXIT_FAILURE);
+}
+
+void print_help() {
+    printf("\n");
+    printf("- 操作方法 -\n");
+    printf("終了するときは, 「EXIT」と打つか, Ctrl+Cを押してください\n");
+    printf("- コマンド一覧 -\n");
+    printf("PLAY  <周波数>, <音の長さ>, <音の大きさ>, <音の種類>\n");
+    printf("BEEP  <周波数>, <音の長さ>\n");
+    printf("PRINT <出力したいもの>\n");
+    printf("\n");
 }
 
 #define REPL_STR_BUFSIZE 10000
@@ -80,16 +100,24 @@ void repl() {
         }
 
         if (strncmp_cs(str, "EXIT", 4) == 0) {
+            printf("REPLモードを終了します\n");
             break;
+        } else if (strncmp_cs(str, "HELP", 4) == 0) {
+            print_help();
         }
 
         src_tokens = lexer(str);
+
+        // 新しく追加された変数を反映する
         update_var_list(var_list);
+
         ic_list = compile(src_tokens, var_list);
         
         exec(ic_list);
 
         free_vector_i64(src_tokens);
         free_vector_ptr(ic_list);
+        src_tokens = NULL;
+        ic_list = NULL;
     }
 }
