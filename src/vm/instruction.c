@@ -20,6 +20,8 @@ void oto_instr_beep() {
     } else if (vmstack_typecheck() == VM_TY_IMMEDIATE) {
         duration = vmstack_popf();
     } else if (vmstack_typecheck() == VM_TY_INITVAL) {
+        // 初期値だとしてもpopしないといけない
+        vmstack_popf();
         duration = 1;
     }
 
@@ -29,6 +31,7 @@ void oto_instr_beep() {
     } else if (vmstack_typecheck() == VM_TY_IMMEDIATE) {
         freq = vmstack_popf();
     } else if (vmstack_typecheck() == VM_TY_INITVAL) {
+        vmstack_popf();
         freq = 500.0;
     }
 
@@ -42,6 +45,7 @@ void oto_instr_play() {
     } else if (vmstack_typecheck() == VM_TY_IMMEDIATE) {
         duration = vmstack_popf();
     } else if (vmstack_typecheck() == VM_TY_INITVAL) {
+        vmstack_popf();
         duration = 1;
     }
 
@@ -51,6 +55,7 @@ void oto_instr_play() {
     } else if (vmstack_typecheck() == VM_TY_IMMEDIATE) {
         freq = vmstack_popf();
     } else if (vmstack_typecheck() == VM_TY_INITVAL) {
+        vmstack_popf();
         freq = 500.0;
     }
 

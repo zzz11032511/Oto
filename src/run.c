@@ -91,6 +91,7 @@ void repl() {
 
     var_list = make_var_list();
     while (true) {
+        // エラーのときにここに戻れるようにしたいけど...
         printf(">>> ");
         fgets(str, REPL_STR_BUFSIZE, stdin);
         
