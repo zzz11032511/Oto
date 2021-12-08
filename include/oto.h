@@ -151,6 +151,9 @@ void set_timecount_flag(bool flag);
 void set_repl_flag(bool flag);
 bool get_repl_flag();
 
+/* config.c */
+void load_otoconfig();
+
 /* token.c */
 
 void init_token_list();

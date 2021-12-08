@@ -32,11 +32,18 @@ void oto_init(char *path) {
 }
 
 void oto_run(const char *path) {
+    if (repl_flag == true) {
+        repl();
+        return;
+    }
+
     src = src_open(path);
     if (IS_NULL(src)) {
         print_error(OTO_FILE_NOT_FOUND_ERROR);
         exit(EXIT_FAILURE);
     }
+
+    printf("flag = %d\n", repl_flag);
 
     src_tokens = lexer(src);
 #ifdef DEBUG
@@ -121,4 +128,8 @@ void repl() {
         src_tokens = NULL;
         ic_list = NULL;
     }
+    
+    free_var_list(var_list);
+    free_token_list();
+    terminate_sound_stream();
 }

@@ -11,67 +11,67 @@ void print_error(errorcode_t err) {
 
     case OTO_UNKNOWN_ERROR:
     case OTO_INTERNAL_ERROR:
-        fprintf(stderr, "Unknown error\n");
+        fprintf(stderr, "正体不明のエラー\n");
         break;
 
     case OTO_SYNTAX_ERROR:
-        fprintf(stderr, "Syntax error\n");
+        fprintf(stderr, "書き方が間違っています\n");
         break;
 
     case OTO_PREPROCESS_ERROR:
-        fprintf(stderr, "Preprocess error\n");
+        fprintf(stderr, "プリプロセッサのエラーです\n");
         break;
 
     case OTO_FILE_NOT_FOUND_ERROR:
-        fprintf(stderr, "File not found error\n");
+        fprintf(stderr, "ファイルがありません\n");
         break;
 
     case OTO_INCLUDE_FILE_NOT_FOUND_ERROR:
-        fprintf(stderr, "Include file not found error\n");
+        fprintf(stderr, "読み込むファイルがありません\n");
         break;
 
     case OTO_CIRCULAR_REFERENCE_ERROR:
-        fprintf(stderr, "Circular reference error\n");
+        fprintf(stderr, "循環参照が発生しています\n");
         break;
 
     case OTO_UNAVAILABLE_OPERATOR_ERROR:
-        fprintf(stderr, "Unavailable operator error\n");
+        fprintf(stderr, "使用できない演算子です\n");
         break;
 
     case OTO_INVALID_SYNTAX_ERROR:
-        fprintf(stderr, "Invalid syntax error\n");
+        fprintf(stderr, "書き方が間違っています\n");
         break;
 
     case OTO_DEFINE_ERROR:
-        fprintf(stderr, "Define error\n");
+        fprintf(stderr, "DEFINEの使い方がちがいます\n");
         break;
 
     case OTO_NAME_ERROR:
-        fprintf(stderr, "Name error\n");
+        fprintf(stderr, "変数に使用できない名前です\n");
         break;
 
     case OTO_ASSIGN_TO_LITERAL_ERROR:
-        fprintf(stderr, "Assign to literal error\n");
+        fprintf(stderr, "定数に代入することはできません\n");
         break;
 
     case OTO_TOO_MANY_ARGUMENTS_ERROR:
-        fprintf(stderr, "Too many arguments error\n");
+        fprintf(stderr, "命令の引数が多すぎます\n");
         break;
 
     case OTO_MISSING_ARGUMENTS_ERROR:
-        fprintf(stderr, "Missing arguments error\n");
+        fprintf(stderr, "命令の引数が足りません\n");
         break;
 
     case OTO_STACK_OVERFLOW_ERROR:
-        fprintf(stderr, "Stack overflow error\n");
+        fprintf(stderr, "スタックオーバーフロー\n");
         break;
 
     case OTO_ZERO_DIVISION_ERROR:
-        fprintf(stderr, "Zero division error\n");
+        fprintf(stderr, "0で割ることはできません\n");
         break;
 
     case OTO_SOUND_PLAYER_ERROR:
-        fprintf(stderr, "Sound player error\n");
+        fprintf(stderr, "音声出力がうまくできませんでした\n");
         break;
     
     case OTO_REPL_ERROR:
