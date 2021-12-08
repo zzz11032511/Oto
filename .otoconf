@@ -1,2 +1,2 @@
-time=false
-repl=true
+time=true
+repl=false

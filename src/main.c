@@ -6,9 +6,9 @@ void usage(const char *name) {
 }
 
 int main(int argc, char **argv) {
+    load_config();
+    
     uint32_t i = 1;
-
-    load_otoconfig();
 
     if (argc == 1) {
         printf("\nOto (beta 2021-12-04) REPL ... Hello!!!\n");
@@ -19,7 +19,6 @@ int main(int argc, char **argv) {
         repl();
         return 0;
     }
-
 
     // 実行時間表示
     if (argc > 1 && strcmp(argv[1], "-T") == 0) {

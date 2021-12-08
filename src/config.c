@@ -2,7 +2,7 @@
 
 const char otoconf_path[] = ".otoconf";
 
-void load_otoconfig() {
+void load_config() {
     char *conf = src_open(otoconf_path);
     if (IS_NULL(conf)) {
         return;
@@ -34,19 +34,15 @@ void load_otoconfig() {
 
         if (strncmp(param, "time", paramlen) == 0) {
             if (strncmp(value, "true", valuelen) == 0) {
-                printf("timetrue\n");
                 set_timecount_flag(true);
             } else if (strncmp(value, "false", valuelen) == 0) {
-                printf("timefalse\n");
                 set_timecount_flag(false);
             }
 
         } else if (strncmp(param, "repl", paramlen) == 0) {
             if (strncmp(value, "true", valuelen) == 0) {
-                printf("repltrue\n");
                 set_repl_flag(true);
             } else if (strncmp(value, "false", valuelen) == 0) {
-                printf("replfalse\n");
                 set_repl_flag(false);
             }
 

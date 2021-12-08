@@ -152,7 +152,7 @@ void set_repl_flag(bool flag);
 bool get_repl_flag();
 
 /* config.c */
-void load_otoconfig();
+void load_config();
 
 /* token.c */
 

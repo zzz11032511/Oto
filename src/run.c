@@ -43,7 +43,11 @@ void oto_run(const char *path) {
         exit(EXIT_FAILURE);
     }
 
-    printf("flag = %d\n", repl_flag);
+    time_t start_time = 0;
+    time_t end_time = 0;
+    if (timecount_flag == true) {
+        start_time = clock();
+    }
 
     src_tokens = lexer(src);
 #ifdef DEBUG
@@ -60,6 +64,18 @@ void oto_run(const char *path) {
     print_ic_list(ic_list);
 #endif
 
+    if (timecount_flag == true) {
+        end_time = clock();
+        printf("コンパイル時間 : %f[s]\n\n", CALC_TIME(start_time, end_time));
+    }
+
+    if (timecount_flag == true) {
+        start_time = clock();
+        exec(ic_list);
+        end_time = clock();
+        printf("実行時間 : %f[s]\n\n", CALC_TIME(start_time, end_time));
+        return;
+    }
     exec(ic_list);
 }
 
@@ -128,7 +144,7 @@ void repl() {
         src_tokens = NULL;
         ic_list = NULL;
     }
-    
+
     free_var_list(var_list);
     free_token_list();
     terminate_sound_stream();
