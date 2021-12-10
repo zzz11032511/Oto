@@ -12,11 +12,15 @@ void load_config() {
     while (conf[i] != '\0') {
         char *param = &conf[i];
         size_t paramlen = 0;
-        while (conf[i + paramlen] != '=' && conf[i + paramlen] != '\n'
-               && conf[i + paramlen] != '\0') {
+        while (conf[i + paramlen] != ':' && conf[i + paramlen] != ' '
+               && conf[i + paramlen] != '\n' && conf[i + paramlen] != '\0') {
             paramlen++;
         }
-        i += paramlen + 1;
+
+        // 空白を飛ばす
+        while (conf[i] != ':') i++;
+        i++;
+        while (conf[i] == ' ') i++;
 
         if (conf[i] == '\0') {
             break;
