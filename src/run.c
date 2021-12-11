@@ -201,8 +201,4 @@ void repl() {
         src_tokens = NULL;
         ic_list = NULL;
     }
-
-    free_var_list(var_list);
-    free_token_list();
-    terminate_sound_stream();
 }
