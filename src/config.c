@@ -36,26 +36,26 @@ void load_config() {
         }
         i += valuelen + 1;
 
-        if (strncmp(param, "time", paramlen) == 0) {
-            if (strncmp(value, "true", valuelen) == 0) {
+        if (strncmp(param, "time", 4) == 0) {
+            if (strncmp(value, "true", 4) == 0) {
                 set_timecount_flag(true);
-            } else if (strncmp(value, "false", valuelen) == 0) {
+            } else if (strncmp(value, "false", 5) == 0) {
                 set_timecount_flag(false);
             }
 
-        } else if (strncmp(param, "repl", paramlen) == 0) {
-            if (strncmp(value, "true", valuelen) == 0) {
+        } else if (strncmp(param, "repl", 4) == 0) {
+            if (strncmp(value, "true", 4) == 0) {
                 set_repl_flag(true);
-            } else if (strncmp(value, "false", valuelen) == 0) {
+            } else if (strncmp(value, "false", 5) == 0) {
                 set_repl_flag(false);
             }
 
-        } else if (strncmp(param, "language", paramlen) == 0) {
-            if (strncmp(value, "kanji", valuelen) == 0) {
+        } else if (strncmp(param, "language", 8) == 0) {
+            if (strncmp(value, "kanji", 5) == 0) {
                 set_language(LANG_JPN_KANJI);
-            } else if (strncmp(value, "hiragana", valuelen) == 0) {
+            } else if (strncmp(value, "hiragana", 8) == 0) {
                 set_language(LANG_JPN_HIRAGANA);
-            } else if (strncmp(value, "english", valuelen) == 0) {
+            } else if (strncmp(value, "english", 7) == 0) {
                 set_language(LANG_ENG);
             }
         }
