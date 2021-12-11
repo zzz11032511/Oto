@@ -33,7 +33,7 @@ void print_error(errorcode_t err) {
         if (get_language() == LANG_JPN_KANJI) {
             fprintf(stderr, "書き方が間違っています\n");
         } else if (get_language() == LANG_JPN_HIRAGANA) {
-            fprintf(stderr, "かきかたがまちがえています\n");
+            fprintf(stderr, "かきかたが まちがえています\n");
         } else if (get_language() == LANG_ENG) {
             fprintf(stderr, "Syntax error\n");
         }
@@ -43,7 +43,7 @@ void print_error(errorcode_t err) {
         if (get_language() == LANG_JPN_KANJI) {
             fprintf(stderr, "プリプロセッサのエラーです\n");
         } else if (get_language() == LANG_JPN_HIRAGANA) {
-            fprintf(stderr, "かきかたがまちがえています\n");
+            fprintf(stderr, "かきかたが まちがえています\n");
         } else if (get_language() == LANG_ENG) {
             fprintf(stderr, "Preprocess error\n");
         }
@@ -53,7 +53,7 @@ void print_error(errorcode_t err) {
         if (get_language() == LANG_JPN_KANJI) {
             fprintf(stderr, "ファイルがありません\n");
         } else if (get_language() == LANG_JPN_HIRAGANA) {
-            fprintf(stderr, "ファイルがありません\n");
+            fprintf(stderr, "ファイルが ありません\n");
         } else if (get_language() == LANG_ENG) {
             fprintf(stderr, "File not found\n");
         }
@@ -61,9 +61,9 @@ void print_error(errorcode_t err) {
 
     case OTO_INCLUDE_FILE_NOT_FOUND_ERROR:
         if (get_language() == LANG_JPN_KANJI) {
-            fprintf(stderr, "読み込むファイルがありません\n");
+            fprintf(stderr, "インクルードするファイルが存在していません\n");
         } else if (get_language() == LANG_JPN_HIRAGANA) {
-            fprintf(stderr, "ファイルがありません\n");
+            fprintf(stderr, "ファイルが ありません\n");
         } else if (get_language() == LANG_ENG) {
             fprintf(stderr, "Include file not found error\n");
         }
@@ -73,7 +73,7 @@ void print_error(errorcode_t err) {
         if (get_language() == LANG_JPN_KANJI) {
             fprintf(stderr, "循環参照が発生しています\n");
         } else if (get_language() == LANG_JPN_HIRAGANA) {
-            fprintf(stderr, "インクルードのやりかたがまちがえています\n");
+            fprintf(stderr, "インクルードの やりかたが まちがえています\n");
         } else if (get_language() == LANG_ENG) {
             fprintf(stderr, "Circular reference error\n");
         }
@@ -83,7 +83,7 @@ void print_error(errorcode_t err) {
         if (get_language() == LANG_JPN_KANJI) {
             fprintf(stderr, "使用できない演算子です\n");
         } else if (get_language() == LANG_JPN_HIRAGANA) {
-            fprintf(stderr, "きごうがまちがえています\n");
+            fprintf(stderr, "きごうが まちがえています\n");
         } else if (get_language() == LANG_ENG) {
             fprintf(stderr, "Unavailable operator error\n");
         }
@@ -91,9 +91,9 @@ void print_error(errorcode_t err) {
 
     case OTO_INVALID_SYNTAX_ERROR:
         if (get_language() == LANG_JPN_KANJI) {
-            fprintf(stderr, "書き方が間違っています\n");
+            fprintf(stderr, "構文エラーです\n");
         } else if (get_language() == LANG_JPN_HIRAGANA) {
-            fprintf(stderr, "かきかたがまちがえています\n");
+            fprintf(stderr, "かきかたが まちがえています\n");
         } else if (get_language() == LANG_ENG) {
             fprintf(stderr, "Invalid syntax error\n");
         }
@@ -101,9 +101,9 @@ void print_error(errorcode_t err) {
 
     case OTO_DEFINE_ERROR:
         if (get_language() == LANG_JPN_KANJI) {
-            fprintf(stderr, "DEFINEの使い方がちがいます\n");
+            fprintf(stderr, "DEFINE文で変数を使うことはできません\n");
         } else if (get_language() == LANG_JPN_HIRAGANA) {
-            fprintf(stderr, "DEFINEのつかいかたがちがいます\n");
+            fprintf(stderr, "DEFINEの つかいかたが ちがいます\n");
         } else if (get_language() == LANG_ENG) {
             fprintf(stderr, "Define error\n");
         }
@@ -113,7 +113,7 @@ void print_error(errorcode_t err) {
         if (get_language() == LANG_JPN_KANJI) {
             fprintf(stderr, "変数に使用できない名前です\n");
         } else if (get_language() == LANG_JPN_HIRAGANA) {
-            fprintf(stderr, "へんすうにつかえないなまえです\n");
+            fprintf(stderr, "へんすうに つかえない なまえです\n");
         } else if (get_language() == LANG_ENG) {
             fprintf(stderr, "Name error\n");
         }
@@ -123,7 +123,7 @@ void print_error(errorcode_t err) {
         if (get_language() == LANG_JPN_KANJI) {
             fprintf(stderr, "定数に代入することはできません\n");
         } else if (get_language() == LANG_JPN_HIRAGANA) {
-            fprintf(stderr, "すうじになにかいれることはできません\n");
+            fprintf(stderr, "すうじに なにかいれることは できません\n");
         } else if (get_language() == LANG_ENG) {
             fprintf(stderr, "Assign to literal error\n");
         }
@@ -133,7 +133,7 @@ void print_error(errorcode_t err) {
         if (get_language() == LANG_JPN_KANJI) {
             fprintf(stderr, "命令の引数が多すぎます\n");
         } else if (get_language() == LANG_JPN_HIRAGANA) {
-            fprintf(stderr, "めいれいのひきすうがおおすぎます\n");
+            fprintf(stderr, "めいれいの ひきすうが おおすぎます\n");
         } else if (get_language() == LANG_ENG) {
             fprintf(stderr, "Too many arguments error\n");
         }
@@ -143,7 +143,7 @@ void print_error(errorcode_t err) {
         if (get_language() == LANG_JPN_KANJI) {
             fprintf(stderr, "命令の引数が足りません\n");
         } else if (get_language() == LANG_JPN_HIRAGANA) {
-            fprintf(stderr, "めいれいのひきすうがたりません\n");
+            fprintf(stderr, "めいれいの ひきすうが たりません\n");
         } else if (get_language() == LANG_ENG) {
             fprintf(stderr, "Missing arguments error\n");
         }
@@ -163,7 +163,7 @@ void print_error(errorcode_t err) {
         if (get_language() == LANG_JPN_KANJI) {
             fprintf(stderr, "0で割ることはできません\n");
         } else if (get_language() == LANG_JPN_HIRAGANA) {
-            fprintf(stderr, "0でわってはいけません\n");
+            fprintf(stderr, "0で わっては いけません\n");
         } else if (get_language() == LANG_ENG) {
             fprintf(stderr, "Zero division error\n");
         }
@@ -173,7 +173,7 @@ void print_error(errorcode_t err) {
         if (get_language() == LANG_JPN_KANJI) {
             fprintf(stderr, "音声出力に失敗しました\n");
         } else if (get_language() == LANG_JPN_HIRAGANA) {
-            fprintf(stderr, "おとがうまくでませんでした\n");
+            fprintf(stderr, "おとが うまく でませんでした\n");
         } else if (get_language() == LANG_ENG) {
             fprintf(stderr, "Oto sound player error\n");
         }
@@ -183,7 +183,7 @@ void print_error(errorcode_t err) {
         if (get_language() == LANG_JPN_KANJI) {
             fprintf(stderr, "REPLモードでは実行できない命令です\n");
         } else if (get_language() == LANG_JPN_HIRAGANA) {
-            fprintf(stderr, "このモードではつかえないめいれいです\n");
+            fprintf(stderr, "このモードでは つかえない めいれいです\n");
         } else if (get_language() == LANG_ENG) {
             fprintf(stderr, "This instruction cannot be used in REPL mode\n");
         }
