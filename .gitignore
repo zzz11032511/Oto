@@ -1,0 +1,8 @@
+*.exe
+*.dll
+*.oto
+
+.vscode/
+sample/
+build/
+oldsrc/
