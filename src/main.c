@@ -11,9 +11,6 @@ int main(int argc, char **argv) {
     uint32_t i = 1;
 
     if (argc == 1) {
-        printf("\nOto (beta 2021-12-04) REPL ... Hello!!!\n");
-        printf("コマンド一覧を見たいときは「HELP」\n");
-        printf("終了するときは「EXIT」\n");
         set_repl_flag(true);
         oto_init("");
         repl();

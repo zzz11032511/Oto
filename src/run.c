@@ -15,9 +15,16 @@ static bool repl_flag = false;
 void set_repl_flag(bool flag) {
     repl_flag = flag;
 }
-
 bool get_repl_flag() {
     return repl_flag;
+}
+
+static language_t language = LANG_JPN_KANJI;
+void set_language(language_t l) {
+    language = l;
+}
+language_t get_language() {
+    return language;
 }
 
 void oto_init(char *path) {
@@ -66,14 +73,26 @@ void oto_run(const char *path) {
 
     if (timecount_flag == true) {
         end_time = clock();
-        printf("コンパイル時間 : %f[s]\n\n", CALC_TIME(start_time, end_time));
+        if (language == LANG_JPN_KANJI) {
+            printf("コンパイル時間 : %f[秒]\n\n", CALC_TIME(start_time, end_time));
+        } else if (language == LANG_JPN_HIRAGANA) {
+            printf("じゅんびじかん : %f[びょう]\n\n", CALC_TIME(start_time, end_time));
+        } else if (language == LANG_ENG) {
+            printf("Compile time : %f[s]\n\n", CALC_TIME(start_time, end_time));
+        }
     }
 
     if (timecount_flag == true) {
         start_time = clock();
         exec(ic_list);
         end_time = clock();
-        printf("実行時間 : %f[s]\n\n", CALC_TIME(start_time, end_time));
+        if (language == LANG_JPN_KANJI) {
+            printf("実行時間 : %f[s]\n\n", CALC_TIME(start_time, end_time));
+        } else if (language == LANG_JPN_HIRAGANA) {
+            printf("しゅうりょうじかん : %f[びょう]\n\n", CALC_TIME(start_time, end_time));
+        } else if (language == LANG_ENG) {
+            printf("Run time : %f[s]\n\n", CALC_TIME(start_time, end_time));
+        }
         return;
     }
     exec(ic_list);
@@ -99,17 +118,49 @@ void oto_error_exit(errorcode_t err) {
 
 void print_help() {
     printf("\n");
-    printf("- 操作方法 -\n");
-    printf("終了するときは, 「EXIT」と打つか, Ctrl+Cを押してください\n");
-    printf("- コマンド一覧 -\n");
-    printf("PLAY  <周波数>, <音の長さ>, <音の大きさ>, <音の種類>\n");
-    printf("BEEP  <周波数>, <音の長さ>\n");
-    printf("PRINT <出力したいもの>\n");
+
+    if (language == LANG_JPN_KANJI) {
+        printf("- 操作方法 -\n");
+        printf("終了するときは, 「EXIT」と打つか, Ctrl+Cを押してください\n");
+        printf("- 命令一覧 -\n");
+        printf("PLAY  <周波数>, <音の長さ>, <音の大きさ>, <音の種類>\n");
+        printf("BEEP  <周波数>, <音の長さ>\n");
+        printf("PRINT <出力したいもの>\n");
+    } else if (language == LANG_JPN_HIRAGANA) {
+        printf("- そうさほうほう -\n");
+        printf("おわるときは, 「EXIT」とうつか, CtrlキーとCキーをどうじにおしてね\n");
+        printf("- コマンドいちらん -\n");
+        printf("PLAY  <おとのたかさ>, <おとのながさ>, <おとのおおきさ>, <おとのしゅるい>\n");
+        printf("BEEP  <おとのたかさ>, <おとのながさ>\n");
+        printf("PRINT <がめんにひょうじしたいもの>\n");
+    } else if (language == LANG_ENG) {
+        printf("- Usage -\n");
+        printf("If you want to finish, type \"EXIT\" or press Ctrl+C.\n");
+        printf("- List of instructions -\n");
+        printf("PLAY  <frequency>, <length>, <volume>, <Sound>\n");
+        printf("BEEP  <frequency>, <length>\n");
+        printf("PRINT <variable or literal>\n");
+    }
+
     printf("\n");
 }
 
 #define REPL_STR_BUFSIZE 10000
 void repl() {
+    printf("\nOto (beta 2021-12-04) REPL ... Hello!!!\n");
+
+    if (language == LANG_JPN_KANJI) {
+        printf("コマンド一覧を見たいときは「HELP」\n");
+        printf("終了するときは「EXIT」\n");
+    } else if (language == LANG_JPN_HIRAGANA) {
+        printf("コマンドいちらんをみたいときは「HELP」\n");
+        printf("おわるときは「EXIT」\n");
+        printf("をにゅうりょくしてください\n");
+    } else if (language == LANG_ENG) {
+        printf("\"HELP\" ... See list of instructions\n");
+        printf("\"EXIT\" ... Exit\n");
+    }
+
     char str[REPL_STR_BUFSIZE] = {0};
 
     var_list = make_var_list();
@@ -124,7 +175,13 @@ void repl() {
         }
 
         if (strncmp_cs(str, "EXIT", 4) == 0) {
-            printf("REPLモードを終了します\n");
+            if (language == LANG_JPN_KANJI) {
+                printf("REPLモードを終了します\n");
+            } else if (language == LANG_JPN_HIRAGANA) {
+                printf("REPLモードをおわります\n");
+            } else if (language == LANG_ENG) {
+                printf("Exit REPL.\n");
+            }
             break;
         } else if (strncmp_cs(str, "HELP", 4) == 0) {
             print_help();

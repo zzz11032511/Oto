@@ -216,3 +216,11 @@ enum {
     OP_EXIT
 };
 typedef int64_t opcode_t;
+
+// language
+enum {
+    LANG_JPN_KANJI = 0,
+    LANG_JPN_HIRAGANA,
+    LANG_ENG
+};
+typedef int64_t language_t;

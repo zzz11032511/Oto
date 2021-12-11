@@ -50,6 +50,14 @@ void load_config() {
                 set_repl_flag(false);
             }
 
+        } else if (strncmp(param, "language", paramlen) == 0) {
+            if (strncmp(value, "kanji", valuelen) == 0) {
+                set_language(LANG_JPN_KANJI);
+            } else if (strncmp(value, "hiragana", valuelen) == 0) {
+                set_language(LANG_JPN_HIRAGANA);
+            } else if (strncmp(value, "english", valuelen) == 0) {
+                set_language(LANG_ENG);
+            }
         }
     }
 

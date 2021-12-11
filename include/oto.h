@@ -150,6 +150,8 @@ void repl();
 void set_timecount_flag(bool flag);
 void set_repl_flag(bool flag);
 bool get_repl_flag();
+void set_language(language_t l);
+language_t get_language();
 
 /* config.c */
 void load_config();
