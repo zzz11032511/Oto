@@ -113,3 +113,11 @@ bool is_str_equal_cs(const char *str1, size_t s1len, const char *str2, size_t s2
     }
     return false;
 }
+
+void print_upto_char(char *str, char endch) {
+    int64_t i = 0;
+    while (str[i] != endch && str[i] != '\0') {
+        printf("%c", str[i]);
+        i++;
+    }
+}
