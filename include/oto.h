@@ -185,7 +185,7 @@ void preprocess(char *src, int64_t idx, VectorI64 *src_tokens);
 /* compile.c */
 
 /* トークン化したソースコードを内部コード列に変換する */
-VectorPTR *compile(VectorI64 *src_tokens, VectorPTR *var_list);
+VectorPTR *compile(VectorI64 *src_tokens, VectorPTR *var_list, char *src_str);
 
 /* exec.c */
 

@@ -66,7 +66,7 @@ void oto_run(const char *path) {
     print_var(var_list);
 #endif
 
-    ic_list = compile(src_tokens, var_list);
+    ic_list = compile(src_tokens, var_list, src);
 #ifdef DEBUG
     print_ic_list(ic_list);
 #endif
@@ -192,7 +192,7 @@ void repl() {
         // 新しく追加された変数を反映する
         update_var_list(var_list);
 
-        ic_list = compile(src_tokens, var_list);
+        ic_list = compile(src_tokens, var_list, str);
         
         exec(ic_list);
 

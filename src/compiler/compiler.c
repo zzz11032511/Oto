@@ -2,9 +2,10 @@
 
 #include "compiler.h"
 
+char *src = NULL;
 VectorPTR *vars = NULL;
-
 VectorPTR *ops  = NULL;
+
 void put_opcode(int64_t *icp, opcode_t op, Var *v1, Var *v2, Var *v3, Var *v4) {
     vector_ptr_set(ops, (*icp)++, (Var *)op);
     vector_ptr_set(ops, (*icp)++, v1);
@@ -175,13 +176,14 @@ void compile_sub(int64_t *icp, SliceI64 *srctcs, int64_t start, int64_t end) {
     }
 }
 
-static void init_compile(VectorPTR *var_list, VectorPTR *opcodes) {
+static void init_compile(VectorPTR *var_list, VectorPTR *opcodes, char *src_str) {
     vars = var_list;
     ops = opcodes;
+    src = src_str;
 }
 
 #define DEFAULT_MAX_OPCODES 4096
-VectorPTR *compile(VectorI64 *src_tokens, VectorPTR *var_list) {
+VectorPTR *compile(VectorI64 *src_tokens, VectorPTR *var_list, char *src_str) {
     VectorPTR *opcodes = new_vector_ptr(DEFAULT_MAX_OPCODES);
     if (IS_NULL(opcodes)) {
         oto_error_exit(OTO_INTERNAL_ERROR);
@@ -189,7 +191,7 @@ VectorPTR *compile(VectorI64 *src_tokens, VectorPTR *var_list) {
 
     // 式や制御構文の解析でスライスの方が扱いやすい
     SliceI64 *srctcs_slice = new_slice_i64(src_tokens, 0, src_tokens->length);
-    init_compile(var_list, opcodes);
+    init_compile(var_list, opcodes, src_str);
 
     // opcodeをどこまで書き込んだか
     int64_t icp = 0;

@@ -2,6 +2,7 @@
 
 #include <oto.h>
 
+extern char *src;
 extern VectorPTR *vars;
 
 /* 変数を取得するための便利マクロ */
