@@ -5,6 +5,7 @@
 
 build/
 oldsrc/
+docs/
 .vscode/
 
 aaa.oto
