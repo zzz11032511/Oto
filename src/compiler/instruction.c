@@ -19,6 +19,11 @@ void compile_instruction(int64_t *icp, SliceI64 *srctcs, int64_t *idx) {
         compile_args(icp, argtcs, 2);
         put_opcode(icp, OP_PLAY, 0, 0, 0, 0);
         break;
+    case TC_PRINTVAR:
+        compile_args(icp, argtcs, 0);
+        put_opcode(icp, OP_PRINTVAR, 0, 0, 0, 0);
+        printf("Done\n");
+        break;
 
     // case TC_NOTE:
     // case TC_MUTE:

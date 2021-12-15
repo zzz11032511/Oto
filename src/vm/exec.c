@@ -4,7 +4,7 @@
 
 #define VAR(tc)  ((Var *)(ic_list->data[tc]))
 
-void exec(VectorPTR *ic_list) {
+void exec(VectorPTR *ic_list, VectorPTR *var_list) {
     int64_t i = 0;
     int64_t end = ic_list->length;
 
@@ -125,6 +125,10 @@ void exec(VectorPTR *ic_list) {
 
         case OP_PLAY:
             oto_instr_play();
+            break;
+
+        case OP_PRINTVAR:
+            oto_instr_printvar(var_list);
             break;
 
         case OP_EXIT:

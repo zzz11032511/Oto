@@ -91,6 +91,7 @@ enum {
     TC_SETFS,     // setfs SETFS
     TC_MIDIIN,    // midiin MIDIIN
     TC_MIDIOUT,   // midiout MIDIOUT
+    TC_PRINTVAR,  // printvar PRINTVAR
 
     TC_EXIT       // exit EXIT
 };
@@ -218,6 +219,7 @@ enum {
     OP_PRINT,
     OP_BEEP,
     OP_PLAY,
+    OP_PRINTVAR,
     OP_EXIT
 };
 typedef int64_t opcode_t;

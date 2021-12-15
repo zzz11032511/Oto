@@ -100,8 +100,6 @@ void compile_sub(int64_t *icp, SliceI64 *srctcs, int64_t start, int64_t end) {
     int64_t i = start;
 
     while (i < end) {
-        DEBUG_IPRINT(i);
-        DEBUG_IPRINT(slice_i64_get(srctcs, i));
         if (slice_i64_get(srctcs, i) == TC_LF) {
             i++;
 

@@ -67,11 +67,46 @@ void oto_instr_play() {
 
     write_out_data(data);
     printf("[Play] ");
-    printf("frequency : %8.3f, length : %2.2f, velocity : %3I64d, wave : %3d\n", 
+    printf("frequency : %8.3f, length : %2.2f, velocity : %d, wave : %d\n", 
            freq, duration, 100, 1);
     
     set_stream_active_flag(true);
     while (is_stream_active()) {
         // usleep(10);
     }
+}
+
+void oto_instr_printvar(VectorPTR *var_list) {
+    printf("- Variable list -\n");
+
+    uint64_t i = TC_EXIT + 1;
+    do {
+        Var *var = ((Var *)var_list->data[i]);
+        i++;
+
+        vartype_t type = var->type;
+        if (type == TY_CONST) {
+            continue;
+        } else if (type == TY_FLOAT) {
+            printf("%15s", var->token->str);
+            printf("(float) : ");
+            printf("%f", var->value.f);
+        } else if (type == TY_ARRAY) {
+            continue;
+        } else if (type == TY_STRING) {
+            continue;
+        } else if (type == TY_OSCIL) {
+            continue;
+        } else if (type == TY_SOUND) {
+            continue;
+        } else if (type == TY_FILTER) {
+            continue;
+        } else if (type == TY_FUNC) {
+            continue;
+        }
+
+        printf("\n");
+
+    } while (i < var_list->length);
+    printf("\n");
 }

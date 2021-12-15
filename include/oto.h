@@ -189,7 +189,7 @@ VectorPTR *compile(VectorI64 *src_tokens, VectorPTR *var_list, char *src_str);
 
 /* exec.c */
 
-void exec(VectorPTR *ic_list);
+void exec(VectorPTR *ic_list, VectorPTR *var_list);
 
 /* debug.c */
 

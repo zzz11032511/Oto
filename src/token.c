@@ -34,7 +34,7 @@ const Token rsvwords[] = {
     {TC_IMPORTWAV, "importwav", 9, 1}, {TC_DEFSE,     "defse",     5, 1},
     {TC_SPECTRUM,  "spectrum",  8, 1}, {TC_SETFS,     "setfs",     5, 1},
     {TC_MIDIIN,    "midiin",    4, 1}, {TC_MIDIOUT,   "midiout",   7, 1},
-    {TC_EXIT,      "exit",      4, 1},
+    {TC_PRINTVAR,  "printvar",  8, 1}, {TC_EXIT,      "exit",      4, 1},
     {0,            NULL,        0, 1},
 };
 

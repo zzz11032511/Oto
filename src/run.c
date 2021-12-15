@@ -84,7 +84,7 @@ void oto_run(const char *path) {
 
     if (timecount_flag == true) {
         start_time = clock();
-        exec(ic_list);
+        exec(ic_list, var_list);
         end_time = clock();
         if (language == LANG_JPN_KANJI) {
             printf("実行時間 : %f[s]\n\n", CALC_TIME(start_time, end_time));
@@ -95,7 +95,7 @@ void oto_run(const char *path) {
         }
         return;
     }
-    exec(ic_list);
+    exec(ic_list, var_list);
 }
 
 void oto_exit_process() {
@@ -194,7 +194,7 @@ void repl() {
 
         ic_list = compile(src_tokens, var_list, str);
         
-        exec(ic_list);
+        exec(ic_list, var_list);
 
         free_vector_i64(src_tokens);
         free_vector_ptr(ic_list);
