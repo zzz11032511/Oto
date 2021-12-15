@@ -36,12 +36,22 @@ const int64_t PTNS_DEFINE[] = {TC_DEFINE, PTN_LABEL, TC_COLON, PTN_LABEL, TC_LF,
 const int64_t PTNS_OSCILDEF[] = {PTN_LABEL, TC_EQU, TC_OSCIL, TC_SQBROPN, PTN_LABEL, TC_SQBRCLS, TC_LF, PTN_END};
 const int64_t PTNS_SOUNDDEF[] = {PTN_LABEL, TC_EQU, TC_SOUND, TC_SQBROPN, PTN_LABEL, TC_SQBRCLS, TC_LF, PTN_END};
 const int64_t PTNS_CPYD[] = {PTN_LABEL, TC_EQU, PTN_LABEL, TC_LF, PTN_END};
+const int64_t PTNS_ADDCPY[] = {PTN_LABEL, TC_PLUSEQ, PTN_LABEL, TC_LF, PTN_END};
+const int64_t PTNS_SUBCPY[] = {PTN_LABEL, TC_MINUEQ, PTN_LABEL, TC_LF, PTN_END};
+const int64_t PTNS_MULCPY[] = {PTN_LABEL, TC_ASTEEQ, PTN_LABEL, TC_LF, PTN_END};
+const int64_t PTNS_DIVCPY[] = {PTN_LABEL, TC_SLASEQ, PTN_LABEL, TC_LF, PTN_END};
+const int64_t PTNS_MODCPY[] = {PTN_LABEL, TC_PERCEQ, PTN_LABEL, TC_LF, PTN_END};
 const int64_t PTNS_ADD2[] = {PTN_LABEL, TC_EQU, PTN_LABEL, TC_PLUS, PTN_LABEL, TC_LF, PTN_END};
 const int64_t PTNS_SUB2[] = {PTN_LABEL, TC_EQU, PTN_LABEL, TC_MINUS, PTN_LABEL, TC_LF, PTN_END};
 const int64_t PTNS_MUL2[] = {PTN_LABEL, TC_EQU, PTN_LABEL, TC_ASTER, PTN_LABEL, TC_LF, PTN_END};
 const int64_t PTNS_DIV2[] = {PTN_LABEL, TC_EQU, PTN_LABEL, TC_SLASH, PTN_LABEL, TC_LF, PTN_END};
 const int64_t PTNS_MOD2[] = {PTN_LABEL, TC_EQU, PTN_LABEL, TC_PERCE, PTN_LABEL, TC_LF, PTN_END};
 const int64_t PTNS_CPY_EXPR[] = {PTN_LABEL, TC_EQU, PTN_EXPR, PTN_END};
+const int64_t PTNS_ADDCPY_EXPR[] = {PTN_LABEL, TC_PLUSEQ, PTN_EXPR, TC_LF, PTN_END};
+const int64_t PTNS_SUBCPY_EXPR[] = {PTN_LABEL, TC_MINUEQ, PTN_EXPR, TC_LF, PTN_END};
+const int64_t PTNS_MULCPY_EXPR[] = {PTN_LABEL, TC_ASTEEQ, PTN_EXPR, TC_LF, PTN_END};
+const int64_t PTNS_DIVCPY_EXPR[] = {PTN_LABEL, TC_SLASEQ, PTN_EXPR, TC_LF, PTN_END};
+const int64_t PTNS_MODCPY_EXPR[] = {PTN_LABEL, TC_PERCEQ, PTN_EXPR, TC_LF, PTN_END};
 const int64_t PTNS_LOOP[] = {TC_LOOP, PTN_END};
 const int64_t PTNS_IF[] = {TC_IF, PTN_END};
 const int64_t PTNS_LABEL_ONLY[] = {PTN_LABEL, TC_LF, PTN_END};
@@ -90,6 +100,8 @@ void compile_sub(int64_t *icp, SliceI64 *srctcs, int64_t start, int64_t end) {
     int64_t i = start;
 
     while (i < end) {
+        DEBUG_IPRINT(i);
+        DEBUG_IPRINT(slice_i64_get(srctcs, i));
         if (slice_i64_get(srctcs, i) == TC_LF) {
             i++;
 
@@ -105,13 +117,36 @@ void compile_sub(int64_t *icp, SliceI64 *srctcs, int64_t start, int64_t end) {
         } 
         // else if (ptn_cmp(srctcs, i, PTN_OSCILDEF)) {
         //     i++
-            
         // } else if (ptn_cmp(srctcs, i, PTN_SOUNDDEF)) {
-
         // } 
         else if (ptn_cmp(srctcs, i, PTNS_CPYD)) {
             assign_to_literal_error_check(tmpvars[1]);
             put_opcode(icp, OP_CPYD, VAR(tmpvars[1]), VAR(tmpvars[2]), 0, 0);
+            i += 4;
+
+        } else if (ptn_cmp(srctcs, i, PTNS_ADDCPY)) {
+            assign_to_literal_error_check(tmpvars[1]);
+            put_opcode(icp, OP_ADD2, VAR(tmpvars[1]), VAR(tmpvars[1]), VAR(tmpvars[2]), 0);
+            i += 4;
+
+        } else if (ptn_cmp(srctcs, i, PTNS_SUBCPY)) {
+            assign_to_literal_error_check(tmpvars[1]);
+            put_opcode(icp, OP_SUB2, VAR(tmpvars[1]), VAR(tmpvars[1]), VAR(tmpvars[2]), 0);
+            i += 4;
+
+        } else if (ptn_cmp(srctcs, i, PTNS_MULCPY)) {
+            assign_to_literal_error_check(tmpvars[1]);
+            put_opcode(icp, OP_MUL2, VAR(tmpvars[1]), VAR(tmpvars[1]), VAR(tmpvars[2]), 0);
+            i += 4;
+
+        } else if (ptn_cmp(srctcs, i, PTNS_DIVCPY)) {
+            assign_to_literal_error_check(tmpvars[1]);
+            put_opcode(icp, OP_DIV2, VAR(tmpvars[1]), VAR(tmpvars[1]), VAR(tmpvars[2]), 0);
+            i += 4;
+
+        } else if (ptn_cmp(srctcs, i, PTNS_MODCPY)) {
+            assign_to_literal_error_check(tmpvars[1]);
+            put_opcode(icp, OP_MOD2, VAR(tmpvars[1]), VAR(tmpvars[1]), VAR(tmpvars[2]), 0);
             i += 4;
 
         } else if (ptn_cmp(srctcs, i, PTNS_ADD2)) {
@@ -149,6 +184,33 @@ void compile_sub(int64_t *icp, SliceI64 *srctcs, int64_t start, int64_t end) {
             // "<Var> =" の分だけ+2
             i += exprtcs->length + 2;
             free_slice_i64(exprtcs);
+
+        } else if (ptn_cmp(srctcs, i, PTNS_ADDCPY_EXPR) || ptn_cmp(srctcs, i, PTNS_SUBCPY_EXPR)
+                   || ptn_cmp(srctcs, i, PTNS_MULCPY_EXPR) || ptn_cmp(srctcs, i, PTNS_DIVCPY_EXPR)
+                   || ptn_cmp(srctcs, i, PTNS_MODCPY_EXPR)) {
+            assign_to_literal_error_check(tmpvars[1]);
+            put_opcode(icp, OP_PUSH, VAR(tmpvars[1]), 0, 0, 0);
+            SliceI64 *exprtcs = make_line_tokencodes(srctcs, i + 2);
+            compile_expr(icp, exprtcs, vars);
+
+            tokencode_t op = slice_i64_get(srctcs, i + 1);
+            if (op == TC_PLUSEQ) {
+                put_opcode(icp, OP_ADD, 0, 0, 0, 0);
+            } else if (op == TC_MINUEQ) {
+                put_opcode(icp, OP_SUB, 0, 0, 0, 0);
+            } else if (op == TC_ASTEEQ) {
+                put_opcode(icp, OP_MUL, 0, 0, 0, 0);
+            } else if (op == TC_SLASEQ) {
+                put_opcode(icp, OP_DIV, 0, 0, 0, 0);
+            } else if (op == TC_PERCEQ) {
+                put_opcode(icp, OP_MOD, 0, 0, 0, 0);
+            }
+            put_opcode(icp, OP_CPYP, VAR(tmpvars[1]), 0, 0, 0);
+
+            // "<Var> =" の分だけ+2
+            i += exprtcs->length + 2;
+            free_slice_i64(exprtcs);
+
 
         } else if (ptn_cmp(srctcs, i, PTNS_LOOP)) {
             compile_loop(icp, srctcs, &i);

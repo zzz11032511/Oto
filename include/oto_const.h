@@ -54,6 +54,11 @@ enum {
     TC_LT,        // '<'
     TC_GE,        // '>='
     TC_LE,        // '<='
+    TC_PLUSEQ,    // +=
+    TC_MINUEQ,    // -=
+    TC_ASTEEQ,    // *=
+    TC_SLASEQ,    // /=
+    TC_PERCEQ,    // %=
     
     TC_BEGIN,     // begin BEGIN
     TC_END,       // end END

@@ -12,6 +12,9 @@ const Token symbols[] = {
     {TC_EEQ,     "==", 2, 0}, {TC_NEQ,     "!=", 2, 0},
     {TC_GT,      ">",  1, 0}, {TC_LT,      "<",  1, 0},
     {TC_GE,      ">=", 2, 0}, {TC_LE,      "<=", 2, 0},
+    {TC_PLUSEQ,  "+=", 2, 0}, {TC_MINUEQ,  "-=", 2, 0},
+    {TC_ASTEEQ,  "*=", 2, 0}, {TC_SLASEQ,  "/=", 2, 0},
+    {TC_PERCEQ,  "%=", 2, 0},
     {0,          NULL, 0, 0}
 };
 

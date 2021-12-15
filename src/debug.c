@@ -4,6 +4,9 @@ void print_src_tokens(VectorI64 *src_tokens) {
     printf("- Source tokens -\n");
     for (uint64_t i = 0; i < src_tokens->length; i++) {
         printf("%I64d ", src_tokens->data[i]);
+        if (src_tokens->data[i] == 0) {
+            printf("\n");
+        }
     }
     printf("\n\n");
 }
