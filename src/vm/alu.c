@@ -2,7 +2,7 @@
 
 #include "vm.h"
 
-#define IS_JUST_ZERO(val) (val & 0xffffffff) == 0
+#define IS_JUST_ZERO(val) (val & -1) == 0
 
 /* 浮動小数点数型で余りや論理演算を行うための共用体 */
 typedef union {
@@ -49,11 +49,11 @@ void alu(opcode_t op) {
         if (IS_JUST_ZERO(val2.i)) {
             oto_error_exit(OTO_ZERO_DIVISION_ERROR);
         }
-        vmstack_pushi(val1.f / val2.f);
+        vmstack_pushf(val1.f / val2.f);
         break;
 
     case OP_MOD:
-        if ((int64_t)val2.f == 0) {
+        if (IS_JUST_ZERO(val2.i)) {
             oto_error_exit(OTO_ZERO_DIVISION_ERROR);
         }
         vmstack_pushf((double)((int64_t)val1.f % (int64_t)val2.f));
