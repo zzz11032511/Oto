@@ -28,9 +28,23 @@ void free_map(Map *map) {
     free(map);
 }
 
+void map_put(Map *map, char *key, void *val) {
+    vector_ptr_append(map->keys, key);
+    vector_ptr_append(map->vals, val);
+}
+
 void map_puti(Map *map, char *key, int64_t val) {
     vector_ptr_append(map->keys, key);
     vector_ptr_append(map->vals, (void *)val);
+}
+
+void *map_get(Map *map, char *key) {
+    for (int64_t i = 0; i < map->keys->length; i++) {
+        if (strcmp(map->keys->data[i], key) == 0) {
+            return map->vals->data[i];
+        }
+    }
+    return 0;
 }
 
 int64_t map_geti(Map *map, char *key) {
