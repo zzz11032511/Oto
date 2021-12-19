@@ -74,6 +74,12 @@ void oto_instr_play() {
 }
 
 void oto_instr_printvar(VectorPTR *var_list) {
+    if (var_list->length <= TC_EXIT + 1) {
+        // 変数が1つも定義されていない
+        printf("No variables have been declared\n");
+        return;
+    }
+
     printf("- Variable list -\n");
 
     uint64_t i = TC_EXIT + 1;

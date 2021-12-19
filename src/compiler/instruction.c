@@ -20,7 +20,6 @@ void compile_instruction(int64_t *icp, SliceI64 *srctcs, int64_t *idx) {
     case TC_PRINTVAR:
         compile_args(icp, argtcs, 0);
         put_opcode(icp, OP_PRINTVAR, 0, 0, 0, 0);
-        printf("Done\n");
         break;
 
     // case TC_NOTE:
