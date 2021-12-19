@@ -1,62 +1,41 @@
 #include <oto.h>
 #include <oto_sound.h>
 
+static Status *oto_status = NULL;
+
 static char *src = NULL;
 static VectorI64 *src_tokens = NULL;
 static VectorPTR *var_list   = NULL;
 static VectorPTR *ic_list    = NULL;
 
-static bool timecount_flag = false;
-void set_timecount_flag(bool flag) {
-    timecount_flag = flag;
-}
-
-static bool repl_flag = false;
-void set_repl_flag(bool flag) {
-    repl_flag = flag;
-}
-bool get_repl_flag() {
-    return repl_flag;
-}
-
-static language_t language = LANG_JPN_KANJI;
-void set_language(language_t l) {
-    language = l;
-}
-language_t get_language() {
-    return language;
-}
-
-void oto_init(char *path) {
+void oto_init(char *srcpath) {
+    oto_status = get_oto_status();
+    init_status(oto_status, srcpath);
+    
+    init_token_list();
+    init_rsvword();
+    // init_include_file_manager(path);
+    init_sound_stream(oto_status->sampling_rate);
+    
     if (atexit(oto_exit_process) != 0) {
         exit(EXIT_FAILURE);
     }
-
-    init_token_list();
-    init_rsvword();
-    init_include_file_manager(path);
-    init_sound_stream(44100);
 }
 
-void oto_run(const char *path) {
-    if (repl_flag == true) {
-        repl();
-        return;
-    }
-
-    src = src_open(path);
+void oto_run() {
+    src = src_open(oto_status->root_srcpath);
     if (IS_NULL(src)) {
-        print_error(OTO_FILE_NOT_FOUND_ERROR);
+        // print_error(OTO_FILE_NOT_FOUND_ERROR);
         exit(EXIT_FAILURE);
     }
 
     time_t start_time = 0;
     time_t end_time = 0;
-    if (timecount_flag == true) {
+    if (oto_status->timecount_flag) {
         start_time = clock();
     }
 
-    src_tokens = lexer(src);
+    lexer(src, src_tokens, var_list, oto_status);
 #ifdef DEBUG
     print_src_tokens(src_tokens);
 #endif
@@ -71,31 +50,31 @@ void oto_run(const char *path) {
     print_ic_list(ic_list);
 #endif
 
-    if (timecount_flag == true) {
+    if (oto_status->timecount_flag) {
         end_time = clock();
-        if (language == LANG_JPN_KANJI) {
+        if (oto_status->language == LANG_JPN_KANJI) {
             printf("コンパイル時間 : %f[秒]\n\n", CALC_TIME(start_time, end_time));
-        } else if (language == LANG_JPN_HIRAGANA) {
+        } else if (oto_status->language == LANG_JPN_HIRAGANA) {
             printf("じゅんびじかん : %f[びょう]\n\n", CALC_TIME(start_time, end_time));
-        } else if (language == LANG_ENG) {
+        } else if (oto_status->language == LANG_ENG) {
             printf("Compile time : %f[s]\n\n", CALC_TIME(start_time, end_time));
         }
-    }
 
-    if (timecount_flag == true) {
         start_time = clock();
         exec(ic_list, var_list);
         end_time = clock();
-        if (language == LANG_JPN_KANJI) {
+
+        if (oto_status->language == LANG_JPN_KANJI) {
             printf("実行時間 : %f[s]\n\n", CALC_TIME(start_time, end_time));
-        } else if (language == LANG_JPN_HIRAGANA) {
+        } else if (oto_status->language == LANG_JPN_HIRAGANA) {
             printf("しゅうりょうじかん : %f[びょう]\n\n", CALC_TIME(start_time, end_time));
-        } else if (language == LANG_ENG) {
+        } else if (oto_status->language == LANG_ENG) {
             printf("Run time : %f[s]\n\n", CALC_TIME(start_time, end_time));
         }
-        return;
+
+    } else {
+        exec(ic_list, var_list);
     }
-    exec(ic_list, var_list);
 }
 
 void oto_exit_process() {
@@ -119,21 +98,21 @@ void oto_error_exit(errorcode_t err) {
 void print_help() {
     printf("\n");
 
-    if (language == LANG_JPN_KANJI) {
+    if (oto_status->language == LANG_JPN_KANJI) {
         printf("- 操作方法 -\n");
         printf("終了するときは, 「EXIT」と打つか, Ctrl+Cを押してください\n");
         printf("- 命令一覧 -\n");
         printf("PLAY  <周波数>, <音の長さ>, <音の大きさ>, <音の種類>\n");
         printf("BEEP  <周波数>, <音の長さ>\n");
         printf("PRINT <出力したいもの>\n");
-    } else if (language == LANG_JPN_HIRAGANA) {
+    } else if (oto_status->language == LANG_JPN_HIRAGANA) {
         printf("- そうさほうほう -\n");
         printf("おわるときは, 「EXIT」とうつか, CtrlキーとCキーをどうじにおしてね\n");
         printf("- コマンドいちらん -\n");
         printf("PLAY  <おとのたかさ>, <おとのながさ>, <おとのおおきさ>, <おとのしゅるい>\n");
         printf("BEEP  <おとのたかさ>, <おとのながさ>\n");
         printf("PRINT <がめんにひょうじしたいもの>\n");
-    } else if (language == LANG_ENG) {
+    } else if (oto_status->language == LANG_ENG) {
         printf("- Usage -\n");
         printf("If you want to finish, type \"EXIT\" or press Ctrl+C.\n");
         printf("- List of instructions -\n");
@@ -149,14 +128,14 @@ void print_help() {
 void repl() {
     printf("\nOto (beta 2021-12-04) REPL ... Hello!!!\n");
 
-    if (language == LANG_JPN_KANJI) {
+    if (oto_status->language == LANG_JPN_KANJI) {
         printf("コマンド一覧を見たいときは「HELP」\n");
         printf("終了するときは「EXIT」\n");
-    } else if (language == LANG_JPN_HIRAGANA) {
+    } else if (oto_status->language == LANG_JPN_HIRAGANA) {
         printf("コマンドいちらんをみたいときは「HELP」\n");
         printf("おわるときは「EXIT」\n");
         printf("をにゅうりょくしてください\n");
-    } else if (language == LANG_ENG) {
+    } else if (oto_status->language == LANG_ENG) {
         printf("\"HELP\" ... See list of instructions\n");
         printf("\"EXIT\" ... Exit\n");
     }
@@ -175,11 +154,11 @@ void repl() {
         }
 
         if (strncmp_cs(str, "EXIT", 4) == 0) {
-            if (language == LANG_JPN_KANJI) {
+            if (oto_status->language == LANG_JPN_KANJI) {
                 printf("REPLモードを終了します\n");
-            } else if (language == LANG_JPN_HIRAGANA) {
+            } else if (oto_status->language == LANG_JPN_HIRAGANA) {
                 printf("REPLモードをおわります\n");
-            } else if (language == LANG_ENG) {
+            } else if (oto_status->language == LANG_ENG) {
                 printf("Exit REPL.\n");
             }
             break;
@@ -187,10 +166,7 @@ void repl() {
             print_help();
         }
 
-        src_tokens = lexer(str);
-
-        // 新しく追加された変数を反映する
-        update_var_list(var_list);
+        lexer(str, src_tokens, var_list, oto_status);
 
         ic_list = compile(src_tokens, var_list, str);
         

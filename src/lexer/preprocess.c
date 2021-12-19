@@ -25,43 +25,27 @@ char *new_string_literal(char *src, int64_t idx) {
     return str;
 }
 
-static Map *include_file_list = NULL;
-/**
- * 循環参照発見機構の初期化
- * 
- * 引数には実行した最初のファイルのパスを渡す
- */
-void init_include_file_manager(char *root_path) {
-    if (include_file_list == NULL) {
-        include_file_list = new_map();
-        if (IS_NULL(include_file_list)) {
-            oto_error_exit(OTO_INTERNAL_ERROR);
-        }
-    }
-    map_puti(include_file_list, root_path, 1);
-}
-
 /**
  * 循環参照を発見する
  * 
  * インクルードしたファイルのパスを
- * include_file_listに参照回数1回として追加し
+ * status->srcfile_tableに参照回数1回として追加し
  * もし既に参照されていた場合はエラーとする
  */
-static void check_circular_ref(char *path) {
-    if (map_exist_key(include_file_list, path)) {
-        if (map_geti(include_file_list, path) >= 1) {
+static void check_circular_ref(char *path, Status *status) {
+    if (map_exist_key(status->srcfile_table, path)) {
+        if (map_geti(status->srcfile_table, path) >= 1) {
             // 循環参照
             oto_error_exit(OTO_CIRCULAR_REFERENCE_ERROR);
         } else {
-            map_inc_val(include_file_list, path);
+            map_inc_val(status->srcfile_table, path);
         }
     } else {
-        map_puti(include_file_list, path, 1);
+        map_puti(status->srcfile_table, path, 1);
     }
 }
 
-static void include_file(char *src, int64_t idx, VectorI64 *src_tokens) {
+static void include_file(char *src, int64_t idx, VectorI64 *src_tokens, VectorPTR *var_list, Status *status) {
     // "include"の分
     idx += 7;
 
@@ -78,26 +62,26 @@ static void include_file(char *src, int64_t idx, VectorI64 *src_tokens) {
     if (IS_NULL(path)) {
         oto_error_exit(OTO_PREPROCESS_ERROR);
     }
-    check_circular_ref(path);
+    check_circular_ref(path, status);
 
     char *new_src = src_open(path);
     if (IS_NULL(new_src)) {
         oto_error_exit(OTO_INCLUDE_FILE_NOT_FOUND_ERROR);
     }
 
-    tokenize(new_src, src_tokens);
+    tokenize(new_src, src_tokens, var_list, status);
 
     // ファイル参照回数を1減らす
-    map_dec_val(include_file_list, path);
+    map_dec_val(status->srcfile_table, path);
 
     free(new_src);
     free(path);
 }
 
-void preprocess(char *src, int64_t idx, VectorI64 *src_tokens) {
+void preprocess(char *src, int64_t idx, VectorI64 *src_tokens, VectorPTR *var_list, Status *status) {
     idx++;
 
     if (strncmp_cs("include", &src[idx], 7) == 0) {
-        include_file(src, idx, src_tokens);
+        include_file(src, idx, src_tokens, var_list, status);
     }
 }

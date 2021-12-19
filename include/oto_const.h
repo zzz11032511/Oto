@@ -30,6 +30,7 @@ enum {
     OTO_REPL_ERROR
 };
 typedef int64_t errorcode_t;
+typedef int64_t error_t;
 
 // Tokencodes
 enum {

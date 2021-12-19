@@ -38,35 +38,6 @@ const Token rsvwords[] = {
     {0,            NULL,        0, 1},
 };
 
-static VectorPTR *token_list = NULL;
-
-void init_token_list() {
-    if (IS_NOT_NULL(token_list)) {
-        free_token_list();
-        token_list = NULL;
-    }
-
-    token_list = new_vector_ptr(DEFAULT_MAX_TC);
-    if (IS_NULL(token_list)) {
-        oto_error_exit(OTO_INTERNAL_ERROR);
-    }
-}
-
-void free_token_list() {
-    if (IS_NULL(token_list)) {
-        return;
-    }
-
-    int64_t i = 0;
-    while (i < token_list->length) {
-        free(((Token *)(token_list->data[i]))->str);
-        free(token_list->data[i]);
-        i++;
-    }
-    free_vector_ptr(token_list);
-    token_list = NULL;
-}
-
 static Token *new_token(tokencode_t tc,
                         char *str, size_t len, tokentype_t type) {
     Token *token = MYMALLOC1(Token);
@@ -88,41 +59,6 @@ static Token *new_token(tokencode_t tc,
     strncpy(token->str, str, len);
 
     return token;
-}
-
-static void add_new_token(tokencode_t tc,
-                          char *str, size_t len, tokentype_t type) {
-    Token *token = new_token(tc, str, len, type);
-    if (IS_NULL(token)) {
-        oto_error_exit(OTO_INTERNAL_ERROR);
-    }
-
-    if (IS_NOT_NULL(token_list->data[tc])) {
-        free(token_list->data[tc]);
-    }
-
-    vector_ptr_set(token_list, tc, (void *)token);
-}
-
-static void append_new_token(char *str, size_t len, tokentype_t type) {
-    add_new_token(token_list->length, str, len, type);
-}
-
-void init_rsvword() {
-    if (IS_NULL(token_list)) {
-        return;
-    }
-
-    int64_t i = 0;
-    while (symbols[i].str != NULL) {
-        append_new_token(symbols[i].str, symbols[i].len, TK_TY_SYMBOL);
-        i++;
-    }
-    i = 0;
-    while (rsvwords[i].str != NULL) {
-        append_new_token(rsvwords[i].str, rsvwords[i].len, TK_TY_RSVWORD);
-        i++;
-    }
 }
 
 /* もし予約語でない場合は0を返す */
@@ -147,18 +83,18 @@ bool is_rsvword(char *str, size_t len) {
     return false;
 }
 
-tokencode_t allocate_tc(char *str, size_t len, tokentype_t type) {
+tokencode_t allocate_tc(char *str, size_t len, tokentype_t type, VectorPTR *var_list) {
     tokencode_t tc = get_rsvword_tc(str, len);
     if (tc != 0) {
         // トークンが予約語だった
         return tc;
     }
 
-    size_t tcs = token_list->length;
+    size_t tcs = var_list->length;
 
     for (tc = 0; tc < tcs; tc++) {
-        size_t tl = ((Token *)token_list->data[tc])->len;
-        char *ts  = ((Token *)token_list->data[tc])->str;
+        size_t tl = ((Var *)var_list->data[tc])->token->len;
+        char *ts  = ((Var *)var_list->data[tc])->token->str;
         if (len == tl && (strncmp(str, ts, len) == 0)) {
             break;
         }
@@ -166,12 +102,16 @@ tokencode_t allocate_tc(char *str, size_t len, tokentype_t type) {
 
     if (tc == tcs) {
         // 新規作成時の処理
-        append_new_token(str, len, type);
+        Token *token = new_token(tc, str, len, type);
+        if (IS_NULL(token)) {
+            // Error
+            oto_error_exit(OTO_INTERNAL_ERROR);
+        }
+        add_new_variable(var_list, token);
     }
 
     return tc;
 }
-
 
 static Var *new_variable(Token *token, tokentype_t type) {
     Var *var = MYMALLOC1(Var);
@@ -217,33 +157,6 @@ void add_new_variable(VectorPTR *var_list, Token *new_token) {
     }
 
     vector_ptr_append(var_list, (void *)new_var);
-}
-
-VectorPTR *make_var_list() {
-    VectorPTR *var_list = new_vector_ptr(token_list->length);
-    if (IS_NULL(var_list)) {
-        oto_error_exit(OTO_INTERNAL_ERROR);
-    }
-
-    for (int64_t i = 0; i < token_list->length; i++) {
-        add_new_variable(var_list, ((Token *)token_list->data[i]));
-    }
-
-    return var_list;
-}
-
-/**
- * REPL専用
- * 前回から追加されたTokenに対応する変数を作る
- */
-void update_var_list(VectorPTR *var_list) {
-    if (IS_NULL(var_list)) {
-        oto_error_exit(OTO_INTERNAL_ERROR);
-    }
-
-    for (int64_t i = var_list->length; i < token_list->length; i++) {
-        add_new_variable(var_list, ((Token *)token_list->data[i]));
-    }
 }
 
 #define IS_HEAP_TYPE(type) \

@@ -12,6 +12,7 @@ SliceI64 *new_slice_i64(VectorI64 *vec, int64_t start, int64_t end) {
         return NULL;
     }
     slice->data = &(vec->data[start]);
+    slice->abs_idx = start;
 
     if (end > vec->length) {
         slice->length = vec->length;
@@ -32,6 +33,7 @@ SliceI64 *new_slice_i64_from_slice(SliceI64 *org_slice, int64_t start, int64_t e
         return NULL;
     }
     slice->data = &(org_slice->data[start]);
+    slice->abs_idx = org_slice->abs_idx + start;
 
     if (end > org_slice->length) {
         slice->length = org_slice->length;

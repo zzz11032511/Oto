@@ -44,7 +44,7 @@ void *map_get(Map *map, char *key) {
             return map->vals->data[i];
         }
     }
-    return 0;
+    return NULL;
 }
 
 int64_t map_geti(Map *map, char *key) {

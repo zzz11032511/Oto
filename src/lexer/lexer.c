@@ -131,7 +131,7 @@ static size_t count_operator_len(char *s) {
 #define IS_IGNORE_CHAR(c)   (c == ' ' || c == '\t' || c == '\r')
 #define IS_PREPROCESS(c)    (c == '@')
 
-void tokenize(char *src, VectorI64 *src_tokens) {
+void tokenize(char *src, VectorI64 *src_tokens, VectorPTR *var_list, Status *status) {
     int64_t i = 0;
     while (src[i] != 0) {
         if (IS_IGNORE_CHAR(src[i])) {
@@ -149,8 +149,8 @@ void tokenize(char *src, VectorI64 *src_tokens) {
                         break;
                     }
                 } else if (src[i] == 0) {
-                        error_lexer(OTO_SYNTAX_ERROR, src, i);
-                    }
+                    error_lexer(OTO_SYNTAX_ERROR, src, i);
+                }
                 i++;
             }
             i += 2;
@@ -174,7 +174,7 @@ void tokenize(char *src, VectorI64 *src_tokens) {
             if (get_repl_flag() == true) {
                 error_lexer(OTO_REPL_ERROR, src, 0);
             } else {
-                preprocess(src, i, src_tokens);
+                preprocess(src, i, src_tokens, var_list, status);
             }
             while (src[i] != '\n' && src[i] != '\0') {
                 i++;
@@ -220,7 +220,7 @@ void tokenize(char *src, VectorI64 *src_tokens) {
 
         vector_i64_append(
             src_tokens,
-            allocate_tc(&src[i], len, type)
+            allocate_tc(&src[i], len, type, var_list)
         );
         i += len;
     }
@@ -228,13 +228,13 @@ void tokenize(char *src, VectorI64 *src_tokens) {
     return;
 }
 
-VectorI64 *lexer(char *src) {
+void lexer(char *src, VectorI64 *src_tokens, VectorPTR *var_list, Status *status) {
     VectorI64 *src_tokens = new_vector_i64(DEFAULT_MAX_TC);
     if (IS_NULL(src_tokens)) {
         oto_error_exit(OTO_INTERNAL_ERROR);
     }
 
-    tokenize(src, src_tokens);
+    tokenize(src, src_tokens, var_list, status);
     vector_i64_append(src_tokens, TC_LF);
 
     return src_tokens;

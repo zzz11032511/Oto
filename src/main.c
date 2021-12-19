@@ -5,28 +5,20 @@ void usage(const char *name) {
     return;
 }
 
-int main(int argc, char **argv) {
-    load_config();
-    
+int main(int argc, char **argv) {    
     uint32_t i = 1;
 
-    if (argc == 1) {
-        set_repl_flag(true);
-        oto_init("");
-        repl();
+    if (argc > 1 && strcmp(argv[1], "--help") == 0) {
+        usage(argv[0]);
         return 0;
-    }
-
-    // 実行時間表示
-    if (argc > 1 && strcmp(argv[1], "-T") == 0) {
-        set_timecount_flag(true);
-        i++;
     }
 
     // ファイル名が指定されていない場合
     if (argc != i + 1) {
-        usage(argv[0]);
-        exit(1);
+        set_repl_flag(true);
+        oto_init(NULL);
+        repl();
+        return 0;
     }
 
     oto_init(argv[i]);
