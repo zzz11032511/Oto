@@ -55,6 +55,11 @@ void oto_error(errorcode_t err) {
 }
 
 void oto_run() {
+    if (oto_status->repl_flag || (oto_status->root_srcpath == NULL)) {
+        repl();
+        return;
+    }
+    
     src = src_open(oto_status->root_srcpath);
     if (IS_NULL(src)) {
         print_error(OTO_FILE_NOT_FOUND_ERROR, oto_status);

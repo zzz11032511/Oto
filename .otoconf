@@ -1,5 +1,5 @@
 timecount: true
 repl: false
 language: kanji
-sampling_rate: 2000
-default_srcpath: ./aaa.oto
+sampling_rate: 44100
+default_srcpath: aaa.oto

@@ -3,7 +3,6 @@
 static FILE *open_file(const char *path) {
     FILE *fp = fopen(path, "r");
     if (IS_NULL(fp)) {
-        perror(path);
         return NULL;
     }
     return fp;

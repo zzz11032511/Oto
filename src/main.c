@@ -16,12 +16,11 @@ int main(int argc, char **argv) {
     // ファイル名が指定されていない場合
     if (argc != i + 1) {
         oto_init(NULL);
-        repl();
-        return 0;
+        oto_run(NULL);
+    } else {
+        oto_init(argv[i]);
+        oto_run(argv[i]);
     }
-
-    oto_init(argv[i]);
-    oto_run(argv[i]);
 
     return 0;
 }
