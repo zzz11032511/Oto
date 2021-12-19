@@ -1,6 +1,3 @@
-#include <oto.h>
-#include <oto_sound.h>
-
 #include "vm.h"
 
 void oto_instr_print() {
@@ -9,7 +6,7 @@ void oto_instr_print() {
     } else if (vmstack_typecheck() == VM_TY_IMMEDIATE) {
         printf("%f\n", vmstack_popf());
     } else if (vmstack_typecheck() == VM_TY_INITVAL) {
-        oto_error_exit(OTO_MISSING_ARGUMENTS_ERROR);
+        oto_error(OTO_MISSING_ARGUMENTS_ERROR);
     }
 }
 

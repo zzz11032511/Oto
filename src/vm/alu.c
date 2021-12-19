@@ -1,5 +1,3 @@
-#include <oto.h>
-
 #include "vm.h"
 
 #define IS_JUST_ZERO(val) (val & -1) == 0
@@ -21,7 +19,7 @@ void alu(opcode_t op) {
     } else if (vmstack_typecheck() == VM_TY_IMMEDIATE) {
         val2.f = vmstack_popf();
     } else {
-        oto_error_exit(OTO_UNKNOWN_ERROR);
+        oto_error(OTO_UNKNOWN_ERROR);
     }
 
     if (vmstack_typecheck() == VM_TY_VARPTR) {
@@ -29,7 +27,7 @@ void alu(opcode_t op) {
     } else if (vmstack_typecheck() == VM_TY_IMMEDIATE) {
         val1.f = vmstack_popf();
     } else {
-        oto_error_exit(OTO_UNKNOWN_ERROR);
+        oto_error(OTO_UNKNOWN_ERROR);
     }
 
     switch (op) {
@@ -47,14 +45,14 @@ void alu(opcode_t op) {
 
     case OP_DIV:
         if (IS_JUST_ZERO(val2.i)) {
-            oto_error_exit(OTO_ZERO_DIVISION_ERROR);
+            oto_error(OTO_ZERO_DIVISION_ERROR);
         }
         vmstack_pushf(val1.f / val2.f);
         break;
 
     case OP_MOD:
         if (IS_JUST_ZERO(val2.i)) {
-            oto_error_exit(OTO_ZERO_DIVISION_ERROR);
+            oto_error(OTO_ZERO_DIVISION_ERROR);
         }
         vmstack_pushf((double)((int64_t)val1.f % (int64_t)val2.f));
         break;
@@ -92,6 +90,6 @@ void alu(opcode_t op) {
         break;
 
     default:
-        oto_error_exit(OTO_UNKNOWN_ERROR);
+        oto_error(OTO_UNKNOWN_ERROR);
     }
 }

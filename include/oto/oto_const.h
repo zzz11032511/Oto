@@ -1,6 +1,16 @@
 #pragma once
 
+#pragma once
+
 #include <stdint.h>
+
+// language
+enum {
+    LANG_JPN_KANJI = 0,
+    LANG_JPN_HIRAGANA,
+    LANG_ENG
+};
+typedef int64_t language_t;
 
 // Errorcodes
 enum {
@@ -30,7 +40,8 @@ enum {
     OTO_REPL_ERROR
 };
 typedef int64_t errorcode_t;
-typedef int64_t error_t;
+
+#define DEFAULT_MAX_TC 1024
 
 // Tokencodes
 enum {
@@ -224,11 +235,3 @@ enum {
     OP_EXIT
 };
 typedef int64_t opcode_t;
-
-// language
-enum {
-    LANG_JPN_KANJI = 0,
-    LANG_JPN_HIRAGANA,
-    LANG_ENG
-};
-typedef int64_t language_t;

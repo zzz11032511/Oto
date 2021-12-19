@@ -1,5 +1,3 @@
-#include <oto.h>
-
 #include "compiler.h"
 
 void compile_instruction(int64_t *icp, SliceI64 *srctcs, int64_t *idx) {
@@ -37,7 +35,7 @@ void compile_instruction(int64_t *icp, SliceI64 *srctcs, int64_t *idx) {
     // case TC_MIDIIN:
     // case TC_MIDIOUT:
     default:
-        oto_error_exit(OTO_INTERNAL_ERROR);
+        oto_error(OTO_INTERNAL_ERROR);
     }
 
     *idx += argtcs->length + 1;

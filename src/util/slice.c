@@ -1,4 +1,4 @@
-#include <oto.h>
+#include <oto/oto_util.h>
 
 SliceI64 *new_slice_i64(VectorI64 *vec, int64_t start, int64_t end) {
     if (IS_NULL(vec)) {

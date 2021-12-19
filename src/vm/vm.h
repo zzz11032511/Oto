@@ -1,6 +1,7 @@
 #pragma once
 
-#include <oto.h>
+#include <oto/oto.h>
+#include <oto/oto_sound.h>
 
 enum {
     VM_TY_IMMEDIATE,

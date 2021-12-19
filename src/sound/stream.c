@@ -1,5 +1,5 @@
-#include <oto.h>
-#include <oto_sound.h>
+#include <oto/oto.h>
+#include <oto/oto_sound.h>
 
 static PaStreamParameters out_param;
 static void init_stream_param() {
@@ -98,7 +98,7 @@ void init_sound_stream(int64_t sample_rate) {
 
     err = Pa_Initialize();
     if (err != paNoError) {
-        oto_error_exit(OTO_INTERNAL_ERROR);
+        oto_error(OTO_INTERNAL_ERROR);
     }
 
     init_stream_param();
@@ -108,12 +108,12 @@ void init_sound_stream(int64_t sample_rate) {
                         (float)sample_rate,
                         FRAMES_PER_BUFFER, paClipOff, play_callback, &out_data);
     if (err != paNoError) {
-        oto_error_exit(OTO_INTERNAL_ERROR);
+        oto_error(OTO_INTERNAL_ERROR);
     }
 
     err = Pa_StartStream(stream);
     if (err != paNoError) {
-        oto_error_exit(OTO_INTERNAL_ERROR);
+        oto_error(OTO_INTERNAL_ERROR);
     }
 }
 
@@ -123,17 +123,17 @@ void terminate_sound_stream() {
     if (!Pa_IsStreamStopped(stream)) {
         err = Pa_StopStream(stream);
         if (err != paNoError) {
-            oto_error_exit(OTO_INTERNAL_ERROR);
+            oto_error(OTO_INTERNAL_ERROR);
         }
     }
 
     err = Pa_CloseStream(stream);
     if (err != paNoError) {
-        oto_error_exit(OTO_INTERNAL_ERROR);
+        oto_error(OTO_INTERNAL_ERROR);
     }
 
     err = Pa_Terminate();
     if (err != paNoError) {
-        oto_error_exit(OTO_INTERNAL_ERROR);
+        oto_error(OTO_INTERNAL_ERROR);
     }
 }

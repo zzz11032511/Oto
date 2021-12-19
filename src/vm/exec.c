@@ -1,5 +1,3 @@
-#include <oto.h>
-
 #include "vm.h"
 
 #define VAR(tc)  ((Var *)(ic_list->data[tc]))
@@ -138,7 +136,7 @@ void exec(VectorPTR *ic_list, VectorPTR *var_list) {
             break;
 
         default:
-            oto_error_exit(OTO_UNKNOWN_ERROR);
+            oto_error(OTO_UNKNOWN_ERROR);
         }
 
         i += 5;

@@ -1,4 +1,4 @@
-#include <oto.h>
+#include <oto/oto.h>
 
 /* idxは最初の「"」の位置 */
 char *new_string_literal(char *src, int64_t idx) {
@@ -36,7 +36,7 @@ static void check_circular_ref(char *path, Status *status) {
     if (map_exist_key(status->srcfile_table, path)) {
         if (map_geti(status->srcfile_table, path) >= 1) {
             // 循環参照
-            oto_error_exit(OTO_CIRCULAR_REFERENCE_ERROR);
+            oto_error(OTO_CIRCULAR_REFERENCE_ERROR);
         } else {
             map_inc_val(status->srcfile_table, path);
         }
@@ -53,20 +53,20 @@ static void include_file(char *src, int64_t idx, VectorI64 *src_tokens, VectorPT
         idx++;
         if (src[idx] == '\n' && src[idx] == '\0') {
             // pathが指定されていない
-            oto_error_exit(OTO_PREPROCESS_ERROR);
+            oto_error(OTO_PREPROCESS_ERROR);
         }
     }
 
     char *path = NULL;
     path = new_string_literal(src, idx);
     if (IS_NULL(path)) {
-        oto_error_exit(OTO_PREPROCESS_ERROR);
+        oto_error(OTO_PREPROCESS_ERROR);
     }
     check_circular_ref(path, status);
 
     char *new_src = src_open(path);
     if (IS_NULL(new_src)) {
-        oto_error_exit(OTO_INCLUDE_FILE_NOT_FOUND_ERROR);
+        oto_error(OTO_INCLUDE_FILE_NOT_FOUND_ERROR);
     }
 
     tokenize(new_src, src_tokens, var_list, status);

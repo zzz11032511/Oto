@@ -1,4 +1,3 @@
-#include <oto.h>
 #include "vm.h"
 
 #define VMSTACK_SIZE 200
@@ -20,7 +19,7 @@ vmvaltype_t vmstack_typecheck() {
 
 void vmstack_pushi(int64_t i) {
     if (sp >= VMSTACK_SIZE) {
-        oto_error_exit(OTO_STACK_OVERFLOW_ERROR);
+        oto_error(OTO_STACK_OVERFLOW_ERROR);
     }
     vmstack[sp].value.i = i;
     vmstack[sp].type = VM_TY_IMMEDIATE;
@@ -29,7 +28,7 @@ void vmstack_pushi(int64_t i) {
 
 void vmstack_push_initval() {
     if (sp >= VMSTACK_SIZE) {
-        oto_error_exit(OTO_STACK_OVERFLOW_ERROR);
+        oto_error(OTO_STACK_OVERFLOW_ERROR);
     }
     vmstack[sp].value.i = 0;
     vmstack[sp].type = VM_TY_INITVAL;
@@ -38,7 +37,7 @@ void vmstack_push_initval() {
 
 void vmstack_pushf(double f) {
     if (sp >= VMSTACK_SIZE) {
-        oto_error_exit(OTO_STACK_OVERFLOW_ERROR);
+        oto_error(OTO_STACK_OVERFLOW_ERROR);
     }
     vmstack[sp].value.f = f;
     vmstack[sp].type = VM_TY_IMMEDIATE;
@@ -47,7 +46,7 @@ void vmstack_pushf(double f) {
 
 void vmstack_pushv(Var *v) {
     if (sp >= VMSTACK_SIZE) {
-        oto_error_exit(OTO_STACK_OVERFLOW_ERROR);
+        oto_error(OTO_STACK_OVERFLOW_ERROR);
     }
     vmstack[sp].value.v = v;
     vmstack[sp].type = VM_TY_VARPTR;
@@ -56,7 +55,7 @@ void vmstack_pushv(Var *v) {
 
 void vmstack_pushp(void *p) {
     if (sp >= VMSTACK_SIZE) {
-        oto_error_exit(OTO_STACK_OVERFLOW_ERROR);
+        oto_error(OTO_STACK_OVERFLOW_ERROR);
     }
     vmstack[sp].value.p = p;
     vmstack[sp].type = VM_TY_IMMEDIATE;
@@ -65,7 +64,7 @@ void vmstack_pushp(void *p) {
 
 int64_t vmstack_popi() {
     if (sp < 0) {
-        oto_error_exit(OTO_STACK_OVERFLOW_ERROR);
+        oto_error(OTO_STACK_OVERFLOW_ERROR);
     }
     sp--;
     return vmstack[sp].value.i;
@@ -73,7 +72,7 @@ int64_t vmstack_popi() {
 
 double vmstack_popf() {
     if (sp < 0) {
-        oto_error_exit(OTO_STACK_OVERFLOW_ERROR);
+        oto_error(OTO_STACK_OVERFLOW_ERROR);
     }
     sp--;
     return vmstack[sp].value.f;
@@ -81,7 +80,7 @@ double vmstack_popf() {
 
 Var *vmstack_popv() {
     if (sp < 0) {
-        oto_error_exit(OTO_STACK_OVERFLOW_ERROR);
+        oto_error(OTO_STACK_OVERFLOW_ERROR);
     }
     sp--;
     return vmstack[sp].value.v;
@@ -89,7 +88,7 @@ Var *vmstack_popv() {
 
 void *vmstack_popp() {
     if (sp < 0) {
-        oto_error_exit(OTO_STACK_OVERFLOW_ERROR);
+        oto_error(OTO_STACK_OVERFLOW_ERROR);
     }
     sp--;
     return vmstack[sp].value.p;

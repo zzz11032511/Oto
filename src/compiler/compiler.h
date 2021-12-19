@@ -1,6 +1,6 @@
 #pragma once
 
-#include <oto.h>
+#include <oto/oto.h>
 
 extern char *src;
 extern VectorPTR *vars;

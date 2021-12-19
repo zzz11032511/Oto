@@ -1,5 +1,3 @@
-#include <oto.h>
-
 #include "compiler.h"
 
 #define DEFAULT_RPN_TC_LIST_SIZE 1000
@@ -80,7 +78,7 @@ static void rpn(SliceI64 *exprtcs, VectorI64 *rpntcs) {
         } else if (IS_ARITH_OPERATOR(tc)) {
             if (is_before_op) {
                 /* 演算子が連続していればエラー */
-                oto_error_exit(OTO_INVALID_SYNTAX_ERROR);
+                oto_error(OTO_INVALID_SYNTAX_ERROR);
 
             } else {
                 is_before_op = true;
@@ -119,7 +117,7 @@ static void expr_sub(int64_t *icp, VectorI64 *rpntcs, VectorPTR *vars) {
             put_opcode(icp, OP_PUSH, (Var *)(vars->data[tc]), 0, 0, 0);
         
         } else {
-            oto_error_exit(OTO_UNKNOWN_ERROR);
+            oto_error(OTO_UNKNOWN_ERROR);
         }
     }
 }

@@ -1,4 +1,4 @@
-#include <oto.h>
+#include <oto/oto.h>
 
 int64_t get_current_line(char *src, int64_t idx) {
     int64_t line = 1;
@@ -34,7 +34,6 @@ void print_line(char *src, int64_t line) {
 }
 
 static void error_lexer(errorcode_t err, char *src, int64_t idx) {
-    print_error(err);
     int64_t line = get_current_line(src, idx);
     print_line(src, line);
 
@@ -58,7 +57,7 @@ static void error_lexer(errorcode_t err, char *src, int64_t idx) {
     fprintf(stderr, "\x1b[39m");
     printf("\n");
 
-    exit(EXIT_FAILURE);
+    oto_error(err);
 }
 
 static bool is_number(char c) {
@@ -171,7 +170,7 @@ void tokenize(char *src, VectorI64 *src_tokens, VectorPTR *var_list, Status *sta
         size_t len = 0;
         tokentype_t type = -1;
         if (IS_PREPROCESS(src[i])) {
-            if (get_repl_flag() == true) {
+            if (status->repl_flag == true) {
                 error_lexer(OTO_REPL_ERROR, src, 0);
             } else {
                 preprocess(src, i, src_tokens, var_list, status);
@@ -228,10 +227,10 @@ void tokenize(char *src, VectorI64 *src_tokens, VectorPTR *var_list, Status *sta
     return;
 }
 
-void lexer(char *src, VectorI64 *src_tokens, VectorPTR *var_list, Status *status) {
+VectorI64 *lexer(char *src, VectorPTR *var_list, Status *status) {
     VectorI64 *src_tokens = new_vector_i64(DEFAULT_MAX_TC);
     if (IS_NULL(src_tokens)) {
-        oto_error_exit(OTO_INTERNAL_ERROR);
+        oto_error(OTO_INTERNAL_ERROR);
     }
 
     tokenize(src, src_tokens, var_list, status);

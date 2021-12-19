@@ -1,5 +1,3 @@
-#include <oto.h>
-
 #include "compiler.h"
 
 SliceI64 *make_line_tokencodes(SliceI64 *srctcs, int64_t start) {
@@ -7,13 +5,13 @@ SliceI64 *make_line_tokencodes(SliceI64 *srctcs, int64_t start) {
     while (srctcs->data[end] != TC_LF) {
         end++;
         if (end >= srctcs->length) {
-            oto_error_exit(OTO_INVALID_SYNTAX_ERROR);
+            oto_error(OTO_INVALID_SYNTAX_ERROR);
         }
     }
 
     SliceI64 *slice = new_slice_i64_from_slice(srctcs, start, end);
     if (IS_NULL(slice)) {
-        oto_error_exit(OTO_INTERNAL_ERROR);
+        oto_error(OTO_INTERNAL_ERROR);
     }
 
     return slice;
@@ -36,7 +34,7 @@ SliceI64 *make_args_enclosed_br(SliceI64 *srctcs, int64_t sqbropn) {
         if ((tc == TC_SQBRCLS || TC_BRCLS) && nest == 0) {
             break;
         } else if (end >= srctcs->length) {
-            oto_error_exit(OTO_INVALID_SYNTAX_ERROR);
+            oto_error(OTO_INVALID_SYNTAX_ERROR);
         }
 
         end++;
@@ -44,7 +42,7 @@ SliceI64 *make_args_enclosed_br(SliceI64 *srctcs, int64_t sqbropn) {
 
     SliceI64 *slice = new_slice_i64_from_slice(srctcs, start, end);
     if (IS_NULL(slice)) {
-        oto_error_exit(OTO_INTERNAL_ERROR);
+        oto_error(OTO_INTERNAL_ERROR);
     }
 
     return slice;
@@ -68,7 +66,7 @@ SliceI64 *make_begin_end_block(SliceI64 *srctcs, int64_t begin) {
         if (tc == TC_END && nest == 0) {
             break;
         } else if (end >= srctcs->length) {
-            oto_error_exit(OTO_INVALID_SYNTAX_ERROR);
+            oto_error(OTO_INVALID_SYNTAX_ERROR);
         }
 
         end++;
@@ -76,7 +74,7 @@ SliceI64 *make_begin_end_block(SliceI64 *srctcs, int64_t begin) {
 
     SliceI64 *slice = new_slice_i64_from_slice(srctcs, start, end);
     if (IS_NULL(slice)) {
-        oto_error_exit(OTO_INTERNAL_ERROR);
+        oto_error(OTO_INTERNAL_ERROR);
     }
 
     return slice;
@@ -104,14 +102,14 @@ SliceI64 *make_ifthen_block(SliceI64 *srctcs, int64_t then) {
                 if (tc == TC_END && nest == 0) {
                     break;
                 } else if (end >= srctcs->length) {
-                    oto_error_exit(OTO_INVALID_SYNTAX_ERROR);
+                    oto_error(OTO_INVALID_SYNTAX_ERROR);
                 }  
                 end++;
             }
         } else if (tc == TC_ELSIF || tc == TC_ELSE || tc == TC_END) {
             break;
         } else if (end >= srctcs->length) {
-            oto_error_exit(OTO_INVALID_SYNTAX_ERROR);
+            oto_error(OTO_INVALID_SYNTAX_ERROR);
         }
 
         end++;
@@ -119,7 +117,7 @@ SliceI64 *make_ifthen_block(SliceI64 *srctcs, int64_t then) {
 
     SliceI64 *slice = new_slice_i64_from_slice(srctcs, start, end);
     if (IS_NULL(slice)) {
-        oto_error_exit(OTO_INTERNAL_ERROR);
+        oto_error(OTO_INTERNAL_ERROR);
     }
 
     return slice;
@@ -159,7 +157,7 @@ void compile_args(int64_t *icp, SliceI64 *argtcs, int64_t max_params) {
     }
 
     if (params > max_params) {
-        oto_error_exit(OTO_TOO_MANY_ARGUMENTS_ERROR);
+        oto_error(OTO_TOO_MANY_ARGUMENTS_ERROR);
     }
 
     while (params < max_params) {

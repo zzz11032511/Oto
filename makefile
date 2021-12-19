@@ -1,4 +1,4 @@
-SRCSLIST := main.c  run.c token.c debug.c error.c config.c \
+SRCSLIST := main.c run.c token.c debug.c error.c status.c option.c \
 			util/util.c util/vector.c util/map.c util/slice.c util/stack.c \
 			lexer/lexer.c lexer/preprocess.c \
 			compiler/compiler.c compiler/util_compiler.c compiler/expr.c compiler/flow.c compiler/instruction.c \

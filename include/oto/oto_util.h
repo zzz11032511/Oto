@@ -1,6 +1,11 @@
+#pragma once
+
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
+#include <mymacro.h>
 
 char *src_open(const char *path);
 size_t count_file_size(const char *path);

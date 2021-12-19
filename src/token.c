@@ -1,4 +1,4 @@
-#include <oto.h>
+#include <oto/oto.h>
 
 const Token symbols[] = {
     {TC_LF,     "\n",  1, 0},
@@ -42,7 +42,7 @@ static Token *new_token(tokencode_t tc,
                         char *str, size_t len, tokentype_t type) {
     Token *token = MYMALLOC1(Token);
     if (IS_NULL(token)) {
-        oto_error_exit(OTO_INTERNAL_ERROR);
+        oto_error(OTO_INTERNAL_ERROR);
     }
 
     token->tc   = tc;
@@ -52,7 +52,7 @@ static Token *new_token(tokencode_t tc,
     // '\0"の分1足す
     char *s = MYMALLOC(len + 1, char);
     if (IS_NULL(s)) {
-        oto_error_exit(OTO_INTERNAL_ERROR);
+        oto_error(OTO_INTERNAL_ERROR);
     }
 
     token->str = s;
@@ -64,7 +64,6 @@ static Token *new_token(tokencode_t tc,
 /* もし予約語でない場合は0を返す */
 static tokencode_t get_rsvword_tc(char *str, size_t len) {
     int64_t i = 0;
-    // TODO: 厳密にテストするべき
     while (rsvwords[i].str != NULL) {
         // 予約語については大文字小文字を区別しない
         if (is_str_equal_cs(str, len, rsvwords[i].str, rsvwords[i].len)) {
@@ -73,14 +72,6 @@ static tokencode_t get_rsvword_tc(char *str, size_t len) {
         i++;
     }
     return 0;
-}
-
-bool is_rsvword(char *str, size_t len) {
-    tokencode_t tc = get_rsvword_tc(str, len);
-    if (tc != 0) {
-        return true;
-    }
-    return false;
 }
 
 tokencode_t allocate_tc(char *str, size_t len, tokentype_t type, VectorPTR *var_list) {
@@ -105,7 +96,7 @@ tokencode_t allocate_tc(char *str, size_t len, tokentype_t type, VectorPTR *var_
         Token *token = new_token(tc, str, len, type);
         if (IS_NULL(token)) {
             // Error
-            oto_error_exit(OTO_INTERNAL_ERROR);
+            oto_error(OTO_INTERNAL_ERROR);
         }
         add_new_variable(var_list, token);
     }
@@ -116,7 +107,7 @@ tokencode_t allocate_tc(char *str, size_t len, tokentype_t type, VectorPTR *var_
 static Var *new_variable(Token *token, tokentype_t type) {
     Var *var = MYMALLOC1(Var);
     if (IS_NULL(var)) {
-        oto_error_exit(OTO_INTERNAL_ERROR);
+        oto_error(OTO_INTERNAL_ERROR);
     }
 
     var->token   = token;
@@ -149,7 +140,7 @@ void add_new_variable(VectorPTR *var_list, Token *new_token) {
 
     if (IS_NULL(new_var)) {
         free(var_list);
-        oto_error_exit(OTO_INTERNAL_ERROR);
+        oto_error(OTO_INTERNAL_ERROR);
     }
 
     if (new_token->type == TK_TY_LITERAL) {
@@ -157,6 +148,23 @@ void add_new_variable(VectorPTR *var_list, Token *new_token) {
     }
 
     vector_ptr_append(var_list, (void *)new_var);
+}
+
+void init_var_list(VectorPTR *var_list) {
+    if (IS_NULL(var_list)) {
+        return;
+    }
+
+    int64_t i = 0;
+    while (symbols[i].str != NULL) {
+        add_new_variable(var_list, &symbols[i]);
+        i++;
+    }
+    i = 0;
+    while (rsvwords[i].str != NULL) {
+        add_new_variable(var_list, &rsvwords[i]);
+        i++;
+    }
 }
 
 #define IS_HEAP_TYPE(type) \

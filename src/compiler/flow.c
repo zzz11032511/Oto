@@ -1,5 +1,3 @@
-#include <oto.h>
-
 #include "compiler.h"
 
 void compile_loop(int64_t *icp, SliceI64 *srctcs, int64_t *idx) {

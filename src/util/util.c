@@ -1,4 +1,4 @@
-#include <oto.h>
+#include <oto/oto_util.h>
 
 static FILE *open_file(const char *path) {
     FILE *fp = fopen(path, "r");
@@ -30,6 +30,10 @@ size_t count_file_size(const char *path) {
 }
 
 char *src_open(const char *path) {
+    if (IS_NULL(path)) {
+        return NULL;
+    }
+    
     FILE *fp = open_file(path);
     if (fp == 0) {
         return NULL;

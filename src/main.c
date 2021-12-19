@@ -1,4 +1,4 @@
-#include <oto.h>
+#include <oto/oto.h>
 
 void usage(const char *name) {
     fprintf(stderr, "Example : %s XXX.oto\n", name);
@@ -15,7 +15,6 @@ int main(int argc, char **argv) {
 
     // ファイル名が指定されていない場合
     if (argc != i + 1) {
-        set_repl_flag(true);
         oto_init(NULL);
         repl();
         return 0;
