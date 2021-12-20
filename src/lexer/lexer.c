@@ -16,23 +16,6 @@ static int64_t get_current_line(char *src, int64_t idx) {
     return line;
 }
 
-static void print_line(char *src, int64_t line) {
-    int64_t l = 1;
-
-    int64_t i = 0;
-    while (l != line) {
-        if (src[i] == '\n') {
-            l++;
-        } else if (src[i] == '\0') {
-            break;
-        }
-        i++;
-    }
-
-    print_upto_char(&src[i], '\n');
-    printf("\n");
-}
-
 static void error_lexer(errorcode_t err, char *src, int64_t idx, Status *status) {
     print_error(err, status);
 

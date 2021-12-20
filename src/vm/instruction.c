@@ -88,6 +88,7 @@ void oto_instr_printvar(VectorPTR *var_list) {
         i++;
 
         vartype_t type = var->type;
+        // printf("%s\n", var->token->str);
         if (type == TY_CONST) {
             continue;
         } else if (type == TY_FLOAT) {

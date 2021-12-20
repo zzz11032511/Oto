@@ -124,3 +124,20 @@ void print_upto_char(char *str, char endch) {
         i++;
     }
 }
+
+void print_line(char *src, int64_t line) {
+    int64_t l = 1;
+
+    int64_t i = 0;
+    while (l != line) {
+        if (src[i] == '\n') {
+            l++;
+        } else if (src[i] == '\0') {
+            break;
+        }
+        i++;
+    }
+
+    print_upto_char(&src[i], '\n');
+    printf("\n");
+}

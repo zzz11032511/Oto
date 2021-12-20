@@ -15,6 +15,7 @@ char to_lower(char ch);
 char to_upper(char ch);
 
 void print_upto_char(char *str, char endch);
+void print_line(char *src, int64_t line);
 
 /* 大文字小文字を区別しないstrncmp() */
 int32_t strncmp_cs(const char *str1, const char *str2, size_t maxcount);

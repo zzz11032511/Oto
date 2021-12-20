@@ -136,6 +136,7 @@ void print_repl_help() {
         printf("PLAY  <周波数>, <音の長さ>, <音の大きさ>, <音の種類>\n");
         printf("BEEP  <周波数>, <音の長さ>\n");
         printf("PRINT <出力したいもの>\n");
+        printf("PRINTVAR\n");
     } else if (oto_status->language == LANG_JPN_HIRAGANA) {
         printf("- そうさほうほう -\n");
         printf("おわるときは, 「EXIT」とうつか, CtrlキーとCキーをどうじにおしてね\n");
@@ -143,6 +144,7 @@ void print_repl_help() {
         printf("PLAY  <おとのたかさ>, <おとのながさ>, <おとのおおきさ>, <おとのしゅるい>\n");
         printf("BEEP  <おとのたかさ>, <おとのながさ>\n");
         printf("PRINT <がめんにひょうじしたいもの>\n");
+        printf("PRINTVAR\n");
     } else if (oto_status->language == LANG_ENG) {
         printf("- Usage -\n");
         printf("If you want to finish, type \"EXIT\" or press Ctrl+C.\n");
@@ -150,6 +152,7 @@ void print_repl_help() {
         printf("PLAY  <frequency>, <length>, <volume>, <Sound>\n");
         printf("BEEP  <frequency>, <length>\n");
         printf("PRINT <variable or literal>\n");
+        printf("PRINTVAR\n");
     }
 
     printf("\n");
