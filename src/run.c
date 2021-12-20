@@ -49,9 +49,13 @@ void oto_exit() {
 #endif
 }
 
+void oto_error_throw(errorcode_t err) {
+    longjmp(env, err);
+}
+
 void oto_error(errorcode_t err) {
     print_error(err, oto_status);
-    longjmp(env, err);
+    oto_error_throw(err);
 }
 
 void oto_run() {

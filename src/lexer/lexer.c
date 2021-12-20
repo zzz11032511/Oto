@@ -1,6 +1,6 @@
 #include <oto/oto.h>
 
-int64_t get_current_line(char *src, int64_t idx) {
+static int64_t get_current_line(char *src, int64_t idx) {
     int64_t line = 1;
     
     int64_t i = 0;
@@ -16,7 +16,7 @@ int64_t get_current_line(char *src, int64_t idx) {
     return line;
 }
 
-void print_line(char *src, int64_t line) {
+static void print_line(char *src, int64_t line) {
     int64_t l = 1;
 
     int64_t i = 0;
@@ -33,8 +33,11 @@ void print_line(char *src, int64_t line) {
     printf("\n");
 }
 
-static void error_lexer(errorcode_t err, char *src, int64_t idx) {
+static void error_lexer(errorcode_t err, char *src, int64_t idx, Status *status) {
+    print_error(err, status);
+
     int64_t line = get_current_line(src, idx);
+    printf("line %I64d : ", line);
     print_line(src, line);
 
     int64_t l = 1;
@@ -48,16 +51,24 @@ static void error_lexer(errorcode_t err, char *src, int64_t idx) {
         i++;
     }
 
+    // "line OOO : "の分だけ空白をあける
+    printf("        ");
+    int j = 0;
+    while (j <= (line / 10)) {
+        printf(" ");
+        j++;
+    }
+
     while (i < idx) {
         printf(" ");
         i++;
     }
     fprintf(stderr, "\x1b[31m");
-    fprintf(stderr, "^");
+    fprintf(stderr, "^~~");
     fprintf(stderr, "\x1b[39m");
     printf("\n");
 
-    oto_error(err);
+    oto_error_throw(err);
 }
 
 static bool is_number(char c) {
@@ -148,7 +159,7 @@ void tokenize(char *src, VectorI64 *src_tokens, VectorPTR *var_list, Status *sta
                         break;
                     }
                 } else if (src[i] == 0) {
-                    error_lexer(OTO_SYNTAX_ERROR, src, i);
+                    error_lexer(OTO_SYNTAX_ERROR, src, i, status);
                 }
                 i++;
             }
@@ -171,7 +182,7 @@ void tokenize(char *src, VectorI64 *src_tokens, VectorPTR *var_list, Status *sta
         tokentype_t type = -1;
         if (IS_PREPROCESS(src[i])) {
             if (status->repl_flag == true) {
-                error_lexer(OTO_REPL_ERROR, src, 0);
+                error_lexer(OTO_REPL_ERROR, src, 0, status);
             } else {
                 preprocess(src, i, src_tokens, var_list, status);
             }
@@ -201,7 +212,7 @@ void tokenize(char *src, VectorI64 *src_tokens, VectorPTR *var_list, Status *sta
         } else if (is_symbol_char(src[i])) {
             len = count_operator_len(&src[i]);
             if (is_valid_operator(&src[i], len) == false) {
-                error_lexer(OTO_UNAVAILABLE_OPERATOR_ERROR, src, i);
+                error_lexer(OTO_UNAVAILABLE_OPERATOR_ERROR, src, i, status);
             }
             type = TK_TY_SYMBOL;
 
@@ -214,7 +225,7 @@ void tokenize(char *src, VectorI64 *src_tokens, VectorPTR *var_list, Status *sta
             type = TK_TY_VARIABLE;
 
         } else {
-            error_lexer(OTO_SYNTAX_ERROR, src, i);
+            error_lexer(OTO_SYNTAX_ERROR, src, i, status);
         }
 
         vector_i64_append(

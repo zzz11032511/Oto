@@ -1,6 +1,6 @@
 #include <oto/oto.h>
 
-const Token symbols[] = {
+Token symbols[] = {
     {TC_LF,     "\n",  1, 0},
     {TC_COMMA,   ",",  1, 0}, {TC_COLON,   ":",  1, 0},
     {TC_SQBROPN, "[",  1, 0}, {TC_SQBRCLS, "]",  1, 0},
@@ -18,7 +18,7 @@ const Token symbols[] = {
     {0,          NULL, 0, 0}
 };
 
-const Token rsvwords[] = {
+Token rsvwords[] = {
     {TC_BEGIN,     "begin",     5, 1}, {TC_END,       "end",       3, 1},
     {TC_DEFINE,    "define",    6, 1}, {TC_IF,        "if",        2, 1},
     {TC_ELSIF,     "elsif",     5, 1}, {TC_ELSE,      "else",      4, 1},

@@ -33,8 +33,8 @@ typedef struct {
     tokentype_t type;
 } Token;
 
-extern const Token symbols[];   // 記号一覧
-extern const Token rsvwords[];  // 予約語一覧
+extern Token symbols[];   // 記号一覧
+extern Token rsvwords[];  // 予約語一覧
 
 /* トークン比較用マクロ */
 #define IS_RSVWORD(tc)        ((TC_BEGIN <= tc) && (tc <= TC_EXIT))
@@ -59,6 +59,7 @@ void init_option(Status *status, char *srcpath);
 
 void oto_exit();
 void oto_error(errorcode_t err);
+void oto_error_throw(errorcode_t err);
 void oto_run();
 
 void repl();
