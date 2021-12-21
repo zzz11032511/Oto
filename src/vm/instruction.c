@@ -114,3 +114,13 @@ void oto_instr_printvar(VectorPTR *var_list) {
     } while (i < var_list->length);
     printf("\n");
 }
+
+void oto_instr_sleep() {
+    if (vmstack_typecheck() == VM_TY_VARPTR) {
+        Sleep((int64_t)(vmstack_popv()->value.f) * 1000);
+    } else if (vmstack_typecheck() == VM_TY_IMMEDIATE) {
+        Sleep((int64_t)(vmstack_popf()) * 1000);
+    } else if (vmstack_typecheck() == VM_TY_INITVAL) {
+        oto_error(OTO_MISSING_ARGUMENTS_ERROR);
+    }
+}

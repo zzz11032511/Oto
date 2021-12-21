@@ -28,13 +28,9 @@ Token rsvwords[] = {
     {TC_TRACK,     "track",     5, 1}, {TC_FILTER,    "filter",    6, 1},
     {TC_OSCIL,     "oscil",     5, 1}, {TC_SOUND,     "sound",     5, 1},
     {TC_PRINT,     "print",     5, 1}, {TC_BEEP,      "beep",      4, 1},
-    {TC_PLAY,      "play",      4, 1}, {TC_NOTE,      "note",      4, 1},
-    {TC_MUTE,      "mute",      4, 1}, {TC_BPM,       "bpm",       3, 1},
-    {TC_PRINTWAV,  "printwav",  8, 1}, {TC_EXPORTWAV, "exportwav", 9, 1},
-    {TC_IMPORTWAV, "importwav", 9, 1}, {TC_DEFSE,     "defse",     5, 1},
-    {TC_SPECTRUM,  "spectrum",  8, 1}, {TC_SETFS,     "setfs",     5, 1},
-    {TC_MIDIIN,    "midiin",    4, 1}, {TC_MIDIOUT,   "midiout",   7, 1},
-    {TC_PRINTVAR,  "printvar",  8, 1}, {TC_EXIT,      "exit",      4, 1},
+    {TC_PLAY,      "play",      4, 1}, {TC_PRINTWAV,  "printwav",  8, 1}, 
+    {TC_PRINTVAR,  "printvar",  8, 1}, {TC_SLEEP,     "sleep",     5, 1},
+    {TC_EXIT,      "exit",      4, 1},
     {0,            NULL,        0, 1},
 };
 

@@ -92,18 +92,9 @@ enum {
     TC_PRINT,     // print PRINT
     TC_BEEP,      // beep BEEP
     TC_PLAY,      // play PLAY
-    TC_NOTE,      // note NOTE
-    TC_MUTE,      // mute MUTE
-    TC_BPM,       // bpm BPM
     TC_PRINTWAV,  // printwav PRINTWAV
-    TC_EXPORTWAV, // exportwav EXPORTWAV
-    TC_IMPORTWAV, // importwav IMPORTWAV
-    TC_DEFSE,     // defse DEFSE
-    TC_SPECTRUM,  // spectrum SPECTRUM
-    TC_SETFS,     // setfs SETFS
-    TC_MIDIIN,    // midiin MIDIIN
-    TC_MIDIOUT,   // midiout MIDIOUT
     TC_PRINTVAR,  // printvar PRINTVAR
+    TC_SLEEP,     // sleep SLEEP
 
     TC_EXIT       // exit EXIT
 };
@@ -232,6 +223,7 @@ enum {
     OP_BEEP,
     OP_PLAY,
     OP_PRINTVAR,
+    OP_SLEEP,
     OP_EXIT
 };
 typedef int64_t opcode_t;

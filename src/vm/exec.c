@@ -128,6 +128,10 @@ void exec(VectorPTR *ic_list, VectorPTR *var_list) {
         case OP_PRINTVAR:
             oto_instr_printvar(var_list);
             break;
+        
+        case OP_SLEEP:
+            oto_instr_sleep();
+            break;
 
         case OP_EXIT:
             return;

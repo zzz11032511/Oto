@@ -21,6 +21,10 @@ void compile_instruction(int64_t *icp, SliceI64 *srctcs, int64_t *idx) {
         compile_args(icp, argtcs, 0);
         put_opcode(icp, OP_PRINTVAR, 0, 0, 0, 0);
         break;
+    case TC_SLEEP:
+        compile_args(icp, argtcs, 1);
+        put_opcode(icp, OP_SLEEP, 0, 0, 0, 0);
+        break;
 
     // case TC_NOTE:
     // case TC_MUTE:
