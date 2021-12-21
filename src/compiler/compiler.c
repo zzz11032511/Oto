@@ -3,6 +3,7 @@
 char *src = NULL;
 VectorPTR *vars = NULL;
 VectorPTR *ops  = NULL;
+Status *oto_status = NULL;
 
 void put_opcode(int64_t *icp, opcode_t op, Var *v1, Var *v2, Var *v3, Var *v4) {
     vector_ptr_set(ops, (*icp)++, (Var *)op);
@@ -87,10 +88,10 @@ static bool ptn_cmp(SliceI64 *srctcs, int64_t i, const int64_t *pattarn) {
     return true;
 }
 
-void assign_to_literal_error_check(tokencode_t tc) {
+void assign_to_literal_error_check(tokencode_t tc, SliceI64 *srctcs, int64_t idx) {
     tokentype_t type = VAR(tc)->token->type;
     if (type == TK_TY_LITERAL || type == TK_TY_RSVWORD || type == TK_TY_SYMBOL) {
-        oto_error(OTO_ASSIGN_TO_LITERAL_ERROR);
+        error_compiler(OTO_ASSIGN_TO_LITERAL_ERROR, srctcs, idx);
     }
 }
 
@@ -102,7 +103,7 @@ void compile_sub(int64_t *icp, SliceI64 *srctcs, int64_t start, int64_t end) {
             i++;
 
         } else if (ptn_cmp(srctcs, i, PTNS_DEFINE)) {
-            assign_to_literal_error_check(tmpvars[1]);
+            assign_to_literal_error_check(tmpvars[1], srctcs, i);
             if (VAR(tmpvars[2])->type != TY_CONST) {
                 oto_error(OTO_DEFINE_ERROR);
             }
@@ -116,62 +117,62 @@ void compile_sub(int64_t *icp, SliceI64 *srctcs, int64_t start, int64_t end) {
         // } else if (ptn_cmp(srctcs, i, PTN_SOUNDDEF)) {
         // } 
         else if (ptn_cmp(srctcs, i, PTNS_CPYD)) {
-            assign_to_literal_error_check(tmpvars[1]);
+            assign_to_literal_error_check(tmpvars[1], srctcs, i);
             put_opcode(icp, OP_CPYD, VAR(tmpvars[1]), VAR(tmpvars[2]), 0, 0);
             i += 4;
 
         } else if (ptn_cmp(srctcs, i, PTNS_ADDCPY)) {
-            assign_to_literal_error_check(tmpvars[1]);
+            assign_to_literal_error_check(tmpvars[1], srctcs, i);
             put_opcode(icp, OP_ADD2, VAR(tmpvars[1]), VAR(tmpvars[1]), VAR(tmpvars[2]), 0);
             i += 4;
 
         } else if (ptn_cmp(srctcs, i, PTNS_SUBCPY)) {
-            assign_to_literal_error_check(tmpvars[1]);
+            assign_to_literal_error_check(tmpvars[1], srctcs, i);
             put_opcode(icp, OP_SUB2, VAR(tmpvars[1]), VAR(tmpvars[1]), VAR(tmpvars[2]), 0);
             i += 4;
 
         } else if (ptn_cmp(srctcs, i, PTNS_MULCPY)) {
-            assign_to_literal_error_check(tmpvars[1]);
+            assign_to_literal_error_check(tmpvars[1], srctcs, i);
             put_opcode(icp, OP_MUL2, VAR(tmpvars[1]), VAR(tmpvars[1]), VAR(tmpvars[2]), 0);
             i += 4;
 
         } else if (ptn_cmp(srctcs, i, PTNS_DIVCPY)) {
-            assign_to_literal_error_check(tmpvars[1]);
+            assign_to_literal_error_check(tmpvars[1], srctcs, i);
             put_opcode(icp, OP_DIV2, VAR(tmpvars[1]), VAR(tmpvars[1]), VAR(tmpvars[2]), 0);
             i += 4;
 
         } else if (ptn_cmp(srctcs, i, PTNS_MODCPY)) {
-            assign_to_literal_error_check(tmpvars[1]);
+            assign_to_literal_error_check(tmpvars[1], srctcs, i);
             put_opcode(icp, OP_MOD2, VAR(tmpvars[1]), VAR(tmpvars[1]), VAR(tmpvars[2]), 0);
             i += 4;
 
         } else if (ptn_cmp(srctcs, i, PTNS_ADD2)) {
-            assign_to_literal_error_check(tmpvars[1]);
+            assign_to_literal_error_check(tmpvars[1], srctcs, i);
             put_opcode(icp, OP_ADD2, VAR(tmpvars[1]), VAR(tmpvars[2]), VAR(tmpvars[3]), 0);
             i += 6;
 
         } else if (ptn_cmp(srctcs, i, PTNS_SUB2)) {
-            assign_to_literal_error_check(tmpvars[1]);
+            assign_to_literal_error_check(tmpvars[1], srctcs, i);
             put_opcode(icp, OP_SUB2, VAR(tmpvars[1]), VAR(tmpvars[2]), VAR(tmpvars[3]), 0);
             i += 6;
 
         } else if (ptn_cmp(srctcs, i, PTNS_MUL2)) {
-            assign_to_literal_error_check(tmpvars[1]);
+            assign_to_literal_error_check(tmpvars[1], srctcs, i);
             put_opcode(icp, OP_MUL2, VAR(tmpvars[1]), VAR(tmpvars[2]), VAR(tmpvars[3]), 0);
             i += 6;
 
         } else if (ptn_cmp(srctcs, i, PTNS_DIV2)) {
-            assign_to_literal_error_check(tmpvars[1]);
+            assign_to_literal_error_check(tmpvars[1], srctcs, i);
             put_opcode(icp, OP_DIV2, VAR(tmpvars[1]), VAR(tmpvars[2]), VAR(tmpvars[3]), 0);
             i += 6;
 
         } else if (ptn_cmp(srctcs, i, PTNS_MOD2)) {
-            assign_to_literal_error_check(tmpvars[1]);
+            assign_to_literal_error_check(tmpvars[1], srctcs, i);
             put_opcode(icp, OP_MOD2, VAR(tmpvars[1]), VAR(tmpvars[2]), VAR(tmpvars[3]), 0);
             i += 6;
 
         } else if (ptn_cmp(srctcs, i, PTNS_CPY_EXPR)) {
-            assign_to_literal_error_check(tmpvars[1]);
+            assign_to_literal_error_check(tmpvars[1], srctcs, i);
             SliceI64 *exprtcs = make_line_tokencodes(srctcs, i + 2);
             compile_expr(icp, exprtcs, vars);
 
@@ -184,7 +185,7 @@ void compile_sub(int64_t *icp, SliceI64 *srctcs, int64_t start, int64_t end) {
         } else if (ptn_cmp(srctcs, i, PTNS_ADDCPY_EXPR) || ptn_cmp(srctcs, i, PTNS_SUBCPY_EXPR)
                    || ptn_cmp(srctcs, i, PTNS_MULCPY_EXPR) || ptn_cmp(srctcs, i, PTNS_DIVCPY_EXPR)
                    || ptn_cmp(srctcs, i, PTNS_MODCPY_EXPR)) {
-            assign_to_literal_error_check(tmpvars[1]);
+            assign_to_literal_error_check(tmpvars[1], srctcs, i);
             put_opcode(icp, OP_PUSH, VAR(tmpvars[1]), 0, 0, 0);
             SliceI64 *exprtcs = make_line_tokencodes(srctcs, i + 2);
             compile_expr(icp, exprtcs, vars);
@@ -229,19 +230,20 @@ void compile_sub(int64_t *icp, SliceI64 *srctcs, int64_t start, int64_t end) {
             i += 2;
 
         } else {
-            oto_error(OTO_INVALID_SYNTAX_ERROR);
+            error_compiler(OTO_INVALID_SYNTAX_ERROR, srctcs, i);
         }
     }
 }
 
-static void init_compile(VectorPTR *var_list, VectorPTR *opcodes, char *src_str) {
+static void init_compile(VectorPTR *var_list, VectorPTR *opcodes, char *src_str, Status *status) {
     vars = var_list;
     ops = opcodes;
     src = src_str;
+    oto_status = status;
 }
 
 #define DEFAULT_MAX_OPCODES 4096
-VectorPTR *compile(VectorI64 *src_tokens, VectorPTR *var_list, char *src_str) {
+VectorPTR *compile(VectorI64 *src_tokens, VectorPTR *var_list, char *src_str, Status *status) {
     VectorPTR *opcodes = new_vector_ptr(DEFAULT_MAX_OPCODES);
     if (IS_NULL(opcodes)) {
         oto_error(OTO_INTERNAL_ERROR);
@@ -249,7 +251,7 @@ VectorPTR *compile(VectorI64 *src_tokens, VectorPTR *var_list, char *src_str) {
 
     // 式や制御構文の解析でスライスの方が扱いやすい
     SliceI64 *srctcs_slice = new_slice_i64(src_tokens, 0, src_tokens->length);
-    init_compile(var_list, opcodes, src_str);
+    init_compile(var_list, opcodes, src_str, status);
 
     // opcodeをどこまで書き込んだか
     int64_t icp = 0;

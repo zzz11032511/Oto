@@ -141,3 +141,19 @@ void print_line(char *src, int64_t line) {
     print_upto_char(&src[i], '\n');
     printf("\n");
 }
+
+int64_t get_current_line(char *src, int64_t idx) {
+    int64_t line = 1;
+    
+    int64_t i = 0;
+    while (i < idx) {
+        if (src[i] == '\n') {
+            line++;
+        } else if (src[i] == '\0') {
+            break;
+        }
+        i++;
+    }
+
+    return line;
+}

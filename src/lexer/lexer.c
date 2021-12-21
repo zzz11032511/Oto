@@ -1,21 +1,5 @@
 #include <oto/oto.h>
 
-static int64_t get_current_line(char *src, int64_t idx) {
-    int64_t line = 1;
-    
-    int64_t i = 0;
-    while (i < idx) {
-        if (src[i] == '\n') {
-            line++;
-        } else if (src[i] == '\0') {
-            break;
-        }
-        i++;
-    }
-
-    return line;
-}
-
 static void error_lexer(errorcode_t err, char *src, int64_t idx, Status *status) {
     print_error(err, status);
 

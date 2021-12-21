@@ -82,7 +82,7 @@ char *new_string_literal(char *src, int64_t idx);
 void preprocess(char *src, int64_t idx, VectorI64 *src_tokens, VectorPTR *var_list, Status *status);
 
 /* compiler */
-VectorPTR *compile(VectorI64 *src_tokens, VectorPTR *var_list, char *src_str);
+VectorPTR *compile(VectorI64 *src_tokens, VectorPTR *var_list, char *src_str, Status *status);
 
 /* exec */
 void exec(VectorPTR *ic_list, VectorPTR *var_list);

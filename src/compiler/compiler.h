@@ -4,6 +4,7 @@
 
 extern char *src;
 extern VectorPTR *vars;
+extern Status *oto_status;
 
 /* 変数を取得するための便利マクロ */
 #define VAR(tc)  ((Var *)(vars->data[tc]))
@@ -25,3 +26,8 @@ SliceI64 *make_begin_end_block(SliceI64 *srctcs, int64_t begin);
 SliceI64 *make_ifthen_block(SliceI64 *srctcs, int64_t then);
 
 void print_slice_srcs(SliceI64 *srctcs);
+
+void error_compiler(errorcode_t err, SliceI64 *srctcs, int64_t idx);
+
+// トークンコード列でのidxをソース文字列でのidxに変換する
+int64_t tc2srcidx(SliceI64 *srctcs, int64_t tcidx);

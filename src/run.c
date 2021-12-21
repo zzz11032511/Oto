@@ -88,7 +88,7 @@ void oto_run() {
         print_var(var_list);
 #endif
 
-        ic_list = compile(src_tokens, var_list, src);
+        ic_list = compile(src_tokens, var_list, src, oto_status);
 #ifdef DEBUG
         print_ic_list(ic_list);
 #endif
@@ -218,7 +218,7 @@ void repl() {
 
             src_tokens = lexer(str, var_list, oto_status);
 
-            ic_list = compile(src_tokens, var_list, str);
+            ic_list = compile(src_tokens, var_list, str, oto_status);
             
             exec(ic_list, var_list);
         }

@@ -78,7 +78,7 @@ static void rpn(SliceI64 *exprtcs, VectorI64 *rpntcs) {
         } else if (IS_ARITH_OPERATOR(tc)) {
             if (is_before_op) {
                 /* 演算子が連続していればエラー */
-                oto_error(OTO_INVALID_SYNTAX_ERROR);
+                error_compiler(OTO_INVALID_SYNTAX_ERROR, exprtcs, i);
 
             } else {
                 is_before_op = true;
