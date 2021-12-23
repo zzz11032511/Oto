@@ -59,7 +59,7 @@ static void rpn(SliceI64 *exprtcs, VectorI64 *rpntcs) {
     Stack *stack = new_stack();
 
     /* 直前のトークンが演算子だったかどうか */
-    bool is_before_op = false;
+    bool is_before_op = true;
 
     for (int64_t i = 0; i < exprtcs->length; i++) {
         tokencode_t tc = slice_i64_get(exprtcs, i);
@@ -95,6 +95,11 @@ static void rpn(SliceI64 *exprtcs, VectorI64 *rpntcs) {
             }
             stack_pushi(stack, tc);
         }
+    }
+
+    if (is_before_op) {
+        // 最後が演算子だと変なのでエラー
+        error_compiler(OTO_INVALID_SYNTAX_ERROR, exprtcs, exprtcs->length);
     }
 
     /* 残っている演算子を全て書き込む */
