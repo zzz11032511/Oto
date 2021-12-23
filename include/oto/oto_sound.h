@@ -27,10 +27,12 @@ typedef enum {
 /* 発振器 */
 typedef struct oscillator {
     basicwave_t wave;
-    struct oscillator *fm;
-    int64_t fm_mod_freq;
-    struct oscillator *am;
-    int64_t am_mod_freq;
+    // struct oscillator *fm;
+    // struct oscillator *am;
+
+    // 妥協したFM音源
+    basicwave_t fm_wave;
+    float fm_freq;
 } Oscillator;
 
 /* 音色情報 */
@@ -47,7 +49,7 @@ typedef struct {
     int8_t volume;
 } Playdata;
 
-void init_sound_stream(int64_t sample_rate);
+void init_sound_stream(int64_t sampling_rate, double fade_range);
 void terminate_sound_stream();
 
 bool is_stream_active();

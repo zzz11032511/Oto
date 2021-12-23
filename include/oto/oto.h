@@ -24,6 +24,7 @@ typedef struct {
     Map *srcfile_table;
     language_t language;
     int64_t sampling_rate;
+    double fade_range;
 } Status;
 
 typedef struct {
@@ -85,7 +86,7 @@ void preprocess(char *src, int64_t idx, VectorI64 *src_tokens, VectorPTR *var_li
 VectorPTR *compile(VectorI64 *src_tokens, VectorPTR *var_list, char *src_str, Status *status);
 
 /* exec */
-void exec(VectorPTR *ic_list, VectorPTR *var_list);
+void exec(VectorPTR *ic_list, VectorPTR *var_list, Status *status);
 
 /* debug print */
 void print_src_tokens(VectorI64 *src_tokens);

@@ -17,11 +17,11 @@ typedef struct {
     uint64_t t;
     float freq[MAX_POLYPHONIC];
     int8_t volume; 
-    int64_t sample_rate;
+    int64_t sampling_rate;
 } Currentdata;
 Currentdata out_data;
 
-static void init_out_data(int64_t sample_rate) {
+static void init_out_data(int64_t sampling_rate) {
     out_data.sound = NULL;
     out_data.length = 0;
     out_data.volume = 0;
@@ -29,7 +29,7 @@ static void init_out_data(int64_t sample_rate) {
     for (uint64_t i = 0; i < MAX_POLYPHONIC; i++) {
         out_data.freq[i] = 1;
     }
-    out_data.sample_rate = sample_rate;
+    out_data.sampling_rate = sampling_rate;
 }
 
 static bool stream_active_flag = false;
@@ -51,7 +51,7 @@ void write_out_data(Playdata data) {
     out_data.volume = data.volume;
 }
 
-#define FADE_RANGE 0.05
+static double FADE_RANGE = 0.05;
 static int play_callback(const void *inputBuffer,
                          void *outputBuffer,
                          unsigned long framesPerBuffer,
@@ -71,7 +71,7 @@ static int play_callback(const void *inputBuffer,
             continue;
         }
 
-        d = sin(2 * PI * data->freq[0] * data->t / data->sample_rate);
+        d = sin(2 * PI * data->freq[0] * data->t / data->sampling_rate);
 
         /* フェード処理 */
         if (data->t < (FADE_RANGE * data->length)) {
@@ -93,7 +93,7 @@ static int play_callback(const void *inputBuffer,
 }
 
 static PaStream *stream;
-void init_sound_stream(int64_t sample_rate) {
+void init_sound_stream(int64_t sampling_rate, double fade_range) {
     PaError err = paNoError;
 
     err = Pa_Initialize();
@@ -102,10 +102,11 @@ void init_sound_stream(int64_t sample_rate) {
     }
 
     init_stream_param();
-    init_out_data(sample_rate);
+    init_out_data(sampling_rate);
+    FADE_RANGE = fade_range;
 
     err = Pa_OpenStream(&stream, NULL, &out_param,
-                        (float)sample_rate,
+                        (float)sampling_rate,
                         FRAMES_PER_BUFFER, paClipOff, play_callback, &out_data);
     if (err != paNoError) {
         oto_error(OTO_INTERNAL_ERROR);

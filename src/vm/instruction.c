@@ -35,7 +35,7 @@ void oto_instr_beep() {
     Beep(freq, duration * 1000);
 }
 
-void oto_instr_play() {
+void oto_instr_play(Status *status) {
     double duration = 0;
     if (vmstack_typecheck() == VM_TY_VARPTR) {
         duration = vmstack_popv()->value.f;
@@ -58,7 +58,7 @@ void oto_instr_play() {
 
     Playdata data;
     data.freq[0] = freq;
-    data.length  = 44100 * duration;
+    data.length  = status->sampling_rate * duration;
     data.sound   = NULL;
     data.volume  = 100;
 

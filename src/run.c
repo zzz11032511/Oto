@@ -20,9 +20,13 @@ void oto_init(char *srcpath) {
     printf("timecount : %d\n", oto_status->timecount_flag);
     printf("repl : %d\n", oto_status->repl_flag);
     printf("sampling_rate : %I64d\n", oto_status->sampling_rate);
+    printf("fade_range : %f\n", oto_status->fade_range);
 #endif
 
-    init_sound_stream(oto_status->sampling_rate);
+    init_sound_stream(
+        oto_status->sampling_rate,
+        oto_status->fade_range
+    );
 
     // 変数表に予約語などを追加する
     var_list = new_vector_ptr(DEFAULT_MAX_TC);
@@ -104,7 +108,7 @@ void oto_run() {
             }
 
             start_time = clock();
-            exec(ic_list, var_list);
+            exec(ic_list, var_list, oto_status);
             end_time = clock();
 
             if (oto_status->language == LANG_JPN_KANJI) {
@@ -116,7 +120,7 @@ void oto_run() {
             }
 
         } else {
-            exec(ic_list, var_list);
+            exec(ic_list, var_list, oto_status);
         }
 
     } else {
@@ -220,7 +224,7 @@ void repl() {
 
             ic_list = compile(src_tokens, var_list, str, oto_status);
             
-            exec(ic_list, var_list);
+            exec(ic_list, var_list, oto_status);
         }
 
         free_vector_i64(src_tokens);
