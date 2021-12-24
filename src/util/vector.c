@@ -2,6 +2,7 @@
 
 #define VECTOR_REALLOC_SIZE 100
 
+/* Vector<int64_t> */
 VectorI64 *new_vector_i64(size_t capacity) {
     VectorI64 *vec = MYMALLOC1(VectorI64);
     if (IS_NULL(vec)) {
@@ -55,6 +56,67 @@ void vector_i64_set(VectorI64 *vec, int64_t idx, int64_t data) {
             realloc_vector_i64(vec, idx + VECTOR_REALLOC_SIZE);
         } else {
             realloc_vector_i64(vec, vec->capacity + VECTOR_REALLOC_SIZE);
+        }
+    }
+
+    vec->data[idx] = data;
+    if (idx >= vec->length) {
+        vec->length = idx + 1;
+    }
+}
+
+/* Vector<double> */
+VectorDouble *new_vector_double(size_t capacity) {
+    VectorDouble *vec = MYMALLOC1(VectorDouble);
+    if (IS_NULL(vec)) {
+        return NULL;
+    }
+
+    vec->length = 0;
+    vec->capacity = capacity;
+    vec->data = MYMALLOC(capacity, double);
+    if (IS_NULL(vec->data)) {
+        free(vec);
+        return NULL;
+    }
+
+    return vec;
+}
+
+void free_vector_double(VectorDouble *vec) {
+    if (IS_NULL(vec)) {
+        return;
+    }
+    free(vec->data);
+    free(vec);
+}
+
+static void realloc_vector_double(VectorDouble *vec, size_t realloc_size) {
+    double *new_data = realloc(vec->data, (sizeof(double) * realloc_size));
+    if (IS_NULL(new_data)) {
+        return;
+    }
+    
+    vec->data = new_data;
+    vec->capacity = realloc_size;
+
+    return;
+}
+
+void vector_double_append(VectorDouble *vec, double data) {
+    if (vec->length >= vec->capacity) {
+        realloc_vector_double(vec, vec->capacity + VECTOR_REALLOC_SIZE);
+    }
+
+    vec->data[(vec->length)++] = data;
+}
+
+void vector_double_set(VectorDouble *vec, int64_t idx, double data) {
+    if (vec->length >= vec->capacity) {
+        if (idx >= vec->length) {
+            realloc_vector_double(vec, idx + VECTOR_REALLOC_SIZE);
+        } else {
+            realloc_vector_double(vec, vec->capacity + VECTOR_REALLOC_SIZE);
         }
     }
 

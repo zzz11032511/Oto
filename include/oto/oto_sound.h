@@ -49,6 +49,21 @@ typedef struct {
     int8_t volume;
 } Playdata;
 
+typedef enum {
+    CLIP = 0,
+    FADE_IN,
+    FADE_OUT,
+    FADE,
+    AMP,
+    TREMOLO
+} filtercode_t;
+
+/* フィルタ */
+typedef struct {
+    filtercode_t num;
+    VectorDouble *args;
+} Filter;
+
 void init_sound_stream(int64_t sampling_rate, double fade_range);
 void terminate_sound_stream();
 

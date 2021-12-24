@@ -27,7 +27,7 @@ int32_t strcmp_cs(const char *str1, const char *str2);
 /* 大文字小文字を区別しないis_equal()<string> */
 bool is_str_equal_cs(const char *str1, size_t s1len, const char *str2, size_t s2len);
 
-/* Vector<uint64_t> */
+/* Vector<int64_t> */
 typedef struct {
     int64_t *data;
     size_t length;
@@ -38,6 +38,13 @@ VectorI64 *new_vector_i64(size_t capacity);
 void free_vector_i64(VectorI64 *vec);
 void vector_i64_append(VectorI64 *vec, int64_t data);
 void vector_i64_set(VectorI64 *vec, int64_t idx, int64_t data);
+
+/* Vector<double> */
+typedef struct {
+    double *data;
+    size_t length;
+    size_t capacity;
+} VectorDouble;
 
 /* Vector<pointer> */
 typedef struct {
