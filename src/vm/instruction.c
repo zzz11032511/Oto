@@ -1,13 +1,26 @@
 #include "vm.h"
 
 void oto_instr_print() {
+    DEBUG_IPRINT(vmstack_typecheck());
     if (vmstack_typecheck() == VM_TY_VARPTR) {
-        printf("%f\n", vmstack_popv()->value.f);
+        Var *var = vmstack_popv();
+        if (var->type == TY_FLOAT) {
+            printf("%f\n", var->value.f);
+        } else if (var->type == TY_FILTER) {
+            printf("[filter]\n");
+        } else if (var->type == TY_SOUND) {
+            printf("[sound]\n");
+        } else if (var->type == TY_OSCIL) {
+            printf("[oscillator]\n");
+        }
+
     } else if (vmstack_typecheck() == VM_TY_IMMEDIATE) {
         printf("%f\n", vmstack_popf());
+    
     } else if (vmstack_typecheck() == VM_TY_INITVAL) {
         oto_error(OTO_MISSING_ARGUMENTS_ERROR);
     }
+    printf("aaaaaaaa\n");
 }
 
 void oto_instr_beep() {

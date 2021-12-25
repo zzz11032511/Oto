@@ -17,7 +17,8 @@
 #define M_SQRT1_2 0.70710678118654752440
 
 typedef enum {
-    SINE_WAVE = 0,
+    NO_WAVE = 0,
+    SINE_WAVE,
     SAWTOOTH_WAVE,  // PSG
     SQUARE_WAVE,    // PSG
     TRIANGLE_WAVE,  // PSG
@@ -38,7 +39,7 @@ typedef struct oscillator {
 /* 音色情報 */
 typedef struct {
     Oscillator *oscillator;
-    VectorPTR filters;
+    VectorPTR *filters;
 } Sound;
 
 /* 演奏情報 */
@@ -66,6 +67,9 @@ typedef struct {
 
 void init_sound_stream(int64_t sampling_rate, double fade_range);
 void terminate_sound_stream();
+
+Oscillator *new_oscil(basicwave_t wave, basicwave_t fm_wave, float fm_freq);
+Sound *new_sound(Oscillator *osc);
 
 bool is_stream_active();
 void set_stream_active_flag(bool b);

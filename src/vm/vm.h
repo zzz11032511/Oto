@@ -30,3 +30,5 @@ void oto_instr_beep();
 void oto_instr_play(Status *status);
 void oto_instr_printvar(VectorPTR *var_list);
 void oto_instr_sleep();
+
+void oto_oscil_define(VectorPTR *var_list);

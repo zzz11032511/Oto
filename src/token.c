@@ -1,4 +1,5 @@
 #include <oto/oto.h>
+#include <oto/oto_sound.h>
 
 Token symbols[] = {
     {TC_LF,     "\n",  1, 0},
@@ -100,7 +101,7 @@ tokencode_t allocate_tc(char *str, size_t len, tokentype_t type, VectorPTR *var_
     return tc;
 }
 
-static Var *new_variable(Token *token, tokentype_t type) {
+static Var *new_variable(Token *token, vartype_t type) {
     Var *var = MYMALLOC1(Var);
     if (IS_NULL(var)) {
         oto_error(OTO_INTERNAL_ERROR);
@@ -176,10 +177,15 @@ void free_var_list(VectorPTR *var_list) {
     while (i < var_list->length) {
         Var *var = ((Var *)var_list->data[i]);
 
-        if (IS_HEAP_TYPE(var->type)) {
-            // 動的に確保するオブジェクトのfree
+        if (var->type == TY_SOUND) {
+            free(((Sound *)(var->value.p))->filters);
+            free(var->value.p);
+        } else if (var->type == TY_OSCIL) {
+            free(var->value.p);
+        } else if (var->type == TY_FILTER) {
             free(var->value.p);
         }
+        
         free(var);
         i++;
     }

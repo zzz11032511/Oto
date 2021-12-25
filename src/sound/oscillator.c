@@ -1,5 +1,5 @@
-#include <oto.h>
-#include <oto_sound.h>
+#include <oto/oto.h>
+#include <oto/oto_sound.h>
 
 Oscillator *new_oscillator(basicwave_t wave, Oscillator *fm, Oscillator *am) {
     Oscillator *oscil = MYMALLOC1(Oscillator);

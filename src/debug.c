@@ -77,6 +77,8 @@ static struct operation {
     {"JMP",          OP_JMP          },
     {"JZ",           OP_JZ           },
     {"JNZ",          OP_JNZ          },
+    {"OSCILDEF",     OP_OSCILDEF     },
+    {"SOUNDDEF",     OP_SOUNDDEF     },
     {"PRINT",        OP_PRINT        },
     {"BEEP",         OP_BEEP         },
     {"PLAY",         OP_PLAY         },

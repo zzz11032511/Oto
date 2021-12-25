@@ -113,6 +113,40 @@ void exec(VectorPTR *ic_list, VectorPTR *var_list, Status *status) {
             }
             break;
 
+        case OP_OSCILDEF:
+            VAR(i + 1)->type = TY_OSCIL;
+            printf("bbb\n");
+            if (VAR(i + 3) == NULL) {
+                printf("aaa\n");
+                VAR(i + 1)->value.p = (void *)new_oscil(
+                    (int64_t)VAR(i + 2)->value.f, 0, 0
+                );
+            } else {
+                printf("ccc\n");
+                if ((VAR(i + 2)->type == TY_FLOAT || VAR(i + 2)->type == TY_CONST)
+                 || (VAR(i + 3)->type == TY_FLOAT || VAR(i + 3)->type == TY_CONST)
+                 || (VAR(i + 4)->type == TY_FLOAT || VAR(i + 4)->type == TY_CONST)) {
+                    VAR(i + 1)->value.p = (void *)new_oscil(
+                        (int64_t)VAR(i + 2)->value.f,
+                        (int64_t)VAR(i + 3)->value.f,
+                        (int64_t)VAR(i + 4)->value.f
+                    );
+                } else {
+                    oto_error(OTO_UNKNOWN_ERROR);
+                }
+            }
+            printf("fff\n");
+            break;
+
+        case OP_SOUNDDEF:
+            VAR(i + 1)->type = TY_SOUND;
+            if (VAR(i + 2)->type == TY_OSCIL) {
+                VAR(i + 1)->value.p = (void *)new_sound((Oscillator *)VAR(i + 2));
+            } else {
+                oto_error(OTO_UNKNOWN_ERROR);
+            }
+            break;
+
         case OP_PRINT:
             oto_instr_print();
             break;

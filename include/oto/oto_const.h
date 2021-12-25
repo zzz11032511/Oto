@@ -219,6 +219,9 @@ enum {
     OP_JZ,         // スタックの上が0ならジャンプ
     OP_JNZ,        // スタックの上が0でないならジャンプ
 
+    OP_OSCILDEF,
+    OP_SOUNDDEF,
+
     OP_PRINT,
     OP_BEEP,
     OP_PLAY,

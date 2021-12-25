@@ -33,6 +33,7 @@ static void reset_tmpvars() {
 
 const int64_t PTNS_DEFINE[] = {TC_DEFINE, PTN_LABEL, TC_COLON, PTN_LABEL, TC_LF, PTN_END};
 const int64_t PTNS_OSCILDEF[] = {PTN_LABEL, TC_EQU, TC_OSCIL, TC_SQBROPN, PTN_LABEL, TC_SQBRCLS, TC_LF, PTN_END};
+const int64_t PTNS_OSCILFMDEF[] = {PTN_LABEL, TC_EQU, TC_OSCIL, TC_SQBROPN, PTN_LABEL, TC_COMMA, PTN_LABEL, TC_COMMA, PTN_LABEL, TC_SQBRCLS, TC_LF, PTN_END};
 const int64_t PTNS_SOUNDDEF[] = {PTN_LABEL, TC_EQU, TC_SOUND, TC_SQBROPN, PTN_LABEL, TC_SQBRCLS, TC_LF, PTN_END};
 const int64_t PTNS_CPYD[] = {PTN_LABEL, TC_EQU, PTN_LABEL, TC_LF, PTN_END};
 const int64_t PTNS_ADDCPY[] = {PTN_LABEL, TC_PLUSEQ, PTN_LABEL, TC_LF, PTN_END};
@@ -111,12 +112,22 @@ void compile_sub(int64_t *icp, SliceI64 *srctcs, int64_t start, int64_t end) {
             VAR(tmpvars[1])->type  = TY_CONST;
             i += 5;
 
-        } 
-        // else if (ptn_cmp(srctcs, i, PTN_OSCILDEF)) {
-        //     i++
-        // } else if (ptn_cmp(srctcs, i, PTN_SOUNDDEF)) {
-        // } 
-        else if (ptn_cmp(srctcs, i, PTNS_CPYD)) {
+        } else if (ptn_cmp(srctcs, i, PTNS_SOUNDDEF)) {
+            assign_to_literal_error_check(tmpvars[1], srctcs, i);
+            put_opcode(icp, OP_SOUNDDEF, VAR(tmpvars[1]), VAR(tmpvars[2]), 0, 0);
+            i += 7;
+
+        } else if (ptn_cmp(srctcs, i, PTNS_OSCILFMDEF)) {
+            assign_to_literal_error_check(tmpvars[1], srctcs, i);
+            put_opcode(icp, OP_OSCILDEF, VAR(tmpvars[1]), VAR(tmpvars[2]), VAR(tmpvars[3]), VAR(tmpvars[4]));
+            i += 11;
+
+        } else if (ptn_cmp(srctcs, i, PTNS_OSCILDEF)) {
+            assign_to_literal_error_check(tmpvars[1], srctcs, i);
+            put_opcode(icp, OP_OSCILDEF, VAR(tmpvars[1]), VAR(tmpvars[2]), 0, 0);
+            i += 7;
+
+        } else if (ptn_cmp(srctcs, i, PTNS_CPYD)) {
             assign_to_literal_error_check(tmpvars[1], srctcs, i);
             put_opcode(icp, OP_CPYD, VAR(tmpvars[1]), VAR(tmpvars[2]), 0, 0);
             i += 4;
