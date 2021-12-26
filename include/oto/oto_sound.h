@@ -48,6 +48,7 @@ typedef struct {
     uint64_t length;
     float freq[MAX_POLYPHONIC];
     int8_t volume;
+    int64_t sampling_rate;
 } Playdata;
 
 typedef enum {
@@ -75,3 +76,5 @@ bool is_stream_active();
 void set_stream_active_flag(bool b);
 
 void write_out_data(Playdata data);
+
+float sound_generate(Playdata *info, uint64_t t, int64_t ch);

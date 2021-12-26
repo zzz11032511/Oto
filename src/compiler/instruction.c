@@ -14,7 +14,7 @@ void compile_instruction(int64_t *icp, SliceI64 *srctcs, int64_t *idx) {
         put_opcode(icp, OP_BEEP, 0, 0, 0, 0);
         break;
     case TC_PLAY:
-        compile_args(icp, argtcs, 2);
+        compile_args(icp, argtcs, 4);
         put_opcode(icp, OP_PLAY, 0, 0, 0, 0);
         break;
     case TC_PRINTVAR:

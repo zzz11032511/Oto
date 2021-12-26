@@ -11,25 +11,22 @@ static void init_stream_param() {
     out_param.hostApiSpecificStreamInfo = NULL;
 }
 
+/* 現在の演奏情報 */
 typedef struct {
-    Sound *sound;
-    uint64_t length;
     uint64_t t;
-    float freq[MAX_POLYPHONIC];
-    int8_t volume; 
-    int64_t sampling_rate;
+    Playdata info;
 } Currentdata;
 Currentdata out_data;
 
 static void init_out_data(int64_t sampling_rate) {
-    out_data.sound = NULL;
-    out_data.length = 0;
-    out_data.volume = 0;
+    out_data.info.sound = NULL;
+    out_data.info.length = 0;
+    out_data.info.volume = 0;
     out_data.t = 0;
     for (uint64_t i = 0; i < MAX_POLYPHONIC; i++) {
-        out_data.freq[i] = 1;
+        out_data.info.freq[i] = 1;
     }
-    out_data.sampling_rate = sampling_rate;
+    out_data.info.sampling_rate = sampling_rate;
 }
 
 static bool stream_active_flag = false;
@@ -42,13 +39,13 @@ void set_stream_active_flag(bool b) {
 }
 
 void write_out_data(Playdata data) {
-    out_data.sound = data.sound;
-    out_data.length = data.length;
+    out_data.info.sound = data.sound;
+    out_data.info.length = data.length;
     out_data.t = 0;
     for (uint64_t i = 0; i < MAX_POLYPHONIC; i++) {
-        out_data.freq[i] = data.freq[i];
+        out_data.info.freq[i] = data.freq[i];
     }
-    out_data.volume = data.volume;
+    out_data.info.volume = data.volume;
 }
 
 static double FADE_RANGE = 0.05;
@@ -66,18 +63,18 @@ static int play_callback(const void *inputBuffer,
     float d = 0;
 
     for (uint64_t i = 0; i < framesPerBuffer; i++) {
-        if (data->t > data->length) {
+        if (data->t > data->info.length) {
             *out++ = 0;
             continue;
         }
 
-        d = sin(2 * PI * data->freq[0] * data->t / data->sampling_rate);
+        d = ((float)data->info.volume / 100) * sound_generate(&data->info, data->t, 0);
 
         /* フェード処理 */
-        if (data->t < (FADE_RANGE * data->length)) {
-            d *= data->t / (FADE_RANGE * data->length);
-        } else if ((data->length - data->t) < (FADE_RANGE * data->length)) {
-            d *= (data->length - data->t) / (FADE_RANGE * data->length);
+        if (data->t < (FADE_RANGE * data->info.length)) {
+            d *= data->t / (FADE_RANGE * data->info.length);
+        } else if ((data->info.length - data->t) < (FADE_RANGE * data->info.length)) {
+            d *= (data->info.length - data->t) / (FADE_RANGE * data->info.length);
         }
 
         *out++ = d;
@@ -85,7 +82,7 @@ static int play_callback(const void *inputBuffer,
         data->t += 1;
     }
 
-    if (data->t > data->length) {
+    if (data->t > data->info.length) {
         stream_active_flag = false;
     }
 

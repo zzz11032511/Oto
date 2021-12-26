@@ -20,7 +20,6 @@ void oto_instr_print() {
     } else if (vmstack_typecheck() == VM_TY_INITVAL) {
         oto_error(OTO_MISSING_ARGUMENTS_ERROR);
     }
-    printf("aaaaaaaa\n");
 }
 
 void oto_instr_beep() {
@@ -49,6 +48,33 @@ void oto_instr_beep() {
 }
 
 void oto_instr_play(Status *status) {
+    Sound *sound = NULL;
+    if (vmstack_typecheck() == VM_TY_VARPTR) {
+        Var *var = vmstack_popp();
+        if (var->type != TY_SOUND) {
+            oto_error(OTO_MISSING_ARGUMENTS_ERROR);
+        }
+        sound = (Sound *)var->value.p;
+    } else if (vmstack_typecheck() == VM_TY_INITVAL) {
+        vmstack_popf();
+    } else {
+        oto_error(OTO_MISSING_ARGUMENTS_ERROR);
+    }
+
+    double volume = 0;
+    if (vmstack_typecheck() == VM_TY_VARPTR) {
+        volume = vmstack_popv()->value.f;
+    } else if (vmstack_typecheck() == VM_TY_IMMEDIATE) {
+        volume = vmstack_popf();
+    } else if (vmstack_typecheck() == VM_TY_INITVAL) {
+        vmstack_popf();
+        volume = 80;
+    }
+
+    if (!(0 <= volume && volume <= 100)) {
+        volume = 80;
+    }
+
     double duration = 0;
     if (vmstack_typecheck() == VM_TY_VARPTR) {
         duration = vmstack_popv()->value.f;
@@ -72,13 +98,20 @@ void oto_instr_play(Status *status) {
     Playdata data;
     data.freq[0] = freq;
     data.length  = status->sampling_rate * duration;
-    data.sound   = NULL;
-    data.volume  = 100;
+    data.sound   = sound;
+    data.volume  = (int8_t)volume;
 
     write_out_data(data);
+
     printf("[Play] ");
-    printf("frequency : %8.3f, length : %2.2f, velocity : %d, wave : %d\n", 
-           freq, duration, 100, 1);
+    if (sound != NULL) {
+        printf("frequency : %8.3f, length : %2.2f, velocity : %I64d, wave : %d\n", 
+               freq, duration, (int64_t)volume, sound->oscillator->wave);
+    } else {
+        printf("frequency : %8.3f, length : %2.2f, velocity : %I64d, wave : 1\n", 
+               freq, duration, (int64_t)volume);
+    }
+
     
     set_stream_active_flag(true);
     while (is_stream_active()) {

@@ -4,7 +4,7 @@ void print_error(errorcode_t err, Status *status) {
     printf("\x1b[31m");
     printf("ERROR");
 #ifdef DEBUG
-    printf("(%I64d) : ", err);
+    printf("(%I64d) : ", err + 10001);
     printf("\x1b[39m");
 #else
     printf("\x1b[39m");

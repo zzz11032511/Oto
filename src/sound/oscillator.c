@@ -1,21 +1,6 @@
 #include <oto/oto.h>
 #include <oto/oto_sound.h>
 
-Oscillator *new_oscillator(basicwave_t wave, Oscillator *fm, Oscillator *am) {
-    Oscillator *oscil = MYMALLOC1(Oscillator);
-    if (IS_NULL(oscil)) {
-        oto_error_exit(OTO_INTERNAL_ERROR);
-    }
-
-    oscil->wave = wave;
-    oscil->fm = fm;
-    oscil->am = am;
-    oscil->fm_mod_freq = 1;
-    oscil->am_mod_freq = 1;
-
-    return oscil;
-}
-
 static float osc_sine_wave(float freq, uint64_t t, float phase,
                            uint64_t sampling_freq) {
     return volume * sin(2 * PI * freq * t / sampling_freq + phase);
