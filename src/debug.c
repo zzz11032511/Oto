@@ -79,6 +79,7 @@ static struct operation {
     {"JNZ",          OP_JNZ          },
     {"OSCILDEF",     OP_OSCILDEF     },
     {"SOUNDDEF",     OP_SOUNDDEF     },
+    {"CONNFILTER",   OP_CONNFILTER   },
     {"PRINT",        OP_PRINT        },
     {"BEEP",         OP_BEEP         },
     {"PLAY",         OP_PLAY         },

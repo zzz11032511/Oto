@@ -8,6 +8,8 @@
  * PLAY 500, 1, 1, AAA
  */
 
+#define DEFAULT_FILTERS_SIZE 50
+
 Sound *new_sound(Oscillator *osc) {
     Sound *sound = MYMALLOC1(Sound);
     if (IS_NULL(sound)) {
@@ -15,7 +17,7 @@ Sound *new_sound(Oscillator *osc) {
     }
 
     sound->oscillator = osc;
-    sound->filters = MYMALLOC1(VectorPTR);
+    sound->filters = new_vector_ptr(DEFAULT_FILTERS_SIZE);
     if (IS_NULL(sound->filters)) {
         free(sound);
         oto_error(OTO_INTERNAL_ERROR);

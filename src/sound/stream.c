@@ -39,9 +39,9 @@ void set_stream_active_flag(bool b) {
 }
 
 void write_out_data(Playdata data) {
+    out_data.t = 0;
     out_data.info.sound = data.sound;
     out_data.info.length = data.length;
-    out_data.t = 0;
     for (uint64_t i = 0; i < MAX_POLYPHONIC; i++) {
         out_data.info.freq[i] = data.freq[i];
     }
@@ -68,7 +68,8 @@ static int play_callback(const void *inputBuffer,
             continue;
         }
 
-        d = ((float)data->info.volume / 100) * sound_generate(&data->info, data->t, 0);
+        d = ((float)data->info.volume / 100) * sound_generate(&(data->info), data->t, 0);
+        d = filtering(d, &data->info, data->t);
 
         /* フェード処理 */
         if (data->t < (FADE_RANGE * data->info.length)) {

@@ -34,6 +34,7 @@ void oto_init(char *srcpath) {
         exit(EXIT_FAILURE);
     }
     init_var_list(var_list);
+    init_filter(var_list);
     
     // メモリ解放とPortAudio終了処理用のハンドラを登録する
     if (atexit(oto_exit) != 0) {

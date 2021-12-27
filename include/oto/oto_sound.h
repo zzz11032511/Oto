@@ -60,15 +60,19 @@ typedef enum {
     TREMOLO
 } filtercode_t;
 
+#define FILTER_ARG_SIZE 5
+
 /* フィルタ */
 typedef struct {
     filtercode_t num;
-    VectorDouble *args;
+    void *args[FILTER_ARG_SIZE];
 } Filter;
 
 void init_sound_stream(int64_t sampling_rate, double fade_range);
 void terminate_sound_stream();
+void init_filter(VectorPTR *var_list);
 
+Filter *new_filter(filtercode_t fc);
 Oscillator *new_oscil(basicwave_t wave, basicwave_t fm_wave, float fm_freq);
 Sound *new_sound(Oscillator *osc);
 
@@ -78,3 +82,4 @@ void set_stream_active_flag(bool b);
 void write_out_data(Playdata data);
 
 float sound_generate(Playdata *info, uint64_t t, int64_t ch);
+float filtering(float data, Playdata *info, uint64_t t);

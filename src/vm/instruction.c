@@ -95,6 +95,7 @@ void oto_instr_play(Status *status) {
         freq = 500.0;
     }
 
+
     Playdata data;
     data.freq[0] = freq;
     data.length  = status->sampling_rate * duration;
@@ -108,14 +109,15 @@ void oto_instr_play(Status *status) {
         printf("frequency : %8.3f, length : %2.2f, velocity : %I64d, wave : %d\n", 
                freq, duration, (int64_t)volume, sound->oscillator->wave);
     } else {
-        printf("frequency : %8.3f, length : %2.2f, velocity : %I64d, wave : 1\n", 
+        printf("frequency : %8.3f, length : %2.2f, velocity : %I64d, wave : NULL\n", 
                freq, duration, (int64_t)volume);
     }
 
+    // printf("filter length : %I64d\n", sound->filters->length);
     
     set_stream_active_flag(true);
     while (is_stream_active()) {
-        // usleep(10);
+        usleep(1);
     }
 }
 

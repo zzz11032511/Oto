@@ -28,7 +28,7 @@ inline static float osc_triangle_wave(Playdata *info, uint64_t t, int64_t ch) {
     else return 3.0 - 4.0 * m / t0;
 }
 
-static float osc_white_noise(Playdata *info, uint64_t t, int64_t ch) {
+inline static float osc_white_noise(Playdata *info, uint64_t t, int64_t ch) {
     return ((float)rand()) / RAND_MAX;
 }
 
@@ -41,19 +41,14 @@ float sound_generate(Playdata *info, uint64_t t, int64_t ch) {
     switch (sound->oscillator->wave) {
     case SINE_WAVE:
         return osc_sine_wave(info, t, ch);
-        break;
     case SAWTOOTH_WAVE:
         return osc_saw_wave(info, t, ch);
-        break;
     case SQUARE_WAVE:
         return osc_square_wave(info, t, ch);
-        break;
     case TRIANGLE_WAVE:
         return osc_triangle_wave(info, t, ch);
-        break;
     case WHITE_NOISE:
         return osc_white_noise(info, t, ch);
-        break;
     default:
         return osc_sine_wave(info, t, ch);
     }

@@ -222,6 +222,13 @@ enum {
     OP_OSCILDEF,
     OP_SOUNDDEF,
 
+    /**
+     * フィルターの接続
+     * 
+     * CONNFILTER <sound> <filter>
+     */
+    OP_CONNFILTER,
+
     OP_PRINT,
     OP_BEEP,
     OP_PLAY,
