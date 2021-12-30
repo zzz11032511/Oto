@@ -175,6 +175,16 @@ void print_error(errorcode_t err, Status *status) {
         }
         break;
 
+    case OTO_EXIST_SOUND_OBJECT_ERROR:
+        if (status->language == LANG_JPN_KANJI) {
+            printf("既に定義されたSoundを上書きしようとしています\n");
+        } else if (status->language == LANG_JPN_HIRAGANA) {
+            printf("かきかたが まちがえています\n");
+        } else if (status->language == LANG_ENG) {
+            printf("Exist sound object error\n");
+        }
+        break;
+
     case OTO_STACK_OVERFLOW_ERROR:
         if (status->language == LANG_JPN_KANJI) {
             printf("スタックオーバーフロー\n");

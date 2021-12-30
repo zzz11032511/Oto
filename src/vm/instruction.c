@@ -52,13 +52,13 @@ void oto_instr_play(Status *status) {
     if (vmstack_typecheck() == VM_TY_VARPTR) {
         Var *var = vmstack_popp();
         if (var->type != TY_SOUND) {
-            oto_error(OTO_MISSING_ARGUMENTS_ERROR);
+            oto_error(OTO_ARGUMENTS_TYPE_ERROR);
         }
         sound = (Sound *)var->value.p;
     } else if (vmstack_typecheck() == VM_TY_INITVAL) {
         vmstack_popf();
     } else {
-        oto_error(OTO_MISSING_ARGUMENTS_ERROR);
+        oto_error(OTO_ARGUMENTS_TYPE_ERROR);
     }
 
     double volume = 0;

@@ -149,8 +149,10 @@ void exec(VectorPTR *ic_list, VectorPTR *var_list, Status *status) {
             
             } else if (VAR(i + 1)->type == TY_SOUND) {
                 // ((Sound *)VAR(i + 1)->value.p)->oscillator = ((Sound *)VAR(i + 2)->value.p)->oscillator;
+                // free_items_vector_ptr(((Sound *)VAR(i + 1)->value.p)->filters);
                 // free_vector_ptr(((Sound *)VAR(i + 1)->value.p)->filters);
-                oto_error(OTO_UNKNOWN_ERROR);
+                // new_vector_ptr()
+                oto_error(OTO_EXIST_SOUND_OBJECT_ERROR);
 
             } else if (VAR(i + 1)->type != TY_SOUND) {
                 if (VAR(i + 1)->type == TY_FILTER) {

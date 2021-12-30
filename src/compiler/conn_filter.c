@@ -23,9 +23,6 @@ void compile_conn_filter(int64_t *icp, SliceI64 *conntcs) {
         put_opcode(icp, OP_CPYS, VAR(e_sound_tc), VAR(s_sound_tc), 0, 0);
     }
 
-
-    print_slice_srcs(conntcs);
-
     for (int64_t i = 1; i < conntcs->length - 2;) {
         tokencode_t tc = conntcs->data[i];
         DEBUG_IPRINT(i);
