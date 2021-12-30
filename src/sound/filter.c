@@ -1,23 +1,20 @@
 #include <oto/oto.h>
 #include <oto/oto_sound.h>
 
-/* 最初に定義しておくフィルタ */
-struct init_define_filters {
-    char *s;
-    size_t sl;
-    filtercode_t filter_num;
-    uint64_t param;
-};
-static const struct init_define_filters def_filters[] = {
+const struct init_define_filters def_filters[] = {
     {"CLIP",        4, CLIP,        0},
-    {"FADE",        4, FADE,        2},
     {"FADE_IN",     7, FADE_IN,     1},
     {"FADE_OUT",    8, FADE_OUT,    1},
+    {"FADE",        4, FADE,        2},
     {"AMP",         3, AMP,         1},
     {"TREMOLO",     7, TREMOLO,     2},
 };
 
 Filter *new_filter(filtercode_t fc) {
+    if (!(0 <= fc && fc < FILTER_NUM)) {
+        return NULL;
+    }
+    
     Filter *filter = MYMALLOC1(Filter);
     if (IS_NULL(filter)) {
         return NULL;
@@ -94,44 +91,51 @@ inline static float tremolo(float d, Playdata *info, uint64_t t, double depth, d
 }
 
 float filtering(float data, Playdata *info, uint64_t t) {
+    if (info->sound == NULL) {
+        return data;
+    }
     VectorPTR *filters = info->sound->filters;
 
     uint64_t i = 0;
     while (i < filters->length) {
-        Var *var = ((Var *)(filters->data[i]));
-        if (var == NULL) {
+        Filter *filter = ((Filter *)(filters->data[i]));
+        if (filter == NULL) {
             return data;
-        } else if (var->type != TY_FILTER) {
-            oto_error(OTO_SOUND_PLAYER_ERROR);
         }
-        Filter *filter = (Filter *)var->value.p;
 
         switch (filter->num) {
         case CLIP:
             data = clip(data);
+            break;
         case FADE_IN:
             data = fade_in(data, info, t, 
-                ((Var *)filter->args[0])->value.f
+                filter->args[0]->value.f
             );
+            break;
         case FADE_OUT:
             data = fade_out(data, info, t,
-                ((Var *)filter->args[0])->value.f
+                filter->args[0]->value.f
             );
+            break;
         case FADE:
             data = fade(data, info, t,
-                ((Var *)filter->args[0])->value.f,
-                ((Var *)filter->args[1])->value.f
+                filter->args[0]->value.f,
+                filter->args[1]->value.f
             );
+            break;
         case AMP:
             data = amp(data, info, t,
-                ((Var *)filter->args[0])->value.f
+                filter->args[0]->value.f
             );
+            break;
         case TREMOLO:
             data = tremolo(data, info, t,
-                ((Var *)filter->args[0])->value.f,
-                ((Var *)filter->args[1])->value.f
+                filter->args[0]->value.f,
+                filter->args[1]->value.f
             );
+            break;
         default:
+            printf("%d\n", filter->num);
             oto_error(OTO_SOUND_PLAYER_ERROR);
         }
 

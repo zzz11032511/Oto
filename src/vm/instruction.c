@@ -117,7 +117,7 @@ void oto_instr_play(Status *status) {
     
     set_stream_active_flag(true);
     while (is_stream_active()) {
-        usleep(1);
+        // usleep(1);
     }
 }
 
@@ -171,4 +171,24 @@ void oto_instr_sleep() {
     } else if (vmstack_typecheck() == VM_TY_INITVAL) {
         oto_error(OTO_MISSING_ARGUMENTS_ERROR);
     }
+}
+
+void oto_connect_filter(Sound *sound, filtercode_t fc, Status *status) {
+    Filter *filter = new_filter(fc);
+    if (IS_NULL(filter)) {
+        oto_error(OTO_UNKNOWN_ERROR);
+    }
+
+    int64_t param = def_filters[fc].param;
+    for (int64_t i = param - 1; i >= 0; i--) {
+        if (vmstack_typecheck() == VM_TY_VARPTR) {
+            filter->args[i] = vmstack_popp();
+        } else if (vmstack_typecheck() == VM_TY_IMMEDIATE) {
+            filter->args[i] = vmstack_popp();
+        } else if (vmstack_typecheck() == VM_TY_INITVAL) {
+            oto_error(OTO_MISSING_ARGUMENTS_ERROR);
+        }
+    }
+            
+    vector_ptr_append(sound->filters, (void *)filter);
 }

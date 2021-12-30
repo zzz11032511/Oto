@@ -79,6 +79,7 @@ static struct operation {
     {"JNZ",          OP_JNZ          },
     {"OSCILDEF",     OP_OSCILDEF     },
     {"SOUNDDEF",     OP_SOUNDDEF     },
+    {"CPYS",         OP_CPYS         },
     {"CONNFILTER",   OP_CONNFILTER   },
     {"PRINT",        OP_PRINT        },
     {"BEEP",         OP_BEEP         },
@@ -116,13 +117,19 @@ void print_ic_list(VectorPTR *ic_list) {
         } else if (op == OP_JMP || op == OP_JZ || op == OP_JNZ) {
             printf("%10I64d\n", (int64_t)v1);
             continue;
-        }
+        
+        } 
 
         if (IS_NULL(v1)) {
             printf("\n");
             continue;
         }
         printf("%10s ", v1->token->str);
+
+        if (op == OP_CONNFILTER) {
+            printf("%10s\n", def_filters[(int64_t)v2].s);
+            continue;
+        }
 
         if (IS_NULL(v2)) {
             printf("\n");

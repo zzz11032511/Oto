@@ -222,6 +222,8 @@ enum {
     OP_OSCILDEF,
     OP_SOUNDDEF,
 
+    OP_CPYS,
+
     /**
      * フィルターの接続
      * 
@@ -237,3 +239,14 @@ enum {
     OP_EXIT
 };
 typedef int64_t opcode_t;
+
+
+enum {
+    CLIP = 0,
+    FADE_IN,
+    FADE_OUT,
+    FADE,
+    AMP,
+    TREMOLO
+};
+typedef int64_t filtercode_t;

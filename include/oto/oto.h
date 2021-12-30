@@ -37,6 +37,16 @@ typedef struct {
 extern Token symbols[];   // 記号一覧
 extern Token rsvwords[];  // 予約語一覧
 
+/* 最初に定義しておくフィルタ */
+struct init_define_filters {
+    char *s;
+    size_t sl;
+    filtercode_t filter_num;
+    uint64_t param;
+};
+extern const struct init_define_filters def_filters[];
+#define FILTER_NUM 6
+
 /* トークン比較用マクロ */
 #define IS_RSVWORD(tc)        ((TC_BEGIN <= tc) && (tc <= TC_EXIT))
 #define IS_AVAILABLE_VAR(tc)  (tc > TC_EXIT)

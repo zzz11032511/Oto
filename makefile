@@ -1,7 +1,8 @@
 SRCSLIST := main.c run.c token.c debug.c error.c status.c option.c \
 			util/util.c util/vector.c util/map.c util/slice.c util/stack.c \
 			lexer/lexer.c lexer/preprocess.c \
-			compiler/compiler.c compiler/util_compiler.c compiler/expr.c compiler/flow.c compiler/instruction.c \
+			compiler/compiler.c compiler/util_compiler.c compiler/expr.c compiler/flow.c \
+			compiler/conn_filter.c compiler/instruction.c \
 			vm/exec.c vm/vmstack.c vm/alu.c vm/instruction.c \
 			sound/stream.c sound/sound.c sound/generator.c sound/filter.c
 

@@ -178,6 +178,7 @@ void free_var_list(VectorPTR *var_list) {
         Var *var = ((Var *)var_list->data[i]);
 
         if (var->type == TY_SOUND) {
+            free_items_vector_ptr(((Sound *)(var->value.p))->filters);
             free(((Sound *)(var->value.p))->filters);
             free(var->value.p);
         } else if (var->type == TY_OSCIL) {

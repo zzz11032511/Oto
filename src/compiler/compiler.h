@@ -18,6 +18,7 @@ void compile_if(int64_t *icp, SliceI64 *srctcs, int64_t *idx);
 void compile_expr(int64_t *icp, SliceI64 *exprtcs, VectorPTR *vars);
 void compile_args(int64_t *icp, SliceI64 *argtcs, int64_t max_params);
 void compile_instruction(int64_t *icp, SliceI64 *srctcs, int64_t *idx);
+void compile_conn_filter(int64_t *icp, SliceI64 *conntcs);
 
 SliceI64 *make_line_tokencodes(SliceI64 *srctcs, int64_t start);
 SliceI64 *make_args_enclosed_br(SliceI64 *srctcs, int64_t sqbropn);

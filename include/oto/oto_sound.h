@@ -51,21 +51,12 @@ typedef struct {
     int64_t sampling_rate;
 } Playdata;
 
-typedef enum {
-    CLIP = 0,
-    FADE_IN,
-    FADE_OUT,
-    FADE,
-    AMP,
-    TREMOLO
-} filtercode_t;
-
-#define FILTER_ARG_SIZE 5
+#define FILTER_ARG_SIZE 10
 
 /* フィルタ */
 typedef struct {
     filtercode_t num;
-    void *args[FILTER_ARG_SIZE];
+    Var *args[FILTER_ARG_SIZE];
 } Filter;
 
 void init_sound_stream(int64_t sampling_rate, double fade_range);

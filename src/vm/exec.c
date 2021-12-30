@@ -143,6 +143,35 @@ void exec(VectorPTR *ic_list, VectorPTR *var_list, Status *status) {
             }
             break;
 
+        case OP_CPYS:
+            if (VAR(i + 2)->type != TY_SOUND) {
+                oto_error(OTO_UNKNOWN_ERROR);
+            
+            } else if (VAR(i + 1)->type == TY_SOUND) {
+                // ((Sound *)VAR(i + 1)->value.p)->oscillator = ((Sound *)VAR(i + 2)->value.p)->oscillator;
+                // free_vector_ptr(((Sound *)VAR(i + 1)->value.p)->filters);
+                oto_error(OTO_UNKNOWN_ERROR);
+
+            } else if (VAR(i + 1)->type != TY_SOUND) {
+                if (VAR(i + 1)->type == TY_FILTER) {
+                    oto_error(OTO_NAME_ERROR);
+                } else if (VAR(i + 1)->type == TY_OSCIL) {
+                    oto_error(OTO_NAME_ERROR);
+                } else if (VAR(i + 1)->type == TY_STRING) {
+                    oto_error(OTO_NAME_ERROR);
+                } else if (VAR(i + 1)->type == TY_ARRAY) {
+                    oto_error(OTO_NAME_ERROR);
+                }
+
+                VAR(i + 1)->type = TY_SOUND;
+                VAR(i + 1)->value.p = (void *)new_sound(((Sound *)VAR(i + 2)->value.p)->oscillator);
+            }
+            break;
+
+        case OP_CONNFILTER:
+            oto_connect_filter(((Sound *)(VAR(i + 1)->value.p)), (filtercode_t)VAR(i + 2), status);
+            break;
+
         case OP_PRINT:
             oto_instr_print();
             break;

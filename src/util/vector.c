@@ -97,8 +97,6 @@ void free_items_vector_ptr(VectorPTR *vec) {
         free(vec->data[i]);
         vec->data[i] = NULL;
     }
-    free(vec->data);
-    free(vec);
 }
 
 static void realloc_vector_ptr(VectorPTR *vec, size_t realloc_size) {
