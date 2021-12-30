@@ -14,9 +14,9 @@ void compile_conn_filter(int64_t *icp, SliceI64 *conntcs) {
     tokencode_t e_sound_tc = conntcs->data[conntcs->length - 1];
 
     if (!IS_AVAILABLE_VAR(s_sound_tc)) {
-        error_compiler(OTO_INVALID_SYNTAX_ERROR, conntcs, 0);
+        error_compiler(OTO_NAME_ERROR, conntcs, 0);
     } else if (!IS_AVAILABLE_VAR(e_sound_tc)) {
-        error_compiler(OTO_INVALID_SYNTAX_ERROR, conntcs, conntcs->length - 1);
+        error_compiler(OTO_NAME_ERROR, conntcs, conntcs->length - 1);
     }
 
     if (s_sound_tc != e_sound_tc) {
@@ -34,7 +34,7 @@ void compile_conn_filter(int64_t *icp, SliceI64 *conntcs) {
             i++;
             int64_t fc = get_init_filtercode(conntcs->data[i]);
             if (fc == -1) {
-                error_compiler(OTO_INVALID_SYNTAX_ERROR, conntcs, i);
+                error_compiler(OTO_FILTER_ERROR, conntcs, i);
             }
             int64_t param = def_filters[fc].param;
 

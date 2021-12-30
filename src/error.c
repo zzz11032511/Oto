@@ -125,6 +125,16 @@ void print_error(errorcode_t err, Status *status) {
         }
         break;
 
+    case OTO_FILTER_ERROR:
+        if (status->language == LANG_JPN_KANJI) {
+            printf("存在しない, または使用できないフィルターです\n");
+        } else if (status->language == LANG_JPN_HIRAGANA) {
+            printf("つかえない フィルターです\n");
+        } else if (status->language == LANG_ENG) {
+            printf("Filter error\n");
+        }
+        break;
+
     case OTO_ASSIGN_TO_LITERAL_ERROR:
         if (status->language == LANG_JPN_KANJI) {
             printf("定数に代入することはできません\n");
@@ -152,6 +162,16 @@ void print_error(errorcode_t err, Status *status) {
             printf("めいれいの ひきすうが たりません\n");
         } else if (status->language == LANG_ENG) {
             printf("Missing arguments error\n");
+        }
+        break;
+
+    case OTO_ARGUMENTS_TYPE_ERROR:
+        if (status->language == LANG_JPN_KANJI) {
+            printf("引数の型が違います\n");
+        } else if (status->language == LANG_JPN_HIRAGANA) {
+            printf("めいれいの ひきすうが ちがいます\n");
+        } else if (status->language == LANG_ENG) {
+            printf("Wrong arguments type error\n");
         }
         break;
 
