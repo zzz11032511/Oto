@@ -8,6 +8,7 @@ const struct init_define_filters def_filters[] = {
     {"FADE",        4, FADE,        2},
     {"AMP",         3, AMP,         1},
     {"TREMOLO",     7, TREMOLO,     2},
+    {"DETUNE",      6, DETUNE,      1},
 };
 
 Filter *new_filter(filtercode_t fc) {
@@ -90,6 +91,18 @@ inline static float tremolo(float d, Playdata *info, uint64_t t, double depth, d
     return d;
 }
 
+inline static float detune(float d, Playdata *info, uint64_t t, double depth) {
+    float data = d;
+    for (int64_t ch = 0; ch < MAX_POLYPHONIC; ch++) {
+        float org = info->freq[ch];
+        info->freq[ch] += depth;
+        data += ((float)info->volume / 100) * sound_generate(info, t, ch);
+        info->freq[ch] = org;
+    }
+    data /= (MAX_POLYPHONIC + 1);
+    return data;
+}
+
 float filtering(float data, Playdata *info, uint64_t t) {
     if (info->sound == NULL) {
         return data;
@@ -132,6 +145,11 @@ float filtering(float data, Playdata *info, uint64_t t) {
             data = tremolo(data, info, t,
                 filter->args[0]->value.f,
                 filter->args[1]->value.f
+            );
+            break;
+        case DETUNE:
+            data = detune(data, info, t,
+                filter->args[0]->value.f
             );
             break;
         default:

@@ -45,7 +45,6 @@ struct init_define_filters {
     uint64_t param;
 };
 extern const struct init_define_filters def_filters[];
-#define FILTER_NUM 6
 
 /* トークン比較用マクロ */
 #define IS_RSVWORD(tc)        ((TC_BEGIN <= tc) && (tc <= TC_EXIT))
