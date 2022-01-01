@@ -9,6 +9,7 @@ const struct init_define_filters def_filters[] = {
     {"AMP",         3, AMP,         1},
     {"TREMOLO",     7, TREMOLO,     2},
     {"DETUNE",      6, DETUNE,      1},
+    {"CHOP",        4, CHOP,        1},
 };
 
 Filter *new_filter(filtercode_t fc) {
@@ -103,6 +104,13 @@ inline static float detune(float d, Playdata *info, uint64_t t, double depth) {
     return data;
 }
 
+inline static float chop(float d, Playdata *info, uint64_t t, double speed) {
+    uint64_t t0 = info->sampling_rate / speed;
+    uint64_t m = t % t0;
+    if (m < t0 / 2) return d;
+    else return 0;
+}
+
 float filtering(float data, Playdata *info, uint64_t t) {
     if (info->sound == NULL) {
         return data;
@@ -149,6 +157,11 @@ float filtering(float data, Playdata *info, uint64_t t) {
             break;
         case DETUNE:
             data = detune(data, info, t,
+                filter->args[0]->value.f
+            );
+            break;
+        case CHOP:
+            data = chop(data, info, t,
                 filter->args[0]->value.f
             );
             break;
