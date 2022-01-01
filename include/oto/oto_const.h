@@ -245,7 +245,7 @@ enum {
 };
 typedef int64_t opcode_t;
 
-#define FILTER_NUM 8
+#define FILTER_NUM 9
 enum {
     CLIP = 0,
     FADE_IN,
@@ -254,6 +254,7 @@ enum {
     AMP,
     TREMOLO,
     DETUNE,
-    CHOP
+    CHOP,
+    CRUSH
 };
 typedef int64_t filtercode_t;

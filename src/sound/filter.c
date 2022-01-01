@@ -10,6 +10,7 @@ const struct init_define_filters def_filters[] = {
     {"TREMOLO",     7, TREMOLO,     2},
     {"DETUNE",      6, DETUNE,      1},
     {"CHOP",        4, CHOP,        1},
+    {"CRUSH",       5, CRUSH,       1},
 };
 
 Filter *new_filter(filtercode_t fc) {
@@ -111,6 +112,20 @@ inline static float chop(float d, Playdata *info, uint64_t t, double speed) {
     else return 0;
 }
 
+inline static float crush(float d, Playdata *info, uint64_t t, double bits) {
+    float q =  (0.5 / bits);
+    if (q < 0) return d;
+    
+    float qd = -1.0;
+    while (qd <= 1.0) {
+        if (qd <= d && d <= (qd + q)) {
+            return qd + q / 2;
+        }
+        qd += q;
+    }
+    return d / 2;
+}
+
 float filtering(float data, Playdata *info, uint64_t t) {
     if (info->sound == NULL) {
         return data;
@@ -162,6 +177,11 @@ float filtering(float data, Playdata *info, uint64_t t) {
             break;
         case CHOP:
             data = chop(data, info, t,
+                filter->args[0]->value.f
+            );
+            break;
+        case CRUSH:
+            data = crush(data, info, t,
                 filter->args[0]->value.f
             );
             break;
