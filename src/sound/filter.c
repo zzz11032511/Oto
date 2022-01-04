@@ -11,6 +11,7 @@ const struct init_define_filters def_filters[] = {
     {"DETUNE",      6, DETUNE,      1},
     {"CHOP",        4, CHOP,        1},
     {"CRUSH",       5, CRUSH,       1},
+    {"LOW_PASS",    8, LOW_PASS,    1}
 };
 
 Filter *new_filter(filtercode_t fc) {
@@ -113,7 +114,7 @@ inline static float chop(float d, Playdata *info, uint64_t t, double speed) {
 }
 
 inline static float crush(float d, Playdata *info, uint64_t t, double bits) {
-    float q =  (0.5 / bits);
+    float q = 0.5 / bits;
     if (q < 0) return d;
     
     float qd = -1.0;
@@ -124,6 +125,42 @@ inline static float crush(float d, Playdata *info, uint64_t t, double bits) {
         qd += q;
     }
     return d / 2;
+}
+
+static float low_pass(float d, Playdata *info, uint64_t t, double cutoff, double Q) {
+    float fc = tan(PI * cutoff) / (2.0 * PI);
+    // float a0 = 1.0 + 2.0 * PI * fc / Q + 4.0 * PI * PI * fc * fc;
+    // float a1 = (8.0 * PI * PI * fc * fc - 2.0) / a0;
+    // float a2 = (1.0 - 2.0 * PI * fc / Q + 4.0 * PI * PI * fc * fc) / a0;
+    // float b0 = 4.0 * PI * PI * fc * fc / a0;
+    // float b1 = 8.0 * PI * PI * fc * fc / a0;
+    // float b2 = 4.0 * PI * PI * fc * fc / a0;
+
+    float a1 = -0.9428;
+    float a2 =  0.3333;
+    float b0 =  0.0976;
+    float b1 =  0.1953;
+    float b2 =  0.0976;
+
+    static float x1, x2, y1, y2;
+    if (t == 0) {
+        x2 = 0;
+        y2 = 0;
+        y1 = d * b0;
+        x1 = d;
+    } else if (t == 1) {
+        x2 = x1;
+        y2 = y1;
+        y1 = (d * b0) + (x1 * b1) - (y1 * a1);
+        x1 = d;
+    } else {
+        x2 = x1;
+        y2 = y1;
+        y1 = (d * b0) + (x1 * b1) + (x2 * b2) - (y1 * a1) - (y2 * a2);
+        x1 = d;
+    }
+
+    return y1;
 }
 
 float filtering(float data, Playdata *info, uint64_t t) {
@@ -183,6 +220,12 @@ float filtering(float data, Playdata *info, uint64_t t) {
         case CRUSH:
             data = crush(data, info, t,
                 filter->args[0]->value.f
+            );
+            break;
+        case LOW_PASS:
+            data = low_pass(data, info, t,
+                filter->args[0]->value.f,
+                M_SQRT1_2
             );
             break;
         default:
