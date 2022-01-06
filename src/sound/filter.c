@@ -11,7 +11,8 @@ const struct init_define_filters def_filters[] = {
     {"DETUNE",      6, DETUNE,      1},
     {"CHOP",        4, CHOP,        1},
     {"CRUSH",       5, CRUSH,       1},
-    {"LOW_PASS",    8, LOW_PASS,    1}
+    {"LPF",         3, LPF,         1},
+    {"HPF",         3, HPF,         1},
 };
 
 Filter *new_filter(filtercode_t fc) {
@@ -127,7 +128,7 @@ inline static float crush(float d, Playdata *info, uint64_t t, double bits) {
     return d / 2;
 }
 
-static float low_pass(float d, Playdata *info, uint64_t t, double fc, double Q) {
+static float lpf(float d, Playdata *info, uint64_t t, double fc, double Q) {
     double a0, a1, a2, b0, b1, b2;
 
     fc = tan(PI * (fc / info->sampling_rate)) / (2.0 * PI);
@@ -138,11 +139,37 @@ static float low_pass(float d, Playdata *info, uint64_t t, double fc, double Q) 
     b1 = 8.0 * PI * PI * fc * fc / a0;
     b2 = 4.0 * PI * PI * fc * fc / a0;
 
-    // a1 = -0.9428;
-    // a2 =  0.3333;
-    // b0 =  0.0976;
-    // b1 =  0.1953;
-    // b2 =  0.0976;
+    static float x1, x2, y1, y2;
+    if (t == 0) {
+        x2 = 0;
+        y2 = 0;
+        y1 = d * b0;
+        x1 = d;
+    } else if (t == 1) {
+        x2 = x1;
+        y2 = y1;
+        y1 = (d * b0) + (x1 * b1) - (y1 * a1);
+        x1 = d;
+    } else {
+        x2 = x1;
+        y2 = y1;
+        y1 = (d * b0) + (x1 * b1) + (x2 * b2) - (y1 * a1) - (y2 * a2);
+        x1 = d;
+    }
+
+    return y1;
+}
+
+static float hpf(float d, Playdata *info, uint64_t t, double fc, double Q) {
+    double a0, a1, a2, b0, b1, b2;
+
+    fc = tan(PI * (fc / info->sampling_rate)) / (2.0 * PI);
+    a0 = 1.0 + 2.0 * PI * fc / Q + 4.0 * PI * PI * fc * fc;
+    a1 = (8.0 * PI * PI * fc * fc - 2.0) / a0;
+    a2 = (1.0 - 2.0 * PI * fc / Q + 4.0 * PI * PI * fc * fc) / a0;
+    b0 = 1.0 / a0;
+    b1 = -2.0 / a0;
+    b2 = 1.0 / a0;
 
     static float x1, x2, y1, y2;
     if (t == 0) {
@@ -224,8 +251,14 @@ float filtering(float data, Playdata *info, uint64_t t) {
                 filter->args[0]->value.f
             );
             break;
-        case LOW_PASS:
-            data = low_pass(data, info, t,
+        case LPF:
+            data = hpf(data, info, t,
+                filter->args[0]->value.f,
+                M_SQRT1_2
+            );
+            break;
+        case HPF:
+            data = lpf(data, info, t,
                 filter->args[0]->value.f,
                 M_SQRT1_2
             );
