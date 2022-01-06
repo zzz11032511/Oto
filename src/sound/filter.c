@@ -13,6 +13,7 @@ const struct init_define_filters def_filters[] = {
     {"LPF",         3, LPF,         1},
     {"HPF",         3, HPF,         1},
     {"WAH",         3, WAH,         3},
+    {"RADIO",       5, RADIO,       0}
 };
 
 Filter *new_filter(filtercode_t fc) {
@@ -184,6 +185,10 @@ static float wah(float d, Playdata *info, uint64_t t, double fc, double Q, doubl
     return lpf(d, info, t, fc, Q);
 }
 
+static float radio(float d, Playdata *info, uint64_t t) {
+    return lpf(d, info, t, 1000, 10) * 0.8;
+}
+
 float filtering(float data, Playdata *info, uint64_t t) {
     if (info->sound == NULL) {
         return data;
@@ -257,6 +262,9 @@ float filtering(float data, Playdata *info, uint64_t t) {
                 filter->args[1]->value.f,
                 filter->args[2]->value.f
             );
+            break;
+        case RADIO:
+            data = radio(data, info, t);
             break;
         default:
             printf("%I64d\n", filter->num);

@@ -245,7 +245,7 @@ enum {
 };
 typedef int64_t opcode_t;
 
-#define FILTER_NUM 11
+#define FILTER_NUM 12
 enum {
     CLIP = 0,
     FADE_IN,
@@ -257,6 +257,7 @@ enum {
     CHOP,
     LPF,
     HPF,
-    WAH
+    WAH,
+    RADIO
 };
 typedef int64_t filtercode_t;
