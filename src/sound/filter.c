@@ -127,20 +127,22 @@ inline static float crush(float d, Playdata *info, uint64_t t, double bits) {
     return d / 2;
 }
 
-static float low_pass(float d, Playdata *info, uint64_t t, double cutoff, double Q) {
-    float fc = tan(PI * cutoff) / (2.0 * PI);
-    // float a0 = 1.0 + 2.0 * PI * fc / Q + 4.0 * PI * PI * fc * fc;
-    // float a1 = (8.0 * PI * PI * fc * fc - 2.0) / a0;
-    // float a2 = (1.0 - 2.0 * PI * fc / Q + 4.0 * PI * PI * fc * fc) / a0;
-    // float b0 = 4.0 * PI * PI * fc * fc / a0;
-    // float b1 = 8.0 * PI * PI * fc * fc / a0;
-    // float b2 = 4.0 * PI * PI * fc * fc / a0;
+static float low_pass(float d, Playdata *info, uint64_t t, double fc, double Q) {
+    double a0, a1, a2, b0, b1, b2;
 
-    float a1 = -0.9428;
-    float a2 =  0.3333;
-    float b0 =  0.0976;
-    float b1 =  0.1953;
-    float b2 =  0.0976;
+    fc = tan(PI * (fc / info->sampling_rate)) / (2.0 * PI);
+    a0 = 1.0 + 2.0 * PI * fc / Q + 4.0 * PI * PI * fc * fc;
+    a1 = (8.0 * PI * PI * fc * fc - 2.0) / a0;
+    a2 = (1.0 - 2.0 * PI * fc / Q + 4.0 * PI * PI * fc * fc) / a0;
+    b0 = 4.0 * PI * PI * fc * fc / a0;
+    b1 = 8.0 * PI * PI * fc * fc / a0;
+    b2 = 4.0 * PI * PI * fc * fc / a0;
+
+    // a1 = -0.9428;
+    // a2 =  0.3333;
+    // b0 =  0.0976;
+    // b1 =  0.1953;
+    // b2 =  0.0976;
 
     static float x1, x2, y1, y2;
     if (t == 0) {
@@ -229,7 +231,7 @@ float filtering(float data, Playdata *info, uint64_t t) {
             );
             break;
         default:
-            printf("%d\n", filter->num);
+            printf("%I64d\n", filter->num);
             oto_error(OTO_SOUND_PLAYER_ERROR);
         }
 
