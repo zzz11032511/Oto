@@ -10,9 +10,9 @@ const struct init_define_filters def_filters[] = {
     {"TREMOLO",     7, TREMOLO,     2},
     {"DETUNE",      6, DETUNE,      1},
     {"CHOP",        4, CHOP,        1},
-    {"CRUSH",       5, CRUSH,       1},
     {"LPF",         3, LPF,         1},
     {"HPF",         3, HPF,         1},
+    {"WAH",         3, WAH,         3},
 };
 
 Filter *new_filter(filtercode_t fc) {
@@ -114,20 +114,7 @@ inline static float chop(float d, Playdata *info, uint64_t t, double speed) {
     else return 0;
 }
 
-inline static float crush(float d, Playdata *info, uint64_t t, double bits) {
-    float q = 0.5 / bits;
-    if (q < 0) return d;
-    
-    float qd = -1.0;
-    while (qd <= 1.0) {
-        if (qd <= d && d <= (qd + q)) {
-            return qd + q / 2;
-        }
-        qd += q;
-    }
-    return d / 2;
-}
-
+// 同じLPF, HPFを2つ重ねるとバグる(はず)
 static float lpf(float d, Playdata *info, uint64_t t, double fc, double Q) {
     double a0, a1, a2, b0, b1, b2;
 
@@ -192,6 +179,11 @@ static float hpf(float d, Playdata *info, uint64_t t, double fc, double Q) {
     return y1;
 }
 
+static float wah(float d, Playdata *info, uint64_t t, double fc, double Q, double depth, double speed) {
+    fc = fc + depth * sin(2 * PI * speed * t / info->sampling_rate);
+    return lpf(d, info, t, fc, Q);
+}
+
 float filtering(float data, Playdata *info, uint64_t t) {
     if (info->sound == NULL) {
         return data;
@@ -246,11 +238,6 @@ float filtering(float data, Playdata *info, uint64_t t) {
                 filter->args[0]->value.f
             );
             break;
-        case CRUSH:
-            data = crush(data, info, t,
-                filter->args[0]->value.f
-            );
-            break;
         case LPF:
             data = hpf(data, info, t,
                 filter->args[0]->value.f,
@@ -261,6 +248,14 @@ float filtering(float data, Playdata *info, uint64_t t) {
             data = lpf(data, info, t,
                 filter->args[0]->value.f,
                 M_SQRT1_2
+            );
+            break;
+        case WAH:
+            data = wah(data, info, t,
+                1000,
+                filter->args[0]->value.f,
+                filter->args[1]->value.f,
+                filter->args[2]->value.f
             );
             break;
         default:

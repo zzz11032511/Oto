@@ -255,8 +255,8 @@ enum {
     TREMOLO,
     DETUNE,
     CHOP,
-    CRUSH,
     LPF,
-    HPF
+    HPF,
+    WAH
 };
 typedef int64_t filtercode_t;
