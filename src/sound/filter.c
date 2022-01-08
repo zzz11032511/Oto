@@ -13,7 +13,8 @@ const struct init_define_filters def_filters[] = {
     {"LPF",         3, LPF,         1},
     {"HPF",         3, HPF,         1},
     {"WAH",         3, WAH,         3},
-    {"RADIO",       5, RADIO,       0}
+    {"RADIO",       5, RADIO,       0},
+    {"VIBRATO",     7, VIBRATO,     2}
 };
 
 Filter *new_filter(filtercode_t fc) {
@@ -187,6 +188,10 @@ static float wah(float d, Playdata *info, uint64_t t, double fc, double Q, doubl
 
 static float radio(float d, Playdata *info, uint64_t t) {
     return lpf(d, info, t, 1000, 10) * 0.8;
+}
+
+static float vibrato(float d, Playdata *info, uint64_t t, double depth, double speed) {
+    
 }
 
 float filtering(float data, Playdata *info, uint64_t t) {

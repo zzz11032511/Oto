@@ -239,13 +239,14 @@ enum {
     OP_PRINT,
     OP_BEEP,
     OP_PLAY,
+    OP_PRINTWAV,
     OP_PRINTVAR,
     OP_SLEEP,
     OP_EXIT
 };
 typedef int64_t opcode_t;
 
-#define FILTER_NUM 12
+#define FILTER_NUM 13
 enum {
     CLIP = 0,
     FADE_IN,
@@ -258,6 +259,7 @@ enum {
     LPF,
     HPF,
     WAH,
-    RADIO
+    RADIO,
+    VIBRATO
 };
 typedef int64_t filtercode_t;

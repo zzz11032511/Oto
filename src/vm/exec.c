@@ -186,6 +186,10 @@ void exec(VectorPTR *ic_list, VectorPTR *var_list, Status *status) {
             oto_instr_play(status);
             break;
 
+        case OP_PRINTWAV:
+            oto_instr_printwav(status);
+            break;
+
         case OP_PRINTVAR:
             oto_instr_printvar(var_list);
             break;

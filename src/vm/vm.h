@@ -28,6 +28,7 @@ void alu(opcode_t op);
 void oto_instr_print();
 void oto_instr_beep();
 void oto_instr_play(Status *status);
+void oto_instr_printwav(Status *status);
 void oto_instr_printvar(VectorPTR *var_list);
 void oto_instr_sleep();
 

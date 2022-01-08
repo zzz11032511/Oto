@@ -1,6 +1,9 @@
 #include <oto/oto.h>
 #include <oto/oto_sound.h>
 
+// PRINTWAV, EXPORT用
+float *databuf = NULL;
+
 static PaStreamParameters out_param;
 static void init_stream_param() {
     out_param.channelCount = MONO_CH;
@@ -15,10 +18,11 @@ static void init_stream_param() {
 typedef struct {
     uint64_t t;
     Playdata info;
+    bool print_flag;
 } Currentdata;
 Currentdata out_data;
 
-static void init_out_data(int64_t sampling_rate) {
+static void init_out_data(int64_t sampling_rate, bool print_flag) {
     out_data.info.sound = NULL;
     out_data.info.length = 0;
     out_data.info.volume = 0;
@@ -27,6 +31,7 @@ static void init_out_data(int64_t sampling_rate) {
         out_data.info.freq[i] = 1;
     }
     out_data.info.sampling_rate = sampling_rate;
+    out_data.print_flag = print_flag;
 }
 
 static bool stream_active_flag = false;
@@ -38,7 +43,7 @@ void set_stream_active_flag(bool b) {
     stream_active_flag = b;
 }
 
-void write_out_data(Playdata data) {
+void write_out_data(Playdata data, bool print_flag) {
     out_data.t = 0;
     out_data.info.sound = data.sound;
     out_data.info.length = data.length;
@@ -46,6 +51,7 @@ void write_out_data(Playdata data) {
         out_data.info.freq[i] = data.freq[i];
     }
     out_data.info.volume = data.volume;
+    out_data.print_flag = print_flag;
 }
 
 static double FADE_RANGE = 0.05;
@@ -78,13 +84,19 @@ static int play_callback(const void *inputBuffer,
             d *= (data->info.length - data->t) / (FADE_RANGE * data->info.length);
         }
 
-        *out++ = d;
+        if (data->print_flag) {
+            databuf[data->t] = d;
+            *out++ = d;
+        } else {
+            *out++ = d;
+        }
 
         data->t += 1;
     }
 
     if (data->t > data->info.length) {
         stream_active_flag = false;
+        data->print_flag = false;
     }
 
     return 0;
@@ -100,7 +112,7 @@ void init_sound_stream(int64_t sampling_rate, double fade_range) {
     }
 
     init_stream_param();
-    init_out_data(sampling_rate);
+    init_out_data(sampling_rate, false);
     FADE_RANGE = fade_range;
 
     err = Pa_OpenStream(&stream, NULL, &out_param,
@@ -117,6 +129,9 @@ void init_sound_stream(int64_t sampling_rate, double fade_range) {
 }
 
 void terminate_sound_stream() {
+    if (IS_NOT_NULL(databuf)) {
+        free(databuf);
+    }
     PaError err = paNoError;
 
     if (!Pa_IsStreamStopped(stream)) {
