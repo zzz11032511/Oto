@@ -95,6 +95,11 @@ void oto_instr_play(Status *status) {
         vmstack_popf();
         freq = 500.0;
     }
+    
+    // freqが0だとエラーになるので補正
+    if (freq == 0) {
+        freq = 1;
+    }
 
     Playdata data;
     data.freq[0] = freq;
@@ -222,6 +227,10 @@ void oto_instr_printwav(Status *status) {
     } else if (vmstack_typecheck() == VM_TY_INITVAL) {
         vmstack_popf();
         freq = 500.0;
+    }
+
+    if (freq == 0) {
+        freq = 1;
     }
 
     Playdata data;
