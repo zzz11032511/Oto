@@ -2,7 +2,7 @@ title: Oto
 
 domain: i18fn.github.io
 url: https://i18fn.github.io
-baseurl: /Oto/
+baseurl: /Oto
 
 # Build settings
 theme: minima

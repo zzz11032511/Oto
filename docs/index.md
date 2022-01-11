@@ -7,29 +7,16 @@ layout: default
 <h1 class="home-helloworld">Hello Oto world!!!</h1>
 
 <div class="home-text">
-    ここは音遊びプログラミング言語Otoの公式サイトです.  
+    ここは音遊びプログラミング言語Otoの公式サイトです。
 </div>
 
 ```basic
-    PLAY 500, 1, 70, piano
+    PLAY Do, 1, 70, piano
 ```
 
-<!-- <div class="home-index">
-    <ul>
-        <li>
-            <a href="tutorial.html">チュートリアル</a>
-            <br>
-        </li>  
-        <li>
-            <a href="document.html">ドキュメント</a>
-            <br>
-        </li>  
-        <li>
-            <a href="sample.html">サンプル</a>
-            <br>
-        </li>
-    </ul>
-</div> -->
+<div class= "overview">
+    Otoは、音源自作や楽曲演奏といった「音遊び」を簡単に楽しめるプログラミング言語です。
+</div>
 
 <div class="home-news">
     <h2>News</h2>
