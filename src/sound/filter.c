@@ -88,7 +88,6 @@ inline static float fade(float d, Playdata *info, uint64_t t, double fadein_time
 
 inline static float amp(float d, Playdata *info, uint64_t t, double gain) {
     d *= gain;
-    d = clip(d);
     return d;
 }
 
