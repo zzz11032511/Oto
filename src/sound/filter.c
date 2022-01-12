@@ -93,7 +93,7 @@ inline static float amp(float d, Playdata *info, uint64_t t, double gain) {
 }
 
 inline static float tremolo(float d, Playdata *info, uint64_t t, double depth, double speed) {
-    d *= depth * sin((2 * PI * speed * t) / info->sampling_rate);
+    d *= 1.0 + depth * sin((2 * PI * speed * t) / info->sampling_rate);
     return d;
 }
 
