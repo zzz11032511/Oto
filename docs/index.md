@@ -26,8 +26,7 @@ layout: default
             {% capture month %} {{ post.date | date: '%m' }} {% endcapture %}
             {% capture day %}   {{ post.date | date: '%d' }} {% endcapture %}
             <oi>
-                {{ year }}-{{ month }}-{{ day }} : 
-                <a href="/Oto{{ post.url }}">{{ post.title }}</a>
+                {{ year }}-{{ month }}-{{ day }} : <a href="/Oto{{ post.url }}">{{ post.title }}</a><br>
             </oi>
         {% endfor %}
     </ul>
