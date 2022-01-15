@@ -14,6 +14,8 @@ bool is_otofile(const char *path);
 char to_lower(char ch);
 char to_upper(char ch);
 
+char *new_string_literal(char *src, int64_t idx);
+
 void print_upto_char(char *str, char endch);
 void print_line(char *src, int64_t line);
 int64_t get_current_line(char *src, int64_t idx);

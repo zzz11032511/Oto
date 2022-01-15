@@ -43,6 +43,11 @@ static bool is_number(char c) {
     return false;
 }
 
+static bool is_string(char c) {
+    if (c == '\"') return true;
+    return false;
+}
+
 static bool is_varname(char c) {
     if ('0' <= c && c <= '9') return true;
     if ('a' <= c && c <= 'z') return true;
@@ -175,6 +180,17 @@ void tokenize(char *src, VectorI64 *src_tokens, VectorPTR *var_list, Status *sta
         } else if (strchr("()[]:,\n", src[i]) != 0) {
             len  = 1;
             type = TK_TY_SYMBOL;
+
+        } else if (is_string(src[i])) {
+            len = 1;
+            while (src[i + len] != '\"') {
+                len++;
+                if (src[i + len] == '\n' || src[i + len] == '\0') {
+                    error_lexer(OTO_SYNTAX_ERROR, src, i, status);
+                }
+            }
+            len++;
+            type = TK_TY_STRING;
 
         } else if (is_symbol_char(src[i])) {
             len = count_operator_len(&src[i]);

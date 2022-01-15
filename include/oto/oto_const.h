@@ -110,6 +110,7 @@ enum {
     TK_TY_SYMBOL = 0,
     TK_TY_RSVWORD,
     TK_TY_LITERAL,
+    TK_TY_STRING,
     TK_TY_VARIABLE
 };
 typedef int64_t tokentype_t;

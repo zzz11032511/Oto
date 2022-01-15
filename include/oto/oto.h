@@ -34,6 +34,11 @@ typedef struct {
     tokentype_t type;
 } Token;
 
+typedef struct {
+    char *str;
+    size_t len;
+} String;
+
 extern Token symbols[];   // 記号一覧
 extern Token rsvwords[];  // 予約語一覧
 

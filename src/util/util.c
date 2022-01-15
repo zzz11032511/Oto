@@ -157,3 +157,28 @@ int64_t get_current_line(char *src, int64_t idx) {
 
     return line;
 }
+
+/* idxは最初の「"」の位置 */
+char *new_string_literal(char *src, int64_t idx) {
+    if (src[idx] != '"') {
+        return NULL;
+    }
+    idx++;
+
+    size_t len = 0;
+    while (src[idx + len] != '"') {
+        len++;
+        if (src[idx + len] == '\0') {
+            return NULL;
+        }
+    }
+
+    char *str = MYMALLOC(len + 1, char);
+    if (IS_NULL(str)) {
+        return NULL;
+    }
+    
+    strncpy(str, &src[idx], len);
+
+    return str;
+}

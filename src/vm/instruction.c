@@ -13,6 +13,8 @@ void oto_instr_print() {
             printf("[sound]\n");
         } else if (var->type == TY_OSCIL) {
             printf("[oscillator]\n");
+        } else if (var->type == TY_STRING) {
+            printf("%s\n", ((String *)var->value.p)->str);
         }
 
     } else if (vmstack_typecheck() == VM_TY_IMMEDIATE) {
@@ -266,15 +268,21 @@ void oto_instr_printwav(Status *status) {
     print_wave_sub(status, &data);
 }
 
-void oto_instr_printvar(VectorPTR *var_list) {
+void oto_instr_printvar(VectorPTR *var_list, Status *status) {
     if (var_list->length <= TC_EXIT + 1) {
         // 変数が1つも定義されていない
         printf("No variables have been declared\n");
         return;
     }
 
-    printf("- Variable list -\n");
-
+    if (status->language == LANG_JPN_KANJI) {
+        printf("- 変数リスト -\n");
+    } else if (status->language == LANG_JPN_HIRAGANA) {
+        printf("- へんすうリスト -\n");
+    } else if (status->language == LANG_ENG) {
+        printf("- Variable list -\n");
+    }
+    
     uint64_t i = TC_EXIT + 1;
     do {
         Var *var = ((Var *)var_list->data[i]);
@@ -284,13 +292,19 @@ void oto_instr_printvar(VectorPTR *var_list) {
         if (type == TY_CONST) {
             continue;
         } else if (type == TY_FLOAT) {
-            printf("%15s", var->token->str);
+            printf("%8s", var->token->str);
             printf("(float) : ");
             printf("%f", var->value.f);
         } else if (type == TY_ARRAY) {
             continue;
         } else if (type == TY_STRING) {
-            continue;
+            if (var->token->type == TK_TY_STRING) {
+                // 文字列リテラルならスルー
+                continue;
+            }
+            printf("%8s", var->token->str);
+            printf("(string) : ");
+            printf("%s\n", ((String *)var->value.p)->str);
         } else if (type == TY_OSCIL) {
             continue;
         } else if (type == TY_SOUND) {

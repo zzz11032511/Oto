@@ -131,17 +131,35 @@ void add_new_variable(VectorPTR *var_list, Token *new_token) {
         new_var = new_variable(new_token, TY_CONST);
         break;
 
+    case TK_TY_STRING:
+        new_var = new_variable(new_token, TY_STRING);
+        break;
+
     default:
         return;
     }
 
     if (IS_NULL(new_var)) {
-        free(var_list);
+        // free(var_list);
         oto_error(OTO_INTERNAL_ERROR);
     }
 
     if (new_token->type == TK_TY_LITERAL) {
         new_var->value.f = strtod(new_token->str, 0);
+    
+    } else if (new_token->type == TK_TY_STRING) {
+        String *s = MYMALLOC1(String);
+        if (IS_NULL(s)) {
+            oto_error(OTO_INTERNAL_ERROR);
+        }
+        // 2つの"の分tokenの長さから引いたものを文字列の長さとする
+        s->len = new_token->len - 2;
+        s->str = new_string_literal(new_token->str, 0);
+        if (IS_NULL(s->str)) {
+            oto_error(OTO_INTERNAL_ERROR);
+        }
+
+        new_var->value.p = (void *)s;
     }
 
     vector_ptr_append(var_list, (void *)new_var);
@@ -184,6 +202,9 @@ void free_var_list(VectorPTR *var_list) {
         } else if (var->type == TY_OSCIL) {
             free(var->value.p);
         } else if (var->type == TY_FILTER) {
+            free(var->value.p);
+        } else if (var->type == TY_STRING) {
+            free(((String *)(var->value.p))->str);
             free(var->value.p);
         }
         

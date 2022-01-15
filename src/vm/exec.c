@@ -13,8 +13,13 @@ void exec(VectorPTR *ic_list, VectorPTR *var_list, Status *status) {
     while (i < end) {
         switch ((opcode_t)ic_list->data[i]) {
         case OP_CPYD:
-            VAR(i + 1)->type    = TY_FLOAT;
-            VAR(i + 1)->value.f = VAR(i + 2)->value.f;
+            VAR(i + 1)->type    = VAR(i + 2)->type;
+            if (VAR(i + 1)->type == TY_FLOAT) {
+                VAR(i + 1)->value.f = VAR(i + 2)->value.f;
+            } else if (VAR(i + 1)->type == TY_STRING) {
+                VAR(i + 1)->value.p = VAR(i + 2)->value.p;
+            }
+
             break;
 
         case OP_CPYP:
@@ -191,7 +196,7 @@ void exec(VectorPTR *ic_list, VectorPTR *var_list, Status *status) {
             break;
 
         case OP_PRINTVAR:
-            oto_instr_printvar(var_list);
+            oto_instr_printvar(var_list, status);
             break;
         
         case OP_SLEEP:
