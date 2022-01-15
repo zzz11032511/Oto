@@ -138,26 +138,32 @@ void print_repl_help() {
         printf("- 操作方法 -\n");
         printf("終了するときは, 「EXIT」と打つか, Ctrl+Cを押してください\n");
         printf("- 命令一覧 -\n");
-        printf("PLAY  <周波数>, <音の長さ>, <音の大きさ>, <音の種類>\n");
-        printf("BEEP  <周波数>, <音の長さ>\n");
+        printf("PLAY  <周波数[Hz]>, <音の長さ[s]>, <音の大きさ[0-100]>, <音の種類>\n");
+        printf("BEEP  <周波数[Hz]>, <音の長さ[s]>\n");
         printf("PRINT <出力したいもの>\n");
         printf("PRINTVAR\n");
+        printf("PRINTWAV  <周波数[Hz]>, <音の長さ[s]>, <音の大きさ[0-100]>, <音の種類>\n");
+        printf("SLEEP <長さ[秒]>\n");
     } else if (oto_status->language == LANG_JPN_HIRAGANA) {
         printf("- そうさほうほう -\n");
         printf("おわるときは, 「EXIT」とうつか, CtrlキーとCキーをどうじにおしてね\n");
         printf("- コマンドいちらん -\n");
-        printf("PLAY  <おとのたかさ>, <おとのながさ>, <おとのおおきさ>, <おとのしゅるい>\n");
-        printf("BEEP  <おとのたかさ>, <おとのながさ>\n");
+        printf("PLAY  <おとのたかさ>, <おとのながさ[びょう]>, <おとのおおきさ[0-100]>, <おとのしゅるい>\n");
+        printf("BEEP  <おとのたかさ>, <おとのながさ[びょう]>\n");
         printf("PRINT <がめんにひょうじしたいもの>\n");
         printf("PRINTVAR\n");
+        printf("PRINTWAV  <おとのたかさ>, <おとのながさ[びょう]>, <おとのおおきさ[0-100]>, <おとのしゅるい>\n");
+        printf("SLEEP <ながさ[びょう]>\n");
     } else if (oto_status->language == LANG_ENG) {
         printf("- Usage -\n");
-        printf("If you want to finish, type \"EXIT\" or press Ctrl+C.\n");
+        printf("If you want to exit, type \"EXIT\" or press Ctrl+C.\n");
         printf("- List of instructions -\n");
-        printf("PLAY  <frequency>, <length>, <volume>, <Sound>\n");
-        printf("BEEP  <frequency>, <length>\n");
+        printf("PLAY  <frequency[Hz]>, <length[s]>, <volume[0-100]>, <Sound>\n");
+        printf("BEEP  <frequency[Hz]>, <length[s]>\n");
         printf("PRINT <variable or literal>\n");
         printf("PRINTVAR\n");
+        printf("PRINTWAV  <frequency[Hz]>, <length[s]>, <volume[0-100]>, <Sound>\n");
+        printf("SLEEP <length[s]>\n");
     }
 
     printf("\n");
