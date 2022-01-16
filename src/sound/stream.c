@@ -28,6 +28,7 @@ static void init_out_data(int64_t sampling_rate, bool print_flag, bool safety_fl
     out_data.info.length = 0;
     out_data.info.volume = 0;
     out_data.t = 0;
+    out_data.info.sound_num = 1;
     for (uint64_t i = 0; i < MAX_POLYPHONIC; i++) {
         out_data.info.freq[i] = 1;
     }
@@ -48,8 +49,9 @@ void set_stream_active_flag(bool b) {
 void write_out_data(Playdata data, bool print_flag) {
     out_data.t = 0;
     out_data.info.sound = data.sound;
+    out_data.info.sound_num = data.sound_num;
     out_data.info.length = data.length;
-    for (uint64_t i = 0; i < MAX_POLYPHONIC; i++) {
+    for (uint64_t i = 0; i < data.sound_num; i++) {
         out_data.info.freq[i] = data.freq[i];
     }
     out_data.info.volume = data.volume;
@@ -77,6 +79,10 @@ static int play_callback(const void *inputBuffer,
         }
 
         d = ((float)data->info.volume / 100) * sound_generate(&(data->info), data->t, 0);
+        for (int64_t i = 1; i < data->info.sound_num; i++) {
+            d += ((float)data->info.volume / 100) * sound_generate(&(data->info), data->t, i);
+        }
+        d /= (float)data->info.sound_num;
         d = filtering(d, &data->info, data->t);
 
         /* フェード処理 */

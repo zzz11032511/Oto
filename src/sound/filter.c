@@ -98,13 +98,13 @@ inline static float tremolo(float d, Playdata *info, uint64_t t, double depth, d
 
 inline static float detune(float d, Playdata *info, uint64_t t, double depth) {
     float data = d;
-    for (int64_t ch = 0; ch < MAX_POLYPHONIC; ch++) {
+    for (int64_t ch = 0; ch < info->sound_num; ch++) {
         float org = info->freq[ch];
         info->freq[ch] += depth;
         data += ((float)info->volume / 100) * sound_generate(info, t, ch);
+        data /= 2;
         info->freq[ch] = org;
     }
-    data /= (MAX_POLYPHONIC + 1);
     return data;
 }
 

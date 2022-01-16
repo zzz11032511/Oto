@@ -5,7 +5,7 @@
 #include <portaudio.h>
 
 // #define MAX_POLYPHONIC 8
-#define MAX_POLYPHONIC 1
+#define MAX_POLYPHONIC 6
 #define FRAMES_PER_BUFFER 128
 #define MAX_VOLUME 100
 
@@ -45,6 +45,7 @@ typedef struct {
 /* 演奏情報 */
 typedef struct {
     Sound *sound;
+    uint64_t sound_num;
     uint64_t length;
     float freq[MAX_POLYPHONIC];
     int8_t volume;

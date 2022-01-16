@@ -1,6 +1,17 @@
 #include <acl.h>
 #include "vm.h"
 
+static void print_array(double *data, int64_t len) {
+    printf("[");
+    for (int64_t i = 0; i < len; i++) {
+        printf("%f", data[i]);
+        if (i != len - 1) {
+            printf(", ");
+        }
+    }
+    printf("]");
+}
+
 void oto_instr_print() {
     DEBUG_IPRINT(vmstack_typecheck());
     if (vmstack_typecheck() == VM_TY_VARPTR) {
@@ -16,15 +27,9 @@ void oto_instr_print() {
         } else if (var->type == TY_STRING) {
             printf("%s\n", ((String *)var->value.p)->str);
         } else if (var->type == TY_ARRAY) {
-            printf("[");
             Array *array = (Array *)var->value.p;
-            for (int64_t i = 0; i < array->len; i++) {
-                printf("%f", array->data[i]);
-                if (i != array->len - 1) {
-                    printf(", ");
-                }
-            }
-            printf("]\n");
+            print_array(array->data, array->len);
+            printf("\n");
         }
 
     } else if (vmstack_typecheck() == VM_TY_IMMEDIATE) {
@@ -38,7 +43,11 @@ void oto_instr_print() {
 void oto_instr_beep() {
     double duration = 0;
     if (vmstack_typecheck() == VM_TY_VARPTR) {
-        duration = vmstack_popv()->value.f;
+        Var *var = vmstack_popp();
+        if (var->type != TY_FLOAT && var->type != TY_CONST) {
+            oto_error(OTO_ARGUMENTS_TYPE_ERROR);
+        }
+        duration = var->value.f;
     } else if (vmstack_typecheck() == VM_TY_IMMEDIATE) {
         duration = vmstack_popf();
     } else if (vmstack_typecheck() == VM_TY_INITVAL) {
@@ -49,7 +58,11 @@ void oto_instr_beep() {
 
     double freq = 0;
     if (vmstack_typecheck() == VM_TY_VARPTR) {
-        freq = vmstack_popv()->value.f;
+        Var *var = vmstack_popp();
+        if (var->type != TY_FLOAT && var->type != TY_CONST) {
+            oto_error(OTO_ARGUMENTS_TYPE_ERROR);
+        }
+        freq = var->value.f;
     } else if (vmstack_typecheck() == VM_TY_IMMEDIATE) {
         freq = vmstack_popf();
     } else if (vmstack_typecheck() == VM_TY_INITVAL) {
@@ -60,7 +73,7 @@ void oto_instr_beep() {
     Beep(freq, duration * 1000);
 }
 
-void oto_instr_play(Status *status) {
+static void play_sub(Status *status, Playdata *data) {
     Sound *sound = NULL;
     if (vmstack_typecheck() == VM_TY_VARPTR) {
         Var *var = vmstack_popp();
@@ -76,7 +89,11 @@ void oto_instr_play(Status *status) {
 
     double volume = 0;
     if (vmstack_typecheck() == VM_TY_VARPTR) {
-        volume = vmstack_popv()->value.f;
+        Var *var = vmstack_popp();
+        if (var->type != TY_FLOAT && var->type != TY_CONST) {
+            oto_error(OTO_ARGUMENTS_TYPE_ERROR);
+        }
+        volume = var->value.f;
     } else if (vmstack_typecheck() == VM_TY_IMMEDIATE) {
         volume = vmstack_popf();
     } else if (vmstack_typecheck() == VM_TY_INITVAL) {
@@ -94,7 +111,11 @@ void oto_instr_play(Status *status) {
 
     double duration = 0;
     if (vmstack_typecheck() == VM_TY_VARPTR) {
-        duration = vmstack_popv()->value.f;
+        Var *var = vmstack_popp();
+        if (var->type != TY_FLOAT && var->type != TY_CONST) {
+            oto_error(OTO_ARGUMENTS_TYPE_ERROR);
+        }
+        duration = var->value.f;
     } else if (vmstack_typecheck() == VM_TY_IMMEDIATE) {
         duration = vmstack_popf();
     } else if (vmstack_typecheck() == VM_TY_INITVAL) {
@@ -102,37 +123,67 @@ void oto_instr_play(Status *status) {
         duration = 1;
     }
 
-    double freq = 0;
+    double sound_num = 1;
+    double freq[MAX_POLYPHONIC] = {0};
     if (vmstack_typecheck() == VM_TY_VARPTR) {
-        freq = vmstack_popv()->value.f;
+        Var *var = vmstack_popp();
+        if (var->type == TY_ARRAY) {
+            Array *array = (Array *)var->value.p;
+            sound_num = array->len;
+            for (int64_t i = 0; i < sound_num; i++) {
+                if (i >= MAX_POLYPHONIC) break;
+                freq[i] = array->data[i];
+                
+                // freqが0だとエラーになるので補正
+                if (freq[i] <= 0) {
+                    freq[i] = 1;
+                }
+            }
+
+        } else if (var->type == TY_FLOAT || var->type == TY_CONST) {
+            freq[0] = var->value.f;
+            if (freq[0] == 0) {
+                freq[0] = 1;
+            }
+        
+        } else {
+            oto_error(OTO_ARGUMENTS_TYPE_ERROR);
+        }
+
     } else if (vmstack_typecheck() == VM_TY_IMMEDIATE) {
-        freq = vmstack_popf();
+        freq[0] = vmstack_popf();
+        if (freq[0] <= 0) {
+            freq[0] = 1;
+        }
     } else if (vmstack_typecheck() == VM_TY_INITVAL) {
         vmstack_popf();
-        freq = 500.0;
+        freq[0] = 500.0;
     }
     
-    // freqが0だとエラーになるので補正
-    if (freq == 0) {
-        freq = 1;
+    data->sound_num = sound_num;
+    for (int64_t i = 0; i < sound_num; i++) {
+        data->freq[i] = freq[i];
     }
+    data->length  = status->sampling_rate * duration;
+    data->sound   = sound;
+    data->volume  = (int8_t)volume;
 
-    Playdata data;
-    data.freq[0] = freq;
-    data.length  = status->sampling_rate * duration;
-    data.sound   = sound;
-    data.volume  = (int8_t)volume;
-
-    write_out_data(data, false);
-
-    printf("[Play] ");
+    printf("[Play] frequency : ");
+    print_array(freq, sound_num);
     if (sound != NULL) {
-        printf("frequency : %8.3f, length : %2.2f, velocity : %I64d, wave : %d\n", 
-               freq, duration, (int64_t)volume, sound->oscillator->wave);
+        printf(", duration : %2.2f, volume : %I64d, wave : %d\n", 
+               duration, (int64_t)volume, sound->oscillator->wave);
     } else {
-        printf("frequency : %8.3f, length : %2.2f, velocity : %I64d, wave : NULL\n", 
-               freq, duration, (int64_t)volume);
+        printf(", duration : %2.2f, volume : %I64d, wave : NULL\n", 
+               duration, (int64_t)volume);
     }
+}
+
+void oto_instr_play(Status *status) {
+    Playdata data;
+
+    play_sub(status, &data);
+    write_out_data(data, false);
 
     set_stream_active_flag(true);
     while (is_stream_active()) {
@@ -198,62 +249,7 @@ static void print_wave_sub(Status *status, Playdata *data) {
 }
 
 void oto_instr_printwav(Status *status) {
-    Sound *sound = NULL;
-    if (vmstack_typecheck() == VM_TY_VARPTR) {
-        Var *var = vmstack_popp();
-        if (var->type != TY_SOUND) {
-            oto_error(OTO_ARGUMENTS_TYPE_ERROR);
-        }
-        sound = (Sound *)var->value.p;
-    } else if (vmstack_typecheck() == VM_TY_INITVAL) {
-        vmstack_popf();
-    } else {
-        oto_error(OTO_ARGUMENTS_TYPE_ERROR);
-    }
-
-    double volume = 0;
-    if (vmstack_typecheck() == VM_TY_VARPTR) {
-        volume = vmstack_popv()->value.f;
-    } else if (vmstack_typecheck() == VM_TY_IMMEDIATE) {
-        volume = vmstack_popf();
-    } else if (vmstack_typecheck() == VM_TY_INITVAL) {
-        vmstack_popf();
-        volume = 80;
-    }
-
-    if (!(0 <= volume && volume <= 100)) {
-        volume = 80;
-    }
-
-    double duration = 0;
-    if (vmstack_typecheck() == VM_TY_VARPTR) {
-        duration = vmstack_popv()->value.f;
-    } else if (vmstack_typecheck() == VM_TY_IMMEDIATE) {
-        duration = vmstack_popf();
-    } else if (vmstack_typecheck() == VM_TY_INITVAL) {
-        vmstack_popf();
-        duration = 1;
-    }
-
-    double freq = 0;
-    if (vmstack_typecheck() == VM_TY_VARPTR) {
-        freq = vmstack_popv()->value.f;
-    } else if (vmstack_typecheck() == VM_TY_IMMEDIATE) {
-        freq = vmstack_popf();
-    } else if (vmstack_typecheck() == VM_TY_INITVAL) {
-        vmstack_popf();
-        freq = 500.0;
-    }
-
-    if (freq == 0) {
-        freq = 1;
-    }
-
     Playdata data;
-    data.freq[0] = freq;
-    data.length  = status->sampling_rate * duration;
-    data.sound   = sound;
-    data.volume  = (int8_t)volume;
 
     if (IS_NOT_NULL(databuf)) {
         free(databuf);
@@ -263,16 +259,8 @@ void oto_instr_printwav(Status *status) {
         oto_error(OTO_INTERNAL_ERROR);
     }
    
+    play_sub(status, &data);
     write_out_data(data, true);
-
-    printf("[Play] ");
-    if (sound != NULL) {
-        printf("frequency : %8.3f, length : %2.2f, velocity : %I64d, wave : %d\n", 
-               freq, duration, (int64_t)volume, sound->oscillator->wave);
-    } else {
-        printf("frequency : %8.3f, length : %2.2f, velocity : %I64d, wave : NULL\n", 
-               freq, duration, (int64_t)volume);
-    }
 
     set_stream_active_flag(true);
     while (is_stream_active()) {
@@ -312,15 +300,9 @@ void oto_instr_printvar(VectorPTR *var_list, Status *status) {
         } else if (type == TY_ARRAY) {
             printf("%8s", var->token->str);
             printf("(array) : ");
-            printf("[");
             Array *array = (Array *)var->value.p;
-            for (int64_t i = 0; i < array->len; i++) {
-                printf("%f", array->data[i]);
-                if (i != array->len - 1) {
-                    printf(", ");
-                }
-            }
-            printf("]");
+            print_array(array->data, array->len);
+            printf("\n");
             continue;
         } else if (type == TY_STRING) {
             if (var->token->type == TK_TY_STRING) {
