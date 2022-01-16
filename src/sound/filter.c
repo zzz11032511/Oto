@@ -100,11 +100,12 @@ inline static float detune(float d, Playdata *info, uint64_t t, double depth) {
     float data = d;
     for (int64_t ch = 0; ch < info->sound_num; ch++) {
         float org = info->freq[ch];
-        info->freq[ch] += depth;
+        info->freq[ch] = info->freq[ch] + depth;
+        // printf("org : %f + depth : %f = %f\n", org, depth, info->freq[ch]);
         data += ((float)info->volume / 100) * sound_generate(info, t, ch);
-        data /= 2;
         info->freq[ch] = org;
     }
+    data /= info->sound_num;
     return data;
 }
 

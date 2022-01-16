@@ -144,7 +144,7 @@ void exec(VectorPTR *ic_list, VectorPTR *var_list, Status *status) {
             if (VAR(i + 2)->type == TY_OSCIL) {
                 VAR(i + 1)->value.p = (void *)new_sound((Oscillator *)(VAR(i + 2)->value.p));
             } else {
-                oto_error(OTO_UNKNOWN_ERROR);
+                oto_error(OTO_ARGUMENTS_TYPE_ERROR);
             }
             break;
 
