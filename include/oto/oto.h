@@ -19,6 +19,7 @@ typedef struct {
     // flags
     bool timecount_flag;
     bool repl_flag;
+    bool safety_flag;
 
     char *root_srcpath;
     Map *srcfile_table;

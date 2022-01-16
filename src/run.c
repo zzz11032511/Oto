@@ -21,12 +21,9 @@ void oto_init(char *srcpath) {
     printf("repl : %d\n", oto_status->repl_flag);
     printf("sampling_rate : %I64d\n", oto_status->sampling_rate);
     printf("fade_range : %f\n", oto_status->fade_range);
+    printf("safety : %d\n", oto_status->safety_flag);
 #endif
-
-    init_sound_stream(
-        oto_status->sampling_rate,
-        oto_status->fade_range
-    );
+    init_sound_stream(oto_status);
 
     // 変数表に予約語などを追加する
     var_list = new_vector_ptr(DEFAULT_MAX_TC);

@@ -1,6 +1,7 @@
 timecount: true
-repl: true
+repl: false
 language: kanji
 default_srcpath: aaa.oto
 sampling_rate: 8000
 fade_range: 0.1
+safety: true

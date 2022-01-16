@@ -104,6 +104,15 @@ static void load_config(Status *status, Map *conf_table) {
         option = map_get(conf_table, "fade_range");
         status->fade_range = strtod(option, NULL);
     }
+
+    if (map_exist_key(conf_table, "safety")) {
+        option = map_get(conf_table, "safety");
+        if (strcmp(option, "true") == 0) {
+            status->safety_flag = true;
+        } else if (strcmp(option, "false") == 0) {
+            status->safety_flag = false;
+        }
+    }
 }
 
 const char otoconf_path[] = ".otoconf";

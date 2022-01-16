@@ -59,7 +59,7 @@ typedef struct {
     Var *args[FILTER_ARG_SIZE];
 } Filter;
 
-void init_sound_stream(int64_t sampling_rate, double fade_range);
+void init_sound_stream(Status *status);
 void terminate_sound_stream();
 void init_filter(VectorPTR *var_list);
 

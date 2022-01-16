@@ -78,6 +78,10 @@ void oto_instr_play(Status *status) {
         volume = 80;
     }
 
+    if (status->safety_flag) {
+        volume = 35;
+    }
+
     double duration = 0;
     if (vmstack_typecheck() == VM_TY_VARPTR) {
         duration = vmstack_popv()->value.f;
@@ -347,6 +351,6 @@ void oto_connect_filter(Sound *sound, filtercode_t fc, Status *status) {
             oto_error(OTO_ARGUMENTS_TYPE_ERROR);
         }
     }
-            
+
     vector_ptr_append(sound->filters, (void *)filter);
 }

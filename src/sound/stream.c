@@ -19,10 +19,11 @@ typedef struct {
     uint64_t t;
     Playdata info;
     bool print_flag;
+    bool safety_flag;
 } Currentdata;
 Currentdata out_data;
 
-static void init_out_data(int64_t sampling_rate, bool print_flag) {
+static void init_out_data(int64_t sampling_rate, bool print_flag, bool safety_flag) {
     out_data.info.sound = NULL;
     out_data.info.length = 0;
     out_data.info.volume = 0;
@@ -32,6 +33,7 @@ static void init_out_data(int64_t sampling_rate, bool print_flag) {
     }
     out_data.info.sampling_rate = sampling_rate;
     out_data.print_flag = print_flag;
+    out_data.safety_flag = safety_flag;
 }
 
 static bool stream_active_flag = false;
@@ -84,6 +86,11 @@ static int play_callback(const void *inputBuffer,
             d *= (data->info.length - data->t) / (FADE_RANGE * data->info.length);
         }
 
+        if (data->safety_flag) {
+            if (d > 0.8)  d = 0.8;
+            if (d < -0.8) d = -0.8;
+        }
+
         if (data->print_flag) {
             databuf[data->t] = d;
             *out++ = d;
@@ -103,7 +110,7 @@ static int play_callback(const void *inputBuffer,
 }
 
 static PaStream *stream;
-void init_sound_stream(int64_t sampling_rate, double fade_range) {
+void init_sound_stream(Status *status) {
     PaError err = paNoError;
 
     err = Pa_Initialize();
@@ -112,11 +119,11 @@ void init_sound_stream(int64_t sampling_rate, double fade_range) {
     }
 
     init_stream_param();
-    init_out_data(sampling_rate, false);
-    FADE_RANGE = fade_range;
+    init_out_data(status->sampling_rate, false, status->safety_flag);
+    FADE_RANGE = status->fade_range;
 
     err = Pa_OpenStream(&stream, NULL, &out_param,
-                        (float)sampling_rate,
+                        (float)status->sampling_rate,
                         FRAMES_PER_BUFFER, paClipOff, play_callback, &out_data);
     if (err != paNoError) {
         oto_error(OTO_INTERNAL_ERROR);

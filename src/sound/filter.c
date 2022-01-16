@@ -190,7 +190,7 @@ static float radio(float d, Playdata *info, uint64_t t) {
 }
 
 static float vibrato(float d, Playdata *info, uint64_t t, double depth, double speed) {
-    
+    return d;
 }
 
 float filtering(float data, Playdata *info, uint64_t t) {
