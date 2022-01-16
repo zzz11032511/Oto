@@ -40,6 +40,11 @@ typedef struct {
     size_t len;
 } String;
 
+typedef struct {
+    double *data;
+    size_t len;
+} Array;
+
 extern Token symbols[];   // 記号一覧
 extern Token rsvwords[];  // 予約語一覧
 

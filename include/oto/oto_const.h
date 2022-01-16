@@ -227,6 +227,7 @@ enum {
 
     OP_OSCILDEF,
     OP_SOUNDDEF,
+    OP_ARRAYDEF,
 
     OP_CPYS,
 

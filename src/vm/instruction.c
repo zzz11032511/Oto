@@ -354,3 +354,34 @@ void oto_connect_filter(Sound *sound, filtercode_t fc, Status *status) {
 
     vector_ptr_append(sound->filters, (void *)filter);
 }
+
+void oto_define_array(VectorPTR *var_list, Var *var, int64_t arraysize) {
+    Array *array = MYMALLOC1(Array);
+    if (IS_NULL(array)) {
+        oto_error(OTO_INTERNAL_ERROR);
+    }
+
+    array->len = arraysize;
+    array->data = MYMALLOC(arraysize, double);
+    if (IS_NULL(array->data)) {
+        oto_error(OTO_INTERNAL_ERROR);
+    }
+
+    for (int64_t i = 0; i < arraysize; i++) {
+        if (vmstack_typecheck() == VM_TY_VARPTR) {
+            array->data[arraysize - i - 1] = ((Var *)vmstack_popp())->value.f;
+        } else if (vmstack_typecheck() == VM_TY_IMMEDIATE) {
+            array->data[arraysize - i - 1] = vmstack_popf();
+        } else if (vmstack_typecheck() == VM_TY_INITVAL) {
+            oto_error(OTO_ARGUMENTS_TYPE_ERROR);
+        }
+
+    }
+
+    for (int64_t i = 0; i < arraysize; i++) {
+        printf("array[%I64d] = %f\n", i, array->data[i]);
+    }
+
+    var->type = TY_ARRAY;
+    var->value.p = (void *)array;
+}

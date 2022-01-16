@@ -148,6 +148,10 @@ void exec(VectorPTR *ic_list, VectorPTR *var_list, Status *status) {
             }
             break;
 
+        case OP_ARRAYDEF:
+            oto_define_array(var_list, VAR(i + 1), (int64_t)VAR(i + 2));
+            break;
+
         case OP_CPYS:
             if (VAR(i + 2)->type != TY_SOUND) {
                 oto_error(OTO_UNKNOWN_ERROR);

@@ -79,6 +79,7 @@ static struct operation {
     {"JNZ",          OP_JNZ          },
     {"OSCILDEF",     OP_OSCILDEF     },
     {"SOUNDDEF",     OP_SOUNDDEF     },
+    {"ARRAYDEF",     OP_ARRAYDEF     },
     {"CPYS",         OP_CPYS         },
     {"CONNFILTER",   OP_CONNFILTER   },
     {"PRINT",        OP_PRINT        },
@@ -128,6 +129,10 @@ void print_ic_list(VectorPTR *ic_list) {
 
         if (op == OP_CONNFILTER) {
             printf("%10s\n", def_filters[(int64_t)v2].s);
+            continue;
+        
+        } else if (op == OP_ARRAYDEF) {
+            printf("%10I64d\n", (int64_t)v2);
             continue;
         }
 

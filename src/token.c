@@ -206,6 +206,9 @@ void free_var_list(VectorPTR *var_list) {
         } else if (var->type == TY_STRING) {
             free(((String *)(var->value.p))->str);
             free(var->value.p);
+        } else if (var->type == TY_ARRAY) {
+            free(((Array *)(var->value.p))->data);
+            free(var->value.p);
         }
         
         free(var);
