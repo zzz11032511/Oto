@@ -85,6 +85,7 @@ static struct operation {
     {"PRINT",        OP_PRINT        },
     {"BEEP",         OP_BEEP         },
     {"PLAY",         OP_PLAY         },
+    {"PRINTWAV",     OP_PRINTWAV     },
     {"PRINTVAR",     OP_PRINTVAR     },
     {"SLEEP",        OP_SLEEP        },
     {"EXIT",         OP_EXIT         }

@@ -15,6 +15,16 @@ void oto_instr_print() {
             printf("[oscillator]\n");
         } else if (var->type == TY_STRING) {
             printf("%s\n", ((String *)var->value.p)->str);
+        } else if (var->type == TY_ARRAY) {
+            printf("[");
+            Array *array = (Array *)var->value.p;
+            for (int64_t i = 0; i < array->len; i++) {
+                printf("%f", array->data[i]);
+                if (i != array->len - 1) {
+                    printf(", ");
+                }
+            }
+            printf("]\n");
         }
 
     } else if (vmstack_typecheck() == VM_TY_IMMEDIATE) {
@@ -300,6 +310,17 @@ void oto_instr_printvar(VectorPTR *var_list, Status *status) {
             printf("(float) : ");
             printf("%f", var->value.f);
         } else if (type == TY_ARRAY) {
+            printf("%8s", var->token->str);
+            printf("(array) : ");
+            printf("[");
+            Array *array = (Array *)var->value.p;
+            for (int64_t i = 0; i < array->len; i++) {
+                printf("%f", array->data[i]);
+                if (i != array->len - 1) {
+                    printf(", ");
+                }
+            }
+            printf("]");
             continue;
         } else if (type == TY_STRING) {
             if (var->token->type == TK_TY_STRING) {
@@ -376,10 +397,6 @@ void oto_define_array(VectorPTR *var_list, Var *var, int64_t arraysize) {
             oto_error(OTO_ARGUMENTS_TYPE_ERROR);
         }
 
-    }
-
-    for (int64_t i = 0; i < arraysize; i++) {
-        printf("array[%I64d] = %f\n", i, array->data[i]);
     }
 
     var->type = TY_ARRAY;
