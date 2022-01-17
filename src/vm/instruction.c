@@ -250,7 +250,8 @@ static void print_wave_sub(Status *status, Playdata *data) {
 
 void oto_instr_printwav(Status *status) {
     Playdata data;
-
+    play_sub(status, &data);
+    
     if (IS_NOT_NULL(databuf)) {
         free(databuf);
     }
@@ -259,7 +260,6 @@ void oto_instr_printwav(Status *status) {
         oto_error(OTO_INTERNAL_ERROR);
     }
    
-    play_sub(status, &data);
     write_out_data(data, true);
 
     set_stream_active_flag(true);
