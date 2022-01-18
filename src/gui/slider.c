@@ -1,24 +1,4 @@
-#include <acl.h>
-
-#define WIN_WIDTH  600
-#define WIN_HEIGHT 400
-
-#define WIN_BACKGROUND_COLOR 0xededed
-
-typedef struct {
-    AInt32a length;
-    AInt32a x;
-    AInt32a y;
-    AInt32a color;
-
-    AInt32a value_x;
-    double value_min;
-    double value_max;
-} Slider;
-
-#define SLIDER_BASE_COLOR 0xa0a0a0
-#define SLIDER_WEIGHT 4
-#define SLIDER_CIRCLE_WIDTH 20
+#include <oto/oto_gui.h>
 
 void aInitSlider(Slider *s, AInt32a length, AInt32a x, AInt32a y, double value_min, double value_max, AInt32a color) {
     s->length = length;
@@ -62,35 +42,35 @@ inline double aGetValueSlider(Slider *s) {
     return s->value_min + ((double)(s->value_x - s->x + 5) / (s->length - s->x + 10)) * s->value_max;
 }
 
-int main(void) {
-    AWindow *w = aOpenWin(WIN_WIDTH, WIN_HEIGHT, "test", 1);
+// int main(void) {
+//     AWindow *w = aOpenWin(WIN_WIDTH, WIN_HEIGHT, "test", 1);
     
-    Slider s;
-    aInitSlider(&s, 550, 25, 50, 0, 100, 0x40bfff);
+//     Slider s;
+//     aInitSlider(&s, 550, 25, 50, 0, 100, 0x40bfff);
 
-    AInt32a key = 0;
-    for (;;) {
-        aFillRect0(w, WIN_WIDTH, WIN_HEIGHT, 0, 0, WIN_BACKGROUND_COLOR);
-        aFillSlider(w, &s);
+//     AInt32a key = 0;
+//     for (;;) {
+//         aFillRect0(w, WIN_WIDTH, WIN_HEIGHT, 0, 0, WIN_BACKGROUND_COLOR);
+//         aFillSlider(w, &s);
         
-        key = aInkey(w, 1);
-        switch (key) {
-        case AKEY_ENTER:
-            goto end_proc;
-        case AKEY_LEFT:
-        case AKEY_RIGHT:
-            aKeyIn2Slider(&s, key, 5);
-            break;
-        default:
-            break;
-        }
+//         key = aInkey(w, 1);
+//         switch (key) {
+//         case AKEY_ENTER:
+//             goto end_proc;
+//         case AKEY_LEFT:
+//         case AKEY_RIGHT:
+//             aKeyIn2Slider(&s, key, 5);
+//             break;
+//         default:
+//             break;
+//         }
 
-        printf("value : %f\n", aGetValueSlider(&s));
-        aWait(1);
-    }
+//         printf("value : %f\n", aGetValueSlider(&s));
+//         aWait(1);
+//     }
 
-end_proc:
-    printf("success\n");
+// end_proc:
+//     printf("success\n");
 
-    return 0;
-}
+//     return 0;
+// }

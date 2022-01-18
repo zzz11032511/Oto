@@ -1,4 +1,4 @@
-#include <acl.h>
+#include <oto/oto_gui.h>
 #include "vm.h"
 
 static void print_array(double *data, int64_t len) {
@@ -191,56 +191,47 @@ void oto_instr_play(Status *status) {
     }
 }
 
-static AInt16a transform_tdata(float data, AInt32a height) {
+static AInt16a transform_tdata(float data) {
     if (data > 1) {
         data = 1;
     } else if (data < -1) {
         data = -1;
     }
-    return (AInt16a)((height / 2) - (data * (height / 2) * 0.8));
+    return (AInt16a)((PRINTWAV_WIN_HEIGHT / 2) - (data * (PRINTWAV_WIN_HEIGHT / 2) * 0.8));
 }
 
 static void print_wave_sub(Status *status, Playdata *data) {
-    AInt16a width  = 1000;
-    AInt16a height = 200;
-    AWindow *w = aOpenWin(width, height * 2, "wave", 1);
+    AWindow *w = aOpenWin(PRINTWAV_WIN_WIDTH, PRINTWAV_WIN_HEIGHT * 2, "wave", 1);
 
-    AInt32a color = aRgb8(0x2e, 0x2e, 0x2e);
-    for (AInt16a y = 0; y < height * 2; y++) {
-        for (AInt16a x = 0; x < width; x++) {
-            aSetPix0(w, x, y, color);
-        }
-    }
+    aFillRect(w, PRINTWAV_WIN_WIDTH, PRINTWAV_WIN_HEIGHT * 2, 0, 0, PRINTWAV_WIN_BACKGROUND_COLOR);
 
     // 全体の波形
-    color = aRgb8(0, 0xc3, 0xff);
+    AInt32a color = aRgb8(0, 0xc3, 0xff);
     int32_t beforex = 0;
-    int32_t beforey = transform_tdata(databuf[0], height);
-    int32_t a = data->length / width;
-    for (int32_t i = 0; i < width; i++) {
-        AInt16a y = transform_tdata(databuf[i * a], height);
+    int32_t beforey = transform_tdata(databuf[0]);
+    int32_t a = data->length / PRINTWAV_WIN_WIDTH;
+    for (int32_t i = 0; i < PRINTWAV_WIN_WIDTH; i++) {
+        AInt16a y = transform_tdata(databuf[i * a]);
         aDrawLine(w,     beforex,     beforey,     i,     y, color);
         aDrawLine(w,     beforex, beforey + 1,     i, y + 1, color);
         aDrawLine(w, beforex + 1,     beforey, i + 1,     y, color);
         aDrawLine(w, beforex + 1, beforey + 1, i + 1, y + 1, color);
         beforex = i;
         beforey = y;
-        // aSetPix0(w, i, y, color);
     }
 
     // 拡大した波形
     color = aRgb8(0, 0xc3, 0xff);
     beforex = 0;
-    beforey = transform_tdata(databuf[data->length / 2], height) + height;
-    for (int32_t i = 1; i < width; i++) {
-        AInt16a y = transform_tdata(databuf[i + data->length / 2], height) + height;
+    beforey = transform_tdata(databuf[data->length / 2]) + PRINTWAV_WIN_HEIGHT;
+    for (int32_t i = 1; i < PRINTWAV_WIN_WIDTH; i++) {
+        AInt16a y = transform_tdata(databuf[i + data->length / 2]) + PRINTWAV_WIN_HEIGHT;
         aDrawLine(w,     beforex,     beforey,     i,     y, color);
         aDrawLine(w,     beforex, beforey + 1,     i, y + 1, color);
         aDrawLine(w, beforex + 1,     beforey, i + 1,     y, color);
         aDrawLine(w, beforex + 1, beforey + 1, i + 1, y + 1, color);
         beforex = i;
         beforey = y;
-        // aSetPix0(w, i, y, color);
     }
 
     // 何等かのキーが押されるまで待機

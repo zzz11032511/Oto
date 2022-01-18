@@ -4,7 +4,8 @@ SRCSLIST := main.c run.c token.c debug.c error.c status.c option.c \
 			compiler/compiler.c compiler/util_compiler.c compiler/expr.c compiler/flow.c \
 			compiler/conn_filter.c compiler/instruction.c compiler/array.c \
 			vm/exec.c vm/vmstack.c vm/alu.c vm/instruction.c \
-			sound/stream.c sound/sound.c sound/generator.c sound/filter.c
+			sound/stream.c sound/sound.c sound/generator.c sound/filter.c \
+			gui/slider.c
 
 PROGRAM       := oto
 DEBUGPROGRAM  := debug
@@ -99,6 +100,7 @@ builddir:
 	mkdir "./$(WIN_BUILD_DIR)/compiler"
 	mkdir "./$(WIN_BUILD_DIR)/vm"
 	mkdir "./$(WIN_BUILD_DIR)/sound"
+	mkdir "./$(WIN_BUILD_DIR)/gui"
 
 clean:
 	del /s /q %cd%\build\*
