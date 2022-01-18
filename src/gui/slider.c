@@ -24,7 +24,7 @@ void aInitSlider(Slider *s, AInt32a length, AInt32a x, AInt32a y, double value_m
     s->length = length;
     s->x = x;
     s->y = y;
-    s->value_x = x;
+    s->value_x = x - 5;
 
     s->value_min = value_min;
     s->value_max = value_max;
@@ -58,8 +58,8 @@ void aKeyIn2Slider(Slider *s, AInt32a key, AInt32a delta) {
     }
 }
 
-double aGetValueSlider(Slider *s) {
-    return s->value_min + ((double)(s->length - s->value_x) / s->length) * s->value_max;
+inline double aGetValueSlider(Slider *s) {
+    return s->value_min + ((double)(s->value_x - s->x + 5) / (s->length - s->x + 10)) * s->value_max;
 }
 
 int main(void) {
