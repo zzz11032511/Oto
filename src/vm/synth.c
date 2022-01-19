@@ -46,7 +46,7 @@ void init_synth() {
 
 void set_synth(int64_t no, Sound *s, Var *v, double min, double max, double freq) {
     if (!(1 <= no && no <= SYNTH_NUM)) {
-        oto_error(OTO_UNKNOWN_ERROR);
+        oto_error(OTO_SYHTH_OUT_OF_NUMBER_ERROR);
     }
     no = no - 1;
 

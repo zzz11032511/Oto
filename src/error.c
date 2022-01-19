@@ -225,6 +225,16 @@ void print_error(errorcode_t err, Status *status) {
         }
         break;
 
+    case OTO_SYHTH_OUT_OF_NUMBER_ERROR:
+        if (status->language == LANG_JPN_KANJI) {
+            printf("シンセサイザーの番号には1から4までで指定してください\n");
+        } else if (status->language == LANG_JPN_HIRAGANA) {
+            printf("シンセサイザーのばんごうには 1から4までを いれてください\n");
+        } else if (status->language == LANG_ENG) {
+            printf("Synth out of number error\n");
+        }
+        break;
+
     default:
         break;
     }
