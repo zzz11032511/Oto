@@ -3,7 +3,7 @@ SRCSLIST := main.c run.c token.c debug.c error.c status.c option.c \
 			lexer/lexer.c lexer/preprocess.c \
 			compiler/compiler.c compiler/util_compiler.c compiler/expr.c compiler/flow.c \
 			compiler/conn_filter.c compiler/instruction.c compiler/array.c \
-			vm/exec.c vm/vmstack.c vm/alu.c vm/instruction.c \
+			vm/exec.c vm/vmstack.c vm/alu.c vm/instruction.c vm/synth.c \
 			sound/stream.c sound/sound.c sound/generator.c sound/filter.c \
 			gui/slider.c
 

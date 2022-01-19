@@ -183,7 +183,7 @@ void oto_instr_play(Status *status) {
     Playdata data;
 
     play_sub(status, &data);
-    write_out_data(data, false);
+    write_out_data(data, false, true);
 
     set_stream_active_flag(true);
     while (is_stream_active()) {
@@ -251,7 +251,7 @@ void oto_instr_printwav(Status *status) {
         oto_error(OTO_INTERNAL_ERROR);
     }
    
-    write_out_data(data, true);
+    write_out_data(data, true, true);
 
     set_stream_active_flag(true);
     while (is_stream_active()) {
@@ -374,4 +374,70 @@ void oto_define_array(VectorPTR *var_list, Var *var, int64_t arraysize) {
 
     var->type = TY_ARRAY;
     var->value.p = (void *)array;
+}
+
+void oto_instr_setsynth(Status *status) {
+    double freq = 0;
+    if (vmstack_typecheck() == VM_TY_VARPTR) {
+        freq = vmstack_popv()->value.f;
+    } else if (vmstack_typecheck() == VM_TY_IMMEDIATE) {
+        freq = vmstack_popf();
+    } else if (vmstack_typecheck() == VM_TY_INITVAL) {
+        vmstack_popf();
+        freq = 500;
+    }
+    
+    Array *range = NULL;
+    if (vmstack_typecheck() == VM_TY_VARPTR) {
+        Var *var = vmstack_popv();
+        if (var->type != TY_ARRAY) {
+            oto_error(OTO_ARGUMENTS_TYPE_ERROR);
+        }
+
+        range = (Array *)var->value.p;
+        if (range->len < 2) {
+            oto_error(OTO_ARGUMENTS_TYPE_ERROR);
+        }
+    } else if (vmstack_typecheck() == VM_TY_IMMEDIATE) {
+        oto_error(OTO_ARGUMENTS_TYPE_ERROR);
+    } else {
+        oto_error(OTO_MISSING_ARGUMENTS_ERROR);
+    }
+    
+    Var *var = NULL;
+    if (vmstack_typecheck() == VM_TY_VARPTR) {
+        var = vmstack_popv();
+        if (var->type != TY_FLOAT) {
+            printf("aaaaa\n");
+            oto_error(OTO_MISSING_ARGUMENTS_ERROR);
+        }
+    } else if (vmstack_typecheck() == VM_TY_IMMEDIATE) {
+        oto_error(OTO_ARGUMENTS_TYPE_ERROR);
+    } else {
+        oto_error(OTO_MISSING_ARGUMENTS_ERROR);
+    }
+
+    Sound *sound = NULL;
+    if (vmstack_typecheck() == VM_TY_VARPTR) {
+        Var *var = vmstack_popp();
+        if (var->type != TY_SOUND) {
+            oto_error(OTO_ARGUMENTS_TYPE_ERROR);
+        }
+        sound = (Sound *)var->value.p;
+    } else if (vmstack_typecheck() == VM_TY_INITVAL) {
+        vmstack_popf();
+    } else {
+        oto_error(OTO_ARGUMENTS_TYPE_ERROR);
+    }
+
+    int64_t no = -1;
+    if (vmstack_typecheck() == VM_TY_VARPTR) {
+        no = (int64_t)vmstack_popv()->value.f;
+    } else if (vmstack_typecheck() == VM_TY_IMMEDIATE) {
+        no = (int64_t)vmstack_popf();
+    } else if (vmstack_typecheck() == VM_TY_INITVAL) {
+        oto_error(OTO_MISSING_ARGUMENTS_ERROR);
+    }
+
+    set_synth(no, sound, var, range->data[0], range->data[1], freq);
 }

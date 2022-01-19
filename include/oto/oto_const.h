@@ -100,6 +100,7 @@ enum {
     TC_PRINTWAV,  // printwav PRINTWAV
     TC_PRINTVAR,  // printvar PRINTVAR
     TC_SLEEP,     // sleep SLEEP
+    TC_SETSYNTH,  // setsynth SETSYNTH
 
     TC_EXIT       // exit EXIT
 };
@@ -244,6 +245,7 @@ enum {
     OP_PRINTWAV,
     OP_PRINTVAR,
     OP_SLEEP,
+    OP_SETSYNTH,
     OP_EXIT
 };
 typedef int64_t opcode_t;

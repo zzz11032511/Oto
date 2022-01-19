@@ -10,13 +10,20 @@ void exec(VectorPTR *ic_list, VectorPTR *var_list, Status *status) {
     int64_t tmpi1 = 0;
     int64_t tmpi2 = 0;
 
+    init_synth();
+
     while (i < end) {
+        #ifdef DEBUG
+            printf("PC : %I64d\n", i);
+        #endif
+        
         switch ((opcode_t)ic_list->data[i]) {
         case OP_CPYD:
-            VAR(i + 1)->type    = VAR(i + 2)->type;
-            if (VAR(i + 1)->type == TY_FLOAT || VAR(i + 1)->type == TY_CONST) {
+            if (VAR(i + 2)->type == TY_FLOAT || VAR(i + 2)->type == TY_CONST) {
+                VAR(i + 1)->type = TY_FLOAT;
                 VAR(i + 1)->value.f = VAR(i + 2)->value.f;
-            } else if (VAR(i + 1)->type == TY_STRING) {
+            } else if (VAR(i + 2)->type == TY_STRING) {
+                VAR(i + 1)->type = TY_STRING;
                 VAR(i + 1)->value.p = VAR(i + 2)->value.p;
             }
 
@@ -207,6 +214,10 @@ void exec(VectorPTR *ic_list, VectorPTR *var_list, Status *status) {
             oto_instr_sleep();
             break;
 
+        case OP_SETSYNTH:
+            oto_instr_setsynth(status);
+            break;
+
         case OP_EXIT:
             return;
 
@@ -219,4 +230,6 @@ void exec(VectorPTR *ic_list, VectorPTR *var_list, Status *status) {
 
         i += 5;
     }
+
+    start_synth(status);
 }

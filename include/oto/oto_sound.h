@@ -73,7 +73,7 @@ void set_stream_active_flag(bool b);
 
 // printwav, export命令用に音データを保存するバッファ
 extern float *databuf;
-void write_out_data(Playdata data, bool print_flag);
+void write_out_data(Playdata data, bool print_flag, bool fade_flag);
 
 float sound_generate(Playdata *info, uint64_t t, int64_t ch);
 float filtering(float data, Playdata *info, uint64_t t);

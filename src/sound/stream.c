@@ -20,6 +20,7 @@ typedef struct {
     Playdata info;
     bool print_flag;
     bool safety_flag;
+    bool fade_flag;
 } Currentdata;
 Currentdata out_data;
 
@@ -35,6 +36,7 @@ static void init_out_data(int64_t sampling_rate, bool print_flag, bool safety_fl
     out_data.info.sampling_rate = sampling_rate;
     out_data.print_flag = print_flag;
     out_data.safety_flag = safety_flag;
+    out_data.fade_flag = true;
 }
 
 static bool stream_active_flag = false;
@@ -46,7 +48,7 @@ void set_stream_active_flag(bool b) {
     stream_active_flag = b;
 }
 
-void write_out_data(Playdata data, bool print_flag) {
+void write_out_data(Playdata data, bool print_flag, bool fade_flag) {
     out_data.t = 0;
     out_data.info.sound = data.sound;
     out_data.info.sound_num = data.sound_num;
@@ -56,6 +58,7 @@ void write_out_data(Playdata data, bool print_flag) {
     }
     out_data.info.volume = data.volume;
     out_data.print_flag = print_flag;
+    out_data.fade_flag = fade_flag;
 }
 
 static double FADE_RANGE = 0.05;
@@ -86,10 +89,12 @@ static int play_callback(const void *inputBuffer,
         d = filtering(d, &data->info, data->t);
 
         /* フェード処理 */
-        if (data->t < (FADE_RANGE * data->info.length)) {
-            d *= data->t / (FADE_RANGE * data->info.length);
-        } else if ((data->info.length - data->t) < (FADE_RANGE * data->info.length)) {
-            d *= (data->info.length - data->t) / (FADE_RANGE * data->info.length);
+        if (data->fade_flag) {
+            if (data->t < (FADE_RANGE * data->info.length)) {
+                d *= data->t / (FADE_RANGE * data->info.length);
+            } else if ((data->info.length - data->t) < (FADE_RANGE * data->info.length)) {
+                d *= (data->info.length - data->t) / (FADE_RANGE * data->info.length);
+            }
         }
 
         if (data->safety_flag) {

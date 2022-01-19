@@ -77,6 +77,10 @@ typedef FILE AFile;
 #define AMODE_AND 2
 #define AMODE_XOR 3
 
+#define AKEY_1 0x0031
+#define AKEY_2 0x0032
+#define AKEY_3 0x0033
+#define AKEY_4 0x0034
 #define AKEY_ENTER 10
 #define AKEY_ESC 27
 #define AKEY_BACKSPACE 8

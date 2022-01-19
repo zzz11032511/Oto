@@ -29,18 +29,10 @@ void compile_instruction(int64_t *icp, SliceI64 *srctcs, int64_t *idx) {
         compile_args(icp, argtcs, 1);
         put_opcode(icp, OP_SLEEP, 0, 0, 0, 0);
         break;
-
-    // case TC_NOTE:
-    // case TC_MUTE:
-    // case TC_BPM:
-    // case TC_PRINTWAV:
-    // case TC_EXPORTWAV:
-    // case TC_IMPORTWAV:
-    // case TC_DEFSE:
-    // case TC_SPECTRUM:
-    // case TC_SETFS:
-    // case TC_MIDIIN:
-    // case TC_MIDIOUT:
+    case TC_SETSYNTH:
+        compile_args(icp, argtcs, 5);
+        put_opcode(icp, OP_SETSYNTH, 0, 0, 0, 0);
+        break;
     default:
         oto_error(OTO_INTERNAL_ERROR);
     }

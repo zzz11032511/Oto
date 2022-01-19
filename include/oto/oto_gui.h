@@ -9,9 +9,9 @@
 #define PRINTWAV_OVERALL_WAVE_COLOR 0x00c3ff
 #define PRINTWAV_ZOOM_WAVE_COLOR    0x00c3ff
 
-#define FILTER_WIN_WIDTH  600
-#define FILTER_WIN_WIN_HEIGHT 400
-#define FILTER_WIN_WIN_BACKGROUND_COLOR 0xededed
+#define SYNTH_WIN_WIDTH  600
+#define SYNTH_WIN_HEIGHT 350
+#define SYNTH_WIN_BACKGROUND_COLOR 0xededed
 
 typedef struct {
     AInt32a length;
@@ -29,6 +29,8 @@ typedef struct {
 #define SLIDER_CIRCLE_WIDTH 20
 
 void aInitSlider(Slider *s, AInt32a length, AInt32a x, AInt32a y, double value_min, double value_max, AInt32a color);
+
 void aFillSlider(AWindow *w, Slider *s);
+
 void aKeyIn2Slider(Slider *s, AInt32a key, AInt32a delta);
-inline double aGetValueSlider(Slider *s);
+double aGetValueSlider(Slider *s);

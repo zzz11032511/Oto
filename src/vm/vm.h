@@ -31,6 +31,12 @@ void oto_instr_play(Status *status);
 void oto_instr_printwav(Status *status);
 void oto_instr_printvar(VectorPTR *var_list, Status *status);
 void oto_instr_sleep();
+void oto_instr_setsynth(Status *status);
 
 void oto_connect_filter(Sound *sound, filtercode_t fc, Status *status);
 void oto_define_array(VectorPTR *var_list, Var *var, int64_t arraysize);
+
+/* synth */
+void init_synth();
+void set_synth(int64_t no, Sound *s, Var *v, double min, double max, double freq);
+void start_synth(Status *status);

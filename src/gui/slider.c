@@ -11,13 +11,16 @@ void aInitSlider(Slider *s, AInt32a length, AInt32a x, AInt32a y, double value_m
     s->color = color;
 }
 
+double aGetValueSlider(Slider *s) {
+    return s->value_min + ((double)(s->value_x - s->x + 5) / (s->length - s->x + 10)) * (s->value_max - s->value_min);
+}
+
 void aFillSlider(AWindow *w, Slider *s) {
     aFillRect(w, s->length, SLIDER_WEIGHT, s->x, s->y, SLIDER_BASE_COLOR);
     aFillOval(w, SLIDER_CIRCLE_WIDTH, SLIDER_CIRCLE_WIDTH, s->value_x, s->y - 8, s->color);
 }
 
 void aKeyIn2Slider(Slider *s, AInt32a key, AInt32a delta) {
-    printf("%x\n", key);
     switch (key) {
     case AKEY_LEFT:
         if (s->value_x <= s->x - 5) {
@@ -37,40 +40,3 @@ void aKeyIn2Slider(Slider *s, AInt32a key, AInt32a delta) {
         break;
     }
 }
-
-inline double aGetValueSlider(Slider *s) {
-    return s->value_min + ((double)(s->value_x - s->x + 5) / (s->length - s->x + 10)) * s->value_max;
-}
-
-// int main(void) {
-//     AWindow *w = aOpenWin(WIN_WIDTH, WIN_HEIGHT, "test", 1);
-    
-//     Slider s;
-//     aInitSlider(&s, 550, 25, 50, 0, 100, 0x40bfff);
-
-//     AInt32a key = 0;
-//     for (;;) {
-//         aFillRect0(w, WIN_WIDTH, WIN_HEIGHT, 0, 0, WIN_BACKGROUND_COLOR);
-//         aFillSlider(w, &s);
-        
-//         key = aInkey(w, 1);
-//         switch (key) {
-//         case AKEY_ENTER:
-//             goto end_proc;
-//         case AKEY_LEFT:
-//         case AKEY_RIGHT:
-//             aKeyIn2Slider(&s, key, 5);
-//             break;
-//         default:
-//             break;
-//         }
-
-//         printf("value : %f\n", aGetValueSlider(&s));
-//         aWait(1);
-//     }
-
-// end_proc:
-//     printf("success\n");
-
-//     return 0;
-// }

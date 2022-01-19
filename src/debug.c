@@ -88,6 +88,7 @@ static struct operation {
     {"PRINTWAV",     OP_PRINTWAV     },
     {"PRINTVAR",     OP_PRINTVAR     },
     {"SLEEP",        OP_SLEEP        },
+    {"SETSYNTH",     OP_SETSYNTH     },
     {"EXIT",         OP_EXIT         }
 };
 
