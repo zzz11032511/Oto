@@ -218,6 +218,10 @@ void exec(VectorPTR *ic_list, VectorPTR *var_list, Status *status) {
             oto_instr_setsynth(status);
             break;
 
+        case OP_SETLOOP:
+            oto_instr_setloop();
+            break;
+
         case OP_EXIT:
             return;
 

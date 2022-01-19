@@ -25,7 +25,6 @@ void compile_conn_filter(int64_t *icp, SliceI64 *conntcs) {
 
     for (int64_t i = 1; i < conntcs->length - 2;) {
         tokencode_t tc = conntcs->data[i];
-        DEBUG_IPRINT(i);
 
         if (tc == TC_RARROW) {
             i++;

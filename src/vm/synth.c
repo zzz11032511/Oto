@@ -58,6 +58,10 @@ void set_synth(int64_t no, Sound *s, Var *v, double min, double max, double freq
     synth_freq = freq;
 }
 
+void set_synth_looppoint(double loop) {
+    loop_point = loop;
+}
+
 void start_synth(Status *status) {
     int64_t use_num = 0;
     for (int64_t i = 0; i < SYNTH_NUM; i++) {

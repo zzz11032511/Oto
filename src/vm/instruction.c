@@ -441,3 +441,14 @@ void oto_instr_setsynth(Status *status) {
 
     set_synth(no, sound, var, range->data[0], range->data[1], freq);
 }
+
+void oto_instr_setloop() {
+    if (vmstack_typecheck() == VM_TY_VARPTR) {
+        set_synth_looppoint(vmstack_popv()->value.f);
+    } else if (vmstack_typecheck() == VM_TY_IMMEDIATE) {
+        set_synth_looppoint(vmstack_popf());
+    } else if (vmstack_typecheck() == VM_TY_INITVAL) {
+        vmstack_popf();
+        set_synth_looppoint(10);
+    }
+}
