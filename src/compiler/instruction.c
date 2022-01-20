@@ -30,10 +30,16 @@ void compile_instruction(int64_t *icp, SliceI64 *srctcs, int64_t *idx) {
         put_opcode(icp, OP_SLEEP, 0, 0, 0, 0);
         break;
     case TC_SETSYNTH:
+        if (oto_status->repl_flag) {
+            oto_error(OTO_REPL_ERROR);
+        }
         compile_args(icp, argtcs, 5);
         put_opcode(icp, OP_SETSYNTH, 0, 0, 0, 0);
         break;
     case TC_SETLOOP:
+        if (oto_status->repl_flag) {
+            oto_error(OTO_REPL_ERROR);
+        }
         compile_args(icp, argtcs, 1);
         put_opcode(icp, OP_SETLOOP, 0, 0, 0, 0);
         break;
