@@ -1,6 +1,8 @@
 OtoプロジェクトはSecHack365'21で開発しています.  
 
-音声出力には[portaudio](https://github.com/PortAudio/portaudio)を使用しています. 
+Otoの公式ウェブサイトは[こちら](https://i18fn.github.io/Oto/).  
+
+音声出力には[portaudio](https://github.com/PortAudio/portaudio)を使用しています.  
 波形描画, GUIシンセ機能には[acl](http://essen.osask.jp/?aclib05)を使用しています.
 
 ## Tasks
