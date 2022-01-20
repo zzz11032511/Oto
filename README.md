@@ -1,7 +1,7 @@
 OtoプロジェクトはSecHack365'21で開発しています.  
 
-音声出力にはportaudioライブラリを使用しています. -> [詳細](https://github.com/PortAudio/portaudio)  
-波形描画にはaclライブラリを使用しています. -> [詳細](http://essen.osask.jp/?aclib05)  
+音声出力には[portaudio](https://github.com/PortAudio/portaudio)を使用しています. 
+波形描画, GUIシンセ機能には[acl](http://essen.osask.jp/?aclib05)を使用しています.
 
 ## Tasks
 - [x] 音声出力機構の改良
