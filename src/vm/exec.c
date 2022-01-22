@@ -1,6 +1,7 @@
 #include "vm.h"
 
 #define VAR(tc)  ((Var *)(ic_list->data[tc]))
+#define IS_JUST_ZERO(val) (val & 0xffffffff) == 0
 
 void exec(VectorPTR *ic_list, VectorPTR *var_list, Status *status) {
     int64_t i = 0;
@@ -79,11 +80,17 @@ void exec(VectorPTR *ic_list, VectorPTR *var_list, Status *status) {
             break;
 
         case OP_DIV2:
+            if (is_just_zero(VAR(i + 3)->value.f)) {
+                oto_error(OTO_ZERO_DIVISION_ERROR);
+            }
             VAR(i + 1)->type    = TY_FLOAT;
             VAR(i + 1)->value.f = VAR(i + 2)->value.f / VAR(i + 3)->value.f;
             break;
 
         case OP_MOD2:
+            if ((int64_t)VAR(i + 3)->value.f == 0) {
+                oto_error(OTO_ZERO_DIVISION_ERROR);
+            }
             VAR(i + 1)->type    = TY_FLOAT;
             VAR(i + 1)->value.f = 
                 (int64_t)VAR(i + 2)->value.f % (int64_t)VAR(i + 3)->value.f;

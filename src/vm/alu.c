@@ -1,12 +1,16 @@
 #include "vm.h"
 
-#define IS_JUST_ZERO(val) (val & -1) == 0
-
 /* 浮動小数点数型で余りや論理演算を行うための共用体 */
 typedef union {
     int64_t i;
     double  f;
 } i64double_u;
+
+bool is_just_zero(double val) {
+    i64double_u v = {0};
+    v.f = val;
+    return (v.i & -1) == 0;
+}
 
 void alu(opcode_t op) {
     /* TODO: float型での比較・論理演算が少し怪しい */
@@ -44,14 +48,14 @@ void alu(opcode_t op) {
         break;
 
     case OP_DIV:
-        if (IS_JUST_ZERO(val2.i)) {
+        if (is_just_zero(val2.f)) {
             oto_error(OTO_ZERO_DIVISION_ERROR);
         }
         vmstack_pushf(val1.f / val2.f);
         break;
 
     case OP_MOD:
-        if (IS_JUST_ZERO(val2.i)) {
+        if ((int64_t)val2.f == 0) {
             oto_error(OTO_ZERO_DIVISION_ERROR);
         }
         vmstack_pushf((double)((int64_t)val1.f % (int64_t)val2.f));

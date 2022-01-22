@@ -22,6 +22,7 @@ double vmstack_popf();
 Var *vmstack_popv();
 void *vmstack_popp();
 
+bool is_just_zero(double val);
 void alu(opcode_t op);
 
 /* instructions */
