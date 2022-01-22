@@ -16,6 +16,7 @@ void oto_init(char *srcpath) {
 
 #ifdef DEBUG
     printf("srcpath : %s\n", oto_status->root_srcpath);
+    printf("include : %s\n", oto_status->include_srcpath);
     printf("language : %I64d\n", oto_status->language);
     printf("timecount : %d\n", oto_status->timecount_flag);
     printf("repl : %d\n", oto_status->repl_flag);
@@ -61,7 +62,7 @@ void oto_error(errorcode_t err) {
 }
 
 void oto_run() {
-    if (oto_status->repl_flag || (oto_status->root_srcpath == NULL)) {
+    if (oto_status->repl_flag || oto_status->root_srcpath == NULL) {
         repl();
         return;
     }

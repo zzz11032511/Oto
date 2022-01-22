@@ -77,7 +77,7 @@ enum {
     TC_ASTEEQ,    // *=
     TC_SLASEQ,    // /=
     TC_PERCEQ,    // %=
-    
+
     TC_BEGIN,     // begin BEGIN
     TC_END,       // end END
     TC_DEFINE,    // define DEFINE

@@ -227,6 +227,15 @@ VectorI64 *lexer(char *src, VectorPTR *var_list, Status *status) {
         oto_error(OTO_INTERNAL_ERROR);
     }
 
+    if (IS_NOT_NULL(status->include_srcpath)) {
+        char *include_src = src_open(status->include_srcpath);
+        if (IS_NULL(include_src)) {
+            print_error(OTO_INCLUDE_FILE_NOT_FOUND_ERROR, status);
+        }
+        tokenize(include_src, src_tokens, var_list, status);
+        free(include_src);
+    }
+
     tokenize(src, src_tokens, var_list, status);
     vector_i64_append(src_tokens, TC_LF);
 

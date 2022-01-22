@@ -100,6 +100,11 @@ static void load_config(Status *status, Map *conf_table) {
         map_puti(status->srcfile_table, status->root_srcpath, 1);
     }
 
+    if (map_exist_key(conf_table, "include")) {
+        status->include_srcpath = map_get(conf_table, "include");
+        map_puti(status->srcfile_table, status->include_srcpath, 1);
+    }
+
     if (map_exist_key(conf_table, "fade_range")) {
         option = map_get(conf_table, "fade_range");
         status->fade_range = strtod(option, NULL);

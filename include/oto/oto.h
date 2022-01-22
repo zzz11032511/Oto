@@ -22,6 +22,7 @@ typedef struct {
     bool safety_flag;
 
     char *root_srcpath;
+    char *include_srcpath;
     Map *srcfile_table;
     language_t language;
     int64_t sampling_rate;
