@@ -2,7 +2,7 @@ timecount: true
 repl: false
 language: kanji
 default_srcpath: aaa.oto
-include: ./sample/kirakira.oto
+include: ./sample/include/doremi.oto
 sampling_rate: 8000
 fade_range: 0.1
 safety: true

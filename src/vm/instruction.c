@@ -16,7 +16,7 @@ void oto_instr_print() {
     DEBUG_IPRINT(vmstack_typecheck());
     if (vmstack_typecheck() == VM_TY_VARPTR) {
         Var *var = vmstack_popv();
-        if (var->type == TY_FLOAT) {
+        if (var->type == TY_FLOAT || var->type == TY_CONST) {
             printf("%f\n", var->value.f);
         } else if (var->type == TY_FILTER) {
             printf("[filter]\n");

@@ -233,6 +233,7 @@ VectorI64 *lexer(char *src, VectorPTR *var_list, Status *status) {
             print_error(OTO_INCLUDE_FILE_NOT_FOUND_ERROR, status);
         }
         tokenize(include_src, src_tokens, var_list, status);
+        vector_i64_append(src_tokens, TC_LF);
         free(include_src);
     }
 
