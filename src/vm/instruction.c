@@ -105,7 +105,7 @@ static void play_sub(Status *status, Playdata *data) {
         volume = 80;
     }
 
-    if (status->safety_flag) {
+    if (status->safety_flag && volume > 35) {
         volume = 35;
     }
 
