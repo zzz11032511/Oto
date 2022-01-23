@@ -90,6 +90,7 @@ static struct operation {
     {"SLEEP",        OP_SLEEP        },
     {"SETSYNTH",     OP_SETSYNTH     },
     {"SETLOOP",      OP_SETLOOP      },
+    {"STOP",         OP_STOP         },
     {"EXIT",         OP_EXIT         }
 };
 

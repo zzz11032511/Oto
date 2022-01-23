@@ -32,7 +32,7 @@ Token rsvwords[] = {
     {TC_PLAY,      "play",      4, 1}, {TC_PRINTWAV,  "printwav",  8, 1}, 
     {TC_PRINTVAR,  "printvar",  8, 1}, {TC_SLEEP,     "sleep",     5, 1},
     {TC_SETSYNTH,  "setsynth",  8, 1}, {TC_SETLOOP,   "setloop",   7, 1},
-    {TC_EXIT,      "exit",      4, 1},
+    {TC_STOP,      "stop",      4, 1}, {TC_EXIT,      "exit",      4, 1},
     {0,            NULL,        0, 1},
 };
 

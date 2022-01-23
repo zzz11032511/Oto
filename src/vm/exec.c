@@ -229,6 +229,10 @@ void exec(VectorPTR *ic_list, VectorPTR *var_list, Status *status) {
             oto_instr_setloop();
             break;
 
+        case OP_STOP:
+            fgetc(stdin);
+            break;
+
         case OP_EXIT:
             return;
 

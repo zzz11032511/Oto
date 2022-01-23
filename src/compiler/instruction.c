@@ -43,6 +43,10 @@ void compile_instruction(int64_t *icp, SliceI64 *srctcs, int64_t *idx) {
         compile_args(icp, argtcs, 1);
         put_opcode(icp, OP_SETLOOP, 0, 0, 0, 0);
         break;
+    case TC_STOP:
+        compile_args(icp, argtcs, 0);
+        put_opcode(icp, OP_STOP, 0, 0, 0, 0);
+        break;
     default:
         oto_error(OTO_INTERNAL_ERROR);
     }

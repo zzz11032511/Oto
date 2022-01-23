@@ -103,6 +103,7 @@ enum {
     TC_SLEEP,     // sleep SLEEP
     TC_SETSYNTH,  // setsynth SETSYNTH
     TC_SETLOOP,   // setloop SETLOOP
+    TC_STOP,      // stop STOP
 
     TC_EXIT       // exit EXIT
 };
@@ -249,6 +250,7 @@ enum {
     OP_SLEEP,
     OP_SETSYNTH,
     OP_SETLOOP,
+    OP_STOP,
 
     OP_EXIT
 };
