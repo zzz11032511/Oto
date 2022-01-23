@@ -6,7 +6,7 @@ title: "ニュース"
 <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
 
 <div class="home-news">
-    <h2>News</h2>
+    <h2>ニュース</h2>
     <ul>
         {% for post in site.posts %}
             {% capture year %}  {{ post.date | date: '%Y' }} {% endcapture %}
