@@ -137,7 +137,7 @@ void compile_sub(int64_t *icp, SliceI64 *srctcs, int64_t start, int64_t end) {
             SliceI64 *conntcs = make_line_tokencodes(srctcs, i);
             compile_conn_filter(icp, conntcs);
 
-            i += conntcs->length + 2;
+            i += conntcs->length;
             free_slice_i64(conntcs);
 
         } else if (ptn_cmp(srctcs, i, PTNS_CPYD)) {

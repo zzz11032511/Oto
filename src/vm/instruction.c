@@ -320,13 +320,16 @@ void oto_instr_printvar(VectorPTR *var_list, Status *status) {
 }
 
 void oto_instr_sleep() {
+    int64_t time = 0;
     if (vmstack_typecheck() == VM_TY_VARPTR) {
-        Sleep((int64_t)(vmstack_popv()->value.f) * 1000);
+        time = (int64_t)((vmstack_popv()->value.f) * 1000);
     } else if (vmstack_typecheck() == VM_TY_IMMEDIATE) {
-        Sleep((int64_t)(vmstack_popf()) * 1000);
+        time = (int64_t)((vmstack_popf()) * 1000);
     } else if (vmstack_typecheck() == VM_TY_INITVAL) {
         oto_error(OTO_MISSING_ARGUMENTS_ERROR);
     }
+    printf("[sleep] %I64d[ms]\n", time);
+    Sleep(time);
 }
 
 void oto_connect_filter(Sound *sound, filtercode_t fc, Status *status) {

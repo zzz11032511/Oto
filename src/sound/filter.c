@@ -101,7 +101,6 @@ inline static float detune(float d, Playdata *info, uint64_t t, double depth) {
     for (int64_t ch = 0; ch < info->sound_num; ch++) {
         float org = info->freq[ch];
         info->freq[ch] = info->freq[ch] + depth;
-        // printf("org : %f + depth : %f = %f\n", org, depth, info->freq[ch]);
         data += ((float)info->volume / 100) * sound_generate(info, t, ch);
         info->freq[ch] = org;
     }
@@ -110,6 +109,7 @@ inline static float detune(float d, Playdata *info, uint64_t t, double depth) {
 }
 
 inline static float chop(float d, Playdata *info, uint64_t t, double speed) {
+    if (speed <= 0) return d;
     uint64_t t0 = info->sampling_rate / speed;
     uint64_t m = t % t0;
     if (m < t0 / 2) return d;
@@ -270,6 +270,12 @@ float filtering(float data, Playdata *info, uint64_t t) {
             break;
         case RADIO:
             data = radio(data, info, t);
+            break;
+        case VIBRATO:
+            data = vibrato(data, info, t,
+                filter->args[0]->value.f,
+                filter->args[1]->value.f
+            );
             break;
         default:
             printf("%I64d\n", filter->num);
