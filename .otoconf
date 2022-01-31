@@ -1,5 +1,5 @@
-timecount: true
-repl: false
+timecount: false
+repl: true
 language: kanji
 default_srcpath: aaa.oto
 include: ./sample/include/doremi.oto
