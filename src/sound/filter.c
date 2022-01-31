@@ -249,13 +249,13 @@ float filtering(float data, Playdata *info, uint64_t t) {
             );
             break;
         case LPF:
-            data = hpf(data, info, t,
+            data = lpf(data, info, t,
                 filter->args[0]->value.f,
                 M_SQRT1_2
             );
             break;
         case HPF:
-            data = lpf(data, info, t,
+            data = hpf(data, info, t,
                 filter->args[0]->value.f,
                 M_SQRT1_2
             );
