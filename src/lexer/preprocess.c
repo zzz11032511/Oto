@@ -41,7 +41,9 @@ static void include_file(char *src, int64_t idx, VectorI64 *src_tokens, VectorPT
 
     char *new_src = src_open(path);
     if (IS_NULL(new_src)) {
-        oto_error(OTO_INCLUDE_FILE_NOT_FOUND_ERROR);
+        print_error(OTO_INCLUDE_FILE_NOT_FOUND_ERROR, status);
+        printf("filename : %s\n", path);
+        oto_error_throw(OTO_INCLUDE_FILE_NOT_FOUND_ERROR);
     }
 
     tokenize(new_src, src_tokens, var_list, status);

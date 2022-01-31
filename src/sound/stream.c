@@ -97,9 +97,20 @@ static int play_callback(const void *inputBuffer,
             }
         }
 
+
         if (data->print_flag) {
             databuf[data->t] = d;
-            *out++ = d;
+        }
+
+        if (data->safety_flag) {
+            d *= 0.3;
+            if (d >= 1.0) {
+                *out++ = 1.0;
+            } else if (d <= -1.0) {
+                *out++ = -1.0;
+            } else {
+                *out++ = d;
+            }
         } else {
             *out++ = d;
         }

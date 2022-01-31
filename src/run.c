@@ -70,9 +70,11 @@ void oto_run() {
     src = src_open(oto_status->root_srcpath);
     if (IS_NULL(src)) {
         print_error(OTO_FILE_NOT_FOUND_ERROR, oto_status);
+        printf("filename : %s\n", oto_status->root_srcpath);
         repl();
         return;
     }
+    oto_status->repl_flag = false;
 
     if (setjmp(env) == 0) {
         src_tokens = new_vector_i64(DEFAULT_MAX_TC);

@@ -30,6 +30,7 @@ void compile_conn_filter(int64_t *icp, SliceI64 *conntcs) {
             i++;
             int64_t fc = get_init_filtercode(conntcs->data[i]);
             if (fc == -1) {
+                // エラー箇所がおかしい
                 error_compiler(OTO_FILTER_ERROR, conntcs, i);
             }
             int64_t param = def_filters[fc].param;

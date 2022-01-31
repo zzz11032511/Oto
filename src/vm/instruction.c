@@ -105,9 +105,9 @@ static void play_sub(Status *status, Playdata *data) {
         volume = 80;
     }
 
-    if (status->safety_flag && volume > 35) {
-        volume = 35;
-    }
+    // if (status->safety_flag && volume > 35) {
+    //     volume = 35;
+    // }
 
     double duration = 0;
     if (vmstack_typecheck() == VM_TY_VARPTR) {
@@ -235,8 +235,7 @@ static void print_wave_sub(Status *status, Playdata *data) {
     }
 
     // 何等かのキーが押されるまで待機
-    aInkeyWait(w, 1);
-    free(w);
+    aWait(-1);
 }
 
 void oto_instr_printwav(Status *status) {
