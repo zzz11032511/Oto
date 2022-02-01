@@ -49,6 +49,12 @@ PLAY <周波数(Hz)> <長さ(秒)> <音量(0-100)> <sound型の変数>
 ```
 引数を省略すると、周波数500Hz、長さ1秒、音量80の正弦波の音を出力します。
 
+第一引数(周波数)にarray型の変数を渡すと、和音を出力することができます。
+```basic
+a = [100, 200]
+PLAY a, 1, 80
+```
+
 sound型は音源を表しています。詳しくは<a href="vartype.html#sound-type">変数とデータ型</a>、<a>フィルター</a>を参照してください。
 
 <h2 id="printwav">PRINTWAV</h2>
@@ -88,4 +94,47 @@ PRINTVAR
 
 ```basic
 SLEEP <長さ(秒)>
+```
+
+<h2 id="setsynth">SETSYNTH</h2>
+シンセサイザーの設定を行う命令です。REPLモードでは実行できません。
+
+```basic
+SETSYNTH <シンセ番号>, <sound型の変数>, <float型の変数>, <値の範囲>
+```
+
+この命令を実行するとプログラム終了時にGUIソフトシンセが起動します。
+![GUIソフトシンセ]({{ '/assets/images/doc-instr-setsynth.png' | relative_url }})
+
+4個のGUIコントロールを使用でき、それらは引数のfloat型の変数と対応させることができます。
+下に具体的な使用例を示します。
+```basic
+snd = SOUND[SQUARE]
+a = 1
+snd -> CHOP[a] -> snd
+
+range = [0, 5]
+/* 1番のシンセにsndを登録し、aのrangeの範囲分動かせるようにする */
+SETSYNTH 1, snd, a, range
+```
+
+上の例では、変数aをSETSYNTH命令で1番のシンセサイザーに接続します。
+変数aがとりうる値の範囲は、array型の変数rangeで指定されたものになります(要素数が2未満だとエラー)。
+
+<h2 id="setloop">SETLOOP</h2>
+GUIシンセモードでのループポイント設定を行う命令です。REPLモードでは実行できません。
+
+```basic
+SETLOOP <ループ時間(秒)>
+```
+
+シンセサイザーモードでは、指定した音が流れ続けます。しかし、Otoの音声出力の都合上音が一瞬停止してから再び鳴り始めます。
+SETLOOP命令は、音が停止するまでの時間を指定します。
+
+<h2 id="stop">STOP</h2>
+
+処理を一時停止する命令です。キーが押されると再開します。
+
+```basic
+STOP
 ```

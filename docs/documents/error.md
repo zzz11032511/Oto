@@ -87,6 +87,10 @@ define文の使い方が間違えている。
 
 音声出力の際にエラーが発生した。
 
+## OTO_SYHTH_OUT_OF_NUMBER_ERROR
+
+SETSYNTH命令で1から4以外の番号を指定した。
+
 ## OTO_REPL_ERROR
 
 REPLモードで使用できない命令を使用した。
