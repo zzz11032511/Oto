@@ -20,6 +20,10 @@ PLAY 500, 1, 60, snd2
 
 ここでは、PRINTWAV命令で表示した波形とともに、Otoで用意されているフィルターについて解説していきます。
 
+<br>
+フィルターのサンプル音源は、全て500Hzの矩形波にフィルターを適応したものになっています。
+<audio controls src="{{ '/assets/sounds/org.mp3' | relative_url }}"></audio>
+
 <h2 id="clip">CLIP</h2>
 
 大きすぎる音をカットするフィルターです。
@@ -27,6 +31,8 @@ PLAY 500, 1, 60, snd2
 ```basic
 CLIP[]
 ```
+<audio controls src="{{ '/assets/sounds/crip.mp3' | relative_url }}"></audio>
+
 ![CLIPフィルター]({{ '/assets/images/filter-clip.png' | relative_url }})
 
 音の大きさが-1.0-1.0の範囲外のものを-1.0または1.0に補正します。
@@ -39,6 +45,8 @@ CLIP[]
 ```basic
 FADE_IN[<時間(秒)>]
 ```
+<audio controls src="{{ '/assets/sounds/fadein.mp3' | relative_url }}"></audio>
+
 ![FADE_INフィルター]({{ '/assets/images/filter-fadein.png' | relative_url }})
 
 引数には、音の始まりから何秒目で100%の音量になるのかを指定します。
@@ -50,6 +58,8 @@ FADE_IN[<時間(秒)>]
 ```basic
 FADE_OUT[<時間(秒)>]
 ```
+<audio controls src="{{ '/assets/sounds/fadeout.mp3' | relative_url }}"></audio>
+
 ![FADE_OUTフィルター]({{ '/assets/images/filter-fadeout.png' | relative_url }})
 
 引数には、音の終わりから何秒目で音を小さくし始めるのかを指定します。
@@ -61,6 +71,8 @@ FADE_INフィルターとFADE_OUTフィルターを両方合わせたもので�
 ```basic
 FADE[<100%になるまでの時間(秒)>, <音が小さくなり始める時間(秒)>]
 ```
+<audio controls src="{{ '/assets/sounds/fade.mp3' | relative_url }}"></audio>
+
 ![FADEフィルター]({{ '/assets/images/filter-fade.png' | relative_url }})
 
 Otoの標準では、クリップノイズ防止のためにフィルター無しの状態でもフェード効果がかかっています。詳しくは<a href="option.html">実行時オプション</a>を参照してください。
@@ -72,6 +84,8 @@ Otoの標準では、クリップノイズ防止のためにフィルター無�
 ```basic
 AMP[<増幅率>]
 ```
+<audio controls src="{{ '/assets/sounds/amp.mp3' | relative_url }}"></audio>
+
 ![AMPフィルター]({{ '/assets/images/filter-amp.png' | relative_url }})
 
 このフィルターを通すことによって、音の大きさが増幅率分大きくなります。潰れた音色を作ることができます。
@@ -83,6 +97,8 @@ AMP[<増幅率>]
 ```basic
 TREMOLO[<深さ>, <速さ>]
 ```
+<audio controls src="{{ '/assets/sounds/tremolo.mp3' | relative_url }}"></audio>
+
 ![TREMOLOフィルター]({{ '/assets/images/filter-tremolo.png' | relative_url }})
 
 <h2 id="detune">DETUNE</h2>
@@ -92,6 +108,8 @@ TREMOLO[<深さ>, <速さ>]
 ```basic
 DETUNE[<音のずれ(Hz)>]
 ```
+<audio controls src="{{ '/assets/sounds/detune.mp3' | relative_url }}"></audio>
+
 ![DETUNEフィルター]({{ '/assets/images/filter-detune.png' | relative_url }})
 
 例えば、500Hzの正弦波にDETUNEフィルターを音のずれ2Hzで通すと、502Hzの波形が足し算されることになります。
@@ -104,6 +122,8 @@ DETUNE[<音のずれ(Hz)>]
 ```basic
 CHOP[<速さ>]
 ```
+<audio controls src="{{ '/assets/sounds/chop.mp3' | relative_url }}"></audio>
+
 ![CHOPフィルター]({{ '/assets/images/filter-chop.png' | relative_url }})
 
 <h2 id="lpf">LPF</h2>
@@ -113,6 +133,8 @@ CHOP[<速さ>]
 ```basic
 LPF[<カットオフ周波数(Hz)>]
 ```
+<audio controls src="{{ '/assets/sounds/lpf.mp3' | relative_url }}"></audio>
+
 ![LPFフィルター]({{ '/assets/images/filter-lpf1.png' | relative_url }})
 
 現在、LPF、HPF、WAH、RADIOのいずれかを同時に接続すると不具合が発生します。詳しくは、<a href="issue.html">現在発生している不具合</a>を参考にしてください。
@@ -124,6 +146,8 @@ LPF[<カットオフ周波数(Hz)>]
 ```basic
 HPF[<カットオフ周波数(Hz)>]
 ```
+<audio controls src="{{ '/assets/sounds/hpf.mp3' | relative_url }}"></audio>
+
 ![HPFフィルター]({{ '/assets/images/filter-hpf1.png' | relative_url }})
 
 <h2 id="wah">WAH</h2>
@@ -133,6 +157,8 @@ HPF[<カットオフ周波数(Hz)>]
 ```basic
 WAH[<レゾナンス>, <ワウの深さ>, <ワウの速さ>]
 ```
+<audio controls src="{{ '/assets/sounds/wah.mp3' | relative_url }}"></audio>
+
 ![WAHフィルター]({{ '/assets/images/filter-wah.png' | relative_url }})
 
 1000Hzを基準として第2引数に指定した分だけ変化します。レゾナンスはカットオフ周波数付近での増幅率のことで、値を変えると音の雰囲気を変えることができます。
@@ -144,4 +170,6 @@ WAH[<レゾナンス>, <ワウの深さ>, <ワウの速さ>]
 ```basic
 RADIO[]
 ```
+<audio controls src="{{ '/assets/sounds/radio.mp3' | relative_url }}"></audio>
+
 ![RADIOフィルター]({{ '/assets/images/filter-radio.png' | relative_url }})
